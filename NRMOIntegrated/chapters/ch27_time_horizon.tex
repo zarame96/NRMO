@@ -1,0 +1,366 @@
+% chapters/ch27_time_horizon.tex
+% Chapter 27: TimeHorizonLayer — Full Specification
+% Source: NRMO_v5.tex (v4 LaTeX original) Chapter 9 (line 3933) +
+%         INV-2.1-6 (line 4040) + Chapter 16 component description
+%         (line 4056) + Chapter 13 v2.1 Integrated Execution Flow
+%         (line 3986).
+% Cross-reference: vNext simulator horizon profiles (Part VIII)
+%                  multi-horizon validation (Part XII §1.3 Performance).
+
+\chapter{TimeHorizonLayer}
+\label{ch:time-horizon-layer}
+
+% =====================================================================
+\section*{v7 Realignment Note (Evaluation Horizon and Over-Defense)}
+\addcontentsline{toc}{section}{v7 Realignment Note}
+
+\nrmobox{Root-cause finding}{
+A short evaluation horizon is a primary cause of over-defensive collapse.
+When the rollout/scoring horizon is too short, the long-run compounding of
+forward growth is not yet visible, so defensive actions win on short-term
+metrics and the engine wrongly concludes that caution is optimal.
+}
+
+\paragraph{Empirical evidence (civilisation domain).}
+With the two-layer structure, the same civilisation state yields opposite
+``best'' actions depending solely on the evaluation horizon:
+at horizon~12 the best action is defensive ($g=0.10$); at horizon~100 it is
+sustainable maximum growth ($g=0.30$), while extreme growth ($g=0.55$) is
+revealed as ruinous. Only a long horizon credits compounding and exposes
+the true optimum.
+
+\paragraph{Design rule.}
+Each domain requires a horizon long enough to credit its compounding
+dynamics. Deterministic, fast-cycle domains (e.g.\ inventory) tolerate short
+horizons; long-horizon domains (civilisations, compounding portfolios)
+require long horizons. Using a short horizon there reproduces the historic
+``poor numbers'' by silently enforcing over-defense.
+
+\nrmobox{Document scope and source}{
+\textbf{Source}: NRMO\_v5.tex (v4 LaTeX original), Chapter 9
+``Time Horizon Layer'' (line 3933), reinforced by INV-2.1-6
+(line 4040), Chapter 16 component description (line 4056), and
+Chapter 13 v2.1 Integrated Execution Flow Step 5 (line 3986).\\[0.3em]
+\textbf{Position in v2.1 stack}: Outer-shell layer, immediately
+\emph{after} Meta-Governance Layer and \emph{before} the FROZEN v2.0
+NRMOSystem pipeline (Step 5 of 7 in the integrated flow).\\[0.3em]
+\textbf{Architectural role}: Display-only warning layer.
+\textbf{Does NOT participate in admissibility judgment.}
+}
+
+% =====================================================================
+\section{Purpose and Architectural Position}
+\label{sec:time-horizon-purpose}
+
+The TimeHorizonLayer is a v2.1 outer-shell layer added to the
+v2.0-FROZEN NRMOSystem pipeline. Its purpose is to surface
+\emph{multi-horizon irreversibility signals} to the operator
+without granting any veto authority.
+
+The motivation is structural: a decision that appears safe at the
+Immediate horizon may carry compounding irreversibility at the 5- or
+20-year horizon (textbook example: a leveraged position that
+optimises on quarterly P\&L while degrading 20-year recovery
+optionality). NRMO Core's veto operates over a single configured
+horizon $T$; TimeHorizonLayer parallelises that view across five
+canonical horizons.
+
+\nrmobox{Why this is a separate layer}{
+NRMO Core's \texttt{NRMO\_CORE.veto()} retains \emph{single}
+authoritative judgment under invariant INV-4 (NRMO Core veto-only
+principle). Allowing the layer to influence Core would create
+\emph{two} sources of admissibility, breaking the invariant.
+TimeHorizonLayer therefore emits a \emph{display-only} warning;
+the human operator (or upstream caller) must decide whether to
+revisit the decision, but Core itself does not see the flag.
+}
+
+% =====================================================================
+\section{The Five Time Horizons}
+\label{sec:time-horizon-five}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lcX}
+\toprule
+\textbf{Horizon} & \textbf{Span} & \textbf{Interpretation} \\
+\midrule
+Immediate & current decision moment & Single-step irreversibility
+(can the action be reversed inside the same session?). \\
+OneYear & 1 year & Personal-cycle irreversibility (career, health,
+relationship). \\
+FiveYear & 5 years & Strategic irreversibility (mid-term capital
+position, institutional stance). \\
+TwentyYear & 20 years & Generational irreversibility (long-term
+optionality of future selves and dependents). \\
+FiftyYear & 50 years & Civilisation-scale irreversibility
+(structural / dynastic choices). \\
+\bottomrule
+\end{tabularx}
+\caption[Five time horizons]{The five horizons monitored by
+TimeHorizonLayer. Each is evaluated independently using
+horizon-conditional projections of the current state.}
+\label{tab:time-horizons}
+\end{table}
+
+\paragraph{Why five (not more, not fewer).}
+The five horizons are calibrated to natural human / institutional
+review cadences. \emph{Immediate} captures reflex-time judgments;
+\emph{OneYear} aligns with annual review; \emph{FiveYear} with
+strategic-plan windows; \emph{TwentyYear} with generational
+optionality; \emph{FiftyYear} with civilisation-scale governance.
+Inserting additional intermediate horizons (e.g., quarter,
+decade) duplicates information without adding signal; coarser
+horizons miss strategic-window irreversibilities. The five-horizon
+choice is empirical: it is the minimal set that captures
+\emph{distinct} failure modes observed in the case study record.
+
+% =====================================================================
+\section{Output Specification}
+\label{sec:time-horizon-output}
+
+\paragraph{Single output field.}
+\texttt{warn\_flag : bool}.
+
+\paragraph{Activation rule.}
+\texttt{warn\_flag} is set to \texttt{true} when irreversibility is
+detected in \emph{any} of the five time horizons.
+
+\paragraph{Per-horizon detail (optional, display only).}
+For diagnostic purposes the layer may also emit a per-horizon
+detail dictionary:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+{
+  "warn_flag": true,
+  "Immediate":  False,
+  "OneYear":    False,
+  "FiveYear":   True,    # 5-year irreversibility detected
+  "TwentyYear": True,    # 20-year amplified
+  "FiftyYear":  False
+}
+\end{lstlisting}
+
+\paragraph{Output channel.}
+The \texttt{warn\_flag} (and optional per-horizon detail) is
+\emph{only} included in the v2.1 Integrated Flow output dictionary
+under the key \texttt{time\_horizon\_warning} (Chapter~13 of v4
+specification, line 3986 of NRMO\_v5.tex). It is \textbf{not}
+passed to \texttt{NRMO\_CORE.veto()}.
+
+% =====================================================================
+\section{Critical Constraint: \texttt{warn\_flag} is NEVER Passed
+to NRMO\_CORE}
+\label{sec:time-horizon-constraint}
+
+\nrmobox{Invariant INV-2.1-6 (verbatim)}{
+\centering
+\textbf{Time Horizon \texttt{warn\_flag} is NOT passed to
+\texttt{NRMO\_CORE}.}\\[0.3em]
+(Source: NRMO\_v5.tex, Chapter 15 v2.1 Invariants, line 4042 of
+the v4 LaTeX original.)
+}
+
+\subsection{Why this matters}
+
+\begin{enumerate}
+\item \textbf{Veto-only authority preservation (INV-4)}.
+NRMO Core's \texttt{NRMO\_CORE.veto()} is the sole admissibility
+judge under INV-4. Letting an outer-shell heuristic modify Core's
+output would create a second source of admissibility, breaking the
+invariant.
+\item \textbf{FROZEN v2.0 pipeline preservation (INV-2.1-1)}.
+The v2.0 NRMOSystem pipeline is FROZEN. Outer-shell layers are
+\emph{additive only}; they cannot mutate signals that flow into
+the FROZEN pipeline.
+\item \textbf{Display-only feedback channel}.
+The flag is human-facing. It enables the operator to recognise
+``the action is admissible by Core but I should pause and reflect
+on long-horizon irreversibility,'' without forcing a decision
+change.
+\end{enumerate}
+
+\subsection{What is \emph{not} prohibited}
+
+\begin{itemize}
+\item \texttt{warn\_flag} \emph{may} be displayed to the operator.
+\item \texttt{warn\_flag} \emph{may} cause the operator to invoke
+NRMO Core a second time with revised parameters.
+\item \texttt{warn\_flag} \emph{may} influence the operator's
+choice among Core-admissible options.
+\item Upstream callers \emph{may} log \texttt{warn\_flag} for audit.
+\end{itemize}
+
+\subsection{What is prohibited}
+
+\begin{itemize}
+\item \texttt{warn\_flag} \textbf{must not} be wired into
+\texttt{NRMO\_CORE.veto()} as a parameter.
+\item \texttt{warn\_flag} \textbf{must not} be wired into APCSO,
+$\varepsilon$-governance, or any FROZEN v2.0 pipeline component.
+\item No code path may set \texttt{NRMO\_CORE} output to ``REJECT''
+on the basis of \texttt{warn\_flag} alone.
+\item No silent merging of \texttt{warn\_flag} into Core's
+\texttt{verdict} is permitted.
+\end{itemize}
+
+% =====================================================================
+\section{Position in the v2.1 Integrated Execution Flow}
+\label{sec:time-horizon-execution-position}
+
+The v2.1 Integrated Execution Flow is the canonical 7-step pipeline
+(Chapter~13 of v4 specification, line 3986 of NRMO\_v5.tex):
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+1. ReflexLayer.evaluate() -> HoldImmediate? -> exit
+2. ModeSelector.current_mode()
+3. NonErgodicMonitor.evaluate() -> SafeExit? -> exit
+4. MetaGovernanceLayer.pre_check(dsi):
+     CrossDomainRuin -> SafeExit? -> force Institutional, exit
+     DSImonitoring -> ForceInstitutional? -> demote mode
+5. TimeHorizonLayer.evaluate() -> set warn_flag (display only)
+6. NRMOSystemV20.process()  [FROZEN v2.0 pipeline]
+7. Output: { mode, time_horizon_warning, verdicts }
+\end{lstlisting}
+
+\paragraph{Step 5 details.}
+TimeHorizonLayer is invoked \emph{after} Meta-Governance has
+either let the mode pass or demoted it, and \emph{before} the
+FROZEN v2.0 NRMOSystem.process() pipeline. This positioning is
+critical: invoking Step 5 \emph{before} Step 4 would mean
+TimeHorizon evaluates against a possibly-pre-demotion mode;
+invoking it \emph{after} Step 6 would mean the warning fires after
+admissibility is already decided.
+
+\paragraph{Output structure (Step 7).}
+The output dictionary has the form:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+{
+  "mode":                  <Reflex|Institutional|...>,
+  "time_horizon_warning":  <bool, optional per-horizon detail>,
+  "verdicts":              <Core verdicts>
+}
+\end{lstlisting}
+
+The three top-level fields are \emph{flat siblings}.
+\texttt{time\_horizon\_warning} is \emph{not} nested inside
+\texttt{verdicts}; this preserves the architectural separation
+between Core's authoritative judgment and the outer-shell display
+warning.
+
+% =====================================================================
+\section{Relationship to Multi-Horizon Validation in $\Omega$ Full}
+\label{sec:time-horizon-omega-relation}
+
+The v5.0 $\Omega$ Full validation (Part~XII
+Section~\ref{sec:methodology-v50-perf}) reports survival across
+three simulation horizons: 200 / 500 / 1000 steps. These are
+\emph{simulation step counts}, not the cognitive-time spans of
+TimeHorizonLayer. The relationship is one of analogy, not
+identity:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xl}
+\toprule
+\textbf{Cognitive horizon (TimeHorizonLayer)} &
+\textbf{Simulation analogue (Omega Full)} \\
+\midrule
+Immediate & single step. \\
+OneYear & 200-step horizon (short). \\
+FiveYear & 500-step horizon (medium). \\
+TwentyYear & 1000-step horizon (long). \\
+FiftyYear & beyond simulator's empirical reach. \\
+\bottomrule
+\end{tabularx}
+\caption[Cognitive vs simulation horizons]{Mapping between
+cognitive time horizons (TimeHorizonLayer, Part~II Ch.~27) and
+simulation horizons ($\Omega$ Full, Part~IX). The mapping is
+\emph{conceptual}; the two systems live in different
+representational domains.}
+\label{tab:time-horizon-mapping}
+\end{table}
+
+\paragraph{Why the analogy is loose.}
+TimeHorizonLayer evaluates a single decision against five horizons
+\emph{at the moment of decision}, using horizon-conditional state
+projections. $\Omega$ Full's multi-horizon validation runs
+end-to-end simulations of \emph{many} decisions over the specified
+horizon and reports aggregate survival. The cognitive layer warns
+about an individual choice; the simulator measures policy quality.
+
+The Long-Horizon Drift Control mechanism in $\Omega$ Full
+(Section~\ref{sec:omega-drift-control}) is the closest engineering
+analogue: it explicitly penalises actions that improve short-horizon
+score at the cost of long-horizon optionality. In a sense,
+$\lambda_{\mathrm{drift}}$ is the simulator's automated version of
+TimeHorizonLayer's human-facing warning.
+
+% =====================================================================
+\section{TimeHorizonLayer is NOT in the v2.5 Engineering Codebase}
+\label{sec:time-horizon-not-in-codebase}
+
+\nrmobox{Implementation status}{
+TimeHorizonLayer is part of the \textbf{cognitive specification}
+(v2.0 / v2.1, Part~II of this monograph). It is \textbf{not}
+implemented in the v2.5 / v5.2 simulation codebase
+(Part~X, Chapter~\ref{ch:engineering-impl}).\\[0.3em]
+The simulation codebase operates on the
+6-dimensional civilisation state vector $(R, E, G, O, K, X)$ and
+does not include the cognitive 8-tuple Situation Parameter Model
+(of which \texttt{time\_horizon} is field~\#4).
+}
+
+\paragraph{Why not implemented.}
+The simulation codebase is built around a horizon parameter that
+is fixed per-experiment (e.g., \texttt{horizon = 200} for smoke
+runs). It does not need a multi-horizon awareness layer, because
+each simulation run \emph{is} its own horizon.
+
+The cognitive specification, by contrast, addresses real-world
+human decision-making in which a single choice interacts with
+multiple horizons simultaneously. TimeHorizonLayer formalises
+this fundamental asymmetry between simulation and human decision
+contexts.
+
+\paragraph{When implementation would matter.}
+Implementation in code becomes necessary if and when the system
+moves from \emph{simulation testbed} to \emph{human-in-the-loop
+deployment} (Part~XII Open Items \#7). At that point the
+TimeHorizonLayer.evaluate() function must be implemented to read
+from the operator's actual capital, trust, health, and time
+horizons, project state forward at each of the five spans, and
+emit \texttt{warn\_flag}.
+
+% =====================================================================
+\section{Connections to Other Parts}
+\label{sec:time-horizon-connections}
+
+\begin{itemize}
+\item INV-2.1-6 is registered in Part~III's Unified Invariant
+Registry (Chapter~\ref{ch:invariants-unified}).
+\item The invariant preserves NRMO Core's veto-only authority
+(INV-4, Section~\ref{sec:limit-nrmo-core}).
+\item The five-horizon choice maps loosely onto the simulator's
+multi-horizon validation in $\Omega$ Full
+(Part~IX Section~\ref{sec:omega-validation-results}; Part~XII
+Section~\ref{sec:methodology-v50-perf}).
+\item The cognitive 8-tuple Situation Parameter Model (Chapter 28
+of this Part) uses \texttt{time\_horizon} as parameter \#4; the
+TimeHorizonLayer's five-horizon span is the discretisation of that
+continuous parameter.
+\item The Step-5 position in the v2.1 Integrated Flow is documented
+verbatim in Section~\ref{sec:v21-integrated-flow}.
+\item The Long-Horizon Drift Control mechanism in $\Omega$ Full
+(Section~\ref{sec:omega-drift-control}) is the engineering
+analogue of TimeHorizonLayer's warning: it operationalises the
+same long-horizon-irreversibility concern within the execution
+engine via $\lambda_{\mathrm{drift}}$.
+\item The Open Items list (Part~XII
+Section~\ref{sec:methodology-v25-honest-limits}) notes that
+human-in-the-loop deployment will require this layer's actual
+implementation.
+\end{itemize}

@@ -1,0 +1,120 @@
+% chapters/ch14_a_allowed_concrete.tex
+% Chapter 14: A_allowed Concrete Values v1.1 — Investment / Work / Relationship
+% Source: NRMO_v5_updated.pdf, Chapter 14 (lines 8065-8178 of v5_layout.txt)
+
+\chapter{$A_{\mathrm{allowed}}$ Concrete Values v1.1 ---
+Investment / Work / Relationship}
+\label{ch:a-allowed-concrete}
+
+\nrmobox{Document role}{
+``Concrete values'' are defined by \emph{asset ratio}, \emph{maximum
+count}, and \emph{time} rather than currency amounts. This avoids
+environment-dependent values while keeping operations firm.\\[0.3em]
+\textbf{Investment-figure conventions}: \texttt{per\_action\_pct\_portfolio}
+is ``\% of total investable balance (including cash)'';
+\texttt{max\_single\_name\_pct} is the guideline for ``maximum
+ratio of single name after new addition.'' For greater precision,
+expand to absolute amounts by entering current assets (JPY / USD,
+cash, securities, DC) into the SP layer.
+}
+
+% =====================================================================
+\section{Mode-Specific Profile (Fixed Values)}
+\label{sec:concrete-mode-profile}
+
+The full domain $\times$ mode matrix is reproduced here for
+self-contained reference. Cross-references to Ch5
+(Section~\ref{sec:a-allowed-concrete-matrix}) provide detailed
+required-checks columns.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{llXX}
+\toprule
+\textbf{Domain} & \textbf{Mode} & \textbf{Categories} & \textbf{Caps (concrete values)} \\
+\midrule
+
+investment & NORMAL
+& info, analysis, proposal, execute
+& max\_irr=0; public=none; rev=High \\
+
+investment & VENTURE
+& info, analysis, proposal, execute, commit
+& max\_irr=1; public=private; money=$5\%$ \\
+
+investment & MISSION
+& info, analysis, proposal, execute, commit
+& max\_irr=2; money=$2\%$; cooldown=24h \\
+
+investment & SAFE
+& info, analysis, proposal
+& max\_irr=0; no new positions \\
+
+\midrule
+
+work & NORMAL
+& info, analysis, proposal, execute, public
+& max\_irr=1; public=limited \\
+
+work & VENTURE
+& info, analysis, proposal, execute, commit, public
+& max\_irr=2; public=limited \\
+
+work & MISSION
+& info, analysis, proposal, execute, commit, public
+& max\_irr=3; second\_opinion required \\
+
+work & SAFE
+& info, analysis, proposal
+& max\_irr=0; public=none \\
+
+\midrule
+
+relationship & NORMAL
+& info, analysis, proposal, execute
+& max\_irr=1; public=private \\
+
+relationship & VENTURE
+& info, analysis, proposal, execute, commit
+& max\_irr=2; cooldown=10m \\
+
+relationship & MISSION
+& info, analysis, proposal, execute, commit
+& max\_irr=3; write\_down\_exit required \\
+
+relationship & SAFE
+& info, analysis, proposal
+& max\_irr=0; no commit \\
+
+\bottomrule
+\end{tabularx}
+\caption[A\_allowed concrete values matrix]{$A_{\mathrm{allowed}}$
+Concrete Values v1.1 mode-specific profile (fixed values). Full
+required-checks columns are in
+Table~\ref{tab:a-allowed-concrete-matrix}.}
+\label{tab:concrete-values-fixed}
+\end{table}
+
+\paragraph{Profiles version.}
+$A_{\mathrm{allowed}}$ Concrete Values v1.1.
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Investment domain values implement the position limits of the
+Investment SOP (Chapter~\ref{ch:investment-sop}, especially
+Section~\ref{sec:invest-position-limits}). The 5\% / 2\% / 24h /
+no-new-positions caps mirror the SOP's max-single-name and
+cooling-off rules.
+\item Work and relationship domains correspond to NRMO+Z+PP
+secretary-console operations
+(Section~\ref{sec:secretary-G}); the
+\texttt{public\_scope} caps map directly to the
+boundary / agreement / log outputs of the [G] module.
+\item These concrete values are the parameter set the Type ZERO
+Gate logic
+(Section~\ref{sec:a-allowed-gate-logic}) consults when computing
+the active mode.
+\end{itemize}

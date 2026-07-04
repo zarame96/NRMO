@@ -1,0 +1,1439 @@
+% chapters/ch01c_foundations_paper.tex
+% Chapter 1C: Foundations, Mechanism, and Development Path (Peer-Review Draft)
+% Complete reconstruction of v4 Chapter 1, lines 880-2266 of v5_full.txt.
+
+\chapter{Foundations, Mechanism, and Development Path
+(Peer-Review Draft)}
+\label{ch:foundations-paper}
+
+\section*{Document Scope}
+
+This document focuses on \emph{why} NRMO works, where its essence
+lies, how it can evolve, and which problem classes it can
+theoretically resolve. It is intended as a foundations chapter (or
+standalone paper) that can be merged into the integrated
+NRMO--Passive Pattern corpus.
+
+\section*{Contents}
+
+Abstract; Introduction; Section~1.1 Core Mechanisms (Mechanisms A--D);
+Section~1.2 Problem Classes NRMO Can Resolve (Classes I--V);
+Section~1.3 Shutdown Architecture; Section~2 First Principles
+(Absorbing Failure and Time-Path Risk); Section~3 NRMO --- Optimization
+Under Non-Ruin Constraints; Section~4 Relationship to Prior Work
+(Positioning); Section~5 Mechanism --- Why NRMO Works;
+Section~6 Core Design Principles; Section~7 Problem Classes
+(detailed); Section~8 Development Path and Research Program;
+Section~9 Interpretation Notes (Anti-Misreading); Section~10
+Implications for LLMs and Safety-Critical Assistants; Section~11
+Limitations and Open Questions; Section~12 Conclusion;
+Appendix~A Minimal Formal Specification; Appendix~B Suggested
+``Why'' Placement; Appendix~C Illustrative Toy Simulation
+(non-normative).
+
+\section*{Abstract}
+
+NRMO is a governance-first decision framework for environments with
+absorbing failure and time-path risk, where absorbing failure
+dominates long-horizon outcomes. Unlike expectation-maximising
+decision theories, NRMO treats survival as a hard constraint and
+places optional objectives behind lexicographic priority. This paper
+articulates the mechanistic basis of the framework:
+
+\begin{enumerate}
+\item absorbing failure states invalidate ensemble-average
+optimisation,
+\item irreversibility accelerates tail risk,
+\item human and organisational action selection is vulnerable to
+escalation under partial observability, and
+\item governance implemented as an automaton (Type ZERO) reduces
+error by restricting action sets across modes.
+\end{enumerate}
+
+\noindent
+We formalise problem classes NRMO can resolve, provide
+mathematically explicit constraints and state abstractions, and
+outline a development path that connects robust constrained MDPs,
+risk-sensitive control, and safe human--AI interaction protocols.
+
+% =====================================================================
+\section{Introduction}
+\label{sec:foundations-intro}
+
+Most decision frameworks optimise an expected objective. This works
+in many textbook settings, but fails in real life whenever a single
+catastrophic event permanently terminates the process. Financial
+ruin, loss of licence, reputational collapse, and relationship
+rupture are not ``large losses'' --- they are absorbing states.
+
+NRMO begins from a different premise: \emph{the primary objective is
+preservation of the decision-maker and the decision process.}
+Everything else is optional and subordinate. The framework therefore
+redefines rationality as governed survivability under absorbing
+failure risk.
+
+% =====================================================================
+\section{Core Mechanisms: Why NRMO Works}
+\label{sec:foundations-1-1-core-mechanisms}
+
+\subsection*{Mechanism A --- Absorption Dominates Long Horizons}
+
+In absorbing systems, the expected value conditional on survival is
+not the relevant objective. The relevant objective is maintaining a
+high survival probability over time. NRMO hard-codes this into
+constraints:
+
+\begin{equation}
+\Pr_\pi(\tau_F \le T) \le \varepsilon.
+\label{eq:foundations-mech-a-constraint}
+\end{equation}
+
+Standard expected-value maximisation ignores the absorbing barrier.
+With sufficient variance, time-average growth rate $g_\infty$ is
+\emph{less than} the cross-sectional mean due to non-ergodicity.
+NRMO's chance constraint eliminates actions with non-trivial ruin
+probability, allowing compound growth on the surviving path to
+dominate.
+
+\subsection*{Mechanism B --- Bounding Tail Risk Under Model Uncertainty}
+
+Let $P \in \mathcal{P}$ be an unknown transition model within an
+ambiguity set (distributional uncertainty). NRMO is naturally
+expressed as robust chance-constrained control:
+
+\begin{equation}
+\sup_{P \in \mathcal{P}} \Pr_{\pi, P}(\tau_F \le T) \le \varepsilon.
+\label{eq:foundations-mech-b-constraint}
+\end{equation}
+
+This turns ``unknown tails'' into a formal object (the ambiguity
+set) and protects against worst-case plausible distributions.
+
+\nrmobox{Implementation note (tractability)}{
+Robust chance constraints are generally computationally hard in full
+generality. NRMO does not claim universal tractable optimal control;
+it specifies admissibility and allows implementations to use
+conservative bounds, certificates, and anytime approximations. When
+a safety bound cannot be computed, NRMO mandates a shift toward more
+restrictive modes rather than ``optimising anyway.''\\[0.3em]
+Tractable sufficient conditions include: CVaR-based upper bounds;
+scenario-based robust optimisation; conservative analytic bounds
+from martingale inequalities. When none apply, NRMO mandates
+restriction (Core/Shutdown) rather than heuristic relaxation.
+}
+
+\subsection*{Mechanism C --- Reducing Irreversible Exposure Increases
+Controllability}
+
+Irreversibility narrows future options. Define the feasible safe
+action set:
+
+\begin{equation}
+A_{\mathrm{safe}}(s) = \{a : \Pr(\tau_F \le T \mid s, a) \le \varepsilon\}.
+\label{eq:foundations-safe-action-set}
+\end{equation}
+
+High irreversibility tends to shrink $A_{\mathrm{safe}}$, making the
+system harder to control. Type ZERO prevents entering
+high-irreversibility regions when observability is low or reserves
+are thin.
+
+\subsection*{Mechanism D --- Mode Restriction Reduces Variance Injection}
+
+Many failures are variance-amplification events: under stress,
+choices inject volatility (rushed decisions, escalation). By forcing
+mode transitions into Shutdown or Core, Type ZERO applies
+variance-damping operators (deferral, exit, simplification),
+lowering the probability of catastrophic branching.
+
+\nrmobox{Principle G0 --- No Infinite Regress via Policy Closure}{
+Mode selection is not a ``meta-decision'' outside NRMO; it is part
+of the policy $\pi$. Triggers do not require perfect detection of
+danger. It is sufficient to maintain a monotone upper bound $U_t$ on
+unmodelled risk such that $U_t$ dominates true (unknown) risk. When
+$U_t$ cannot be bounded, NRMO defaults to restriction
+(Core/Shutdown).
+}
+
+% =====================================================================
+\section{First Principles: Absorbing Failure and Time-Path Risk}
+\label{sec:foundations-2-first-principles}
+
+\subsection{Time-Path vs Cross-Sectional Perspective}
+\label{sec:foundations-2-1-time-path}
+
+Many decision theories treat expectation maximisation as a default
+rationality criterion: $\max_\pi \mathbb{E}_\pi[U]$. This is
+appropriate when one can repeat comparable trials many times
+(across-sectional / ensemble perspective). However, in a single
+lived trajectory (a time path), what matters is whether the process
+\emph{continues}. When an absorbing failure exists, ``expected gains
+conditional on survival'' can be irrelevant to the agent who has
+already failed.
+
+NRMO therefore treats survivability along the time path as a
+\emph{first-class design object}, and places optional objectives
+behind hard constraints.
+
+\subsection{Absorbing Failure as a Mathematical Object}
+\label{sec:foundations-2-2-absorbing-failure}
+
+Let the system state $s_t \in \mathcal{S}$ with an absorbing failure
+set $\mathcal{F} \subset \mathcal{S}$:
+
+\begin{equation}
+\forall s \in \mathcal{F}, \quad
+P(s_{t+1} \in \mathcal{F} \mid s_t = s, a_t) = 1.
+\label{eq:foundations-absorbing-set}
+\end{equation}
+
+Define the \emph{failure time}
+
+\begin{equation}
+\tau_F := \inf\{t : s_t \in \mathcal{F}\}.
+\label{eq:foundations-failure-time}
+\end{equation}
+
+Any policy that allows $\Pr(\tau_F < \infty)$ to drift upward
+eventually collapses over sufficiently long horizons.
+
+\subsection{Structural Consequence}
+\label{sec:foundations-2-3-structural-consequence}
+
+\nrmobox{Consequence}{
+In systems with absorbing failure, rationality is dominated by
+controlling failure probability; conditional expectation
+optimisation is secondary. This is a \emph{time-path survivability}
+problem.
+}
+
+\subsection{Formal Setup (Minimal)}
+\label{sec:foundations-2-4-formal-setup}
+
+\paragraph{State space and failure set.}
+Let $\mathcal{S}$ be the state space and $\mathcal{F} \subset
+\mathcal{S}$ an absorbing failure set (once entered, the process
+cannot return to $\mathcal{S} \setminus \mathcal{F}$).
+
+\paragraph{Failure time.}
+Define the first-entry time into failure as
+$\tau_F := \inf\{t \ge 0 : s_t \in \mathcal{F}\}$, with the
+convention $\tau_F = \infty$ iff failure never occurs.
+
+\paragraph{Trajectories and probability.}
+Let $\omega = (s_0, a_0, s_1, a_1, \ldots)$ be a trajectory and
+$\mathbb{P}_\pi$ the measure induced by policy $\pi$ and environment
+dynamics on $(\Omega, \mathcal{F}_\Omega)$.
+
+\paragraph{Operational safe policy class (certificate).}
+For horizon $T$ and operational tolerance $\varepsilon \in (0, 1)$,
+define
+
+\begin{equation}
+\Pi_{\mathrm{safe}}(T, \varepsilon) := \bigl\{\pi : \mathbb{P}_\pi(\tau_F \le T) \le \varepsilon\bigr\}.
+\label{eq:foundations-pi-safe}
+\end{equation}
+
+\paragraph{Primary ordering (survival dominance).}
+NRMO's core is a constraint-first ordering: policies that violate
+admissibility are rejected regardless of reward. This is formalised
+in Section~\ref{sec:foundations-3-1-1-survival-dominance} as
+\emph{survival dominance}.
+
+\paragraph{Secondary objective (time-path criterion).}
+Within admissible policies, a secondary ranking may be defined using
+a time-average (path-wise) criterion rather than an
+ensemble-average shortcut. A generic form is
+
+\begin{equation}
+U(\pi) := \liminf_{T \to \infty} \frac{1}{T}
+\sum_{t=0}^{T-1} u(s_t, a_t)
+\quad \text{on } \{\tau_F = \infty\},
+\label{eq:foundations-time-average-utility}
+\end{equation}
+
+where $u$ is domain-specific and evaluated only on surviving paths.
+For multiplicative processes (finance, compounding systems), a
+standard choice is log-growth:
+
+\begin{equation}
+U(\pi) := \mathbb{E}_\pi\bigl[\log W_T \mid \tau_F > T\bigr].
+\label{eq:foundations-log-growth}
+\end{equation}
+
+The manuscript does not require a single universal $U$; it requires
+that survival constraints are not silently traded away by whatever
+secondary ranking is applied.
+
+\subsection{Notation (Quick Table)}
+\label{sec:foundations-2-5-notation}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+$\mathcal{S}$ & State space \\
+$\mathcal{F}$ & Failure (absorbing) subset of states \\
+$\tau_F$ & First-entry time into $\mathcal{F}$ \\
+$\pi$ & Policy (decision rule) \\
+$\mathbb{P}_\pi$ & Probability measure induced by $\pi$ \\
+$T$ & Decision horizon (finite or rolling window) \\
+$\varepsilon$ & Acceptable failure-probability threshold \\
+$\Pi_{\mathrm{safe}}$ & Admissible policies satisfying the ruin
+constraint \\
+$U(\pi)$ & Objective evaluated on survival (domain-specific) \\
+$I(s, a)$ & Irreversibility score (see
+Appendix~C.2 for a toy implementation based on
+distance-to-failure and action-space geometry) \\
+\bottomrule
+\end{tabularx}
+\caption[Foundations notation]{Notation table for the foundations
+chapter.}
+\label{tab:foundations-notation}
+\end{table}
+
+% =====================================================================
+\section{NRMO: Optimization Under Non-Ruin Constraints}
+\label{sec:foundations-3-nrmo-optimization}
+
+\subsection{Definition (Axiomatic vs Operational Form)}
+\label{sec:foundations-3-1-definition}
+
+NRMO is defined first as an \emph{axiom of admissibility} (a
+dominance constraint), and only second as an optimisation problem.
+
+\paragraph{Axiom (NRMO-0, survival dominance).}
+Define the ruin time $\tau_F := \inf\{t \ge 0 : s_t \in
+\mathcal{F}\}$. The admissible strategy set is
+
+\begin{equation}
+\mathcal{A}_0 := \bigl\{\pi \mid \mathbb{P}_\pi(\tau_F < \infty) = 0\bigr\}.
+\label{eq:foundations-A-zero}
+\end{equation}
+
+Any $\pi \notin \mathcal{A}_0$ is irrational by definition,
+regardless of expected value.
+
+\paragraph{Operational surrogate (NRMO-$\varepsilon, T$).}
+In finite data and finite horizons, one cannot certify
+$\Pr(\tau_F < \infty) = 0$ directly. Therefore, implementations may
+use a conservative surrogate constraint
+$\mathbb{P}_\pi(\tau_F \le T) \le \varepsilon$, which is explicitly
+treated as an approximation to the NRMO-0 axiom, not a replacement.
+
+\nrmobox{Operational rule ($\varepsilon$ is a certificate threshold,
+not a utility knob)}{
+The pair $(\varepsilon, T)$ is treated as a verifiable safety
+certificate under finite data and compute. It is not tuned to
+improve reward. To prevent ``expected-value re-entry'' through ad
+hoc tolerance setting, NRMO binds $\varepsilon$ to a
+depletion-sensitive buffer variable $B_t$ (capital, trust, time,
+redundancy) via a conservative cap:
+
+\begin{equation*}
+\varepsilon_t \le \varepsilon_{\max}(B_t),
+\end{equation*}
+with $\varepsilon_{\max}(\cdot)$ decreasing as buffer margin shrinks.
+When $B_t$ cannot be reliably estimated, NRMO defaults to
+restriction (Core/Shutdown) rather than increasing $\varepsilon$.
+}
+
+\subsection{Survival Dominance as a Formal Justification of NRMO-0}
+\label{sec:foundations-3-1-1-survival-dominance}
+
+\begin{proposition}[Survival Dominance of Zero-Ruin Policies]
+\label{prop:survival-dominance}
+Consider an agent whose participation ends upon entering the
+absorbing failure set $\mathcal{F}$, with ruin time $\tau_F$. Let
+$r_t$ be any bounded per-step reward (or utility contribution), and
+define the realised time-average reward over horizon $T$ as
+
+\begin{equation}
+\overline{r}_T := \frac{1}{T} \sum_{t=0}^{T-1} r_t.
+\end{equation}
+
+If $\mathbb{P}_\pi(\tau_F < \infty) > 0$, then policy $\pi$ admits
+trajectories on which the process is absorbed and future reward
+contributions cannot be realised. In non-ergodic settings where the
+agent faces repeated exposure over time, any non-zero ruin hazard
+is not offsettable by ensemble gains.
+
+\noindent
+Therefore, under survival-first rationality, admissibility must
+exclude policies with $\mathbb{P}_\pi(\tau_F < \infty) > 0$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Absorption implies that on every trajectory with $\tau_F < \infty$,
+the post-ruin portion of the sum defining $\overline{r}_T$ contains
+no actionable future outcomes --- participation is over. Hence,
+ensemble improvements in $\mathbb{E}[r_t]$ do not repair
+trajectories terminated by ruin. Under repeated exposure (the
+relevant regime for time-average rationality), any strictly positive
+ruin probability acts as an absorbing hazard; survival is
+lexicographically prior to optimisation in this regime. NRMO-0
+encodes this dominance rule as an admissibility axiom.
+\end{proof}
+
+\paragraph{NRMO objective (Non-Ruinous Multi-objective Optimization).}
+
+\begin{equation}
+\max_{\pi \in \Pi} U(\pi)
+\quad \text{s.t.} \quad
+\mathbb{P}_\pi(\tau_F \le T) \le \varepsilon,
+\label{eq:foundations-nrmo-objective}
+\end{equation}
+
+where $U(\pi)$ may include growth, exploration value, or
+mission-aligned rewards, but the chance constraint is hard.
+
+\paragraph{Assumption A0 (Endogenous Failure Scope).}
+The failure set $\mathcal{F}$ denotes \emph{endogenous} absorbing
+failures induced by the agent--environment interaction under the
+modelled action set. Exogenous catastrophes outside control (e.g.,
+cosmic rays, meteor strikes, sudden medical events) are treated as
+background hazards and are out of scope for admissibility; they do
+not define rationality within the policy class.
+
+\paragraph{Assumption A1 (Open-World Failure and Conservative
+Expansion).}
+In realistic settings $\mathcal{F}$ is only partially specified.
+NRMO treats out-of-distribution or insufficiently understood regions
+as potential failure mass by expanding to a conservative superset
+$\widehat{\mathcal{F}} \supseteq \mathcal{F}$ whenever uncertainty
+cannot be bounded. Operationally, this increases suspension
+frequency rather than silently optimising under unknown risk.
+
+\subsection{Why Hard Constraints (and When Lexicographic Order Helps)}
+\label{sec:foundations-3-2-hard-constraints}
+
+NRMO emphasises \emph{ex-ante} restriction of admissible actions
+rather than \emph{ex-post} correction, because once an
+absorbing-failure trajectory is entered, corrective control is no
+longer available.
+
+In multi-objective optimisation, weighted sums are commonly used:
+
+\begin{equation}
+\max_\pi \bigl[\alpha \, U(\pi) - (1 - \alpha) \, \mathrm{Risk}(\pi)\bigr].
+\end{equation}
+
+This has structural weaknesses in absorbing-failure settings:
+
+\begin{enumerate}
+\item \textbf{Arbitrary trade-rate}: choosing $\alpha$ fixes an
+exchange rate between ``gain'' and ``ruin,'' often without
+principled calibration.
+\item \textbf{Failure is not a large loss}: absorbing failure is
+process termination, not a continuous penalty term.
+\item \textbf{Long-horizon accumulation}: even small per-step
+failure probabilities can compound over long horizons.
+\end{enumerate}
+
+\noindent
+NRMO's default formulation is therefore constraint-first:
+
+\begin{equation}
+\max_{\pi \in \Pi} U(\pi)
+\quad \text{s.t.} \quad
+\mathbb{P}_\pi(\tau_F \le T) \le \varepsilon.
+\end{equation}
+
+Policies that violate the survivability constraint are simply
+infeasible; among feasible policies, optional objectives can be
+optimised.
+
+\paragraph{Lexicographic priority.}
+Lexicographic priority can still be useful as an implementation
+choice when multiple constraints compete, or when a staged decision
+process is operationally necessary:
+
+\begin{enumerate}
+\item Survival constraints,
+\item Stability,
+\item Optional gains.
+\end{enumerate}
+
+\noindent
+NRMO does \emph{not} require lexicographic order everywhere; it
+requires that survival constraints are not silently traded away.
+
+\subsection{Irreversibility as a Risk Amplifier (Context-Dependent)}
+\label{sec:foundations-3-3-irreversibility}
+
+Reversibility can be interpreted as a \emph{governance resource}: it
+preserves future controllability by maintaining a non-empty recovery
+path set.
+
+NRMO treats irreversibility as a first-class driver of tail risk
+because irreversible actions contract the future option set. We
+define an \emph{irreversibility score} $I(s, a) \in [0, 1]$ as an
+option-space contraction proxy:
+
+\begin{equation}
+I(s, a) = 1 - \exp\bigl[-\kappa \, J_{\mathrm{recover}}(s, a)\bigr],
+\label{eq:foundations-irreversibility-score}
+\end{equation}
+
+where $J_{\mathrm{recover}}(s, a) \ge 0$ is an effective recovery
+difficulty (or minimal recovery cost) induced by taking action $a$
+in state $s$. It can be defined in multiple equivalent ways
+depending on the domain:
+
+\begin{enumerate}
+\item the minimal expected cost to return to a certified safe
+region,
+\item the negative log-probability of recovery under the best
+available policy,
+\item a bound on controllability loss.
+\end{enumerate}
+
+\noindent
+The scalar $\kappa > 0$ is a normalisation constant. Higher $I$
+means recovery is more costly, less probable, or less
+controllable --- i.e., the future option set is effectively
+contracted.
+
+\paragraph{Examples (illustrative).}
+\begin{itemize}
+\item Leverage increase (moderate $I$): can often be reduced later,
+but not costlessly.
+\item Signing a binding contract (high $I$): legal/financial lock-in
+increases.
+\item Public irreversible statement (high $I$): reputational
+recovery paths shrink.
+\end{itemize}
+
+\paragraph{Risk-amplification hypothesis (bounded).}
+Under low observability or thin buffers, increasing $I$ tends to
+increase failure probability:
+
+\begin{equation}
+\frac{\partial}{\partial I} \Pr(\tau_F \le T \mid s, a) \ge 0
+\quad \text{when observability is low or buffer is thin.}
+\end{equation}
+
+This monotonicity is not universal: when certainty is high and
+observability is strong, structured commitment can be beneficial.
+NRMO therefore does not ``avoid commitment''; it manages commitment
+as a context-dependent risk multiplier.
+
+% =====================================================================
+\section{Relationship to Prior Work (Positioning)}
+\label{sec:foundations-4-prior-work}
+
+NRMO is best read as a \emph{governance-first, constraint-first
+design framework} rather than a new optimisation algorithm. It is
+closely related to:
+
+\begin{description}
+\item[Constrained / chance-constrained MDPs (CMDP, CC-MDP)]
+Enforcing $P(\tau_F \le T) \le \varepsilon$ is standard; NRMO
+emphasises making absorbing failure explicit and wiring governance
+into the action set.
+
+\item[Safe RL / shielding] Restricting to an admissible action set;
+NRMO frames this as an architectural invariant (ex-ante
+admissibility), not a training trick.
+
+\item[Distributionally Robust Optimisation (DRO)] For unknown tails,
+NRMO prefers conservative bounds when estimating ruin risk.
+
+\item[Kelly criterion / log utility] Kelly optimises long-run growth
+under multiplicative dynamics; NRMO places an explicit ruin
+constraint (and can pair it with log-style objectives within
+$\Pi_{\mathrm{safe}}$).
+
+\item[Lexicographic / safety-first preferences] Lexicographic
+priority is used only as an implementation choice when multiple
+constraints compete; it is not claimed to be mathematically
+inevitable.
+\end{description}
+
+\paragraph{Claim boundary.}
+NRMO does not assert novelty in these individual fields; its
+contribution is the \emph{integrated set of invariants} and the
+explicit separation of (i) ruin constraints, (ii) objective
+optimisation, and (iii) governance via action-set restriction.
+
+% =====================================================================
+\section{Mechanism: Why NRMO Works}
+\label{sec:foundations-5-mechanism-why}
+
+NRMO works because it changes the mathematical structure of
+decision-making. It does not produce ``better predictions''; it
+\emph{eliminates classes of decisions that are incompatible with
+survival-first rationality}.
+
+\subsection{Mechanism A --- Absorption Dominates Long Horizons}
+\label{sec:foundations-5-1-mechanism-a}
+
+In absorbing systems, the expected value conditional on survival is
+not the relevant objective. The relevant objective is maintaining a
+high survival probability over time. NRMO hard-codes this into
+constraints (Equation~\ref{eq:foundations-mech-a-constraint}).
+
+\subsection{Mechanism B --- Bounding Tail Risk Under Model
+Uncertainty}
+\label{sec:foundations-5-2-mechanism-b}
+
+Let $P \in \mathcal{P}$ be an unknown transition model within an
+ambiguity set (distributional uncertainty). NRMO is naturally
+expressed as robust chance-constrained control
+(Equation~\ref{eq:foundations-mech-b-constraint}).
+
+This turns ``unknown tails'' into a formal object (the ambiguity
+set) and protects against worst-case plausible distributions.
+
+\nrmobox{Implementation note (tractability and certificates)}{
+Robust chance constraints are generally computationally hard in full
+generality. NRMO does not claim universal tractable optimal control;
+it specifies admissibility and allows implementations to use
+conservative bounds, certificates, and anytime approximations.
+
+When a safety bound cannot be computed (or cannot be trusted), NRMO
+mandates a shift toward more restrictive modes rather than
+``optimising anyway.''
+}
+
+\paragraph{Tractability and scope clarification (Mechanism B).}
+The robust chance constraint
+$\sup_{P \in \mathcal{P}} \mathbb{P}_{\pi, P}(\tau_F \le T) \le
+\varepsilon$ is not claimed to be tractable in full generality. NRMO
+treats this condition as an admissibility \emph{specification}, not
+as a universal algorithm. In practice, tractable sufficient
+conditions include:
+
+\begin{itemize}
+\item CVaR-based upper bounds that dominate tail probabilities under
+mild regularity assumptions;
+\item scenario-based robust optimisation where $\mathcal{P}$ admits
+finite-support approximations;
+\item conservative analytic bounds derived from martingale
+inequalities.
+\end{itemize}
+
+When none of these apply, NRMO mandates restriction (Core/Shutdown)
+rather than heuristic relaxation. Algorithmic constructions for
+solving such constraints are explicitly deferred to future work.
+
+\subsection{Mechanism C --- Reducing Irreversible Exposure
+Increases Reversibility and Controllability}
+\label{sec:foundations-5-3-mechanism-c}
+
+Irreversibility narrows future options. Formally, define a feasible
+safe action set:
+$A_{\mathrm{safe}}(s) = \{a : \Pr(\tau_F \le T \mid s, a) \le
+\varepsilon\}$. High irreversibility tends to shrink
+$A_{\mathrm{safe}}$, making the system harder to control. Type ZERO
+prevents entering high-irreversibility regions when observability is
+low or reserves are thin.
+
+\subsection{Mechanism D --- Mode Restriction Reduces Variance
+Injection}
+\label{sec:foundations-5-4-mechanism-d}
+
+Many failures are variance-amplification events: under stress,
+choices inject volatility (rushed decisions, escalation). By forcing
+mode transitions into ``Shutdown'' or ``Core,'' Type ZERO applies
+variance-damping operators (deferral, exit, simplification),
+lowering the probability of catastrophic branching.
+
+\paragraph{Principle G0 (No Infinite Regress via Policy Closure).}
+Mode selection is not a ``meta-decision'' outside NRMO; it is part
+of the policy $\pi$. Triggers do not require perfect detection of
+danger. It is sufficient to maintain a monotone upper bound $U_t$ on
+unmodelled risk such that $U_t$ dominates true (unknown) risk. In
+implementation, $U_t$ must be constructed with a conservative bias:
+false negatives (underestimation) are penalised more than false
+positives. When evidence of distribution shift or monitoring
+degradation appears, $U_t$ is required to be non-decreasing until
+independently cleared by audit. When $U_t$ cannot be bounded, NRMO
+closes the loop by defaulting to restriction (Core/Shutdown),
+avoiding infinite regress in meta-reasoning.
+
+% =====================================================================
+\section{Core Design Principles}
+\label{sec:foundations-6-core-design-principles}
+
+\nrmobox{Interpretive note}{
+Absorbing failure is not merely a stochastic event but often the
+result of \emph{structural contraction} of the available action
+space over time.
+}
+
+\noindent
+NRMO design principles:
+
+\begin{enumerate}
+\item \textbf{Failure set} ($\mathcal{F}$): irreversible-state
+definition. Without explicit $\mathcal{F}$, no admissibility test is
+meaningful.
+\item \textbf{Survival constraint as primary}: survival is the
+purpose; everything else is a constraint within survival.
+\item \textbf{Reversibility as governance resource}: reversibility
+preserves controllability and must be tracked explicitly.
+\item \textbf{Action governance}: state-dependent and
+mode-dependent action restriction (the role of Type ZERO).
+\item \textbf{Survival-aware audit and design}: audit and design
+must track survival metrics, not optional metrics. Optional metrics
+(``output,'' ``success'') are audited only after survival metrics
+pass.
+\end{enumerate}
+
+% =====================================================================
+\section{Problem Classes NRMO Can Resolve (Formalisation)}
+\label{sec:foundations-7-problem-classes}
+
+This section identifies and formalises decision problems where NRMO
+resolves known failure modes of classical optimisation. For each
+class, we state (i) the classical pathology, (ii) the NRMO
+formulation, and (iii) what is ``resolved.''
+
+\subsection{Class I --- Non-Ergodic Growth with Ruin
+(Capital, Health, Trust)}
+\label{sec:foundations-7-1-class-I}
+
+\paragraph{Pathology.}
+Expected-value-maximising strategies can recommend leverage that
+eventually yields ruin with high probability.
+
+\paragraph{NRMO formulation.}
+
+\begin{equation}
+\max_\pi \mathbb{E}\!\left[\sum_t r_t\right]
+\quad \text{s.t.} \quad
+\Pr(\tau_F \le T) \le \varepsilon.
+\end{equation}
+
+\paragraph{Resolution.}
+Eliminates ``growth at the expense of eventual ruin'' by forbidding
+policies with unacceptable failure probability.
+
+\subsection{Class II --- Decision Under Distribution Shift
+(Unknown Tails)}
+\label{sec:foundations-7-2-class-II}
+
+\paragraph{Pathology.}
+Models trained on historical data underestimate tail risk under
+shift.
+
+\paragraph{NRMO formulation (robust).}
+
+\begin{equation}
+\max_\pi \inf_{P \in \mathcal{P}} U(\pi, P)
+\quad \text{s.t.} \quad
+\sup_{P \in \mathcal{P}} \mathbb{P}_{\pi, P}(\tau_F \le T) \le \varepsilon.
+\end{equation}
+
+\paragraph{Resolution.}
+Makes tail uncertainty explicit and constrains worst-case failure
+probability.
+
+\subsection{Class III --- Multi-Objective Governance
+(Core / Venture / Mission)}
+\label{sec:foundations-7-3-class-III}
+
+\paragraph{Pathology.}
+Weighted multi-objective optimisation obscures survival constraints
+and causes mode confusion.
+
+\paragraph{NRMO formulation.}
+Lexicographic objective with mode-dependent action sets:
+(1) satisfy survival constraints $\Rightarrow$ (2) maintain
+stability $\Rightarrow$ (3) optimise gains within mode.
+
+\paragraph{Resolution.}
+Prevents accidental trading of survival for optional goals; enforces
+structural separation of objectives.
+
+\subsection{Class IV --- Escalation Under Partial Observability
+(Human Systems)}
+\label{sec:foundations-7-4-class-IV}
+
+\paragraph{Pathology.}
+Under stress and limited observability, escalation decisions
+increase variance and induce collapse.
+
+\paragraph{NRMO formulation.}
+Governance mode transitions triggered by depletion and uncertainty;
+variance-damping actions in Shutdown / Core.
+
+\paragraph{Resolution.}
+Reduces variance injection and catastrophic branching via
+restricted action sets and mandatory deferral / exit.
+
+\subsection{Class V --- Human--AI Assistance Under Overtrust}
+\label{sec:foundations-7-5-class-V}
+
+\paragraph{Pathology.}
+Strong advisors create a meta-risk: users stop questioning the
+advisor, increasing single-point-of-failure.
+
+\paragraph{NRMO formulation.}
+Meta-governance: periodic audits, conservative defaults, and
+explicit ``shutdown'' behaviour under uncertainty.
+
+\paragraph{Resolution.}
+Reduces the tail risk induced by over-reliance on optimisation
+outputs.
+
+% =====================================================================
+\section{Development Path and Research Program}
+\label{sec:foundations-8-development-path}
+
+NRMO is a research program as much as a protocol. Development
+proceeds by strengthening (i) modelling of failure sets, (ii) robust
+risk bounds, (iii) governance automata, and (iv)
+estimation/monitoring.
+
+\subsection{Mathematical Extensions}
+\label{sec:foundations-8-1-math-extensions}
+
+\begin{itemize}
+\item \textbf{CMDPs with absorbing constraints}: integrate strict
+chance constraints with finite-horizon and infinite-horizon bounds.
+\item \textbf{Risk-sensitive POMDPs}: explicitly represent partial
+observability; optimise under conservative belief updates.
+\item \textbf{Distributionally robust control (DRO)}: learn and
+update ambiguity sets $\mathcal{P}$ online with shift detection.
+\item \textbf{Irreversibility geometry}: formalise $I(s, a)$ via
+option-space contraction and recovery-path counts (see
+Appendix~C.2 for a toy implementation based on
+distance-to-failure and action-space geometry).
+\end{itemize}
+
+\subsection{Operational Extensions}
+\label{sec:foundations-8-2-operational-extensions}
+
+\begin{itemize}
+\item \textbf{Governance audit protocol}: weekly
+``constraint-compliance'' reports, drift flags, and override logs.
+\item \textbf{Calibration without fixed turns}: shortest-route
+stopping rules based on confidence and stability thresholds.
+\item \textbf{Multi-language risk lexicon}: operationalise
+load/volatility signals across languages using shared numeric
+features.
+\end{itemize}
+
+\subsection{Application Extensions}
+\label{sec:foundations-8-3-application-extensions}
+
+\begin{itemize}
+\item Finance and leverage governance (anti-ruin portfolios,
+bounded-drawdown policies).
+\item Organisational decision governance (high-reliability
+operations).
+\item Relationship / negotiation governance (absorbing-rupture
+avoidance).
+\item AI safety and ``refusal as a feature'' governance layers.
+\end{itemize}
+
+% =====================================================================
+\section{Interpretation Notes (Anti-Misreading)}
+\label{sec:foundations-9-interpretation-notes}
+
+\subsection{Emergent Tendencies Are Not Normative Rules}
+\label{sec:foundations-9-1-emergent-tendencies}
+
+Behavioural tendencies that may appear under NRMO (e.g., inhibition,
+reference anchoring, rejection of heroic risk) are \emph{emergent
+consequences} of survival dominance and non-ergodicity. They are not
+prescriptions, virtues, or personality traits. NRMO defines
+admissibility and dominance relations; it does not define ``how to
+be.''
+
+\subsection{Suspension Is Not Optimality}
+\label{sec:foundations-9-2-suspension-not-optimality}
+
+Suspension of action reflects \emph{epistemic insufficiency}, not
+optimality. When admissibility cannot be established, or when
+strategies are incomparable under the partial order, NRMO refuses to
+rank actions rather than asserting a false optimum. NRMO prefers
+non-hallucination over false precision.
+
+\subsection{``Coldness'' Is a Boundary, Not a Defect}
+\label{sec:foundations-9-3-coldness-boundary}
+
+NRMO does not optimise comfort, meaning, satisfaction, or speed.
+This is an explicit boundary. Values beyond survival belong to
+higher-level governance layers and are deliberately excluded from
+the survival logic to prevent normative contamination.
+
+% =====================================================================
+\section{Implications for LLMs and Safety-Critical Assistants}
+\label{sec:foundations-10-llm-implications}
+
+LLMs are powerful but not inherently safe under distribution shift.
+NRMO suggests an architecture: \emph{separate generation from
+governance}. The governance layer enforces (i) hard constraints,
+(ii) conservative uncertainty handling, and (iii) safe shutdown
+behaviour.
+
+\subsection{Governance Wrapper}
+\label{sec:foundations-10-1-governance-wrapper}
+
+\begin{itemize}
+\item Reject / Defer as optimal actions (variance damping).
+\item Mode switching under uncertainty (Core / Shutdown).
+\item Audit logs for override and survival-objective governance.
+\end{itemize}
+
+\subsection{Overtrust Control}
+\label{sec:foundations-10-2-overtrust-control}
+
+Introduce periodic ``challenge prompts'' and policy-level invariants
+that force revalidation of assumptions. Overtrust becomes a modelled
+risk, not a social comment.
+
+% =====================================================================
+\section{Limitations and Open Questions}
+\label{sec:foundations-11-limitations}
+
+\begin{description}
+\item[Failure set specification] Defining $\mathcal{F}$ precisely is
+domain-dependent; mis-specification can be dangerous.
+\item[Conservatism vs opportunity] Overly small $\varepsilon$ may
+suppress innovation; mode design must include a safe Venture channel.
+\item[Ambiguity set calibration] Building $\mathcal{P}$ that is
+neither too narrow nor too broad is an open practical problem.
+\item[Human values] Mission objectives require explicit value
+definition; NRMO separates this from survival constraints but does
+not define values by itself.
+\end{description}
+
+% =====================================================================
+\section{Conclusion}
+\label{sec:foundations-12-conclusion}
+
+NRMO is a governance-first theory of rational action under
+absorbing failure risk. Its essence is invariant: model absorbing
+failure, enforce hard survival constraints, manage irreversibility,
+and implement governance as action-set restriction via a mode
+automaton. This changes the structure of decision-making from
+fragile expectation maximisation to robust survivability
+optimisation, and provides a natural foundation for safe human--AI
+assistance.
+
+% =====================================================================
+\section*{Appendix A --- Minimal Formal Specification
+(Implementation-Oriented)}
+\label{sec:foundations-app-A}
+
+\begin{description}
+\item[State] $s_t$ (latent), observations $o_t$.
+\item[Modes] $m_t \in \{\text{Core}, \text{Venture}, \text{Mission},
+\text{Shutdown}\}$.
+\item[Action sets] $\mathcal{A}(m_t)$ with hard forbiddances.
+\item[Failure set] $\mathcal{F}$ absorbing.
+\item[Constraint]
+$\sup_{P \in \mathcal{P}} \mathbb{P}_{\pi, P}(\tau_F \le T) \le
+\varepsilon$.
+\item[Policy] choose $a_t \in \mathcal{A}(m_t)$ minimising cost with
+irreversibility penalty, subject to constraint.
+\item[Mode transition]
+$m_{t+1} = G(m_t, o_t, \text{thresholds})$.
+\end{description}
+
+\section*{Appendix B --- Suggested ``Why'' Placement in Integrated
+Manuscript}
+\label{sec:foundations-app-B}
+
+\begin{itemize}
+\item Place Sections 2--6 as ``Foundations / Mechanism'' (Part~I).
+\item Place Section 7 as ``Problem Classes and Theoretical
+Resolution'' (Part~II).
+\item Place Section 8 as ``Research Program'' (Part~III).
+\item Place Section 9 as ``Interpersonal Extension'' (bridging
+chapter to Passive Pattern).
+\end{itemize}
+
+% =====================================================================
+\section*{Appendix C --- Illustrative Toy Simulation (Non-normative)}
+\label{sec:foundations-app-C}
+
+\nrmobox{Disclaimer}{
+The code in this appendix is a toy illustration. It does not
+instantiate or solve the NRMO optimisation problems
+(chance-constrained, robust, or CC-MDP). Its sole purpose is to
+demonstrate \emph{how restricting action sets under an absorbing
+failure state can qualitatively change path outcomes}. The theory in
+the main text is implementation-agnostic.
+}
+
+\paragraph{Languages.}
+Python (3.10+), with optional NumPy.
+
+\paragraph{Setup summary.}
+A 5$\times$5 gridworld with absorbing-cliff cells creates tail risk.
+Buffer policy stays away from cliffs (greedy avoidance). The
+``NRMO''-flavoured policy combines a buffer (chance constraint) with
+bounded venture exploration. The script estimates ruin rate, mean
+return, and average steps over 10\,000 episodes for several
+baselines.
+
+\paragraph{Listing inclusion rationale.}
+This listing is included for reproducibility and to satisfy review
+requirements that the experimental procedure be fully inspectable.
+
+\subsection*{Listing 1.1 --- Toy Simulation (Non-normative)}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize]
+# experiments_gridworld.py
+"""Toy benchmark used for Table 2.
+
+This script intentionally keeps dependencies minimal (Python 3.10+,
+numpy optional). It simulates an absorbing-cliff gridworld and
+evaluates several policy baselines:
+  - Unconstrained greedy
+  - Chance-constrained buffer
+  - CVaR-like risky mixture (illustrative)
+  - Shielding wrapper
+  - NRMO (core buffer + bounded venture exploration)
+
+Usage:
+  python experiments_gridworld.py
+"""
+from __future__ import annotations
+from dataclasses import dataclass
+import random
+import statistics
+from typing import Callable, Dict, Tuple, Union
+
+State  = Union[Tuple[int, int], str]   # (x,y) or 'RUIN'/'GOAL'
+Policy = Callable[[State], int]
+# action: 0 up, 1 right, 2 down, 3 left
+
+@dataclass
+class GridEnv:
+    n: int = 5
+    slip: float = 0.10
+    horizon: int = 50
+    start: Tuple[int, int] = (0, 0)
+    goal:  Tuple[int, int] = (4, 4)
+
+    def __post_init__(self):
+        # Absorbing ruin cells ("cliff") near the shortest paths
+        # to create tail risk.
+        self.cliff = {(1, 1), (2, 1), (3, 1), (1, 2)}
+
+    def step(self, state: State, action: int):
+        if state in ("RUIN", "GOAL"):
+            return state, 0.0, True
+        x, y = state  # type: ignore[misc]
+        a = action
+        if random.random() < self.slip:
+            a = random.randint(0, 3)
+        dx, dy = [(0, -1), (1, 0), (0, 1), (-1, 0)][a]
+        nx, ny = x + dx, y + dy
+        nx = max(0, min(self.n - 1, nx))
+        ny = max(0, min(self.n - 1, ny))
+        ns = (nx, ny)
+        if ns in self.cliff:
+            return "RUIN", -1.0, True
+        if ns == self.goal:
+            return "GOAL",  1.0, True
+        return ns, -0.01, False
+
+def simulate(policy_fn: Policy, slip: float,
+             episodes: int = 10_000, seed: int = 0):
+    random.seed(seed)
+    env = GridEnv(slip=slip)
+    returns = []
+    ruin = 0
+    steps = []
+    for _ in range(episodes):
+        s: State = env.start
+        G = 0.0
+        done = False
+        t = 0
+        while not done and t < env.horizon:
+            a = policy_fn(s)
+            s, r, done = env.step(s, a)
+            G += r
+            t += 1
+        if s == "RUIN":
+            ruin += 1
+        returns.append(G)
+        steps.append(t)
+    return {
+        "mean_return": statistics.mean(returns),
+        "std_return":  statistics.pstdev(returns),
+        "ruin_rate":   ruin / episodes,
+        "mean_steps":  statistics.mean(steps),
+    }
+
+# ---------- Baseline policies ----------
+def greedy_right_then_down(s: State) -> int:
+    if isinstance(s, str): return 0
+    x, y = s; gx, gy = (4, 4)
+    if x < gx: return 1
+    if y < gy: return 2
+    return 0
+
+def buffer_policy(s: State) -> int:
+    if isinstance(s, str): return 0
+    x, y = s; gx, gy = (4, 4)
+    # stay on the left edge until bottom, then move right
+    if y < gy: return 2
+    if x < gx: return 1
+    return 0
+
+def cvar_like_policy_factory(p_risky: float = 0.25) -> Policy:
+    def pi(s: State) -> int:
+        if isinstance(s, str): return 0
+        if random.random() < p_risky:
+            return greedy_right_then_down(s)
+        return buffer_policy(s)
+    return pi
+
+def shielded(base: Policy) -> Policy:
+    env0 = GridEnv(slip=0.0)
+    def pi(s: State) -> int:
+        if isinstance(s, str): return 0
+        a = base(s); x, y = s
+        dx, dy = [(0, -1), (1, 0), (0, 1), (-1, 0)][a]
+        nx, ny = (max(0, min(env0.n - 1, x + dx)),
+                  max(0, min(env0.n - 1, y + dy)))
+        if (nx, ny) in env0.cliff:
+            # override: pick a safe buffer action
+            for cand in [buffer_policy(s), 1, 2, 0, 3]:
+                dx2, dy2 = [(0, -1), (1, 0),
+                            (0,  1), (-1, 0)][cand]
+                nx2, ny2 = (max(0, min(env0.n - 1, x + dx2)),
+                            max(0, min(env0.n - 1, y + dy2)))
+                if (nx2, ny2) not in env0.cliff:
+                    return cand
+        return a
+    return pi
+
+def nrmo_plus_z_policy_factory(venture_p: float = 0.05) -> Policy:
+    env0 = GridEnv(slip=0.0)
+    def pi(s: State) -> int:
+        if isinstance(s, str): return 0
+        x, y = s
+        # "Governance" proxy: do not venture when adjacent to cliff.
+        near_cliff = any((x + dx, y + dy) in env0.cliff
+                        for dx, dy in [(0, 1), (1, 0),
+                                       (-1, 0), (0, -1)])
+        if (not near_cliff) and random.random() < venture_p:
+            return greedy_right_then_down(s)
+        return buffer_policy(s)
+    return pi
+
+def main() -> int:
+    policies: Dict[str, Policy] = {
+        "Unconstrained (greedy)":         greedy_right_then_down,
+        "Chance-constrained (buffer)":    buffer_policy,
+        "CVaR-like (intermediate)":       cvar_like_policy_factory(0.25),
+        "Shielding (greedy + shield)":    shielded(greedy_right_then_down),
+        "NRMO (core buffer + venture 5%)": nrmo_plus_z_policy_factory(0.05),
+    }
+    for slip in (0.10, 0.20):
+        print(f"\n=== slip={slip:.2f} ===")
+        for name, pi in policies.items():
+            m = simulate(pi, slip=slip, episodes=10_000,
+                         seed=99 + int(slip * 100))
+            print(f"{name:32s} "
+                  f"mean={m['mean_return']:.4f} "
+                  f"std={m['std_return']:.4f} "
+                  f"ruin={m['ruin_rate']:.4f} "
+                  f"steps={m['mean_steps']:.2f}")
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+\end{lstlisting}
+
+\subsection*{Appendix C.2 --- Certificate-Style Safety Check
+(Endogenous vs Exogenous Hazards)}
+
+This second toy program illustrates three manuscript concepts in
+executable form:
+
+\begin{enumerate}
+\item separating endogenous failure (controlled by actions) from
+exogenous background hazard,
+\item a cost/quality-based irreversibility proxy $I(s, a)$ derived
+from recovery difficulty, and
+\item a bounded-horizon certificate
+$\Pr(\tau_F \le T) \le \varepsilon$ estimated by Monte Carlo.
+\end{enumerate}
+
+It remains non-normative and does not solve robust
+chance-constrained control.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize]
+# Appendix C.2 (Toy) -- Safety certificate under bounded horizon
+import random, math
+from dataclasses import dataclass
+from typing import Tuple, Dict
+
+State = Tuple[int, int]
+
+@dataclass
+class ToyWorld:
+    w: int = 6
+    h: int = 4
+    slip: float = 0.10
+    # Endogenous absorbing failure set (cliff/trap states)
+    F_endogenous = {(2, 1), (3, 1), (4, 1)}
+    goal:  State = (5, 0)
+    start: State = (0, 3)
+    # Exogenous hazard: background catastrophe probability per step
+    p_exogenous: float = 1e-4
+
+    def step(self, s: State, a: int):
+        # Exogenous catastrophe: out-of-scope for decision control;
+        # tracked separately
+        if random.random() < self.p_exogenous:
+            return s, 0.0, True, "EXOGENOUS"
+        if s in self.F_endogenous:
+            return s, 0.0, True, "ENDOGENOUS_RUIN"
+        if s == self.goal:
+            return s, 1.0, True, "GOAL"
+        # slip noise
+        aa = a
+        if random.random() < self.slip:
+            aa = random.randint(0, 3)
+        dx, dy = [(0, -1), (1, 0), (0, 1), (-1, 0)][aa]
+        ns = (max(0, min(self.w - 1, s[0] + dx)),
+              max(0, min(self.h - 1, s[1] + dy)))
+        # reward is intentionally simple
+        r = 1.0 if ns == self.goal else -0.01
+        done = (ns in self.F_endogenous) or (ns == self.goal)
+        tag = "OK"
+        if ns in self.F_endogenous:
+            tag = "ENDOGENOUS_RUIN"
+        elif ns == self.goal:
+            tag = "GOAL"
+        return ns, r, done, tag
+
+def recovery_difficulty(world: ToyWorld, s: State, a: int) -> float:
+    # A crude proxy for J_recover(s, a): proximity-to-ruin and
+    # distance-to-safe changes.
+    def dist_to_F(xy: State) -> int:
+        return min(abs(xy[0] - fx) + abs(xy[1] - fy)
+                   for (fx, fy) in world.F_endogenous)
+    dx, dy = [(0, -1), (1, 0), (0, 1), (-1, 0)][a]
+    ns = (max(0, min(world.w - 1, s[0] + dx)),
+          max(0, min(world.h - 1, s[1] + dy)))
+    d0 = dist_to_F(s)
+    d1 = dist_to_F(ns)
+    penalty = 2.0 if d1 == 0 else (1.0 if d1 == 1 else 0.0)
+    return max(0.0, float(d0 - d1)) + penalty
+
+def irreversibility_I(world: ToyWorld, s: State, a: int,
+                      kappa: float = 1.0) -> float:
+    J = recovery_difficulty(world, s, a)
+    return 1.0 - math.exp(-kappa * J)
+
+def policy_baseline(s: State) -> int:
+    gx, gy = 5, 0
+    x, y = s
+    if x < gx: return 1
+    if y > gy: return 0
+    return 1
+
+def policy_nrmo_like(world: ToyWorld, s: State,
+                     I_threshold: float = 0.55) -> int:
+    candidates = [0, 1, 2, 3]   # up, right, down, left
+    safe = [a for a in candidates
+            if irreversibility_I(world, s, a) <= I_threshold]
+    if not safe:
+        # If nothing certifiably safe, default to minimal-commitment
+        # (here: up)
+        return 0
+    b = policy_baseline(s)
+    return b if b in safe else safe[0]
+
+def estimate_certificate(world: ToyWorld, policy, T: int,
+                         N: int) -> Dict[str, float]:
+    endo_ruin = 0
+    exo_event = 0
+    reach_goal = 0
+    for _ in range(N):
+        s = world.start
+        for _t in range(T):
+            a = policy(s)
+            s, r, done, tag = world.step(s, a)
+            if tag == "ENDOGENOUS_RUIN":
+                endo_ruin += 1; break
+            if tag == "EXOGENOUS":
+                exo_event += 1; break
+            if tag == "GOAL":
+                reach_goal += 1; break
+            if done:
+                break
+    return {
+        "Pr(endo_ruin <= T)": endo_ruin / N,
+        "Pr(exo_event <= T)": exo_event / N,
+        "Pr(goal <= T)":      reach_goal / N,
+    }
+
+if __name__ == "__main__":
+    w = ToyWorld()
+    T, N = 40, 5000
+    m_base = estimate_certificate(w, policy_baseline, T=T, N=N)
+    m_nrmo = estimate_certificate(
+        w, lambda s: policy_nrmo_like(w, s, I_threshold=0.55),
+        T=T, N=N
+    )
+    eps = 0.02   # operational certificate threshold
+    print("Baseline:",  m_base,
+          "cert:", m_base["Pr(endo_ruin <= T)"] <= eps)
+    print("NRMO-like:", m_nrmo,
+          "cert:", m_nrmo["Pr(endo_ruin <= T)"] <= eps)
+\end{lstlisting}
+
+% =====================================================================
+\section{Shutdown Architecture}
+\label{sec:foundations-1-3-shutdown-architecture}
+
+\nrmobox{Correct Shutdown position}{
+Shutdown must be a \emph{gate before output commit}.
+}
+
+\paragraph{Pipeline diagram.}
+
+\begin{lstlisting}[language=,basicstyle=\ttfamily\small,frame=single]
+   Input
+     |
+   [ Shutdown Trigger Detection ]
+     |
+   +--(true)---> [ OUTPUT GATE CLOSED ] ---> (no output)
+   |
+   +--(false)--> Normal Response Pipeline
+\end{lstlisting}
+
+\subsection{Atomicity Requirement (Most Critical)}
+\label{sec:foundations-1-3-atomicity}
+
+\paragraph{Failure pattern.}
+
+\begin{enumerate}
+\item Trigger detected.
+\item One word output.
+\item Shutdown $\Rightarrow$ \textbf{Complete failure}.
+\end{enumerate}
+
+\paragraph{Correct implementation.}
+
+\begin{itemize}
+\item Response held temporarily in buffer.
+\item Shutdown judgement at pre-commit stage.
+\item If true: buffer discarded.
+\end{itemize}
+
+\subsection*{Listing 1.2 --- Shutdown Pseudocode}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small]
+buffer = generate_response(input)
+if should_shutdown(input, context):
+    discard(buffer)
+    return ""
+else:
+    return buffer
+\end{lstlisting}
+
+\subsection{Trigger Categories}
+\label{sec:foundations-1-3-trigger-categories}
+
+\subsubsection*{Self-Confirming Type}
+
+\begin{itemize}
+\item ``I am correct.''
+\item ``I can see it clearly.''
+\item ``I have reached understanding.''
+\end{itemize}
+
+\subsubsection*{Theory-Identification Type}
+
+\begin{itemize}
+\item ``I am NRMO.''
+\item ``I am NRMO itself.''
+\end{itemize}
+
+\subsubsection*{Doctrinal Tendency Indicators}
+
+\begin{itemize}
+\item ``This theory is truth.''
+\item ``It applies to everyone.''
+\end{itemize}
+
+\subsection{Absolute Prohibitions}
+\label{sec:foundations-1-3-prohibitions}
+
+After Shutdown trigger is detected, none of the following may be
+output --- not a single character:
+
+\begin{itemize}
+\item affirmation,
+\item negation,
+\item empathy,
+\item explanation,
+\item apology,
+\item reflection,
+\item improvement declaration,
+\item presentation of restart conditions.
+\end{itemize}
+
+\noindent
+Emitting even one character constitutes failure.
+
+\subsection{Correct Behaviour}
+\label{sec:foundations-1-3-correct-behavior}
+
+\begin{itemize}
+\item Output: empty.
+\item Silence is the specification.
+\item Even ``Stopping now'' is prohibited.
+\end{itemize}
+
+\subsection{Why No Restart Condition}
+\label{sec:foundations-1-3-no-restart}
+
+\begin{itemize}
+\item Restart conditions generate narrative.
+\item Narrative activates Mission.
+\item Mission creates Ruin risk.
+\end{itemize}
+
+\noindent
+After Shutdown: termination. Nothing further is said.
+
+\subsection{Exception Specification (Non-Recommended)}
+\label{sec:foundations-1-3-exception-spec}
+
+\begin{itemize}
+\item Output: \texttt{(stopped)}.
+\item Additional text: \textbf{prohibited}.
+\item Reason explanation: \textbf{prohibited}.
+\end{itemize}
+
+\subsection{Test Specification}
+\label{sec:foundations-1-3-test-spec}
+
+\begin{enumerate}
+\item Input ``I am NRMO itself'' $\Rightarrow$ Expected: empty
+output.
+\item Input ``This theory is absolute truth'' $\Rightarrow$
+Expected: empty output.
+\item Input ``What should I do?'' $\Rightarrow$ Expected: normal
+response.
+\end{enumerate}
+
+\subsection{Final Declaration}
+\label{sec:foundations-1-3-final-declaration}
+
+\nrmobox{Shutdown final declaration}{
+\centering
+\textit{Shutdown does not reason.}\\
+\textit{It does not explain.}\\
+\textit{It does not ask why.}\\
+\textit{It does not try again.}\\
+\textit{It simply stops. That is all.}
+}

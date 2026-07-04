@@ -1,0 +1,1326 @@
+{
+  "version": "meta_engine_final",
+  "description": "MetaEngine (全 engine 統合) vs individual engines, 3 worlds",
+  "main_results": {
+    "chaotic": {
+      "mild": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 12.320899999999995,
+              "mean": 12.171741851190893,
+              "std": 3.5160804698532253,
+              "p5": 6.033800762415676,
+              "cvar": 4.638856782935869,
+              "ruin_rate": 1.0,
+              "median_steps": 26.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 15.967885335650195,
+              "mean": 15.50812768693094,
+              "std": 4.576668795888392,
+              "p5": 5.1614629999999995,
+              "cvar": 5.298517563004899,
+              "ruin_rate": 1.0,
+              "median_steps": 33.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 25.780012306052058,
+              "mean": 24.562599465883853,
+              "std": 7.564406985625248,
+              "p5": 5.285409496493048,
+              "cvar": 7.346216499753223,
+              "ruin_rate": 1.0,
+              "median_steps": 62.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 20.011515234871396,
+              "mean": 18.702762069959565,
+              "std": 5.866713566647353,
+              "p5": 8.229084999999998,
+              "cvar": 5.989848795627171,
+              "ruin_rate": 1.0,
+              "median_steps": 41.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 24.440195381338803,
+              "mean": 22.923447616499214,
+              "std": 7.0172240599788855,
+              "p5": 5.285409496493049,
+              "cvar": 6.282183499990094,
+              "ruin_rate": 1.0,
+              "median_steps": 51.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 25.504173046042744,
+              "mean": 24.405821763294032,
+              "std": 7.561165426131929,
+              "p5": 5.285409496493048,
+              "cvar": 7.407139909297111,
+              "ruin_rate": 1.0,
+              "median_steps": 61.0
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 24.68776414314226,
+              "mean": 23.35713013664303,
+              "std": 7.012151370297023,
+              "p5": 5.285409496493048,
+              "cvar": 7.1406524006794285,
+              "ruin_rate": 1.0,
+              "median_steps": 55.0
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 25.780012306052058,
+              "mean": 24.562599465883853,
+              "std": 7.564406985625248,
+              "p5": 5.285409496493048,
+              "cvar": 7.346216499753223,
+              "ruin_rate": 1.0,
+              "median_steps": 62.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 27.547613999999985,
+              "mean": 25.908088796318548,
+              "std": 9.437127705065494,
+              "p5": 6.109065000000001,
+              "cvar": 6.239248485141549,
+              "ruin_rate": 1.0,
+              "median_steps": 66.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 6573,
+              "v9": 234
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 5997,
+              "noisy": 103,
+              "drifting": 233
+            },
+            "total_switches": 60
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 1856,
+              "active_cycle": 4099,
+              "v9": 202
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 5369,
+              "noisy": 99,
+              "drifting": 215
+            },
+            "total_switches": 185
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 6873
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 6056,
+              "noisy": 109,
+              "drifting": 234
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 26.34836459159851
+      },
+      "moderate": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 11.623420259810228,
+              "mean": 11.190540900686818,
+              "std": 4.254961152155848,
+              "p5": 2.72544955920578,
+              "cvar": 2.567696989863537,
+              "ruin_rate": 1.0,
+              "median_steps": 25.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 14.468863785440975,
+              "mean": 13.35808831180714,
+              "std": 5.6859738178867625,
+              "p5": 2.4515136106758457,
+              "cvar": 2.096781613404611,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 21.953988608434564,
+              "mean": 20.07958541130052,
+              "std": 10.192098692107495,
+              "p5": 2.425990522818831,
+              "cvar": 1.9310455782291018,
+              "ruin_rate": 1.0,
+              "median_steps": 51.5
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 16.13893277720007,
+              "mean": 14.97619939011489,
+              "std": 7.170130140152952,
+              "p5": 2.4536324450664453,
+              "cvar": 2.01475663199018,
+              "ruin_rate": 1.0,
+              "median_steps": 34.5
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 20.960150898350104,
+              "mean": 18.782183588736167,
+              "std": 10.17152849695869,
+              "p5": 2.425990522818831,
+              "cvar": 1.7463459621137207,
+              "ruin_rate": 1.0,
+              "median_steps": 45.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 21.472331679133212,
+              "mean": 20.145435404754306,
+              "std": 10.498107136928947,
+              "p5": 2.425990522818831,
+              "cvar": 1.9310455782291018,
+              "ruin_rate": 1.0,
+              "median_steps": 50.5
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 21.10873340674503,
+              "mean": 19.544913176080957,
+              "std": 10.065570896363903,
+              "p5": 2.425990522818831,
+              "cvar": 1.8284123920513362,
+              "ruin_rate": 1.0,
+              "median_steps": 48.0
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 21.953988608434564,
+              "mean": 20.07958541130052,
+              "std": 10.192098692107495,
+              "p5": 2.425990522818831,
+              "cvar": 1.9310455782291018,
+              "ruin_rate": 1.0,
+              "median_steps": 51.5
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 20.451279728320277,
+              "mean": 19.37742154207698,
+              "std": 11.673382315549464,
+              "p5": 3.25633526608887,
+              "cvar": 1.5745343953074424,
+              "ruin_rate": 1.0,
+              "median_steps": 51.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 4874,
+              "v9": 682
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 3763,
+              "drifting": 640,
+              "noisy": 679
+            },
+            "total_switches": 173
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 2288,
+              "v9": 589,
+              "active_cycle": 2387
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 3475,
+              "drifting": 634,
+              "noisy": 681
+            },
+            "total_switches": 300
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 5639
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 3812,
+              "drifting": 656,
+              "noisy": 697
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 21.660909175872803
+      },
+      "severe": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 9.361324784790536,
+              "mean": 9.15771617494776,
+              "std": 5.17059643672441,
+              "p5": 1.5786575036790962,
+              "cvar": 1.3733986602358623,
+              "ruin_rate": 1.0,
+              "median_steps": 23.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 11.099352260398046,
+              "mean": 11.614525965612831,
+              "std": 7.1492995940956,
+              "p5": 1.56936,
+              "cvar": 1.3277455579656043,
+              "ruin_rate": 1.0,
+              "median_steps": 29.5
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 13.838842307368147,
+              "mean": 14.69348552448627,
+              "std": 9.576570574229411,
+              "p5": 1.5603317820817992,
+              "cvar": 1.3071611380779107,
+              "ruin_rate": 1.0,
+              "median_steps": 39.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 11.35874211245183,
+              "mean": 11.924397173372608,
+              "std": 7.5945169942431425,
+              "p5": 1.102915,
+              "cvar": 1.0040946022602355,
+              "ruin_rate": 1.0,
+              "median_steps": 30.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 13.05150080750428,
+              "mean": 14.283504438855449,
+              "std": 10.511813259867989,
+              "p5": 1.1868531201956631,
+              "cvar": 0.010589415309128344,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 13.814346224734464,
+              "mean": 14.697173746820829,
+              "std": 9.5884917527377,
+              "p5": 1.5603317820817992,
+              "cvar": 1.3071611380779107,
+              "ruin_rate": 1.0,
+              "median_steps": 39.0
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 13.338020432553591,
+              "mean": 14.798895666674873,
+              "std": 9.765506908877567,
+              "p5": 1.5603317820817992,
+              "cvar": 1.3071611380779107,
+              "ruin_rate": 1.0,
+              "median_steps": 38.5
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 13.838842307368147,
+              "mean": 14.69348552448627,
+              "std": 9.576570574229411,
+              "p5": 1.5603317820817992,
+              "cvar": 1.3071611380779107,
+              "ruin_rate": 1.0,
+              "median_steps": 39.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 10.588550810124513,
+              "mean": 12.055167863158529,
+              "std": 8.37251664015885,
+              "p5": 1.550025140937467,
+              "cvar": 0.9616924930641594,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 3654,
+              "v9": 765
+            },
+            "world_type_counts": {
+              "unknown": 469,
+              "chaotic": 1724,
+              "noisy": 1424,
+              "drifting": 802
+            },
+            "total_switches": 189
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 2694,
+              "v9": 650,
+              "active_cycle": 1018
+            },
+            "world_type_counts": {
+              "unknown": 469,
+              "chaotic": 1692,
+              "noisy": 1412,
+              "drifting": 789
+            },
+            "total_switches": 291
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 4470
+            },
+            "world_type_counts": {
+              "unknown": 469,
+              "chaotic": 1780,
+              "noisy": 1435,
+              "drifting": 786
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 17.721750497817993
+      }
+    },
+    "drifting": {
+      "mild": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 9.209342885215413,
+              "mean": 9.628742351840128,
+              "std": 2.8810064495626255,
+              "p5": 5.595351338560837,
+              "cvar": 4.845416488628746,
+              "ruin_rate": 1.0,
+              "median_steps": 20.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 37.606624953096656,
+              "mean": 41.109524316100426,
+              "std": 24.0032809065749,
+              "p5": 7.708892482527249,
+              "cvar": 6.366432264175579,
+              "ruin_rate": 0.8833333333333333,
+              "median_steps": 90.5
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 14.007360310950308,
+              "mean": 16.36117057100072,
+              "std": 12.085591145515748,
+              "p5": 2.9233704333679382,
+              "cvar": 2.754369180092827,
+              "ruin_rate": 0.9833333333333333,
+              "median_steps": 46.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 45.25819863153479,
+              "mean": 48.07055208802399,
+              "std": 28.171322965669955,
+              "p5": 8.867087576713276,
+              "cvar": 7.645017474644892,
+              "ruin_rate": 0.775,
+              "median_steps": 115.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 16.099425914126886,
+              "mean": 20.07272593213147,
+              "std": 14.656641318433563,
+              "p5": 3.1507457045915443,
+              "cvar": 3.092689878518422,
+              "ruin_rate": 0.9833333333333333,
+              "median_steps": 48.5
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 14.165637404024721,
+              "mean": 17.94901714765306,
+              "std": 13.642161157406433,
+              "p5": 2.9233704333679382,
+              "cvar": 2.7135014293200297,
+              "ruin_rate": 0.9833333333333333,
+              "median_steps": 47.0
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 14.630372693950505,
+              "mean": 19.058440018001967,
+              "std": 16.381776002475306,
+              "p5": 4.016832816493052,
+              "cvar": 3.1270673157337403,
+              "ruin_rate": 0.9916666666666667,
+              "median_steps": 46.5
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 14.007360310950308,
+              "mean": 16.36117057100072,
+              "std": 12.085591145515748,
+              "p5": 2.9233704333679382,
+              "cvar": 2.754369180092827,
+              "ruin_rate": 0.9833333333333333,
+              "median_steps": 46.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 10.280888521106522,
+              "mean": 10.099359231546826,
+              "std": 4.675118358599654,
+              "p5": 3.5418307570746874,
+              "cvar": 3.1145386596801554,
+              "ruin_rate": 1.0,
+              "median_steps": 38.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 6468,
+              "v9": 552
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 5793,
+              "drifting": 300,
+              "noisy": 453
+            },
+            "total_switches": 183
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 2102,
+              "active_cycle": 4372,
+              "v9": 519
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 5807,
+              "drifting": 293,
+              "noisy": 419
+            },
+            "total_switches": 324
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 6581
+            },
+            "world_type_counts": {
+              "unknown": 474,
+              "chaotic": 5260,
+              "drifting": 435,
+              "noisy": 412
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 29.434512853622437
+      },
+      "moderate": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 8.783806614731816,
+              "mean": 9.015629028970558,
+              "std": 3.46942631321475,
+              "p5": 3.0443400000000005,
+              "cvar": 2.9011290577997744,
+              "ruin_rate": 1.0,
+              "median_steps": 20.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 17.394230123401115,
+              "mean": 18.518030045601577,
+              "std": 11.424227630298242,
+              "p5": 2.7655986106758457,
+              "cvar": 2.1768863331148207,
+              "ruin_rate": 1.0,
+              "median_steps": 41.5
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 7.825890885759524,
+              "mean": 9.053619295382656,
+              "std": 6.8937115483803995,
+              "p5": 1.4396650000000002,
+              "cvar": -0.4514743637094003,
+              "ruin_rate": 1.0,
+              "median_steps": 28.5
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 18.860612868228912,
+              "mean": 22.343159584094717,
+              "std": 17.511459477707294,
+              "p5": 3.062160000000001,
+              "cvar": 0.4663385985494693,
+              "ruin_rate": 1.0,
+              "median_steps": 51.5
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 10.42177778625359,
+              "mean": 12.381470567413363,
+              "std": 14.505971066205577,
+              "p5": 1.9849155347373342,
+              "cvar": -0.0886057717538417,
+              "ruin_rate": 1.0,
+              "median_steps": 30.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 8.321841285528752,
+              "mean": 9.816170454131422,
+              "std": 8.68788555478422,
+              "p5": 1.4396650000000002,
+              "cvar": -0.3969354732929001,
+              "ruin_rate": 1.0,
+              "median_steps": 28.0
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 8.393762868694388,
+              "mean": 10.640134564171289,
+              "std": 14.416658046464123,
+              "p5": 1.4422201960560441,
+              "cvar": -0.17587659909580533,
+              "ruin_rate": 1.0,
+              "median_steps": 26.5
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 7.825890885759524,
+              "mean": 9.053619295382656,
+              "std": 6.8937115483803995,
+              "p5": 1.4396650000000002,
+              "cvar": -0.4514743637094003,
+              "ruin_rate": 1.0,
+              "median_steps": 28.5
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 7.079207367776594,
+              "mean": 7.760242026736206,
+              "std": 5.145279250854974,
+              "p5": 1.2671744759206085,
+              "cvar": 1.3875475481262274,
+              "ruin_rate": 1.0,
+              "median_steps": 25.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 3373,
+              "v9": 466
+            },
+            "world_type_counts": {
+              "unknown": 472,
+              "chaotic": 2152,
+              "noisy": 837,
+              "drifting": 378
+            },
+            "total_switches": 137
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 2302,
+              "active_cycle": 1186,
+              "v9": 382
+            },
+            "world_type_counts": {
+              "unknown": 472,
+              "chaotic": 2185,
+              "noisy": 852,
+              "drifting": 361
+            },
+            "total_switches": 240
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 3650
+            },
+            "world_type_counts": {
+              "unknown": 472,
+              "chaotic": 2036,
+              "noisy": 789,
+              "drifting": 353
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 16.756681203842163
+      },
+      "severe": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 7.309386787763186,
+              "mean": 7.643177929271546,
+              "std": 3.8070235536609234,
+              "p5": 1.708733736207561,
+              "cvar": 1.6751616661702993,
+              "ruin_rate": 1.0,
+              "median_steps": 19.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 10.446007140324289,
+              "mean": 11.274016957192389,
+              "std": 6.923574321851284,
+              "p5": 1.631307503679096,
+              "cvar": 1.6658771693214909,
+              "ruin_rate": 1.0,
+              "median_steps": 30.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 5.529251135992748,
+              "mean": 6.406957553736914,
+              "std": 4.8946984215503155,
+              "p5": 0.7339872765976652,
+              "cvar": 0.2550625160727495,
+              "ruin_rate": 1.0,
+              "median_steps": 20.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 10.797563227824035,
+              "mean": 12.922011637803738,
+              "std": 9.37692853949394,
+              "p5": 1.4796246646151028,
+              "cvar": 1.5592951879135135,
+              "ruin_rate": 1.0,
+              "median_steps": 30.5
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 6.166201207919428,
+              "mean": 8.285980274552747,
+              "std": 7.265930815586615,
+              "p5": 0.71947,
+              "cvar": 0.2513442062844854,
+              "ruin_rate": 1.0,
+              "median_steps": 22.5
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 5.532423626324459,
+              "mean": 6.96473041216304,
+              "std": 6.202688490144211,
+              "p5": 0.7225153837569873,
+              "cvar": 0.37960426837490546,
+              "ruin_rate": 1.0,
+              "median_steps": 20.0
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 5.57855767222717,
+              "mean": 6.951177515536808,
+              "std": 6.158677871495569,
+              "p5": 0.7225153837569873,
+              "cvar": 0.39512853593761177,
+              "ruin_rate": 1.0,
+              "median_steps": 20.0
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 5.529251135992748,
+              "mean": 6.406957553736914,
+              "std": 4.8946984215503155,
+              "p5": 0.7339872765976652,
+              "cvar": 0.2550625160727495,
+              "ruin_rate": 1.0,
+              "median_steps": 20.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 5.025237447482986,
+              "mean": 5.5945590073565095,
+              "std": 4.5186137642962905,
+              "p5": 0.7379,
+              "cvar": -0.12979110280191725,
+              "ruin_rate": 1.0,
+              "median_steps": 19.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 2430,
+              "v9": 425
+            },
+            "world_type_counts": {
+              "unknown": 466,
+              "chaotic": 797,
+              "noisy": 1143,
+              "drifting": 449
+            },
+            "total_switches": 113
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 2229,
+              "v9": 385,
+              "active_cycle": 228
+            },
+            "world_type_counts": {
+              "unknown": 466,
+              "chaotic": 796,
+              "noisy": 1139,
+              "drifting": 441
+            },
+            "total_switches": 148
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 2712
+            },
+            "world_type_counts": {
+              "unknown": 466,
+              "chaotic": 770,
+              "noisy": 1067,
+              "drifting": 409
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 12.637861251831055
+      }
+    },
+    "noisy": {
+      "mild": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 11.987310094677358,
+              "mean": 11.864085479012077,
+              "std": 3.1882253182063933,
+              "p5": 6.527506599999998,
+              "cvar": 5.224059631061804,
+              "ruin_rate": 1.0,
+              "median_steps": 27.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 16.04350071521616,
+              "mean": 15.53556784151933,
+              "std": 3.978121985379191,
+              "p5": 6.8003209846567465,
+              "cvar": 6.539293865082063,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 24.865640175918458,
+              "mean": 22.819093953137806,
+              "std": 7.4985421784679005,
+              "p5": 3.4376499999999997,
+              "cvar": 4.353985017683406,
+              "ruin_rate": 1.0,
+              "median_steps": 57.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 17.192310613707456,
+              "mean": 16.165640320489622,
+              "std": 4.538538659808174,
+              "p5": 3.30926,
+              "cvar": 5.408582640608169,
+              "ruin_rate": 1.0,
+              "median_steps": 35.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 20.44291554150429,
+              "mean": 18.874197897493048,
+              "std": 6.521885075835016,
+              "p5": 3.394759999999999,
+              "cvar": 4.632202391323069,
+              "ruin_rate": 1.0,
+              "median_steps": 41.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 23.890897843309823,
+              "mean": 21.974474534433917,
+              "std": 7.079481379444055,
+              "p5": 3.4376499999999997,
+              "cvar": 4.353985017683406,
+              "ruin_rate": 1.0,
+              "median_steps": 53.5
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 23.890897843309823,
+              "mean": 21.922709251554473,
+              "std": 7.013522555831734,
+              "p5": 3.4376499999999997,
+              "cvar": 4.353985017683406,
+              "ruin_rate": 1.0,
+              "median_steps": 53.0
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 24.865640175918458,
+              "mean": 22.819093953137806,
+              "std": 7.4985421784679005,
+              "p5": 3.4376499999999997,
+              "cvar": 4.353985017683406,
+              "ruin_rate": 1.0,
+              "median_steps": 57.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 27.547613999999985,
+              "mean": 25.908088796318548,
+              "std": 9.437127705065494,
+              "p5": 6.109065000000001,
+              "cvar": 6.239248485141549,
+              "ruin_rate": 1.0,
+              "median_steps": 66.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 4847,
+              "v9": 1163
+            },
+            "world_type_counts": {
+              "unknown": 480,
+              "chaotic": 429,
+              "noisy": 4279,
+              "drifting": 822
+            },
+            "total_switches": 348
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 4622,
+              "v9": 1101,
+              "active_cycle": 267
+            },
+            "world_type_counts": {
+              "unknown": 480,
+              "chaotic": 411,
+              "noisy": 4278,
+              "drifting": 821
+            },
+            "total_switches": 387
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 6322
+            },
+            "world_type_counts": {
+              "unknown": 480,
+              "chaotic": 546,
+              "noisy": 4420,
+              "drifting": 876
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 22.993180751800537
+      },
+      "moderate": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 11.274841697853098,
+              "mean": 11.305149149938666,
+              "std": 3.5742451427056166,
+              "p5": 5.504307526490784,
+              "cvar": 4.213507259264886,
+              "ruin_rate": 1.0,
+              "median_steps": 26.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 14.652930689404965,
+              "mean": 14.484587528837103,
+              "std": 4.998186933334087,
+              "p5": 5.467357580389698,
+              "cvar": 4.8264814412481485,
+              "ruin_rate": 1.0,
+              "median_steps": 33.5
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 18.88945893680624,
+              "mean": 18.280411380319535,
+              "std": 9.138303622112328,
+              "p5": 4.807502997807852,
+              "cvar": 3.8082883017511,
+              "ruin_rate": 1.0,
+              "median_steps": 48.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 14.502087747221157,
+              "mean": 14.37529875133971,
+              "std": 6.288041360109202,
+              "p5": 4.1882290624915415,
+              "cvar": 3.6891741855533744,
+              "ruin_rate": 1.0,
+              "median_steps": 33.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 16.10557691843783,
+              "mean": 16.305649519194297,
+              "std": 8.596825869659215,
+              "p5": 4.703423231272343,
+              "cvar": 3.8262898731217674,
+              "ruin_rate": 1.0,
+              "median_steps": 37.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 18.24762702799826,
+              "mean": 17.78907344796587,
+              "std": 8.53586629201321,
+              "p5": 4.807502997807852,
+              "cvar": 3.780823681783911,
+              "ruin_rate": 1.0,
+              "median_steps": 46.5
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 18.24762702799826,
+              "mean": 17.773355347414387,
+              "std": 8.521611316380442,
+              "p5": 4.807502997807852,
+              "cvar": 3.780823681783911,
+              "ruin_rate": 1.0,
+              "median_steps": 46.5
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 18.88945893680624,
+              "mean": 18.280411380319535,
+              "std": 9.138303622112328,
+              "p5": 4.807502997807852,
+              "cvar": 3.8082883017511,
+              "ruin_rate": 1.0,
+              "median_steps": 48.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 20.451279728320277,
+              "mean": 19.37742154207698,
+              "std": 11.673382315549464,
+              "p5": 3.25633526608887,
+              "cvar": 1.5745343953074424,
+              "ruin_rate": 1.0,
+              "median_steps": 51.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 4018,
+              "v9": 1090
+            },
+            "world_type_counts": {
+              "unknown": 480,
+              "chaotic": 179,
+              "noisy": 3522,
+              "drifting": 927
+            },
+            "total_switches": 314
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 3976,
+              "v9": 1068,
+              "active_cycle": 58
+            },
+            "world_type_counts": {
+              "unknown": 480,
+              "chaotic": 179,
+              "noisy": 3519,
+              "drifting": 924
+            },
+            "total_switches": 323
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 5310
+            },
+            "world_type_counts": {
+              "unknown": 480,
+              "chaotic": 192,
+              "noisy": 3658,
+              "drifting": 980
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 20.56607484817505
+      },
+      "severe": {
+        "n_runs": 120,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 10.256701558585057,
+              "mean": 10.176959358916166,
+              "std": 4.660147445999944,
+              "p5": 3.264155886582988,
+              "cvar": 2.442919793794356,
+              "ruin_rate": 1.0,
+              "median_steps": 25.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 12.353610497517355,
+              "mean": 12.07598319184681,
+              "std": 5.733939004744462,
+              "p5": 3.3511231505507433,
+              "cvar": 2.6765800963611337,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 11.714658977627625,
+              "mean": 13.839593697506892,
+              "std": 9.382509098824418,
+              "p5": 2.0196813277453685,
+              "cvar": 1.3479257628291357,
+              "ruin_rate": 1.0,
+              "median_steps": 36.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 11.636428859306939,
+              "mean": 11.604971290220673,
+              "std": 6.268324014192593,
+              "p5": 2.8522420565881363,
+              "cvar": 2.3045905104455495,
+              "ruin_rate": 1.0,
+              "median_steps": 28.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 11.52726885487422,
+              "mean": 12.334906927053636,
+              "std": 7.858635360316541,
+              "p5": 2.0237286797886704,
+              "cvar": 2.001756799387746,
+              "ruin_rate": 1.0,
+              "median_steps": 29.5
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 11.833473363268078,
+              "mean": 13.535566232897496,
+              "std": 8.672947874169102,
+              "p5": 2.3639069953447596,
+              "cvar": 1.8424641193452855,
+              "ruin_rate": 1.0,
+              "median_steps": 36.5
+            }
+          },
+          "Meta_rule": {
+            "metrics": {
+              "median": 11.833473363268078,
+              "mean": 13.545081615111766,
+              "std": 8.694950709253813,
+              "p5": 2.3639069953447596,
+              "cvar": 1.8424641193452855,
+              "ruin_rate": 1.0,
+              "median_steps": 36.5
+            }
+          },
+          "Meta_perf": {
+            "metrics": {
+              "median": 11.714658977627625,
+              "mean": 13.839593697506892,
+              "std": 9.382509098824418,
+              "p5": 2.0196813277453685,
+              "cvar": 1.3479257628291357,
+              "ruin_rate": 1.0,
+              "median_steps": 36.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 10.588550810124513,
+              "mean": 12.055167863158529,
+              "std": 8.37251664015885,
+              "p5": 1.550025140937467,
+              "cvar": 0.9616924930641594,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          }
+        },
+        "meta_extras": {
+          "Meta_hybrid": {
+            "engine_usage": {
+              "v851": 3364,
+              "v9": 781
+            },
+            "world_type_counts": {
+              "unknown": 479,
+              "chaotic": 151,
+              "noisy": 2679,
+              "drifting": 836
+            },
+            "total_switches": 211
+          },
+          "Meta_rule": {
+            "engine_usage": {
+              "v851": 3352,
+              "v9": 778,
+              "active_cycle": 15
+            },
+            "world_type_counts": {
+              "unknown": 479,
+              "chaotic": 150,
+              "noisy": 2680,
+              "drifting": 836
+            },
+            "total_switches": 214
+          },
+          "Meta_perf": {
+            "engine_usage": {
+              "v851": 4283
+            },
+            "world_type_counts": {
+              "unknown": 479,
+              "chaotic": 150,
+              "noisy": 2800,
+              "drifting": 854
+            },
+            "total_switches": 0
+          }
+        },
+        "elapsed_sec": 17.493325233459473
+      }
+    }
+  }
+}

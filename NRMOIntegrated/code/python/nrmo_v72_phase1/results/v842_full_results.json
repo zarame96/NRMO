@@ -1,0 +1,386 @@
+{
+  "version": "v8.4.2",
+  "description": "v8.4.1 + MAPLayer only (strictly isolated)",
+  "main_results": {
+    "mild": {
+      "n_runs": 200,
+      "v71": {
+        "median": 12.578070480955372,
+        "mean": 12.502774889815582,
+        "std": 3.732769352134137,
+        "ruin_rate": 1.0,
+        "median_steps": 26.0
+      },
+      "v841": {
+        "median": 15.948369999999997,
+        "mean": 15.482435433206861,
+        "std": 4.938060532708871,
+        "ruin_rate": 1.0,
+        "median_steps": 32.0
+      },
+      "v842_map_on": {
+        "median": 15.948369999999997,
+        "mean": 15.479183640201573,
+        "std": 4.931879459191891,
+        "ruin_rate": 1.0,
+        "median_steps": 32.0
+      },
+      "v842_map_off": {
+        "median": 15.948369999999997,
+        "mean": 15.482435433206861,
+        "std": 4.938060532708871,
+        "ruin_rate": 1.0,
+        "median_steps": 32.0
+      },
+      "paired_v842_vs_v841": {
+        "median": 0.0,
+        "mean": -0.003251793005288679,
+        "n_842_better": 0,
+        "n_841_better": 1,
+        "wilcoxon_p": 0.31731050786291415
+      },
+      "maplayer_pure_effect_on_minus_off": {
+        "median": 0.0,
+        "mean": -0.003251793005288679,
+        "n_on_better": 0,
+        "n_off_better": 1,
+        "wilcoxon_p": 0.31731050786291415
+      },
+      "variance_change": {
+        "v841_std": 4.938060532708871,
+        "v842_std": 4.931879459191891,
+        "std_delta": -0.006181073516979829
+      },
+      "adaptive_avg_per_run": 26.16,
+      "near_ruin_avg_per_run": 11.325,
+      "elapsed_sec": 6.600262641906738
+    },
+    "moderate": {
+      "n_runs": 200,
+      "v71": {
+        "median": 11.187482160190564,
+        "mean": 11.010236233817265,
+        "std": 4.757933647365648,
+        "ruin_rate": 1.0,
+        "median_steps": 25.0
+      },
+      "v841": {
+        "median": 14.514823344058986,
+        "mean": 14.064017188072512,
+        "std": 6.281781194109254,
+        "ruin_rate": 1.0,
+        "median_steps": 31.0
+      },
+      "v842_map_on": {
+        "median": 14.514823344058986,
+        "mean": 14.064631833785688,
+        "std": 6.282709562181664,
+        "ruin_rate": 1.0,
+        "median_steps": 31.0
+      },
+      "v842_map_off": {
+        "median": 14.514823344058986,
+        "mean": 14.064017188072512,
+        "std": 6.281781194109254,
+        "ruin_rate": 1.0,
+        "median_steps": 31.0
+      },
+      "paired_v842_vs_v841": {
+        "median": 0.0,
+        "mean": 0.000614645713175257,
+        "n_842_better": 2,
+        "n_841_better": 0,
+        "wilcoxon_p": 0.17971249487899976
+      },
+      "maplayer_pure_effect_on_minus_off": {
+        "median": 0.0,
+        "mean": 0.000614645713175257,
+        "n_on_better": 2,
+        "n_off_better": 0,
+        "wilcoxon_p": 0.17971249487899976
+      },
+      "variance_change": {
+        "v841_std": 6.281781194109254,
+        "v842_std": 6.282709562181664,
+        "std_delta": 0.0009283680724108123
+      },
+      "adaptive_avg_per_run": 24.37,
+      "near_ruin_avg_per_run": 10.195,
+      "elapsed_sec": 6.60316014289856
+    },
+    "severe": {
+      "n_runs": 200,
+      "v71": {
+        "median": 10.383764610394815,
+        "mean": 10.024839385113339,
+        "std": 4.533628697420544,
+        "ruin_rate": 1.0,
+        "median_steps": 24.0
+      },
+      "v841": {
+        "median": 12.146473367064626,
+        "mean": 12.141874425930327,
+        "std": 6.972918224139643,
+        "ruin_rate": 1.0,
+        "median_steps": 29.0
+      },
+      "v842_map_on": {
+        "median": 12.146473367064626,
+        "mean": 12.141672610882283,
+        "std": 6.973369279171249,
+        "ruin_rate": 1.0,
+        "median_steps": 29.0
+      },
+      "v842_map_off": {
+        "median": 12.146473367064626,
+        "mean": 12.141874425930327,
+        "std": 6.972918224139643,
+        "ruin_rate": 1.0,
+        "median_steps": 29.0
+      },
+      "paired_v842_vs_v841": {
+        "median": 0.0,
+        "mean": -0.00020181504804453354,
+        "n_842_better": 1,
+        "n_841_better": 1,
+        "wilcoxon_p": 0.6547208460185769
+      },
+      "maplayer_pure_effect_on_minus_off": {
+        "median": 0.0,
+        "mean": -0.00020181504804453354,
+        "n_on_better": 1,
+        "n_off_better": 1,
+        "wilcoxon_p": 0.6547208460185769
+      },
+      "variance_change": {
+        "v841_std": 6.972918224139643,
+        "v842_std": 6.973369279171249,
+        "std_delta": 0.0004510550316059181
+      },
+      "adaptive_avg_per_run": 21.585,
+      "near_ruin_avg_per_run": 8.88,
+      "elapsed_sec": 6.212828874588013
+    },
+    "extreme": {
+      "n_runs": 200,
+      "v71": {
+        "median": 7.416711178629079,
+        "mean": 7.911866026054554,
+        "std": 5.791132533389582,
+        "ruin_rate": 1.0,
+        "median_steps": 22.5
+      },
+      "v841": {
+        "median": 6.433769450863791,
+        "mean": 8.156513348615642,
+        "std": 6.453758734872732,
+        "ruin_rate": 1.0,
+        "median_steps": 23.5
+      },
+      "v842_map_on": {
+        "median": 6.433769450863791,
+        "mean": 8.158452325082797,
+        "std": 6.457918298527875,
+        "ruin_rate": 1.0,
+        "median_steps": 23.5
+      },
+      "v842_map_off": {
+        "median": 6.433769450863791,
+        "mean": 8.156513348615642,
+        "std": 6.453758734872732,
+        "ruin_rate": 1.0,
+        "median_steps": 23.5
+      },
+      "paired_v842_vs_v841": {
+        "median": 0.0,
+        "mean": 0.0019389764671551657,
+        "n_842_better": 4,
+        "n_841_better": 4,
+        "wilcoxon_p": 0.40081416938293446
+      },
+      "maplayer_pure_effect_on_minus_off": {
+        "median": 0.0,
+        "mean": 0.0019389764671551657,
+        "n_on_better": 4,
+        "n_off_better": 4,
+        "wilcoxon_p": 0.40081416938293446
+      },
+      "variance_change": {
+        "v841_std": 6.453758734872732,
+        "v842_std": 6.457918298527875,
+        "std_delta": 0.004159563655142584
+      },
+      "adaptive_avg_per_run": 16.905,
+      "near_ruin_avg_per_run": 6.165,
+      "elapsed_sec": 5.537365198135376
+    },
+    "total": {
+      "n_runs": 200,
+      "v71": {
+        "median": 4.7797704197657715,
+        "mean": 5.118313391143741,
+        "std": 4.522087383582056,
+        "ruin_rate": 1.0,
+        "median_steps": 17.0
+      },
+      "v841": {
+        "median": 5.030864411714813,
+        "mean": 5.836597195225202,
+        "std": 5.148338102224798,
+        "ruin_rate": 1.0,
+        "median_steps": 18.0
+      },
+      "v842_map_on": {
+        "median": 5.030864411714813,
+        "mean": 5.830445512635488,
+        "std": 5.140486016365108,
+        "ruin_rate": 1.0,
+        "median_steps": 18.0
+      },
+      "v842_map_off": {
+        "median": 5.030864411714813,
+        "mean": 5.836597195225202,
+        "std": 5.148338102224798,
+        "ruin_rate": 1.0,
+        "median_steps": 18.0
+      },
+      "paired_v842_vs_v841": {
+        "median": 0.0,
+        "mean": -0.00615168258971373,
+        "n_842_better": 0,
+        "n_841_better": 2,
+        "wilcoxon_p": 0.17971249487899976
+      },
+      "maplayer_pure_effect_on_minus_off": {
+        "median": 0.0,
+        "mean": -0.00615168258971373,
+        "n_on_better": 0,
+        "n_off_better": 2,
+        "wilcoxon_p": 0.17971249487899976
+      },
+      "variance_change": {
+        "v841_std": 5.148338102224798,
+        "v842_std": 5.140486016365108,
+        "std_delta": -0.00785208585969066
+      },
+      "adaptive_avg_per_run": 13.395,
+      "near_ruin_avg_per_run": 3.925,
+      "elapsed_sec": 4.876086473464966
+    }
+  },
+  "acceptance_criteria": {
+    "1_no_degrade_mild_moderate_severe": {
+      "passed": true,
+      "evidence": [
+        {
+          "level": "mild",
+          "diff": 0.0,
+          "p": 0.31731050786291415
+        },
+        {
+          "level": "moderate",
+          "diff": 0.0,
+          "p": 0.17971249487899976
+        },
+        {
+          "level": "severe",
+          "diff": 0.0,
+          "p": 0.6547208460185769
+        }
+      ]
+    },
+    "2_improve_or_stabilize_extreme_total": {
+      "passed": false,
+      "evidence": [
+        {
+          "level": "extreme",
+          "diff": 0.0,
+          "std_delta": 0.004159563655142584
+        },
+        {
+          "level": "total",
+          "diff": 0.0,
+          "std_delta": -0.00785208585969066
+        }
+      ]
+    },
+    "3_ml_ablation_measurable_benefit": {
+      "passed": false,
+      "evidence": [
+        {
+          "level": "mild",
+          "diff": 0.0,
+          "p": 0.31731050786291415,
+          "measurable": false
+        },
+        {
+          "level": "moderate",
+          "diff": 0.0,
+          "p": 0.17971249487899976,
+          "measurable": false
+        },
+        {
+          "level": "severe",
+          "diff": 0.0,
+          "p": 0.6547208460185769,
+          "measurable": false
+        },
+        {
+          "level": "extreme",
+          "diff": 0.0,
+          "p": 0.40081416938293446,
+          "measurable": false
+        },
+        {
+          "level": "total",
+          "diff": 0.0,
+          "p": 0.17971249487899976,
+          "measurable": false
+        }
+      ],
+      "n_levels_with_measurable_benefit": 0
+    },
+    "4_deterministic_rng": {
+      "passed": true,
+      "evidence": "V842Engine inherits V71Engine rng injection, MAPLayer is deterministic"
+    },
+    "5_traces_explainable": {
+      "passed": true,
+      "evidence": "intervention_log captures all EG/Throttle/AP events with map_info, adaptive_config in V842Decision"
+    },
+    "6_no_early_ruin_mechanism": {
+      "passed": true,
+      "evidence": [
+        {
+          "level": "mild",
+          "v841_steps": 32.0,
+          "v842_steps": 32.0
+        },
+        {
+          "level": "moderate",
+          "v841_steps": 31.0,
+          "v842_steps": 31.0
+        },
+        {
+          "level": "severe",
+          "v841_steps": 29.0,
+          "v842_steps": 29.0
+        },
+        {
+          "level": "extreme",
+          "v841_steps": 23.5,
+          "v842_steps": 23.5
+        },
+        {
+          "level": "total",
+          "v841_steps": 18.0,
+          "v842_steps": 18.0
+        }
+      ]
+    },
+    "7_no_candidate_amplification": {
+      "passed": true,
+      "evidence": "MAPLayer adjusts guard config conservatively only (r_warning↑, consecutive_limit↓)"
+    }
+  }
+}

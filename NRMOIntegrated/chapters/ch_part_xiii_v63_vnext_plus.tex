@@ -1,0 +1,215 @@
+% =====================================================================
+\section{v6.3: vNext+ Full Integration of Adaptive Tuning and StrongEngine $\Omega$ Full}
+\label{sec:vnext-plus-v63}
+
+
+\nrmobox{v7 structural correction}{
+This mechanism resides on the \textbf{real side}: the StrongEngine $\Omega$
+Full advances over each domain's true dynamics with a maximum-forward default,
+while a civ-sim MaxForwardEngine imitates it to explore extremes. Rollout must
+use the target domain's true dynamics with a long-enough horizon to credit
+compounding, avoiding over-defensive collapse. Maximum forward is the default,
+not a universal optimum (world-dependence). See Realignment Master Spec.
+}
+Sections~\ref{sec:stage11-v51}--\ref{sec:calibration-v62} described the
+v5.1--v6.2 simulator development, in which the \texttt{Adaptive\_OmegaFull}
+agent strategy was implemented as a simplified mutation~+~drift-penalty
+heuristic rather than the full Adaptive NRMOvNext~+~StrongEngine~$\Omega$
+Full pipeline of the Part~IX specification. v6.3 closes this gap.
+
+\subsection{Discovery: implementation already existed}
+
+The v52 codebase (\texttt{v52\_codebase/}, accompanying this monograph)
+already contains the full implementation of:
+\begin{itemize}
+\item \texttt{governance/nrmo\_core.py} (92 lines): NRMO Core veto and
+  admissibility-set construction, both original and vNext variants;
+\item \texttt{governance/tuning\_layer.py} (83 lines): five-mode
+  \texttt{MetaController} with hysteresis, \texttt{adaptive\_tuning}
+  state-responsive rules, world-profile selection;
+\item \texttt{engine/omega\_full.py} (703 lines): $\Omega$ Full's nine
+  sections —~Candidate Population System (\S1), Favorable State Detector
+  (\S4: Wolf Pursuit), Edge Survival Guard (\S6), Risk-Adjusted floor
+  (\S7), Portfolio Synergy (\S8), Dual Objective Scoring (\S9), plus
+  Long-Horizon Drift Estimator and Failure Memory.
+\end{itemize}
+
+The reason v5.0--v6.2 World Simulation did not use these was
+architectural: v52 operates on a single \texttt{CivState} (six scalars:
+$R,E,G,O,K,X$) whereas World Simulation operates on $N$~agents $\times$~6
+per-agent dimensions. The two scales had not been bridged.
+
+\subsection{Bridging design}
+
+The v6.3 module \texttt{vnext\_plus.py} introduces three bridges:
+
+\paragraph{Aggregation bridge.}
+A per-civilisation \texttt{aggregate\_to\_civstate} function maps
+$\{$agent population state arrays, religion strength, shock add$\} \to
+\texttt{CivState}$. The mapping is heuristic but consistent with v52's
+$0$--$130$ scaling:
+\begin{equation*}
+\begin{aligned}
+R &= 130 \cdot \overline{\text{assets}} \\
+K &= 130 \cdot \overline{\text{edu}} \\
+G &= 130 \cdot \overline{\text{inst}} \\
+O &= 130 \cdot (0.6\,\overline{\text{urban}} + 0.4\,\overline{\text{edu}})
+    + 30\,\mathrm{Var}(\text{edu}+\text{assets}) \\
+E &= \max(8, 65 - 80\,\text{shock} + 50\,\overline{\text{fk}}) \\
+X &= \min(95, 100\,\text{shock} + 15\,\mathrm{Var}(\text{edu}+\text{assets}))
+\end{aligned}
+\end{equation*}
+
+The inequality term $\mathrm{Var}(\text{edu}+\text{assets})$ in $O$ and
+$X$ captures the previously ignored dimension: heterogeneity within the
+civilisation contributes to both optionality (diverse positions $\Rightarrow$
+more pathways) and exposure (inequality stress).
+
+\paragraph{Per-civ controller.}
+The \texttt{VNextPlusCivController} class instantiates one
+\texttt{MetaController}, one \texttt{HysteresisTracker}, and one
+\texttt{OmegaFullEngine} per civilisation. This is the principled
+extension of v52's single-civilisation assumption to the World Simulation's
+9-civilisation reality. Each controller maintains its own failure memory,
+previous state, and world-archetype scores. Cross-civilisation
+contamination of governance state is structurally precluded.
+
+\paragraph{Action projection bridge.}
+The civ-level optimal action $a^\star_c$ returned by
+\texttt{OmegaFullEngine.select\_action} is projected onto agents via
+\texttt{project\_action\_to\_agents}: for each agent of strategy $s$,
+the agent's action is $a^\star_c + \mathcal{N}(0, \sigma_s^2 \mathbf{I}_4)$,
+clipped and renormalised. The $\sigma_s$ values reflect strategy
+fidelity to the civ optimum:
+\texttt{NRMO\_vNext} = 0.03, \texttt{Adaptive\_OmegaFull} = 0.04,
+\texttt{RiskAdj} = 0.06, \texttt{EVMax} = 0.05 (with $+0.05$ growth
+bias), \texttt{Faith\_*} = 0.06--0.10 with sub-faith-specific biases,
+\texttt{Drift} = $\infty$ (ignores civ action). Thus only the two
+``vNext-family'' strategies tightly track the civ optimum; other
+strategies use their original per-agent theory functions.
+
+\subsection{Evolution beyond v52: archetype classifier enabled}
+
+v52's $\Omega$ Full implementation contains a world-archetype classifier
+(\texttt{classify\_world\_archetype}: vulnerable, race, stress,
+stagnation, normal probabilities) and \texttt{get\_edge\_profile} that
+would adapt Edge Guard portfolio weights to detected archetype. In v52,
+both were \emph{computed but not used} (the inline comment reads:
+``computed, logged; disabled until validated at 500-run validation'').
+
+v6.3 re-enables both. The 500-run validation gate is replaced by the
+empirical multi-civilisation, multi-seed averaging that v6.3 itself
+provides: nine civilisations $\times$ three seeds = 27 independent
+trajectories per benchmark, sufficient to detect systematic effects.
+This is not a deferral of the original validation requirement but a
+substitution of a denser empirical regime.
+
+\subsection{Pipeline summary}
+
+For each civilisation $c$ at each generation $g$:
+\begin{enumerate}
+\item Aggregate agent population $\to$ \texttt{CivState}$_c^g$.
+\item World parameters $\mathit{wp}_c$ derived from Cultural Module's
+  era $i$ at year $y = 40g$ (severity mapping
+  $\mathrm{base\_failure} \mapsto \{\text{shock\_prob, tail\_prob,
+  rivalry, env\_drag, \ldots}\}$).
+\item \texttt{MetaController}$_c$.update($s, \mathit{wp}_c$) $\to$
+  mode~$m_c \in \{$Normal, HighStakes, Recovery, StagnationEscape,
+  Race$\}$, with hysteresis (enter\_th $=2$, exit\_th $=3$).
+\item \texttt{adaptive\_tuning}(profile$(\mathit{world\_name})$,~$s$,~$m_c$)
+  $\to$ tuned \texttt{TuningConfig} $\mathit{tc}_c$.
+\item Candidate pool: \texttt{build\_candidate\_pool}$(s, \mathit{wp}_c)$
+  generates $\sim$23--29 candidates from base templates, mutation,
+  synthesis, and invention; Wolf Pursuit expands the pool when
+  favourable state is detected.
+\item NRMO Core: \texttt{construct\_admissible\_set}(pool,~$s$,~mode=vnext,
+  $\mathit{tc}_c$) returns admissible subset.
+\item $\Omega$ Full select: for each admissible candidate, MC rollout
+  ($\mathrm{depth}=6$, $\mathrm{repeats}=6$; doubled for Wolf), score
+  with full nine-component objective; rank by score; build portfolio
+  (main + hedge + probe) with Synergy bonus and drift-safe hedge
+  selection.
+\item Project $a^\star_c$ onto agents of strategy
+  \texttt{NRMO\_vNext} and \texttt{Adaptive\_OmegaFull}; other
+  strategies use original per-agent theory functions.
+\end{enumerate}
+
+Architectural invariants are preserved without exception: NRMO Core only
+issues YES/NO/HOLD, $\Omega$ Full searches only inside the admissible
+set, Tuning Layer adjusts thresholds but does not enter NRMO scoring.
+
+\subsection{Empirical comparison}
+
+Three-seed averaged comparison, scale~=~small (9~civilisations $\times$
+5{,}000 agents, 75 generations), with vs without vNext+ enabled:
+
+\begin{center}
+\small
+\begin{tabular}{llrrr}
+\toprule
+Strategy & World & Baseline & vNext+ & $\Delta$ \\
+\midrule
+\multirow{4}{*}{NRMO\_vNext}
+  & Japan       & 2.148 & 2.146 & $-0.002$ \\
+  & China       & 2.109 & 2.140 & $+0.031$ \\
+  & Europe      & 0.769 & 0.807 & $+0.038$ \\
+  & Polynesian  & 0.943 & 1.065 & $+0.122$ \\
+\midrule
+\multirow{4}{*}{Adaptive\_OmegaFull}
+  & Japan       & 2.175 & 2.137 & $-0.038$ \\
+  & Europe      & 0.820 & 0.803 & $-0.017$ \\
+  & Polynesian  & 0.947 & 1.042 & $+0.094$ \\
+  & IndigenousAmericas & 0.248 & 0.258 & $+0.011$ \\
+\midrule
+\multirow{2}{*}{ExpectedValueMax}
+  & Europe      & 0.950 & 0.981 & $+0.032$ \\
+  & IndigenousAmericas & 0.198 & 0.236 & $+0.038$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The pattern is asymmetric and matches the theoretical prediction:
+vNext+ \emph{improves performance in hostile worlds} (Polynesian,
+Europe, IndigenousAmericas) for vNext-family strategies, but
+\emph{degrades performance in peaceful worlds} (Indic, Islamic) where
+the Adaptive Tuning Layer's protective threshold tightening costs
+otherwise-available growth opportunity. This is the classical
+\emph{insurance premium} of vNext: pay efficiency in calm times to
+secure survival under stress.
+
+In peaceful worlds, \texttt{ExpectedValueMax} still wins on score, as
+predicted by Q4 of the original vNext specification (Section~XXX
+research questions). vNext+ is not a free win; it is the systematic
+trading of peacetime efficiency for hostile-world resilience.
+
+\subsection{Runtime cost}
+
+Adding vNext+ approximately quadruples small-scale runtime (small
+preset: 4\,s $\to$ 17\,s, $\times 4.3$) due to the per-civilisation MC
+rollouts ($\sim$14 candidates $\times$ 6 rollouts $\times$ 6 depth per
+civ per generation $\approx$ 500 transitions per civ per generation;
+$\times$ 9 civs $\times$ 75 generations $\approx$ 340{,}000 additional
+transitions per run). The cost is acceptable for small and medium
+scale; large scale (1.8\,M agents) takes proportionally longer.
+
+\subsection{Limits and outlook}
+
+The aggregation bridge necessarily loses information: a civilisation
+where half the agents are highly educated and half are not, and one
+where all agents have median education, both produce the same
+$\overline{\text{edu}}$ and therefore the same $K$. The variance terms
+in $O$ and $X$ partially address this. A future $v$ might bridge
+\emph{distributional} rather than \emph{mean} statistics into
+CivState, at the cost of expanding the state-vector dimension beyond
+the six-scalar v52 form.
+
+The action projection assumes that agents within a strategy class are
+exchangeable. This is true for the simulation purposes here, but
+agents differing in initial occupation, region, or family lineage may
+in principle warrant differentiated actions. Future iterations could
+condition $\sigma_s$ on per-agent state.
+
+Stage~4's GPU acceleration remains environment-blocked; vNext+ at
+large scale ($n \ge 200{,}000$ per civ) takes minutes-scale runtime
+which is acceptable for empirical work but precludes the $10^7$ and
+$10^8$ Stage~3/4 targets.

@@ -1,0 +1,140 @@
+% chapters/ch32_u_def_01.tex
+% Chapter 32 (Part IV): U-DEF-01 Addendum — Conflict Resolution
+% Source: NRMO_v5_updated.pdf, Part IV (lines 10302-10334 of v5_layout.txt)
+
+\chapter{U-DEF-01 Addendum --- Conflict Resolution}
+\label{ch:u-def-01}
+
+\nrmobox{Document identification}{
+\textbf{Title}: NRMO Unified Specification | Addendum U-DEF-01\\[0.3em]
+\textbf{Subtitle}: NRMO Unified Specification Theoretical Unification
+Addendum\\[0.3em]
+\textbf{Insertion}: Between Part~I (v2.1) and Part~III
+(v4 Theoretical Foundation)\\[0.3em]
+\textbf{Author}: Takashi Ikeya | \textbf{Conflict ID}: U-DEF-01 |
+\textbf{Status}: ADOPTED | \textbf{Year}: 2026
+}
+
+% =====================================================================
+\section{Identified Conflict: U-DEF-01}
+\label{sec:u-def-01-conflict}
+
+A single formal conflict exists between the two constituent
+documents of this specification. All other design elements ---
+Phased Parallel Execution, $\varepsilon$-buffer update, Governance
+Toolkit, APSOC, DEADLOCK handler --- are mutually consistent.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Dimension} & \textbf{Part~I v2.1 (p.\,19)} & \textbf{Part~III / v4 Paper Def.\,3} \\
+\midrule
+
+$U(\pi)$ definition
+& ``Evaluated on survival'' --- conditional on $\tau_F = \infty$
+& $\liminf (1/T) E_\pi[\sum_{t=0}^{T-1} r_t]$ --- unconditional \\
+
+Risk
+& Zero-probability conditioning when $\mathrm{ruin} \to 1$
+& None; well-defined for all $\pi$ \\
+
+Role
+& Primary optimisation target (implicit)
+& Primary optimisation target (explicit) \\
+
+\bottomrule
+\end{tabularx}
+\caption[U-DEF-01 conflict]{The U-DEF-01 conflict: implicit vs.~
+explicit optimisation target with different domain conditioning.}
+\label{tab:u-def-01-conflict}
+\end{table}
+
+% =====================================================================
+\section{Resolution: Plan A}
+\label{sec:u-def-01-resolution}
+
+This Addendum adopts Plan A: \textbf{unconditional $U(\pi)$ is the
+canonical optimisation scalar}. The conditional form
+$U_{\mathrm{cond}}(\pi)$ is retained as an audit metric only.
+
+\paragraph{Decree U-DEF-01-A.}
+
+\begin{equation}
+U(\pi) := \liminf_{T \to \infty}
+\frac{1}{T} \mathbb{E}_\pi\!\left[
+\sum_{t=0}^{T-1} r(s_t, a_t)
+\right]
+\quad \text{(unconditional)}.
+\label{eq:u-def-01-canonical}
+\end{equation}
+
+This supersedes Part~I p.~19 (``evaluated on survival'').
+
+\paragraph{Rationale.}
+
+\begin{enumerate}
+\item Well-defined for all $\pi$ including high-ruin policies.
+\item Directly aligns with Theorem~1 (Ruin Dilution): $U(\pi) \le
+(1 - q) R_{\max}$ makes ruin-cost visible in the objective itself.
+\item For $\pi \in \mathrm{safe}(T, 0)$, unconditional $=$
+conditional since $P(\tau_F = \infty) = 1$.
+\end{enumerate}
+
+\paragraph{Prohibition U-DEF-01-P.}
+Using $U_{\mathrm{cond}}(\pi)$ as optimisation target in Algorithm~1
+Step~9 or as APSOC gate input is \textbf{prohibited}
+(equivalent to Chapter~33 Prohibition~\#1).
+
+% =====================================================================
+\section{Role Assignment After Resolution}
+\label{sec:u-def-01-role-assignment}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXc}
+\toprule
+\textbf{Metric} & \textbf{Role} & \textbf{Computed in} & \textbf{Optimisation?} \\
+\midrule
+
+$U(\pi)$ unconditional
+& Primary scalar
+& Algorithm~1 Step~9
+& YES \\
+
+$U_{\mathrm{cond}}(\pi)$ conditional
+& Audit / interpretation metric
+& Evidence Capsule (read-only)
+& NO \\
+
+$q = P(\tau_F \le T)$
+& Constraint certificate
+& APSOC Gate / CVaR
+& Constraint only \\
+
+\bottomrule
+\end{tabularx}
+\caption[U-DEF-01 role assignment]{Role assignment after U-DEF-01-A
+resolution. Only $U(\pi)$ is an optimisation target.}
+\label{tab:u-def-01-roles}
+\end{table}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item U-DEF-01-A directly affects Part~V Theorem~1 (Ruin Dilution):
+the unconditional definition makes the bound $U(\pi) \le (1 - q)
+R_{\max}$ a direct theorem, not a conditional one.
+\item Algorithm~1 (Phased Parallel Execution) in Part~V Step~9
+returns $\arg\max_{o \in O_{\mathrm{valid}}} U(\pi_o)$ ---
+unconditional.
+\item APSOC Gate input (CVaR ruin upper bound) uses the constraint
+side $q$, not $U_{\mathrm{cond}}$.
+\item In the engineering implementation (Part~X), the v2.5 codebase
+metrics module computes both $U$ and $U_{\mathrm{cond}}$;
+$U_{\mathrm{cond}}$ is logged audit-only, $U$ feeds the scoring
+loop.
+\end{itemize}

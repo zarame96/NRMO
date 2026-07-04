@@ -1,0 +1,737 @@
+% chapters/ch12_operational_refinements.tex
+% Chapter 12: Operational Refinements + APCSO formal theory + applied guide
+% Source: NRMO_v5_updated.pdf, Chapter 12 (lines 7331-7941 of v5_layout.txt)
+
+\chapter{Operational Refinements --- APCSO Formal Theory and
+Applied Guide}
+\label{ch:operational-refinements}
+
+This chapter completes the v2.1 operational refinements with three
+additional sections:
+
+\begin{itemize}
+\item Limitations and future work (extending
+Section~\ref{sec:invariants-limitations}).
+\item APCSO --- A Chance-Constrained Autonomy-Preserving
+Optimisation Framework for Non-Ruin Decision Shaping (formal
+theory).
+\item APCSO Operational \& Applied Guide --- from theory to
+practice.
+\end{itemize}
+
+% =====================================================================
+\section{Section 5.3: Abuse Detection Formalisation}
+\label{sec:abuse-detection-formalisation}
+
+\paragraph{Current state.}
+Abuse patterns are detected via heuristics. No formal guarantee
+exists that all misuse will be caught.
+
+\paragraph{Known gaps.}
+\begin{itemize}
+\item Sophisticated misuse may evade pattern matching.
+\item False positives require human review (resource cost).
+\item Detection thresholds are implementation-dependent.
+\end{itemize}
+
+\paragraph{Future work.}
+Develop formal verification methods for governance-layer integrity
+through theoretical analysis and statistical anomaly detection.
+
+% =====================================================================
+\section{Section 5.4: Zero-Risk Classification}
+\label{sec:zero-risk-classification}
+
+\paragraph{Current state.}
+Determining whether an action truly satisfies $\varepsilon = 0$ and
+irreversibility $= 0$ requires human judgement. Edge cases exist.
+
+\paragraph{Example ambiguity.}
+A ``reversible'' social experiment may have irreversible cultural
+effects. The boundary between zero-risk and low-risk can be
+disputed.
+
+\paragraph{Future work.}
+Develop clearer taxonomies for action classification and establish
+review processes for boundary cases.
+
+% =====================================================================
+\section{Section 5.5: Long-Term Co-Evolution}
+\label{sec:long-term-coevolution}
+
+\paragraph{Unsolved problem.}
+NRMO and the institutional context co-evolve over decades. The
+renewal protocol addresses parameter drift, but broader questions
+remain:
+
+\begin{itemize}
+\item How does NRMO adapt to fundamental value shifts?
+\item Can the system recognise when its own assumptions are
+obsolete?
+\item What triggers wholesale re-design vs incremental refinement?
+\end{itemize}
+
+\paragraph{Informal recommendation.}
+Periodic reflective review (e.g., annual or decadal) asking:
+
+\begin{quote}
+\itshape
+What did NRMO prevent that, in hindsight, should have been
+permitted?
+\end{quote}
+
+\noindent
+This is not formalised and relies on institutional discipline, not
+algorithmic enforcement.
+
+% =====================================================================
+\section{Summary of Contributions (v2.1 Amendments)}
+\label{sec:v21-summary}
+
+NRMO v2.1 Amendments introduce four operational refinements to
+address degradation patterns observed in long-term deployment:
+
+\begin{enumerate}
+\item \textbf{Parameter Renewal Protocol} prevents $\varepsilon$
+ossification through periodic re-approval with mandatory log review.
+\item \textbf{HOLD State Refinement} prevents indefinite stasis by
+operationalising exit conditions.
+\item \textbf{Zero-Risk Fast Path} enables computational optimisation
+for trivially safe actions.
+\item \textbf{Abuse Pattern Detection} provides operational
+safeguards against vocabulary misuse.
+\end{enumerate}
+
+\subsection{Theoretical Integrity}
+
+Core theoretical guarantees are preserved:
+
+\begin{itemize}
+\item Non-Ruin constraint
+$P(\mathrm{Ruin} \mid \pi, \varepsilon) \le \varepsilon$ remains
+enforced.
+\item State space $S = \{\mathrm{ACTIVE}, \mathrm{HOLD},
+\mathrm{EXIT}, \mathrm{SAFE\_EXIT}\}$ unchanged.
+\item APCSO 3-choice output structure maintained.
+\item Autonomy preservation principles intact.
+\item No optimisation, ranking, or single-recommendation introduced.
+\end{itemize}
+
+\subsection{Operational Robustness}
+
+Operational improvements achieved:
+
+\begin{itemize}
+\item Parameter evolution enabled while maintaining theoretical
+bounds.
+\item State stasis prevented through explicit exit conditions.
+\item Creative actions facilitated without compromising safety.
+\item Misuse patterns monitored and escalated.
+\end{itemize}
+
+\subsection{Design Philosophy}
+
+The goal is not to make NRMO more permissive or more restrictive,
+but to ensure it \emph{remains adaptive without compromising
+invariants}. The system must preserve flexibility at the governance
+layer while maintaining rigid constraints at the theoretical core.
+
+\nrmobox{v2.1 design principle}{
+\centering
+\textit{The world can challenge NRMO's parameters, but not its
+guarantees.}
+}
+
+\subsection{Future Directions}
+
+Key areas for continued research and development:
+
+\begin{itemize}
+\item Formalisation of $\varepsilon$-governance mechanisms.
+\item Verification methods for governance-layer integrity.
+\item Automated detection of parameter drift and abuse patterns.
+\item Long-term co-evolution frameworks for NRMO and institutional
+contexts.
+\item Empirical validation through extended deployment case
+studies.
+\end{itemize}
+
+\subsection*{Document status}
+
+\begin{tabular}{ll}
+NRMO v2.1 Amendments Status: & Approved for Integration \\
+Classification:               & Core Structure Corrections \\
+Core Theory:                  & v2.0 Invariants Preserved \\
+Recommended Adoption:         & Incremental deployment with
+monitoring \\
+\end{tabular}\\[0.4em]
+
+\paragraph{Manifest.}
+NRMO Core v1.2.7 / Passive Pattern v1.5 / APCSO (operational +
+applied additions).
+\textbf{Update Pack}: v1.2.8 (HTML operational changes).
+
+% =====================================================================
+\section{APCSO --- A Chance-Constrained, Autonomy-Preserving
+Optimisation Framework for Non-Ruin Decision Shaping}
+\label{sec:apcso-formal}
+
+\nrmobox{Critical amendment: APCSO}{
+\textbf{Structure}: APCSO operates between Passive Pattern and
+NRMO Core.\\[0.3em]
+Pipeline: PP $\to$ APCSO $\to$ NRMO. APCSO does \emph{not} replace
+NRMO Core; it shapes the choice set before NRMO admissibility
+verification.
+}
+
+\subsection{Abstract}
+
+We introduce \emph{Autonomy-Preserving Choice-Set Optimisation}
+(APCSO), a human-in-the-loop optimisation framework that shapes
+decision \emph{environments} rather than selecting actions. APCSO
+maximises mutual gain subject to explicit Non-Ruin constraints,
+formally bounding the probability of irreversible breakdown. Human
+autonomy is preserved by emitting unordered proposal sets instead of
+ranked recommendations. We present a formal mathematical
+formulation, complementary governance layers, a non-reducibility
+argument, and an illustrative toy model.
+
+\subsection{Introduction}
+
+Many decision-support systems fail by over-optimising, collapsing
+autonomy, or inducing irreversible commitment. APCSO addresses this
+failure mode by optimising the \emph{structure} of available choices
+under explicit ruin constraints. APCSO is architecturally separated
+from suppressive safety layers and operates only where reversibility
+remains.
+
+\subsection{System Architecture}
+
+\begin{itemize}
+\item \textbf{NRMO Core}: Non-Ruin principle; no decision-making.
+\item \textbf{Passive Pattern v1.5}: suppression-only safety layer.
+\item \textbf{Autonomy-Preserving Choice-Set Optimisation (APCSO)}:
+choice-set optimisation.
+\item \textbf{$\varepsilon$-Governance / Policy Layer (external)}:
+external authority for $\varepsilon$.
+\item \textbf{Shadow Optimization Layer (non-executable)}.
+\item \textbf{Autonomy Firewall / UI Layer}.
+\item \textbf{Narrative / Ethics Layer (post-hoc)}.
+\end{itemize}
+
+\subsection{State, Observation, and Belief}
+
+Let $s_t \in S$ denote a latent decision-relevant state. Observations
+$o_t \in O$ induce a belief distribution:
+
+\begin{equation}
+b_t(s) = \Pr(s_t = s \mid o_{0:t}).
+\label{eq:apcso-belief}
+\end{equation}
+
+\subsection{Proposal Set Structure}
+
+APCSO outputs an unordered proposal set of exactly three elements:
+
+\begin{equation}
+\mathbf{a}_t = \{a_t^{(1)}, a_t^{(2)}, a_t^{(3)}\} \subset A.
+\label{eq:apcso-proposal-set}
+\end{equation}
+
+\begin{itemize}
+\item No ranking or preference is expressed.
+\item At least one proposal must be a hold or exit option.
+\end{itemize}
+
+\subsection{Ruin Definition}
+
+\begin{equation}
+R = R_{\mathrm{irr}} \cup R_{\mathrm{aut}} \cup R_{\mathrm{lock}}.
+\label{eq:apcso-ruin-set}
+\end{equation}
+
+Ruin is absorbing and irreversible once entered.
+
+\subsection{Conservative Upper Bound on Ruin Probability}
+
+\begin{equation}
+\widehat{p}_R(a, b) =
+\sup_{s \in \mathrm{supp}(b)} \Pr(R \mid s, a).
+\label{eq:apcso-ruin-upper}
+\end{equation}
+
+\subsection{Mutual-Gain Utility}
+
+\begin{equation}
+U_{\mathrm{mg}}(s, a) =
+\bigl(U_{\mathrm{self}}(s, a),\,
+U_{\mathrm{other}}(s, a),\,
+-I(a, s)\bigr).
+\label{eq:apcso-utility}
+\end{equation}
+
+\noindent
+Utility is evaluated only up to Pareto improvement.
+
+\subsection{Optimisation Problem}
+
+\begin{equation}
+\max_{\mathbf{a} \subset A,\, |\mathbf{a}| = 3}
+\mathbb{E}_{s \sim b}[U_{\mathrm{mg}}(s, \mathbf{a})]
+\quad \text{s.t.} \quad
+\widehat{p}_R(\mathbf{a}, b) \le \varepsilon.
+\label{eq:apcso-optimisation}
+\end{equation}
+
+\subsection{Complementary Layers (Formal Theory)}
+
+\subsubsection{$\varepsilon$-Governance / Policy Layer}
+
+\begin{equation}
+\varepsilon \in [\varepsilon_{\min}, \varepsilon_{\max}].
+\end{equation}
+
+Risk tolerance is determined externally by governance and never
+optimised by APCSO.
+
+\subsubsection{Shadow Optimisation}
+
+\begin{equation}
+a_t^{\mathrm{shadow}} =
+\arg\max \mathbb{E}[U_{\mathrm{mg}}].
+\end{equation}
+
+Shadow results are never executable and are used solely for learning
+and calibration.
+
+\subsubsection{Autonomy Firewall / UI}
+
+\begin{equation}
+A_{\mathrm{afford}}(t) = \mathbf{a}_t.
+\end{equation}
+
+The firewall restricts availability without coercing choice.
+
+\subsubsection{Narrative / Ethics Layer}
+
+\begin{equation}
+\frac{\partial \mathcal{N}}{\partial U_{\mathrm{mg}}} = 0,
+\qquad
+\frac{\partial \mathcal{N}}{\partial \varepsilon} = 0.
+\end{equation}
+
+Meaning attribution is strictly post-hoc and non-interfering.
+
+\subsection{Non-Reducibility to Existing Frameworks}
+
+APCSO is not reducible to CMDPs, Safe RL, or Mechanism Design. Those
+frameworks optimise actions or policies; APCSO optimises the choice
+set itself under autonomy constraints and outputs unordered feasible
+sets.
+
+\subsection{Toy Model Illustration}
+
+Consider a two-state system $s \in \{\mathrm{safe},
+\mathrm{fragile}\}$. An aggressive action is safe in isolation but
+induces irreversible ruin when combined with commitment.
+Action-centric optimisation selects it; APCSO excludes it by
+structuring the choice set.
+
+\subsection{Limitations}
+
+\begin{itemize}
+\item $\varepsilon$ is exogenous and governance-dependent.
+\item Adversarial or self-destructive agents are out of scope.
+\item Zero-sum or symbolic conflicts may not be expressible as
+mutual-gain utilities.
+\end{itemize}
+
+\paragraph{Formal status.}
+This document defines the complete Autonomy-Preserving Choice-Set
+Optimisation (APCSO) theory, including complementary governance
+layers, non-reducibility arguments, and an illustrative toy model.
+NRMO Core and Passive Pattern v1.5 remain unchanged.
+
+% =====================================================================
+\section{APCSO Operational \& Applied Guide --- From Theory to
+Practice}
+\label{sec:apcso-applied-guide}
+
+\subsection{Purpose of This Document}
+
+This document operationalises the APCSO theory for real-world use.
+It does not redefine the theory; instead, it specifies execution
+patterns, governance hooks, and applied examples that can be safely
+deployed without violating Non-Ruin guarantees.
+
+\subsection{When APCSO Should Be Activated}
+
+\begin{itemize}
+\item Decisions with irreversible downside risk.
+\item Human-in-the-loop judgement must be preserved.
+\item Optimisation pressure exists but must be bounded.
+\end{itemize}
+
+\subsection{Operational Pipeline}
+
+\begin{enumerate}
+\item Passive Pattern Safety Check (halt if triggered).
+\item Belief Update from observations.
+\item $\varepsilon$ retrieval from Governance Layer.
+\item Shadow Optimisation (optional, non-executable).
+\item APCSO proposal-set optimisation.
+\item Autonomy Firewall enforcement.
+\item Narrative / Ethics explanation (post-hoc).
+\end{enumerate}
+
+\subsection{$\varepsilon$-Governance in Practice}
+
+In deployment, $\varepsilon$ should be treated as a policy artefact,
+not a tuning parameter. Typical stratification:
+
+\begin{itemize}
+\item Strategic decisions: $\varepsilon \in [0.01, 0.05]$.
+\item Operational decisions: $\varepsilon \in [0.05, 0.15]$.
+\item Exploratory / R\&D contexts: $\varepsilon \in [0.15, 0.30]$.
+\end{itemize}
+
+\subsection{Applied Examples (Industry-Specific)}
+
+\subsubsection{Corporate Strategy Decision}
+
+A board must choose whether to enter a new market with irreversible
+capital commitments. APCSO structures proposals as:
+
+\begin{itemize}
+\item Market entry with capped exposure.
+\item Pilot project with exit clause.
+\item Hold / defer decision.
+\end{itemize}
+
+\subsubsection{AI System Deployment}
+
+An AI team considers deploying a model with uncertain social impact.
+APCSO ensures one proposal is a rollback-capable deployment and one
+is non-deployment.
+
+\subsubsection{Personal High-Stakes Decision}
+
+In career or life decisions, APCSO prevents binary framing by forcing
+a reversible alternative into the choice set.
+
+\subsubsection{Public Policy / Regulation}
+
+When introducing new regulations with irreversible social impact,
+APCSO structures proposals as phased trials, sunset clauses, and
+explicit non-action options, bounding systemic ruin.
+
+\subsubsection{Healthcare / Clinical Governance}
+
+For high-risk clinical or institutional decisions, APCSO enforces
+reversible pilot protocols and ethics-review exit paths within the
+proposal set.
+
+\subsubsection{Finance / Capital Allocation}
+
+In capital deployment, APCSO ensures that at least one proposal
+preserves liquidity and prevents lock-in, mitigating tail-risk
+exposure.
+
+\subsection{Metrics for Ongoing Monitoring}
+
+\begin{itemize}
+\item Observed vs estimated ruin probability.
+\item Frequency of hold / exit selections.
+\item Shadow vs executable divergence.
+\end{itemize}
+
+\subsection{Failure Modes and Safeguards}
+
+\begin{itemize}
+\item $\varepsilon$ drift without governance review.
+\item Shadow optimisation leaking into execution.
+\item UI bypass of Autonomy Firewall.
+\end{itemize}
+
+\subsection{Operational Checklist (SOP)}
+
+\begin{enumerate}
+\item Confirm APCSO applicability (irreversibility and ruin risk
+present).
+\item Run Passive Pattern safety check (halt if triggered).
+\item Retrieve $\varepsilon$ from Governance Layer (document
+authority).
+\item Execute Shadow Optimisation strictly offline.
+\item Generate exactly three proposals (incl. hold / exit).
+\item Validate ruin upper-bound $\le \varepsilon$ for all proposals.
+\item Enforce Autonomy Firewall at UI / process level.
+\item Log human choice without preference inference.
+\item Attach Narrative explanation post-hoc only.
+\end{enumerate}
+
+\subsection{End-to-End Operational Scenario (90-Day Example)}
+
+\paragraph{Scenario.}
+New business initiative with irreversible capital exposure.
+
+\begin{description}
+\item[Day 0] APCSO activation approved; $\varepsilon$ set by
+executive governance.
+\item[Day 7] Shadow Optimisation explores aggressive expansion
+(non-executable).
+\item[Day 14] APCSO generates proposal set: capped entry / pilot /
+hold.
+\item[Day 30] Human selects pilot option; monitoring begins.
+\item[Day 60] Ruin indicators reviewed; $\varepsilon$ unchanged.
+\item[Day 90] Exit clause exercised or scaled entry proposed.
+\end{description}
+
+\subsection{Failure Scenarios (Negative Cases)}
+
+\subsubsection{$\varepsilon$ Drift Failure}
+
+$\varepsilon$ is gradually increased without governance review,
+leading to silent accumulation of ruin risk. This violates
+$\varepsilon$-Governance separation and invalidates APCSO
+guarantees.
+
+\subsubsection{Shadow Leakage Failure}
+
+Shadow Optimisation outputs are exposed to decision-makers, biasing
+human choice toward aggressive actions. This collapses autonomy and
+reintroduces covert ranking.
+
+\subsubsection{Hold-Option Erosion}
+
+Hold / exit proposals are repeatedly framed as inferior, effectively
+removing reversibility. APCSO degenerates into action optimisation.
+
+\subsection{Role and Responsibility Decomposition}
+
+\begin{itemize}
+\item \textbf{Governance Authority}: defines and revises
+$\varepsilon$.
+\item \textbf{APCSO Operator}: generates proposal sets and validates
+constraints.
+\item \textbf{Shadow Analyst}: runs non-executable exploration only.
+\item \textbf{Human Decision-Maker}: selects freely among proposals.
+\item \textbf{Auditor}: verifies Autonomy Firewall and process
+compliance.
+\item \textbf{Narrative Owner}: provides post-hoc explanation only.
+\end{itemize}
+
+\subsection{Advanced Applications (Applied Extensions)}
+
+\subsubsection{Multi-Stage APCSO (Recursive Deployment)}
+
+Multi-Stage APCSO addresses decisions whose consequences unfold over
+extended horizons. Let the outcome of stage $k$ update the belief
+$b_{k+1}$:
+
+\begin{equation}
+b_{k+1} = \mathrm{Update}(b_k, o_k).
+\end{equation}
+
+APCSO is re-invoked at each stage. The key constraint is that
+$\varepsilon$ remains fixed across stages unless explicitly updated
+by Governance. This prevents gradual normalisation of risk. Recursive
+APCSO therefore enables acceleration while preserving long-term
+Non-Ruin guarantees.
+
+\subsubsection{Portfolio-Level APCSO (Ruin Budget Allocation)}
+
+Organisations often face multiple concurrent decisions.
+Portfolio-Level APCSO introduces a global ruin budget
+$\varepsilon_{\mathrm{total}}$, allocated across $N$ initiatives:
+
+\begin{equation}
+\sum_{i=1}^N \varepsilon_i \le \varepsilon_{\mathrm{total}}.
+\end{equation}
+
+Each local APCSO instance must satisfy its assigned $\varepsilon_i$.
+This enforces systemic stability even when individual projects
+pursue aggressive trajectories.
+
+\subsubsection{Crisis Mode Operation}
+
+In crisis conditions (time pressure, incomplete information), APCSO
+operates in a constrained mode. Proposal diversity may be reduced,
+but invariants must hold:
+
+\begin{itemize}
+\item At least one explicit hold / exit option.
+\item No $\varepsilon$ expansion; $\varepsilon$ tightening is
+preferred.
+\item Shadow Optimisation remains isolated.
+\end{itemize}
+
+\subsubsection{Human Bias Mitigation Layer}
+
+APCSO should be paired with bias-mitigation techniques: randomised
+order, neutral framing, and visual symmetry.
+
+\subsubsection{Institutional Scaling and Federation}
+
+Local APCSO units operate under a global $\varepsilon$ ceiling
+enforced by central governance:
+
+\begin{equation}
+\varepsilon_{\mathrm{local}} \le \varepsilon_{\mathrm{global}}.
+\end{equation}
+
+\subsubsection{Adversarial and Political Environments}
+
+APCSO may be applied internally in adversarial settings to structure
+irreversible commitments while treating adversaries as uncertainty.
+
+\subsubsection{Termination and Exit Protocols}
+
+If belief uncertainty exceeds model validity or $\varepsilon$ cannot
+be supplied, APCSO must suspend and defer to Passive Pattern halt.
+
+\subsection{Implementation Mapping (Code Correspondence Table)}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Theory component} & \textbf{Implementation layer} & \textbf{Typical artefacts} \\
+\midrule
+Belief State $b_t$
+& State Estimation
+& Bayesian updater, belief store, uncertainty tracker \\
+
+$\varepsilon$-Governance
+& Policy / Config
+& Policy file, approval workflow, configuration service \\
+
+Shadow Optimisation
+& Offline Analytics
+& Simulation jobs, notebooks, sandboxed optimisers \\
+
+APCSO Optimiser
+& Core Service
+& Proposal generator, constraint checker \\
+
+Ruin Upper Bound
+& Risk Engine
+& Worst-case estimator, safety validator \\
+
+Autonomy Firewall
+& Interface / Process
+& UI gating, API allow-list, procedural controls \\
+
+Narrative Layer
+& Explanation / Reporting
+& Post-hoc report generator, audit logs \\
+
+Passive Pattern Safety
+& Interrupt
+& Kill-switch, circuit breaker \\
+
+\bottomrule
+\end{tabularx}
+\caption[APCSO implementation mapping]{APCSO theoretical components
+and their typical implementation artefacts. The mapping is
+illustrative and does not mandate a specific technology stack.}
+\label{tab:apcso-implementation}
+\end{table}
+
+This mapping intentionally avoids executable pseudo-code. Its
+purpose is to clarify separation-of-concerns and prevent unsafe
+coupling between layers.
+
+\subsection{Product Archetype and Design Boundaries}
+
+This section defines the abstract product design compatible with
+APCSO. It intentionally avoids concrete specifications, UI mockups,
+or implementation details. Its purpose is to prevent misconstruction
+while enabling safe instantiation.
+
+\subsubsection{Product Archetype}
+
+An APCSO-compatible product is a Decision Support Infrastructure,
+not a decision-maker. Its core function is to structure feasible
+choices under Non-Ruin constraints, while explicitly delegating
+judgement to humans or institutions.
+
+\begin{itemize}
+\item Primary role: choice-set generation and validation.
+\item Non-role: action selection, ranking, or execution.
+\end{itemize}
+
+\subsubsection{Acceptable Product Forms}
+
+\begin{itemize}
+\item Internal governance tool.
+\item Advisory layer embedded in existing workflows.
+\item Audit and review infrastructure.
+\end{itemize}
+
+\subsubsection{Prohibited Product Patterns}
+
+\begin{itemize}
+\item Automatic execution engines.
+\item Recommendation systems with ranked outputs.
+\item Interfaces that expose $\varepsilon$ tuning to end-users.
+\item Dashboards that surface Shadow Optimisation results.
+\end{itemize}
+
+\subsubsection{Human-Product Boundary}
+
+The product must preserve a clear separation:
+
+\begin{itemize}
+\item The system structures options.
+\item The human selects and bears responsibility.
+\end{itemize}
+
+\subsubsection{Governance and Accountability}
+
+The product must make visible who supplied $\varepsilon$, who
+approved APCSO activation, and when termination conditions apply.
+However, it must not enforce or suggest normative judgements.
+
+\subsubsection{Anti-Pattern Warning}
+
+If a product design attempts to optimise user behaviour, persuasion,
+or compliance, it violates APCSO's autonomy-preserving premise and
+must be rejected.
+
+\subsection{Relationship to Core Theory}
+
+All operational practices here respect the formal constraints of the
+APCSO theory and must be suspended if Passive Pattern v1.5 or NRMO
+Core triggers a halt. This operational guide is a companion document
+to the formal APCSO theory. It is non-normative, non-binding, and
+intended solely for safe application.
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item APCSO is the formal mathematical core of the choice-set system
+referenced in the v2.1 invariants
+(Section~\ref{sec:inv-apcso}).
+\item Equation~\ref{eq:apcso-optimisation} (the constrained
+optimisation problem) is the action-side analogue of the
+admissibility-set construction
+$\Pi_{\mathrm{safe}}(T, \varepsilon)$ in
+Section~\ref{sec:foundations-3-1-definition}.
+\item The chance constraint
+$\widehat{p}_R(\mathbf{a}, b) \le \varepsilon$ in
+Equation~\ref{eq:apcso-ruin-upper} is the local form of the
+robust chance constraint $\sup_{P \in \mathcal{P}}
+P_{\pi, P}(\tau_F \le T) \le \varepsilon$ used in the arXiv paper
+(Part~VII).
+\item The complementary governance layers (Shadow Optimisation,
+Autonomy Firewall, Narrative Layer) correspond to the
+governance--execution separation invariant
+(Invariant~\ref{inv:gov-exec-sep}).
+\item The Multi-Stage APCSO recursion is the cognitive analogue of
+the Long-Horizon Drift Control of $\Omega$ Full v5.0 (Part~IX),
+which uses a sustainable-growth estimator and
+$\lambda_{\mathrm{drift}}$ penalty to prevent gradual normalisation
+in extended horizons.
+\end{itemize}

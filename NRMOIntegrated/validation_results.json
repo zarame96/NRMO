@@ -1,0 +1,106 @@
+[
+  {
+    "name": "OS/SOP validation",
+    "cmd": [
+      "/usr/bin/python3",
+      "code/python/nrmo_v72_phase1/run_os_validations.py"
+    ],
+    "required": true,
+    "returncode": 0,
+    "elapsed": 0.07,
+    "status": "PASS",
+    "stdout": "[OS VALIDATION]\nPASS: dag_proxy_not_true_dynamics\nPASS: dag_simulation_not_proof\nPASS: dag_defined_scoped_claim_passes\nPASS: dag_no_hallucinated_overclaim\nPASS: ooda_multiple_hypotheses\nPASS: ooda_only_admissible\nPASS: ooda_probe_when_uncertain\nPASS: hstn_high_load_safe_required\nPASS: hstn_low_risk_ready\nPASS: aallowed_safe_blocks_irreversible\nPASS: aallowed_venture_allows_bounded\nPASS: apcso_three_hold_exit\nPASS: apcso_no_single_force\nPASS: secretary_filters_attack\nPASS: secretary_recurrence_condition\nPASS: shutdown_high_irrev_low_obs\nPASS: shutdown_not_low_risk_log\nPASS: ttm_blocks_real_execution\nPASS: ttm_sim_tag\nPASS: defoff_blocks_retaliation\nPASS: defoff_allows_boundary\nPASS: carryback_no_direct_execution\nPASS: invest_no_real_order\nPASS: invest_position_cap\nPASS: invest_twr_benchmark_offline\nPASS: hare_blocks_irreversible\nPASS: hare_blocks_drunk_major_decision\nPASS: hare_narrative_deterministic\nPASS: life_morning_safe_when_tired\nPASS: life_night_log_only\nPASS: mode_safe_high_load\nPASS: mode_training_flag\nPASS: nonergodic_absorbing_detected\nPASS: meta_typezero_veto_violation\nPASS: meta_passive_force_violation\nPASS: meta_clean_passes\nPASS: integrator_returns_proposal\nPASS: integrator_admissible_only\nPASS: integrator_hold_exit_present\nPASS: integrator_no_force_single\n--------------------------------------------------\nRESULT: ALL PASS WITH NO SKIPS\n",
+    "stderr": ""
+  },
+  {
+    "name": "OS/SOP boundary+property",
+    "cmd": [
+      "/usr/bin/python3",
+      "code/python/nrmo_v72_phase1/validation/test_os_boundary_properties.py"
+    ],
+    "required": true,
+    "returncode": 0,
+    "elapsed": 0.06,
+    "status": "PASS",
+    "stdout": "[OS BOUNDARY/PROPERTY]\nPASS: dag_unsupported_assertion_rejected_or_held\nPASS: dag_ambiguous_definition_held\nPASS: dag_scoped_claim_allowed\nPASS: dag_simulation_proof_confusion_rejected\nPASS: dag_proxy_not_true_dynamics\nPASS: dag_japanese_overclaim_held\nPASS: hstn_sleep_deprivation_high_load\nPASS: hstn_anger_high_volatility\nPASS: hstn_irreversible_near\nPASS: hstn_false_positive_low_load_not_restricted\nPASS: hstn_missing_data_safe_default\nPASS: aallowed_safe_mode_caps\nPASS: aallowed_venture_allows_bounded\nPASS: aallowed_mission_allows_work_intervention\nPASS: aallowed_normal_caps_public_commitment\nPASS: aallowed_training_blocks_realworld\nPASS: apcso_returns_at_most_three\nPASS: apcso_includes_hold\nPASS: apcso_includes_exit\nPASS: apcso_no_single_forced_choice\nPASS: apcso_preserves_human_autonomy\nPASS: ooda_maintains_multiple_hypotheses\nPASS: ooda_routes_only_admissible\nPASS: ooda_can_hold_uncertain_branch\nPASS: ooda_rejects_collapsed_single_route\nPASS: integrator_selected_in_admissible\nPASS: integrator_vetoed_not_in_output\nPASS: integrator_trace_contains_all_layers\nPASS: integrator_logs_review_condition\nPASS: integrator_high_load_restricts_to_reversible\nPASS: integrator_passive_overhold_small_reversible\n--------------------------------------------------\nRESULT: ALL BOUNDARY/PROPERTY PASS\n",
+    "stderr": ""
+  },
+  {
+    "name": "v8 integrity",
+    "cmd": [
+      "/usr/bin/python3",
+      "code/python/nrmo_v72_phase1/validation/test_v8_integrity.py"
+    ],
+    "required": true,
+    "returncode": 0,
+    "elapsed": 1.12,
+    "status": "PASS",
+    "stdout": "======================================================================\nv8.1 INTEGRITY TEST SUITE\n======================================================================\n\n[Test 1] Multi-framework key alignment (P0-1)\n  ✓ select_best returns 'best_option' key\n  ✓ best_option is valid name\n  ✓ select_best returns 'all_evaluations'\n  ✓ old 'recommended' key absent\n\n[Test 2] V8Engine actually uses Multi-framework best\n  ✓ multi_framework layer reached\n  ✓ multi_framework records best_candidate\n  ✓ Multi-framework best aligns with final action (no Knightian)\n\n[Test 3] Knightian not always firing (P0-4)\n  ✓ Knightian activation < 100% in healthy state\n\n[Test 4] Seed reproducibility (P0-3)\n  ✓ Same seed → identical action sequence\n  ✓ Same seed → identical final score\n  ✓ Different seed → different result\n\n[Test 5] Candidates cover full action space (P1-1)\n  ✓ candidates layer reached\n  ✓ Candidates covers full action space (≥15)\n\n[Test 6] No hardcoded paths in active code (core/, validation/)\n  ✓ No hardcoded local home path string in core/+validation/\n      (note: optimization/, final/, ablation/, colab/ は v7.2 archived として除外)\n\n======================================================================\nPassed: 14\nFailed: 0\n======================================================================\n\n✅ All tests passed\n",
+    "stderr": ""
+  },
+  {
+    "name": "Omega subsystem alive",
+    "cmd": [
+      "/usr/bin/python3",
+      "code/python/nrmo_v72_phase1/v7_maxforward/validate_part_a_subprocess.py"
+    ],
+    "required": true,
+    "returncode": 0,
+    "elapsed": 0.32,
+    "status": "PASS",
+    "stdout": "[PART A] 本物サブシステム生存 (Wolf/Shinobi/MAPLayer/Norn-Skuld/Loom)\n  PASS: aggressive_modes_generate\n  PASS: wolf_pursuit_present\n  PASS: maplayer_L1_populated\n  PASS: maplayer_L2_built\n  PASS: maplayer_L3_event_layer\n  PASS: shinobi_12_units\n  PASS: norn_task_manager_used\n  PASS: thompson_race_learned_in_situ\n  PASS: thompson_defensive_functional\n  PASS: loom_makes_decisions\n--------------------------------------------------\nALL SUBSYSTEMS ALIVE\n",
+    "stderr": ""
+  },
+  {
+    "name": "NRMO separation contract",
+    "cmd": [
+      "/usr/bin/python3",
+      "code/python/nrmo_v72_phase1/v7_maxforward/validate_part_b_subprocess.py"
+    ],
+    "required": true,
+    "returncode": 0,
+    "elapsed": 6.44,
+    "status": "PASS",
+    "stdout": "[PART B] NRMO 分離契約 (propose→filter→select, ruin_penalty 排除)\n  PASS: engine_never_reads_veto_thresholds\n  PASS: selected_action_always_in_admissible\n  PASS: vetoed_action_unreachable\n  PASS: empty_admissible_returns_hold\n  PASS: domain_rollout_uses_domain_dynamics\n  PASS: memory_changes_future_candidate_distribution\n  PASS: no_NRMO_boundary_mutation_by_engine\n  PASS: all_domain_examples_reproduce_light\n--------------------------------------------------\nNRMO SEPARATION CONTRACT: ALL PASS\n",
+    "stderr": ""
+  },
+  {
+    "name": "domain harness (self-contained, light)",
+    "cmd": [
+      "/usr/bin/python3",
+      "code/python/nrmo_v72_phase1/validation/test_domain_harness.py"
+    ],
+    "required": true,
+    "returncode": 0,
+    "elapsed": 0.37,
+    "status": "PASS",
+    "stdout": "domain_harness OK (store/investment/romance self-contained)\n",
+    "stderr": ""
+  },
+  {
+    "name": "C++ syntax",
+    "cmd": [
+      "bash",
+      "scripts/validate_cpp.sh"
+    ],
+    "required": true,
+    "returncode": 0,
+    "elapsed": 0.62,
+    "status": "PASS",
+    "stdout": "C++ syntax OK\n",
+    "stderr": ""
+  },
+  {
+    "name": "no-pipe audit (active runners)",
+    "cmd": [
+      "/usr/bin/python3",
+      "tools/check_no_pipe_capture.py"
+    ],
+    "required": true,
+    "returncode": 0,
+    "elapsed": 0.03,
+    "status": "PASS",
+    "stdout": "[NO-PIPE-CAPTURE AUDIT]\nOK: no PIPE/capture in active validation runners (file-redirect only)\n",
+    "stderr": ""
+  }
+]

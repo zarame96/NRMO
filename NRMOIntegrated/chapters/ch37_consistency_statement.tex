@@ -1,0 +1,158 @@
+% chapters/ch37_consistency_statement.tex
+% Chapter 37 (Part VI): Structural Consistency Statement & Completion Checklist
+% Source: NRMO_v5_updated.pdf, Ch37 Final Declaration (lines 13130-13230 of v5_layout.txt)
+
+\chapter{Structural Consistency Statement \&
+Completion Checklist}
+\label{ch:consistency-statement-final}
+
+\nrmobox{Final declaration}{
+\textbf{Status}: Final Declaration\\[0.3em]
+\textbf{Version}: v5 (v2.1 base + v3 extensions + v5 additions)\\[0.3em]
+This document preserves NRMO Complete System v2.0 FINAL verbatim.
+Version 2.1 and later introduce additive extensions only. No
+foundational, operational, narrative, or external module content
+has been removed.
+}
+
+% =====================================================================
+\section{Structural Integrity Guarantees}
+\label{sec:final-integrity-guarantees}
+
+Structural integrity is guaranteed via:
+
+\begin{itemize}
+\item \textbf{Chapter Mapping Ledger}
+(Section~\ref{sec:chapter-mapping-ledger}).
+\item \textbf{Invariant Registry v2.0 and v2.1}
+(Sections~\ref{sec:v20-invariant-registry},
+\ref{sec:v21-invariant-registry}, and the global index in
+Section~\ref{sec:invariant-global-index}).
+\item \textbf{$\varepsilon$-Supply Formalisation}
+(Chapter~\ref{ch:epsilon-supply}).
+\item \textbf{Completion Checklist} (this chapter).
+\end{itemize}
+
+% =====================================================================
+\section{Completion Condition Checklist}
+\label{sec:final-checklist}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Condition} & \textbf{Status} & \textbf{Location} \\
+\midrule
+
+v2.0 all chapters present (45 chapters) & PASS & Parts I--II \\
+
+Chapter order maintained & PASS & Table of Contents \\
+
+Background explanation preserved & PASS & Foundational Reference \\
+
+Theoretical invariants & PASS & Theoretical Invariants Ch. \\
+
+v2.1 additions are additive only & PASS & Governance Structure
+Part \\
+
+Mapping table present & PASS & Governance Structure Ch. \\
+
+Invariant registry present & PASS & Theoretical Invariants Ch. \\
+
+$\varepsilon$ Supply formalised & PASS & $\varepsilon$ Supply
+Chapter \\
+
+Test suite present & PASS & Test Suite Chapter \\
+
+Compilable & PASS & (compile verification) \\
+
+Strong Engine / Separation & PASS & Strong Engine Chapters \\
+
+Life SOP present & PASS & Life SOP Chapter \\
+
+APCSO Operations Guide & PASS & APCSO Ops Chapter \\
+
+Hare-no-Hi full spec & PASS & Hare-no-Hi Chapter \\
+
+Investment SOP / TWR & PASS & Investment SOP Chapter \\
+
+DAG 4 Core Gates & PASS & DAG Layer Chapter \\
+
+$\varepsilon$ Change Protocol v2.1 & PASS & $\varepsilon$ Supply
+Chapter \\
+
+TTM 400 pattern catalog & PASS & TTM/PPS Chapter \\
+
+Context Handoff full (8 items) & PASS & Ch.\,0 Handoff \\
+
+Shutdown full trigger types & PASS & Foundational Reference \\
+
+Problem Classes I--V & PASS & Theoretical Foundation \\
+
+\bottomrule
+\end{tabularx}
+\caption[Final completion checklist]{Final Completion Condition
+Checklist for v5 Constitutional Edition.}
+\label{tab:final-completion-checklist}
+\end{table}
+
+% =====================================================================
+\section{Prohibition Confirmation}
+\label{sec:final-prohibitions}
+
+The following operations have \textbf{NOT} been performed in this
+document:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{0.85\linewidth}{Xc}
+\toprule
+\textbf{Prohibited operation} & \textbf{Confirmed absent} \\
+\midrule
+Improvement proposals & $\checkmark$ \\
+Redesign & $\checkmark$ \\
+Organisation & $\checkmark$ \\
+Ideological reconstruction & $\checkmark$ \\
+Simplification & $\checkmark$ \\
+Rewriting through integration & $\checkmark$ \\
+Deletion of v2.0 content & $\checkmark$ \\
+Wording changes & $\checkmark$ \\
+Reinterpretation & $\checkmark$ \\
+Chapter order changes & $\checkmark$ \\
+Meaning restructuring & $\checkmark$ \\
+Redundancy reduction & $\checkmark$ \\
+Rewriting through concept integration & $\checkmark$ \\
+Externalisation & $\checkmark$ \\
+Module reclassification & $\checkmark$ \\
+\bottomrule
+\end{tabularx}
+\caption[Prohibition confirmation]{Confirmation that prohibited
+operations were not performed during v4 $\to$ v5 reconstruction.}
+\label{tab:final-prohibitions}
+\end{table}
+
+% =====================================================================
+\section{Document Closure}
+\label{sec:final-closure}
+
+\nrmobox{Document closure}{
+\centering
+--- End of NRMO Complete System v5 ---\\[0.3em]
+v2.1 base + v3 R1-FIX extensions + v5 additions\\
+2026
+}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This chapter closes the v4 monograph. The v5.5 monograph
+extends it with Parts VII--XII (mathematical formalisation,
+simulator, $\Omega$ Full, engineering implementation, empirical
+validation, methodological notes).
+\item The integrity guarantees here apply to Parts I--VI; Parts
+VII--XII operate as additive extensions in the same spirit
+(no modification of existing structure).
+\end{itemize}

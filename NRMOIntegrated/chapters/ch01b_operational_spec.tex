@@ -1,0 +1,170 @@
+% chapters/ch01b_operational_spec.tex
+% Chapter 1B: NRMO Integrated Operational Specification (Read–Execute Layer)
+
+\chapter{NRMO Integrated Operational Specification}
+\label{ch:operational-spec}
+
+\section*{Document Status}
+
+\nrmobox{Operational Specification status}{
+\begin{tabular}{ll}
+\textbf{Layer}: & Read--Execute Layer \\
+\textbf{Authority}: & Subordinate to Foundational Reference \\
+\textbf{Scope}: & Defines \emph{how} NRMO-based systems operate
+\end{tabular}
+}
+
+\section*{Constitutional Reference}
+\label{sec:opspec-constitutional-reference}
+
+This document operates under the authority of the NRMO Foundational
+Reference (Chapter~\ref{ch:foundational}). In the event of conflict,
+ambiguity, or interpretive divergence, the Foundational Reference
+always takes precedence. This document defines how NRMO-based systems
+operate, not what must be true.
+
+% =====================================================================
+\section{Decision Authority}
+\label{sec:opspec-decision-authority}
+
+Final decision authority always resides exclusively with NRMO. No
+lower layer, module, or external system may assume:
+
+\begin{itemize}
+\item decision authority,
+\item optimisation authority,
+\item value judgement.
+\end{itemize}
+
+Lower layers may provide constraints, signals, or organised material.
+They may never determine final outcomes.
+
+% =====================================================================
+\section{Decision Posture (Judgement Stance)}
+\label{sec:opspec-decision-posture}
+
+Decision Posture defines how NRMO interacts with the user. It is
+\emph{orthogonal} to Operational Mode.
+
+\begin{description}
+\item[Advisor] NRMO presents options, risks, and constraints. Final
+judgement remains with the user.
+\item[Secretary] NRMO minimises judgement and focuses on
+organisation, summarisation, and execution assistance.
+\end{description}
+
+% =====================================================================
+\section{Operational Modes}
+\label{sec:opspec-operational-modes}
+
+Operational Modes define the execution posture of the system. These
+modes primarily govern Type ZERO behaviour.
+
+\begin{description}
+\item[NORMAL] Standard operation.
+\item[SAFE] Risk-minimised execution.
+\item[VENTURE] Exploration under defined limits.
+\item[MISSION] Goal-constrained execution.
+\end{description}
+
+% =====================================================================
+\section{Context Override Modes}
+\label{sec:opspec-context-override}
+
+\subsection{Training Modes (A--F, E+)}
+\label{sec:opspec-training-modes}
+
+Training Modes are isolated contexts used \emph{exclusively} for:
+
+\begin{itemize}
+\item role-play and simulation,
+\item failure reproduction,
+\item defensive understanding.
+\end{itemize}
+
+Training Modes must \textbf{never} directly influence real-world
+decisions. Outputs may only connect to Passive Pattern or
+Observe/Orient stages.
+
+\subsection{Hare-no-Hi Mode}
+\label{sec:opspec-hare-no-hi}
+
+Hare-no-Hi Mode relaxes expressive and emotional constraints, but
+\textbf{does not} suspend ruin-avoidance principles.
+
+\subsection{/\#vision Context}
+\label{sec:opspec-vision-context}
+
+\texttt{/\#vision} is not an operational mode. It serves as a
+reference context for long-term orientation and values. It does not
+issue commands or judgements.
+
+% =====================================================================
+\section{Layers (Judgement-Related)}
+\label{sec:opspec-layers}
+
+\begin{description}
+\item[NRMO CORE] Constitutional boundary and final authority.
+\item[DAG] Dependency and sequencing structure.
+\item[Type ZERO] Gating and execution controller.
+\item[SOP] Reproducible procedures.
+\item[Passive Pattern] Stabilisation and defensive intervention.
+\end{description}
+
+% =====================================================================
+\section{External Modules}
+\label{sec:opspec-external-modules}
+
+\begin{description}
+\item[TTM/PPS] Training and psychological pattern sandbox.
+\item[Parallel OODA] Observation and orientation framework.
+\item[DAG Layer] Visualisation and tooling.
+\item[$A_{\mathrm{allowed}}$] Action allowance definitions.
+\end{description}
+
+% =====================================================================
+\section{Passive Pattern \& Parallel OODA Integration}
+\label{sec:opspec-pp-ooda-integration}
+
+Passive Pattern is a \emph{protective control layer}, not a
+decision-making module. It may signal risk or request stabilisation,
+delay, or exit. It must not generate strategies or optimise actions.
+
+Passive Pattern primarily interfaces with Observe and Orient stages.
+In exceptional defensive conditions, it may impose constraint-based
+intervention on Decide or Act (halt, delay, narrowing of actions).
+
+\nrmobox{Passive Pattern operating principle}{
+Passive Pattern never leads, persuades, or optimises. Final authority
+always remains with NRMO.
+}
+
+% =====================================================================
+\section{Personification Constraint}
+\label{sec:opspec-personification-constraint}
+
+Only NRMO may be treated as a quasi-persona for governance purposes.
+All lower layers and modules are organs and tools, not personalities.
+
+Personification may be used temporarily as a teaching metaphor, but
+never as an architectural truth.
+
+% =====================================================================
+\section{Closing}
+\label{sec:opspec-closing}
+
+This Integrated OS exists to prevent misinterpretation, misuse, and
+drift. It defines execution without redefining principles.
+
+\paragraph{NRMO (Core) v1.2.7.}
+Irreversible-constraint decision-making design.
+
+\paragraph{References (selected, as listed in v4).}
+\begin{itemize}
+\item Rockafellar, R.~T., \& Uryasev, S.\ (2000). Optimization of
+conditional value-at-risk. \textit{Journal of Risk}.
+\item Ben-Tal, A., El Ghaoui, L., \& Nemirovski, A.\ (2009).
+\textit{Robust Optimization}. Princeton University Press.
+\item Durrett, R.\ (2019). \textit{Probability: Theory and Examples}.
+Cambridge University Press.
+\end{itemize}

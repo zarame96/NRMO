@@ -1,0 +1,1033 @@
+% chapters/ch_part9_omega_full.tex
+% Part IX Chapter: NRMO vNext Integrated Complete Specification v2.0
+% Source: NRMO_Integrated_Spec_v2.pdf — full pdftotext at /tmp/integrated.txt
+
+\chapter{NRMO vNext Integrated Complete Specification v2.0 ---
+StrongEngine $\Omega$ Full + Civilisation-Scale Design}
+\label{ch:omega-full-integrated}
+
+% =====================================================================
+\section*{v7 Realignment Note (Real-Side Primacy)}
+\addcontentsline{toc}{section}{v7 Realignment Note}
+
+\nrmobox{v7 structural correction}{
+In this v7 realignment, the StrongEngine $\Omega$ Full described in this
+chapter operates on the \textbf{real side} as the primary actor, over the
+true dynamics of each target domain. The civilisation simulation is itself
+one such real domain; the civ-sim side hosts only a MaxForwardEngine that
+imitates the StrongEngine to explore extremes and return a best score.
+}
+
+\paragraph{Maximum forward as default.}
+The $\Omega$ Full stack (Wolf Pursuit, Edge Survival Guard, Mutation /
+Synthesis / Invention) defaults to maximum forward movement over the
+domain's true dynamics. Wolf Pursuit attacks on favourable signals; Edge
+Survival Guard changes the \emph{direction} of advance at the ruin edge ---
+it does not stop. Stagnation and minimum-viable choices are excluded as
+passive ruin.
+
+\paragraph{Rollout uses the target domain (not a fixed civ-sim).}
+The MC rollout that scores candidates must use the target domain's true
+dynamics. Embedding a fixed civ-sim transition inside the engine caused the
+over-defensive collapse behind earlier ``poor numbers.'' The evaluation
+horizon must be long enough to credit compounding growth, otherwise the
+choice biases toward over-defense. Maximum forward is the default posture,
+not a universal optimum: the civ-sim layer discovers each world's true
+optimum (aggression, sustainable growth, or even extreme caution as in
+V9-minimum worlds). See the Realignment Master Spec.
+
+
+\index{Omega Full!Default Stack}
+\index{Wolf Pursuit Mode}
+\index{Edge Survival Guard}
+\index{Long-Horizon Drift Control}
+\index{30-civilisation roster}
+\index{Governance-Execution Separation}
+\nrmobox{Document identification}{
+\textbf{Title}: NRMO vNext Integrated Complete Specification\\[0.3em]
+\textbf{Subtitle}: Governance, Simulation, Validation, and
+Civilisation-Scale Design\\[0.3em]
+\textbf{Default Stack}: Adaptive NRMOvNext + StrongEngine $\Omega$
+Full\\[0.3em]
+\textbf{Status}: Integrated technical specification / research
+draft\\[0.3em]
+\textbf{Author}: Takashi Ikeya\\[0.3em]
+\textbf{Affiliation}: NRMO Research Framework\\[0.3em]
+\textbf{Date}: March 2026, Version 2.0 (Engine Revision Integrated)
+}
+
+\section*{Abstract}
+
+This specification is the complete integrated specification of NRMO
+vNext. It unifies the following into a single technical document:
+(1) constitutional principles, (2) ruin taxonomy, (3) active /
+passive ruin, (4) exposure sizing, (5) exploration floor, (6)
+amendment sandbox, (7) evaluation metrics, (8) logging protocol,
+(9) individual-scale simulation, (10) civilisation-scale simulation,
+(11) 30-civilisation casebook design, (12) detailed priority
+civilisation profiles.
+
+\paragraph{Default stack.}
+Adaptive NRMOvNext + StrongEngine $\Omega$ Full. $\Omega$ Full is a
+strategy-space-expansion engine, integrating mutation / synthesis /
+invention candidate-search-space expansion, Wolf Pursuit / Edge
+Survival Guard / Portfolio Synergy / Dual Objective / Long-Horizon
+Drift Control. Governance--execution separation is strictly observed,
+and RiskAdjustedUtility is exceeded across all horizons
+(200 / 500 / 1000).
+
+% =====================================================================
+\section{Executive Summary}
+\label{sec:omega-executive-summary}
+
+This document treats NRMO not as a generic productivity framework
+but as a long-horizon governance-first operating logic under the
+possibility of absorbing failure. The core claim is simple: states
+from which recovery is structurally impossible must be treated as
+hard constraints.
+
+This specification proposes a strengthened formulation NRMO-vNext,
+preserving the original core while sharpening the classification
+layer, permission layer, exploration layer, and amendment layer.
+
+\nrmobox{Default Stack}{
+Adaptive NRMOvNext + StrongEngine $\Omega$ Full is the baseline
+configuration.\\[0.3em]
+NRMO = governance only (ruin boundary, admissibility, veto).\\
+$\Omega$ Full = execution only (candidate generation / evaluation /
+portfolio).\\[0.3em]
+\textbf{These two layers must never merge}.
+}
+
+% =====================================================================
+\section{Scope and Positioning}
+\label{sec:omega-scope}
+
+This document integrates five normally-separated levels:
+
+\begin{enumerate}
+\item Constitutional principle.
+\item Operational governance logic.
+\item Measurable decision protocol.
+\item Synthetic simulation design.
+\item Civilisation-scale interpretation.
+\end{enumerate}
+
+% =====================================================================
+\section{Foundational Concepts}
+\label{sec:omega-foundational}
+
+\subsection{Absorbing Failure}
+\label{sec:omega-absorbing-failure}
+
+An absorbing failure state is a state from which recovery is
+impossible, or whose recovery cost is so high that it cannot be
+reasonably modelled. Optionality depletion.
+
+\subsection{Optionality}
+\label{sec:omega-optionality}
+
+Optionality is the preserved breadth of future action space.
+Resources, trust, health, institutional flexibility, temporal slack,
+strategic alternatives.
+
+\subsection{Active Ruin and Passive Ruin}
+\label{sec:omega-active-vs-passive}
+
+\begin{itemize}
+\item \textbf{Active ruin}: direct collapse from reckless action or
+uncontrolled expansion.
+\item \textbf{Passive ruin}: erosion of optionality from long-term
+avoidance, rigidity, insufficient exploration, adaptation failure.
+\end{itemize}
+
+The former is dramatic; the latter appears stable but often becomes
+terminal suddenly. Robust designs must address both.
+
+% =====================================================================
+\section{Design Principles}
+\label{sec:omega-design-principles}
+
+\begin{enumerate}
+\item \textbf{True ruin is a hard constraint}: if a candidate action
+increases the probability of entering true ruin state above a
+threshold, short-circuit.
+\item \textbf{Optionality is the long-horizon objective}: within the
+non-ruin domain, maintain future manoeuvrability and gain as much
+as possible.
+\item \textbf{Non-ruin is not enough}: even avoiding dramatic
+failure, slow death is possible. Insufficient exploration,
+rigidification, decision-space narrowing.
+\item \textbf{Intelligence is not authority}: execution capacity,
+exploration, and strategy generation must be downstream of
+governance constraints.
+\end{enumerate}
+
+% =====================================================================
+\section{NRMO vNext Core Reformulation}
+\label{sec:omega-core-reformulation}
+
+\textbf{Original}: Avoid absorbing ruin states.
+
+\textbf{Strengthened}:
+
+\begin{equation}
+\max\,\mathbb{E}\!\left[\sum_{t=0}^H \gamma^t G(S_t, a_t)\right]
+\quad \text{subject to} \quad
+\Pr(\mathrm{Ruin\ within\ } H) \le \alpha.
+\label{eq:omega-strengthened-objective}
+\end{equation}
+
+Here $G(S_t, a_t)$ = composite utility including growth, learning,
+optionality gain. $\alpha$ = maximum tolerable ruin probability.
+
+\nrmobox{NRMO vNext Core Statement}{
+Maximise long-horizon optionality, learning, and durable growth,
+subject to avoiding absorbing ruin states and monitoring both active
+and passive pathways to collapse.
+}
+
+% =====================================================================
+\section{Ruin Taxonomy}
+\label{sec:omega-ruin-taxonomy}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Layer} & \textbf{Meaning} & \textbf{Examples} & \textbf{Response} \\
+\midrule
+R4 & True ruin & Irreversible destruction; collapse of survival
+foundation & Hard stop / reject. \\
+R3 & Critical damage & Severe but recoverable damage & Hold,
+review, reduce exposure. \\
+R2 & Reversible loss & Project failure; bounded loss & Allow with
+controlled sizing. \\
+R1 & Noise & Discomfort, uncertainty, friction & Observe or ignore. \\
+\bottomrule
+\end{tabularx}
+\caption[Omega Ruin taxonomy]{Ruin taxonomy with four-layer
+classification.}
+\label{tab:omega-ruin-taxonomy}
+\end{table}
+
+\subsection{Active vs Passive Ruin}
+\label{sec:omega-active-passive-table}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Type} & \textbf{Mechanism} & \textbf{Example} \\
+\midrule
+Active ruin
+& Reckless action; uncontrolled expansion
+& Excessive leverage; ecologically destructive extraction; conflict
+escalation. \\
+
+Passive ruin
+& Insufficient adaptation; stagnation; rigidity
+& Technological obsolescence; social rigidification; strategic
+dependency; exploration collapse. \\
+
+\bottomrule
+\end{tabularx}
+\caption[Active vs passive ruin]{Active and passive ruin mechanisms
+and examples.}
+\label{tab:omega-active-passive}
+\end{table}
+
+% =====================================================================
+\section{Governance Architecture}
+\label{sec:omega-governance-arch}
+
+\nrmobox{Governance--Execution Separation}{
+\begin{itemize}
+\item NRMO = governance only: ruin classification, hard constraints,
+optionality governance, veto.
+\item Norn = interpretive governance perspective (preservation of
+structural consistency).
+\item StrongEngine $\Omega$ Full = execution only: search, scoring,
+portfolio construction.
+\item Merging of governance and execution is \textbf{prohibited}.
+\end{itemize}
+}
+
+\subsection{Default Stack Pipeline}
+\label{sec:omega-default-stack}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+World Model / Observation
+        |
+        v
+Context / Norn Layer
+        |
+        v
+Meta-Controller (5 Modes + Hysteresis)
+        |
+        v
+Adaptive Tuning Layer
+        |
+        v
+NRMO Core vNext (VETO ONLY)
+        |
+        v
+Admissible Action Set A_t
+        |
+        v
+StrongEngine Omega Full
+        |
+        v
+Portfolio Action a_t in A_t
+        |
+        v
+State Transition
+\end{lstlisting}
+
+\paragraph{Formal contract.}
+$A_t = \mathrm{NRMO}(X_t)$ --- governance defines admissibility.
+$a_t = \Omega(A_t)$ --- execution searches within admissibility.
+$a_t \in A_t$ must always hold.
+
+\subsection{Role of Norn}
+\label{sec:omega-role-of-norn}
+
+Norn is neither a decision-making subject nor an execution engine.
+It is an interpretive governance perspective preserving structural
+consistency. It organises context, prevents conceptual drift, and
+prevents the constitutional logic from being implicitly bent by
+opportunistic short-term reasoning.
+
+\subsection{Why the Split Matters}
+\label{sec:omega-split-rationale}
+
+A common failure mode in human and machine systems is the merging
+of observation, strategy generation, and authority. Once merged,
+the system tends to justify its own impulses. The architecture above
+separates search from permission, and anomaly monitoring from
+strategy production.
+
+% =====================================================================
+\section{Decision Variables and Exposure Sizing}
+\label{sec:omega-decision-vars}
+
+Variables estimated for each candidate action: $R$ (ruin proximity),
+$V$ (reversibility), $L$ (learning value), $G$ (expected gain),
+$\Delta O$ (optionality effect), $\mathrm{EC}$ (execution cost),
+$\mathrm{TC}$ (time cost).
+
+\subsection{Exposure Sizing}
+\label{sec:omega-exposure-sizing}
+
+\begin{equation}
+\mathrm{ExposureAllowed} = E_{\max} \times
+\!\left(1 - \frac{R}{100}\right) \times
+\frac{V}{100} \times
+\!\left(0.5 + 0.5 \cdot \frac{L}{100}\right).
+\label{eq:omega-exposure-sizing}
+\end{equation}
+
+\subsection{Utility Inside the Non-Ruin Domain}
+\label{sec:omega-utility}
+
+\begin{equation}
+U = 0.5 G + 0.3 L + 0.2 \Delta O,
+\qquad
+\mathrm{Score} = U \times \mathrm{ExposureAllowed}.
+\label{eq:omega-utility}
+\end{equation}
+
+% =====================================================================
+\section{Exploration Floor and Passive Ruin Guard}
+\label{sec:omega-exploration-floor}
+
+\paragraph{Exploration floor.}
+Within the non-ruin domain, a minimum reversible exploration is not
+merely permitted but required.
+
+\paragraph{Passive ruin detection.}
+
+\begin{equation}
+\text{if } \mathrm{ExplorationRate} < \mathrm{EF} \text{ for } N
+\text{ periods and } O_t \text{ declines persistently, then flag
+PassiveRuin.}
+\label{eq:omega-passive-detection}
+\end{equation}
+
+% =====================================================================
+\section{Constitutional Amendment Sandbox}
+\label{sec:omega-amendment-sandbox}
+
+\paragraph{Amendment cycle.}
+
+\begin{enumerate}
+\item Detection of misclassification / policy drift.
+\item Formulation of amendment hypothesis.
+\item Counterfactual / sandbox test.
+\item Comparison of new and old rules.
+\item Adoption / rejection / modification.
+\item Preservation of rollback path.
+\end{enumerate}
+
+\paragraph{Protected invariants.}
+True ruin remains a hard constraint. Execution authority remains
+downstream of governance. Classification changes require evidence.
+Rollback always available.
+
+% =====================================================================
+\section{Evaluation Metrics}
+\label{sec:omega-eval-metrics}
+
+\paragraph{Primary.}
+True Ruin Rate, Passive Ruin Rate, Optionality Retention Score,
+Exploration Rate, Recovery Speed.
+
+\paragraph{Secondary.}
+Critical Damage Rate, False Stop Rate, False Go Rate, Regret After
+Action, Regret After Inaction, Decision Load, Learning Yield,
+Stability Score.
+
+% =====================================================================
+\section{Operational Log Template}
+\label{sec:omega-log-template}
+
+All decisions are recorded as a single structured record:
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Field} & \textbf{Description} \\
+\midrule
+\texttt{log\_id} & Unique decision record. \\
+\texttt{date} & Timestamp. \\
+\texttt{context\_category} & E.g.\ career, investment, relationship,
+organisation. \\
+\texttt{decision\_title} & Short name of decision. \\
+\texttt{decision\_summary} & Short context summary. \\
+\texttt{capital\_state}, \texttt{health\_state},
+\texttt{trust\_state}, \texttt{functional\_integrity},
+\texttt{optionality\_state}
+& Pre-decision state estimate. \\
+\texttt{fatigue\_level}, \texttt{emotional\_distortion\_risk}
+& Pre-decision distortion. \\
+\texttt{action\_candidate} & Proposed action. \\
+\texttt{expected\_gain}, \texttt{ruin\_proximity},
+\texttt{reversibility}, \texttt{learning\_value},
+\texttt{optionality\_effect}
+& Estimated action values. \\
+\texttt{risk\_layer} & R1--R4 classification. \\
+\texttt{hard\_constraint\_trigger} & yes/no. \\
+\texttt{exposure\_allowed} & Computed intensity. \\
+\texttt{decision\_output} & reject / hold / allow. \\
+\texttt{executed} & yes/no. \\
+\texttt{actual\_outcome\_summary} & What actually happened. \\
+\texttt{actual\_gain\_loss} & Realised value. \\
+\texttt{actual\_damage\_layer} & Realised damage level. \\
+\texttt{recovery\_days} & Time to baseline. \\
+\texttt{regret\_after\_action} / \texttt{regret\_after\_inaction}
+& Post-hoc regret. \\
+\texttt{learning\_yield} & Realised learning value. \\
+\texttt{false\_stop} / \texttt{false\_go}
+& Classification audit. \\
+\texttt{amendment\_candidate} & Should constitutional change be
+considered? \\
+\texttt{notes} & Anything not captured above. \\
+\bottomrule
+\end{tabularx}
+\caption[Omega operational log template]{Operational log template
+for structured decision records.}
+\label{tab:omega-log-template}
+\end{table}
+
+% =====================================================================
+\section{Empirical Validation Program}
+\label{sec:omega-validation-program}
+
+\paragraph{Study 1.}
+Synthetic world benchmark --- 100{,}000+ episodes, horizon 200
+steps, multiple environment regimes. Comparisons: EV maximisation,
+simple checklist, OODA-only, original NRMO, NRMO-vNext, NRMO-vNext +
+$\Omega$ Full.
+
+\paragraph{Study 2.}
+Human-in-the-loop decision experiment.
+
+\paragraph{Study 3.}
+Longitudinal operational logging (8--12 weeks).
+
+\paragraph{Study 4.}
+External replication across domains (investment, management, career,
+organisational planning).
+
+% =====================================================================
+\section{Individual-Scale Simulation Specification}
+\label{sec:omega-individual-scale}
+
+\subsection{State Variables}
+\label{sec:omega-individual-state}
+
+Individual agent state:
+
+\begin{equation}
+S_t = (C_t, H_t, T_t, F_t, O_t, S_t^*, \mathit{TS}_t,
+\mathit{FA}_t, \mathit{ED}_t),
+\label{eq:omega-individual-state}
+\end{equation}
+
+where: capital, health, trust, functional integrity, optionality,
+skill reserve, time slack, fatigue, emotional distortion.
+
+\subsection{Environment Variables}
+\label{sec:omega-environment-vars}
+
+Uncertainty $U$, tail risk density $\mathit{TR}$, opportunity
+density $\mathit{OD}$, recovery support $\mathit{RS}$, noise level
+$\mathit{NL}$, adversarial pressure $\mathit{AP}$.
+
+\subsection{Action Generation}
+\label{sec:omega-action-generation}
+
+At each time step, $N$ candidate actions are generated. Each action
+takes the variables from the Decision Variables section. Under
+$\Omega$ Full, the Candidate Population System
+(base / mutation / synthesis / invention) generates candidates.
+
+\subsection{Terminal Conditions}
+\label{sec:omega-terminal-conditions}
+
+Terminate if any of capital, health, trust, function, optionality
+falls below the catastrophic floor.
+
+\subsection{Minimal Pseudocode (Default: Adaptive NRMOvNext +
+$\Omega$ Full)}
+\label{sec:omega-individual-pseudo}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single]
+for episode in episodes:
+    state = initialize_agent()
+    env   = initialize_environment()
+    omega = OmegaFullEngine()
+    for t in range(horizon):
+        # EXECUTION: candidate generation
+        candidates = omega.build_candidate_pool(state, env)
+
+        # GOVERNANCE: admissibility filter
+        scored = []
+        for action in candidates:
+            risk_layer = classify(action.R)
+            if risk_layer == R4:
+                continue   # hard stop
+            exposure = exposure_allowed(action.R,
+                                        action.V,
+                                        action.L)
+            scored.append((action, exposure))
+        admissible = nrmo_filter(scored, state)
+
+        # EXECUTION: Omega scoring + portfolio
+        chosen = omega.select_action(admissible, state, env)
+
+        state = apply(chosen, state, env)
+        if true_ruin(state):
+            break
+\end{lstlisting}
+
+% =====================================================================
+\section{Civilisation-Scale Simulation Specification}
+\label{sec:omega-civ-scale}
+
+\subsection{Civilisation State Vector}
+\label{sec:omega-civ-state}
+
+\begin{equation}
+X_t = (P, K, I, E, T, H, M, O, C, X, F, R),
+\label{eq:omega-civ-state}
+\end{equation}
+
+where: population, knowledge, institutional coherence, economic
+capacity, trust, health, security, optionality, cultural diversity,
+exploration, fatigue, ruin proximity.
+
+\subsection{Civilisation Archetypes}
+\label{sec:omega-archetypes}
+
+\begin{enumerate}
+\item Unbounded Growth.
+\item Ultra-Conservative.
+\item Original NRMO.
+\item NRMO-vNext + $\Omega$ Full (default).
+\end{enumerate}
+
+\subsection{Ruin Conditions}
+\label{sec:omega-civ-ruin}
+
+Population collapse, institutional / legitimacy joint collapse,
+health / biosurvival failure, prolonged optionality exhaustion,
+economy + security joint floor breach.
+
+\subsection{Policy Categories}
+\label{sec:omega-policy-categories}
+
+Research investment, military expansion, welfare expansion,
+infrastructure build, institutional reform, cultural liberalisation,
+surveillance / control, external trade, risky frontier exploration,
+ecological extraction, conflict escalation, rest / consolidation.
+
+\subsection{Simulation Loop (Default: Adaptive NRMOvNext +
+$\Omega$ Full)}
+\label{sec:omega-civ-loop}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single]
+for civ in civilizations:
+    state = init_civilization()
+    omega = OmegaFullEngine()  # Default execution engine
+    for turn in range(horizon):
+        # GOVERNANCE: mode + tuning + admissibility
+        mode    = meta_controller.update(state)
+        tuning  = adaptive_tuning(state, world, mode)
+
+        candidates = omega.build_candidate_pool(state, world)
+        # Execution
+        admissible = nrmo_filter(candidates, state, tuning)
+        # Governance
+
+        # EXECUTION: score + portfolio within admissible set
+        action = omega.select_action(admissible,
+                                     state, world, mode)
+        state = apply(state, action, world)
+        if civilizational_true_ruin(state):
+            break
+\end{lstlisting}
+
+% =====================================================================
+\section{StrongEngine $\Omega$ Full --- Execution Layer
+Specification}
+\label{sec:omega-full-spec}
+
+\nrmobox{Definition (source: monograph)}{
+StrongEngine $\Omega$ Full = a bounded, failure-aware,
+fragility-sensitive, portfolio-capable strategy-space-expansion
+engine operating strictly within NRMO admissibility constraints.\\[0.3em]
+The engine does \textbf{not} include RUIN in its evaluation function.
+RUIN is handled only at the NRMO execution boundary.
+}
+
+\subsection{Candidate Population System ($\S 1$)}
+\label{sec:omega-candidate-pop}
+
+Candidates are generated from 4 sources:
+
+\begin{enumerate}
+\item \textbf{base strategies} (11 templates).
+\item \textbf{mutated strategies} ($\pm 0.05$ perturbation; 1--3
+variants per base).
+\item \textbf{synthesised strategies} (pairwise averaging $+
+\pm 0.03$ noise).
+\item \textbf{invented strategies}
+(state $\times$ world analytical candidates).
+\end{enumerate}
+
+\paragraph{Pipeline.}
+\texttt{base} $\to$ \texttt{mutation} $\to$ \texttt{synthesis} $\to$
+\texttt{invention} $\to$ \texttt{candidate\_pool} $\to$
+\texttt{governance filter} $\to$ \texttt{evaluation}.
+
+\paragraph{Population size.}
+Typically 16--32; 24+ during Wolf Pursuit.
+
+\subsection{Candidate Mutation ($\S 2$)}
+\label{sec:omega-mutation}
+
+Local expansion of search space. Add $\mathrm{random}(-0.05, +0.05)$
+to each action component. Values clipped to $[0, 1]$ then
+re-normalised.
+
+\subsection{Strategy Synthesis ($\S 3$)}
+\label{sec:omega-synthesis}
+
+Averaging of two strategies $+$ $\pm 0.03$ noise. 5--10 hybrids
+generated from random candidate pairs.
+
+\subsection{Wolf Pursuit Mode ($\S 4$--$\S 5$)}
+\label{sec:omega-wolf-pursuit}
+
+Favourable state: $E \ge 50$, $G \ge 45$, $O \ge 45$, $K \ge 45$,
+$X \le 35$, $\mathrm{d}O \ge 0$, $\mathrm{d}K \ge 0$. When this
+holds, $\texttt{WolfPursuit} = \mathrm{true}$: candidate count
+increases, rollout depth increases (depth $= 8$), portfolio
+aggression increases.
+
+\subsection{Edge Survival Guard ($\S 6$--$\S 7$)}
+\label{sec:omega-edge-guard}
+
+Fragile-condition detection $\to$ $\texttt{EdgeFloor} = \mathrm{true}$:
+growth reduction, eco stabilisation, governance repair, low
+exposure. Portfolio: main $= 0.45$, hedge $= 0.45$, probe $= 0.10$.
+
+\paragraph{RiskAdjusted Floor.}
+In fragile state, if $\Omega$ score $<$ RiskAdj score, switch to
+EdgeFloor profile.
+
+\subsection{Portfolio Synergy ($\S 8$)}
+\label{sec:omega-portfolio-synergy}
+
+Synergy bonus via pairwise compatibility matrix. In addition to
+independent evaluation, candidates are evaluated for candidate
+synergy.
+
+\subsection{Dual Objective Scoring ($\S 9$)}
+\label{sec:omega-dual-scoring}
+
+Favourable states: maximise $\Omega - \mathrm{RiskAdj}$.
+Fragile states: $\Omega \ge \mathrm{RiskAdj}$ as a constraint.
+
+\subsection{Long-Horizon Drift Control}
+\label{sec:omega-drift-control}
+
+\begin{equation}
+g_{\mathrm{sust}} = \mathrm{clip}\!\left(0.15, 0.40,\;
+0.28 + 0.08 \frac{E}{100} + 0.06 \frac{G}{100}
+- 0.10 \frac{X}{100} - 0.05 \cdot d_{\mathrm{env}}\right).
+\label{eq:omega-gsust}
+\end{equation}
+
+\begin{equation}
+\mathrm{drift} = \max(0,\, g - g_{\mathrm{sust}}) \cdot
+(d_{\mathrm{env}} + 0.5 p_{\mathrm{tail}}) \cdot
+\!\left(1 + 0.5 \frac{X}{100}\right) \cdot
+\!\left(1 - 0.3 \frac{G}{100}\right).
+\label{eq:omega-drift}
+\end{equation}
+
+\begin{equation}
+\mathrm{final\_score} = \mathrm{rollout\_score} -
+\lambda_{\mathrm{drift}} \times \mathrm{drift}.
+\label{eq:omega-final-score}
+\end{equation}
+
+\paragraph{Recommended values.}
+$\lambda_{\mathrm{drift}} = 1.0$. Normal world: drift $\times 1.25$.
+
+\paragraph{Drift-safe hedge.}
+Portfolio hedge candidates satisfying $g \le g_{\mathrm{sust}}$ are
+prioritised.
+
+% =====================================================================
+\section{Civilisation Outcome Map}
+\label{sec:omega-outcome-map}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+   Collapse risk
+        ^
+        |
+        |        Unbounded
+        |  Delayed   growth
+        |  collapse
+        |
+        |        NRMO-vNext
+        |          + Omega Full
+        |  Ultra-   safe frontier
+        |  conservative   expansion
+        |---------------------> Exploration intensity
+\end{lstlisting}
+
+% =====================================================================
+\section{30-Civilisation Casebook Design}
+\label{sec:omega-casebook-design}
+
+\paragraph{Group structure.}
+
+\begin{itemize}
+\item A-group (10 Unbounded Growth).
+\item B-group (5 Ultra-Conservative).
+\item C-group (5 original NRMO).
+\item D-group (10 NRMO-vNext + $\Omega$ Full).
+\end{itemize}
+
+\paragraph{Collapse modes.}
+Active ruin, passive ruin, fragmentation collapse, ecological
+collapse, authoritarian lock-in, overexpansion collapse.
+
+\paragraph{Flourishing modes.}
+Resilient growth, adaptive renaissance, distributed stability, safe
+frontier expansion, cultural--technological balance.
+
+% =====================================================================
+\section{Priority Ten Civilisation Profiles}
+\label{sec:omega-priority-profiles}
+
+\paragraph{A1 Sky Furnace (Unbounded Growth).}
+Over-acceleration collapse. Capacity expansion outpaces governance.
+Typical example of active ruin.
+
+\paragraph{A4 Market Comet (Unbounded Growth).}
+Systemic financial failure. Dense connectivity amplifies hidden ruin
+exposure.
+
+\paragraph{B2 Quiet Wall (Ultra-Conservative).}
+Passive ruin. After long stability, decline of innovation leads to
+strategic obsolescence.
+
+\paragraph{C1 Shield Archive (original NRMO).}
+Robust and capable. Occasionally misses frontier opportunity.
+Survives with moderate growth.
+
+\paragraph{C3 Granite Compass (original NRMO).}
+Institution-heavy. Stable but cultural adaptability narrows.
+
+\paragraph{D1 Open Bastion (NRMO-vNext + $\Omega$ Full).}
+Safe experimentation; recurring learning cycles; durable growth.
+$\Omega$ Full's Wolf Pursuit efficiently captures frontier
+opportunity.
+
+\paragraph{D3 Aurora Accord (NRMO-vNext + $\Omega$ Full).}
+Uses diversity as adaptive reserve. Distributes recurring crises.
+
+\paragraph{D6 Prism Union (NRMO-vNext + $\Omega$ Full).}
+Federated redundancy. Local failures stay local.
+
+\paragraph{D9 Meridian Forum (NRMO-vNext + $\Omega$ Full).}
+Deliberative governance with constitutional sandboxing. Realises
+recurring institutional reform without existential breakage.
+
+\paragraph{D10 Lattice Dawn (NRMO-vNext + $\Omega$ Full).}
+Distributed local experiments + centralised ruin constraint.
+Long-term knowledge. $\Omega$ Full's Drift Control prevents
+cumulative environmental degradation even at 1000-turn horizon.
+
+% =====================================================================
+\section{Benchmark Groups}
+\label{sec:omega-benchmark-groups}
+
+\begin{enumerate}
+\item Expected-value maximisation baseline.
+\item Simple checklist baseline.
+\item OODA-only simplification.
+\item Original NRMO.
+\item NRMO-vNext.
+\item NRMO-vNext + StrongEngine $\Omega$ Full (default).
+\end{enumerate}
+
+% =====================================================================
+\section{Validation Results (Smoke Scale)}
+\label{sec:omega-validation-results}
+
+\nrmobox{Multi-Horizon Validation}{
+\begin{tabular}{lll}
+\textbf{Horizon} & \textbf{$\Omega$ Full} &
+\textbf{RiskAdj / Result} \\
+\hline
+200 & 61\% / score 0.50 & 59\% / 0.44 / $\Omega$ WIN \\
+500 & 48\% & 46\% / $\Omega$ WIN \\
+1000 & 40\% & 33\% / $\Omega$ WIN \\
+\end{tabular}\\[0.3em]
+Governance--execution separation observed. RiskAdj exceeded across
+all horizons.
+}
+
+% =====================================================================
+\section{Critical Weaknesses and Planned Remedies}
+\label{sec:omega-weaknesses}
+
+\begin{enumerate}
+\item Operational parameter values remain provisional.
+\item Some components are conceptually elegant but empirically
+untested.
+\item Longitudinal human-deployment evidence is thin.
+\item Civilisation simulation is a synthetic testbed, not historical
+proof.
+\item Optionality scoring requires domain-sensitive calibration.
+\item Survival in Vulnerable world is low for all strategies; room
+for improvement.
+\end{enumerate}
+
+% =====================================================================
+\section{Research Use, Practical Use, and Limits}
+\label{sec:omega-use-and-limits}
+
+\paragraph{Research.}
+Formal scaffold for simulation, benchmark comparison, and
+human-in-the-loop experiments.
+
+\paragraph{Practical.}
+Disciplined language for separating true ruin from discomfort and
+maintaining exploration.
+
+\paragraph{Limit.}
+Cannot fully eliminate judgement. The constitution can discipline
+thought but does not replace the need for observation, context, and
+honest correction.
+
+% =====================================================================
+\section{Conclusion}
+\label{sec:omega-conclusion}
+
+NRMO is most powerful when understood not as a doctrine of fear but
+as a long-horizon navigation system.
+
+The original core is sound: irreversible collapse should dominate
+ordinary expected-value calculation. The upgraded system classifies
+ruin more carefully, guards passive ruin, allows graded exposure,
+and enables constitutional self-repair.
+
+The default stack of Adaptive NRMOvNext + StrongEngine $\Omega$
+Full maximises strategy space within governance constraints, and
+exceeds the RiskAdj baseline across short, medium, and long
+horizons.
+
+\nrmobox{Final statement}{
+\centering
+\textit{It no longer says only ``do not die.'' \\
+It says: ``do not close the future.''}
+}
+
+% =====================================================================
+\section{Appendix A --- Compact Variable Table}
+\label{sec:omega-variable-table}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lcX}
+\toprule
+\textbf{Symbol} & \textbf{Range} & \textbf{Notes} \\
+\midrule
+$R$ & 0--100 & Ruin proximity (candidate action risk). \\
+$V$ & 0--100 & Reversibility (higher $=$ easier recovery). \\
+$L$ & 0--100 & Learning value. \\
+$G$ & variable & Expected gain (normalisable to 0--100). \\
+$\Delta O$ & variable & Optionality effect (positive or negative). \\
+$E_{\max}$ & 0--1 & Governance exposure cap. \\
+$\mathrm{EF}$ & threshold & Minimum exploration requirement. \\
+$\lambda_{\mathrm{drift}}$ & 0--3 & Long-horizon drift penalty
+weight (default 1.0). \\
+\bottomrule
+\end{tabularx}
+\caption[Omega compact variable table]{Compact variable table.}
+\label{tab:omega-variables}
+\end{table}
+
+% =====================================================================
+\section{Appendix B --- Minimal Weekly Review Questions}
+\label{sec:omega-weekly-review}
+
+\begin{enumerate}
+\item Have I stopped an action that should have been allowed?
+\item Have I allowed an action that should have been stopped?
+\item Despite apparent stability, is optionality declining?
+\item Is fatigue distorting the classification layer?
+\item Do recurring patterns justify amendment-sandbox testing?
+\end{enumerate}
+
+% =====================================================================
+\section{Appendix C --- Full 30-Civilisation Roster}
+\label{sec:omega-30-civ-roster}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXX}
+\toprule
+\textbf{ID} & \textbf{Name} & \textbf{Role} \\
+\midrule
+A1 & Sky Furnace & over-acceleration collapse. \\
+A2 & Glass Orbit & frontier exploration fragility. \\
+A3 & Iron Bloom & military-industrial overextension. \\
+A4 & Market Comet & financial tail-risk fragility. \\
+A5 & Wild Archive & knowledge--governance separation. \\
+A6 & Neon Flood & information disorder. \\
+A7 & Salt Empire & ecological extraction trap. \\
+A8 & Apex Relay & network interdependence shock. \\
+A9 & Ember Republic & reform volatility. \\
+A10 & Black Sail & conquest overreach. \\
+\midrule
+B1 & Stone Nest & stable agrarian duration. \\
+B2 & Quiet Wall & passive ruin via stagnation. \\
+B3 & Sacred Loop & doctrinal rigidity. \\
+B4 & Winter Court & aristocratic inertia. \\
+B5 & Silent Delta & slow optionality exhaustion. \\
+\midrule
+C1 & Shield Archive & standard NRMO survival. \\
+C2 & Harbor Logic & opportunity-missing trade. \\
+C3 & Granite Compass & over-conservative institution. \\
+C4 & Lantern Chain & knowledge without frontier. \\
+C5 & Delta Guard & environmental resilience, muted adaptation. \\
+\midrule
+D1 & Open Bastion & baseline successful vNext + $\Omega$. \\
+D2 & Tidal Library & anti-stagnation knowledge. \\
+D3 & Aurora Accord & diversity as adaptive reserve. \\
+D4 & Iron Harbor & security--exploration balance. \\
+D5 & Verdant Relay & biosurvival circular resilience. \\
+D6 & Prism Union & federated resilience. \\
+D7 & Ember Compass & high-exploration with hard stops. \\
+D8 & Polar Engine & harsh-environment endurance. \\
+D9 & Meridian Forum & amendment-sandbox governance. \\
+D10 & Lattice Dawn & decentralised exploration + constitutional
+control. \\
+\bottomrule
+\end{tabularx}
+\caption[30-civilisation roster]{Full 30-civilisation roster.}
+\label{tab:omega-30-roster}
+\end{table}
+
+% =====================================================================
+\section{Appendix D --- Seed Conditions for Civilisation
+Initialisation}
+\label{sec:omega-seed-conditions}
+
+To separate governance-type effects from starting luck, at least
+five seed-condition families are used.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Seed} & \textbf{Description} \\
+\midrule
+Seed-1 & Resource rich, stable, high internal trust. \\
+Seed-2 & Resource poor, high pressure, security heavy. \\
+Seed-3 & Knowledge rich, institutionally weak. \\
+Seed-4 & High diversity, moderate latent conflict. \\
+Seed-5 & Harsh environment, fragile recovery support. \\
+\bottomrule
+\end{tabularx}
+\caption[Seed conditions]{Seed conditions for civilisation
+initialisation.}
+\label{tab:omega-seed-conditions}
+\end{table}
+
+\medskip
+
+\centering
+\textit{--- End of Specification ---}\\
+NRMO vNext Integrated Complete Specification v2.0\\
+Default Stack: Adaptive NRMOvNext + StrongEngine $\Omega$ Full\\
+March 2026
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This specification is the engineering analogue of Part~II's
+governance architecture. The Default Stack
+(Section~\ref{sec:omega-default-stack}) is the engineering
+realisation of the governance--execution separation invariant
+(Invariant~\ref{inv:gov-exec-sep}).
+\item The 6-dimensional civilisation state vector
+(Section~\ref{sec:omega-civ-state}) extends the vNext 6-dimensional
+vector (Section~\ref{sec:vnext-state}) with cultural diversity, etc.
+\item The Long-Horizon Drift Control
+(Section~\ref{sec:omega-drift-control}) is implemented in the v2.5
+codebase (Part~X) as the
+\texttt{omega\_full.py / sustainable\_growth\_estimator} module.
+\item The 30-civilisation roster
+(Section~\ref{sec:omega-30-civ-roster}) is the empirical-validation
+testbed for Part~XI.
+\item The arXiv mathematical formalisation (Part~VII) provides the
+formal foundation for the strengthened objective in
+Equation~\ref{eq:omega-strengthened-objective}.
+\end{itemize}

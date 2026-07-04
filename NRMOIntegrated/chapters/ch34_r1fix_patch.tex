@@ -1,0 +1,529 @@
+% chapters/ch34_r1fix_patch.tex
+% Chapter 34 (Part VI): R1-FIX Patch — Revised Chapters 26-35 of v3.0
+% Source: NRMO_v5_updated.pdf, Part VI Ch33 (lines 10595-10860 of v5_layout.txt)
+
+\chapter{R1-FIX Patch --- Revised Chapters 26--35
+(NRMO v3.0 Specification)}
+\label{ch:r1fix-patch}
+
+\nrmobox{Document status}{
+\textbf{Title}: NRMO v3.0 specification | Revised R1-FIX Chapters
+26--34\\[0.3em]
+\textbf{Scope}: 5 chapters | Parallel + Design\\[0.3em]
+\textbf{Status}: REVISION DRAFT --- Pending Constitutional Review\\[0.3em]
+\textbf{Affects}: NRMO v3.0 (Chapters 26--34); does \textbf{not}
+modify v2.0 design (parallel + CONSTITUTIONAL FROZEN).
+}
+
+% =====================================================================
+\section{Conflict Identifiers Resolved}
+\label{sec:r1fix-conflicts}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{ID} & \textbf{Conflict description} & \textbf{Chapter} \\
+\midrule
+C-01 & Parallel execution vs.~Type ZERO suppression. & Ch.~27 \\
+C-04 & APSOC definition state DEADLOCK. & Ch.~30 \\
+D-01 & Scoreboard parameter weighting. & Ch.~31 \\
+D-02 & $\varepsilon_{\max}(B_t)$ definition. & Ch.~26 \\
+D-03 & Challenge Window update condition. & Ch.~31 \\
+\bottomrule
+\end{tabularx}
+\caption[R1-FIX conflicts]{Conflicts identified for R1-FIX revision
+of NRMO v3.0 Chapters 26--35.}
+\label{tab:r1fix-conflicts}
+\end{table}
+
+% =====================================================================
+\section{Chapter 26 Invariants (Revised)}
+\label{sec:r1fix-invariants}
+
+The following invariants are FROZEN under the R1-FIX revision:
+
+\begin{itemize}
+\item \textbf{NRMO CORE / Ruin}: Ruin is the absorbing failure
+state; $\varepsilon$ bounds action probability of entering Ruin.
+\item \textbf{Shutdown Atomicity}: Shutdown is atomic; partial /
+interrupted execution prohibited.
+\item \textbf{Type ZERO suppression}: Type ZERO exercises
+suppression in Phased Parallel Phase~3 (Section~27.3); Phase~1
+evaluation is read-only.
+\item \textbf{DAG structure}: Definition \& Assertion Governance;
+directed acyclic consistency.
+\item \textbf{Non-Personification}: Modules are organs, not agents.
+\item \textbf{$A_{\mathrm{allowed}}$ constraint}: Permitted action
+set externally supplied; NRMO does not generate or modify.
+\item \textbf{APSOC Pre-Commit Gate}: Execution requires
+reversibility / loss / condition gates passed.
+\item \textbf{$\varepsilon$-Supply}: $\varepsilon$ supplied
+externally; $\varepsilon_{\max}(B_t)$ constraint
+(Section~26.1 of v3.0).
+\end{itemize}
+
+% =====================================================================
+\section{$\varepsilon_{\max}(B_t)$ Definition}
+\label{sec:r1fix-epsilon-max}
+
+\nrmobox{Specification warning}{
+The specification ``$\varepsilon_{\max}(\cdot)$'' must be carefully
+distinguished from the institutional $\varepsilon$
+(Chapter~\ref{ch:epsilon-supply}). $\varepsilon_{\max}(B_t)$ is a
+buffer-modulated dynamic ceiling, \emph{never} above the
+institutional $\varepsilon$.
+}
+
+\subsection{$B_t$ Buffer State}
+
+$B_t$ is the buffer state, normalised to $[0, 1]$:
+
+\begin{equation}
+B_t = \frac{B_{\mathrm{capital}}}{B_{\mathrm{max}}}
+\;\in\; [0, 1].
+\end{equation}
+
+\noindent
+Or alternatively:
+\begin{equation}
+B_t = \frac{\mathrm{remaining}}{\mathrm{initial}}
+\;\in\; [0, 1].
+\end{equation}
+
+\noindent
+For multi-resource composition:
+\begin{equation}
+B_t = \sum_i w_i \cdot \frac{b_i}{b_{i, \max}},
+\quad B_t \in [0, 1].
+\end{equation}
+
+\paragraph{Constraint.}
+$B_t \in [0, 1]$. When $B_t = 0$: SHUTDOWN-equivalent.
+
+\subsection{$\varepsilon_{\max}(B_t)$ Selection Conditions}
+
+The $\varepsilon_{\max}$ function must satisfy:
+
+\begin{enumerate}
+\item \textbf{Monotonicity}: $B_{t_1} \le B_{t_2} \Rightarrow
+\varepsilon_{\max}(B_{t_1}) \le \varepsilon_{\max}(B_{t_2})$.
+\item \textbf{Floor at zero buffer}:
+$\varepsilon_{\max}(0) = \varepsilon_{\mathrm{floor}} > 0$ (zero
+buffer state).
+\item \textbf{Ceiling at full buffer}:
+$\varepsilon_{\max}(1) = \varepsilon_{\mathrm{global}}$
+(institutional ceiling).
+\item \textbf{Smoothness}: $\varepsilon_{\max}(\cdot) \in C^1$
+(continuously differentiable).
+\end{enumerate}
+
+\subsection{Canonical $\varepsilon_{\max}$ Function}
+
+\begin{equation}
+\boxed{
+\varepsilon_{\max}(B_t) =
+\varepsilon_{\mathrm{floor}}
++ (\varepsilon_{\mathrm{global}} - \varepsilon_{\mathrm{floor}})
+\cdot (1 - e^{-\kappa B_t}).
+}
+\label{eq:r1fix-epsilon-max-canonical}
+\end{equation}
+
+\paragraph{Parameter ranges.}
+
+\begin{itemize}
+\item $\varepsilon_{\mathrm{floor}}$: floor at $B_t = 0$,
+typically $\varepsilon_{\mathrm{global}} / 10$.
+\item $\varepsilon_{\mathrm{global}}$: institutional ceiling
+($B_t = 1$).
+\item $\kappa$: rate parameter; canonical $\kappa = 3.0$.
+\end{itemize}
+
+\subsection{$\varepsilon_t$ Update Protocol}
+
+\begin{enumerate}
+\item Each decision-making step updates $B_t$.
+\item Compute $\varepsilon_t = \min(\varepsilon_{\max}(B_t),
+\varepsilon_{\mathrm{global}})$.
+\item NRMO CORE consumes $\varepsilon_t$ as the active veto
+threshold.
+\item All $\varepsilon_t$ changes are recorded append-only with
+audit trail.
+\item Edge case: $B_t = 0 \Rightarrow \varepsilon_t =
+\varepsilon_{\mathrm{floor}}$, SHUTDOWN evaluation triggered.
+\end{enumerate}
+
+% =====================================================================
+\section{Chapter 27 Execution Architecture (Revised)}
+\label{sec:r1fix-execution-architecture}
+
+\subsection{Design Principle: Phased Parallel Execution}
+
+\nrmobox{Specification clarification}{
+The original v3.0 specification was misread as ``parallel execution
+prohibited; Type ZERO suppression overrides parallelism.'' The
+correct reading: \emph{parallel execution is permitted in Phase~1
+(read-only)}; Type ZERO suppression operates in Phase~3
+(serial / suppression).
+}
+
+\paragraph{Three phases.}
+
+\begin{description}
+\item[Phase 1 (Fork --- parallel evaluation)]
+All modules evaluate state in parallel. Read-only; no state
+changes permitted. Type ZERO Phase~1: read-only evaluation.
+\item[Phase 2 (Barrier --- await completion)]
+Wait for all modules to complete or hit $T_{\max}$ cutoff. Late
+scores set to 0.
+\item[Phase 3 (Join --- serial / suppression)]
+Priority Arbiter $\to$ Tri-Option Generator $\to$ APSOC $\to$
+Shutdown $\to$ NRMO CORE serial. Type ZERO suppression operates
+here.
+\end{description}
+
+\paragraph{Resolution.}
+\begin{itemize}
+\item Suppression separated from Phase~1 (evaluation) and Phase~3
+(suppression).
+\item Parallel evaluation and Type ZERO suppression are now
+non-conflicting in time.
+\end{itemize}
+
+\subsection{Architecture Diagram}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+Input (state / decision-making)
+        |
+        v
+PHASE 1: FORK (parallel evaluation)
+  [OODA] [HST-N] [Fast Strike]
+  [Type ZERO*] [PP] [Heavy Strike]
+  [DAG] [SOP] [Stealth] [Tuatha]
+  *Type ZERO: Phase 1 = evaluation only;
+   suppression in Phase 3.
+        |
+        v (completion or T_max)
+PHASE 2: BARRIER (await)
+        |
+        v
+PHASE 3: JOIN (serial)
+  Priority Arbiter
+  -> Tri-Option Generator (A/B/C)
+  -> APSOC -> Shutdown (Atomic)
+  -> NRMO CORE -> Action Router
+\end{lstlisting}
+
+\subsection{Steps (Numbered)}
+
+\begin{enumerate}
+\item Input: state / decision-making.
+\item Phase 1 Fork: parallel module evaluation.
+\item Phase 2 Barrier: $T_{\max}$ cutoff completion (overdue
+modules score 0).
+\item Phase 3 Type ZERO suppression: Priority Arbiter score
+aggregation + execution.
+\begin{itemize}
+\item Tri-Option Generator: A/B/C with APSOC Pre-Commit gates.
+\end{itemize}
+\item Shutdown (Atomic): conditional shutdown evaluation.
+\item NRMO CORE: Ruin $\le \varepsilon_t$ check.
+\item Action Router: approved action execution.
+\end{enumerate}
+
+\subsection{$T_{\max}$ Cutoff}
+
+$T_{\max}$ is the parallel-evaluation deadline. Modules whose
+evaluation has not completed by $T_{\max}$ have their scores
+discarded (set to 0). This prevents slow modules from blocking the
+pipeline indefinitely.
+
+% =====================================================================
+\section{Boundary Contract (APSOC Gates)}
+\label{sec:r1fix-boundary-contract}
+
+Each option produced by Tri-Option Generator must pass three APSOC
+gates:
+
+\begin{itemize}
+\item \textbf{Max Loss Cap}: maximum loss bounded.
+\item \textbf{Reversibility Class}: reversible / partially
+reversible / irreversible classification.
+\item \textbf{Exit Trigger condition}: explicit state-defined exit
+condition.
+\end{itemize}
+
+\subsection{A/B/C Option Allocation Constraint}
+
+Default option-portfolio allocation:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Option} & \textbf{Risk class} & \textbf{Default
+allocation} \\
+\midrule
+A (defensive) & Reversible, low-impact & 20\% (or 80\% / 30\%) \\
+B (balanced) & Reversible, medium-impact & 0\% (or 80\% / 50\%) \\
+C (offensive) & Boundary-approaching & 0\% (or 25\% / 20\%) \\
+\bottomrule
+\end{tabularx}
+\caption[Boundary contract A/B/C]{Default A/B/C allocation. Constraint:
+$A + B + C = 100\%$.}
+\label{tab:r1fix-abc-allocation}
+\end{table}
+
+\paragraph{Constraint.}
+$A + B + C = 100\%$.
+
+% =====================================================================
+\section{Scoreboard (Revised)}
+\label{sec:r1fix-scoreboard}
+
+\nrmobox{Specification clarification}{
+The original v3.0 specification's scoreboard formula included
+unclear parameter normalisation. R1-FIX reformulates with explicit
+$[0, 1]$ normalisation per dimension.
+}
+
+\subsection{Normalised Performance Vector}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+xK_DeltaL = clip(1 - DeltaLatency / DeltaLatency_ref, 0, 1)
+              # Latency: 1 = best
+xK_Cs     = C_success_rate
+              # in [0,1]
+xK_MD     = clip(1 - MaxDrawdown / MaxDrawdown_ref, 0, 1)
+              # Drawdown loss: 1 = best
+xK_AV     = clip(1 - (Abort + Veto) / AV_ref, 0, 1)
+              # Abort+Veto: 1 = least
+
+# Reference values DeltaLatency_ref, MaxDrawdown_ref, AV_ref
+# come from A_allowed.
+\end{lstlisting}
+
+\subsection{Scoreboard Equation}
+
+\begin{equation}
+\mathrm{Score} =
+w_1 \cdot \mathrm{xK}_{\Delta L}
++ w_2 \cdot \mathrm{xK}_{\mathrm{Cs}}
+- w_3 \cdot (1 - \mathrm{xK}_{\mathrm{MD}})
+- w_4 \cdot (1 - \mathrm{xK}_{\mathrm{AV}}).
+\label{eq:r1fix-scoreboard}
+\end{equation}
+
+\noindent
+Weights $w_1, w_2, w_3, w_4 \ge 0$ are tuned per Mode (S, D, M, H, T)
+within $A_{\mathrm{allowed}}$.
+
+% =====================================================================
+\section{Challenge Window (Revised: Update Conditions)}
+\label{sec:r1fix-challenge-window}
+
+\nrmobox{Specification clarification}{
+The original v3.0 specification stated ``A increases, C suppression''
+without explicit update equations. R1-FIX provides definitive
+update equations with constraint validation.
+}
+
+\subsection{Trigger Condition}
+
+\begin{equation}
+\mathrm{deterioration\_flag} = (\mathrm{Score}_t <
+\mathrm{Score}_{\mathrm{baseline}}).
+\end{equation}
+
+When $\mathrm{Score}_t \ge \mathrm{Score}_{\mathrm{baseline}}$ for
+consecutive periods, Challenge Window enters recovery mode.
+
+\subsection{Update Equations}
+
+For coefficients $\alpha, \beta > 0$:
+
+\begin{equation}
+A_{t+1} = A_t + \alpha \cdot \mathrm{deterioration\_flag} \cdot
+(A_{\max} - A_t),
+\label{eq:r1fix-At-update}
+\end{equation}
+
+\begin{equation}
+C_{t+1} = C_t - \beta \cdot \mathrm{deterioration\_flag} \cdot
+C_t,
+\label{eq:r1fix-Ct-update}
+\end{equation}
+
+\begin{equation}
+B_{t+1} = 1.0 - A_{t+1} - C_{t+1}.
+\label{eq:r1fix-Bt-update}
+\end{equation}
+
+\subsection{Default Parameters}
+
+\begin{itemize}
+\item $\alpha = 0.20$ (A increase rate, $0 < \alpha < 1$).
+\item $\beta = 0.30$ (C decrease rate, $0 < \beta < 1$).
+\item $A_{\max} = 0.80$ (A ceiling).
+\item $\mathrm{Score}_{\mathrm{baseline}}$: rolling N-step mean.
+\end{itemize}
+
+\subsection{Constraint Validation}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+assert A_{t+1} >= 0.20            # A floor
+assert C_{t+1} >= 0.0             # C floor
+assert 0.0 <= B_{t+1} <= 0.80     # B range
+assert abs(A_{t+1} + B_{t+1}
+           + C_{t+1} - 1.0) < 1e-9
+                                  # 100% allocation
+\end{lstlisting}
+
+\subsection{Recovery Condition}
+
+\begin{equation}
+\mathrm{Score}_t \ge \mathrm{Score}_{\mathrm{baseline}}
+\quad \text{for } N_{\mathrm{recover}} \text{ consecutive periods}.
+\end{equation}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+if consecutive_recovery_count >= N_recover:
+    (A, B, C) = (A_default, B_default, C_default)
+              # Restore defaults
+\end{lstlisting}
+
+\subsection{Replacement and Cooling}
+
+On shutdown (any cause), suppression cools:
+$\alpha = \alpha_{\min}$, $\beta = \beta_{\max}$ for
+$N_{\mathrm{cool}}$ periods.
+
+% =====================================================================
+\section{Minimal Handover Output Format}
+\label{sec:r1fix-handover}
+
+The Tri-Option Generator output for handover:
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+Selection {A | B | C} with Score and
+Boundary Contract structure
+{Max Loss, Reversibility, Exit state}.
+
+State (A_t, B_t, C_t) and Challenge Window
+consecutive_recovery_count are tracked.
+
+Chapter 32 Output (Revised):
+- Mode Weights:    {S, D, M, H, T}
+- Normalized Inputs:
+    x_DeltaL: [0,1]
+    x_Cs:     [0,1]
+    x_MD:     [0,1]
+    x_AV:     [0,1]
+- Options:
+    A: { Ruin: __, Rev: __, MaxLoss: __,
+         Expect: __, APSOC_gates: [1] }
+    B: { Ruin: __, Rev: __, MaxLoss: __,
+         Expect: __, APSOC_gates: [1, 2] }
+    C: { Ruin: __, Rev: __, MaxLoss: __,
+         Expect: __, APSOC_gates: [1, 2, 3] }
+- Chosen:
+    [ A | B | C | SAFE_EXIT | DEADLOCK_HOLD ]
+- Reason:        [1]
+- Caps:          [...]
+- Score:         [...]
+- Allocation:    { A: __, B: __, C: __ }
+- LogID:         [audit ID]
+- Emergency Bypass:
+    [true | false]
+    (when true: log audit + 3-step
+     SHUTDOWN evaluation)
+\end{lstlisting}
+
+% =====================================================================
+\section{Chapter 33 Prohibitions}
+\label{sec:r1fix-prohibitions}
+
+The R1-FIX revision lists 10 prohibited operations:
+
+\begin{enumerate}
+\item \textbf{CORE}: NRMO CORE veto-only; no override of veto.
+\item \textbf{Shutdown}: Shutdown is conditional and atomic; cannot
+be interrupted.
+\item \textbf{Phase 1}: state changes prohibited in parallel
+evaluation.
+\item \textbf{Phase 3}: parallel execution prohibited; serial
+sequence enforced.
+\item \textbf{Invariants}: removal or weakening of any invariant
+prohibited.
+\item \textbf{Reason}: actions without recorded reasons prohibited.
+\item \textbf{Irreversibility}: irreversible actions without explicit
+exit clause prohibited.
+\item \textbf{AI judgement}: AI-only decision-making prohibited.
+\item \textbf{$\varepsilon_{\max}$}: changing $\varepsilon_{\max}$
+function ($\varepsilon_{\mathrm{floor}}$, $\varepsilon_{\mathrm{global}}$,
+$\kappa$) without governance approval prohibited.
+\item \textbf{Scoreboard}: changing $w_1$--$w_4$ weights without
+mode transition approval prohibited.
+\end{enumerate}
+
+% =====================================================================
+\section{Chapter 34 Conditions}
+\label{sec:r1fix-conditions-summary}
+
+The R1-FIX revision lists 9 condition checks:
+
+\begin{enumerate}
+\item \textbf{Ruin condition}: $\tau_F = \infty$ (no ruin
+observation).
+\item \textbf{Decision-making total time}: Phase 1+3
+$\le T_{\max\_\mathrm{total}}$ ($\Delta$ Latency).
+\item \textbf{Firepower operation}: Stealth-Acc unit status check.
+\item \textbf{Firepower state}: Phase 1+3 active modules verified.
+\item \textbf{Score baseline}:
+$\mathrm{Score} \ge \mathrm{Score}_{\mathrm{baseline}}$.
+\item \textbf{Reason}: Evidence Capsule audit trail present.
+\item \textbf{Veto / Abort}: counts recorded; AV computed.
+\item \textbf{DEADLOCK}: SAFE\_EXIT delivered, DEADLOCK\_LOG
+recorded.
+\item \textbf{$\varepsilon_{\max}$}: decision-making
+$\varepsilon_t \le \varepsilon_{\max}(B_t)$.
+\end{enumerate}
+
+% =====================================================================
+\section{Chapter 35 Definition: Closure}
+\label{sec:r1fix-closure}
+
+\nrmobox{Closure declaration}{
+\centering
+\textit{NRMO ver3.0 = Ruin-Firepower-OS (operation).}\\[0.3em]
+Revised five points:\\
+parallel execution + Type ZERO $\to$ suppression separation;\\
+Phased Parallel Execution;\\
+APSOC + DEADLOCK;\\
+Scoreboard $\to$ $\varepsilon_{\max}(B_t)$ $\to$ definition;\\
+Challenge Window $\to$ update conditions.
+}
+
+\paragraph{Document closure.}
+End of NRMO ver3.0 Patch R1-FIX | Full-Active Combat-Constitution OS
+| R1-FIX | 2026-02-18.
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Equation~\ref{eq:r1fix-epsilon-max-canonical} ($\varepsilon_{\max}(B_t)$)
+is the buffer-modulated dynamic ceiling, used in Algorithm~1
+(Section~\ref{sec:tf-v4-algorithm}) Step~1.
+\item Phased Parallel Execution architecture aligns with the
+Parallel OODA specification (Chapter~\ref{ch:parallel-ooda}).
+\item Boundary Contract (Section~\ref{sec:r1fix-boundary-contract})
+implements APSOC's Pre-Commit gate
+(Section~\ref{sec:apcso-formal}).
+\item Scoreboard (Section~\ref{sec:r1fix-scoreboard}) implements the
+multi-axis score aggregation; the engineering implementation
+(Part~X) uses an analogous scoring loop.
+\end{itemize}

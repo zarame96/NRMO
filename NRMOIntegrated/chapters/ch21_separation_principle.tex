@@ -1,0 +1,129 @@
+% chapters/ch21_separation_principle.tex
+% Chapter 21: NRMO-Engine Separation Principle — Formal Definition
+% Source: NRMO_v5_updated.pdf, Chapter 21 (lines 9324-9433 of v5_layout.txt)
+
+\chapter{NRMO-Engine Separation Principle ---
+Formal Definition}
+\label{ch:separation-principle}
+
+\nrmobox{Document status}{
+\begin{tabular}{ll}
+\textbf{Status}: & Structural Requirement \\
+\textbf{Precondition}: & Strong Engine Architecture
+(Chapter~\ref{ch:strong-engine})
+\end{tabular}\\[0.3em]
+This chapter formalises the separation between NRMO (constitution)
+and Engine (propulsion) as an invariant.
+}
+
+% =====================================================================
+\section{Prohibited Patterns (Failed in All World Lines)}
+\label{sec:sep-prohibited}
+
+\subsection{Pattern 1: Engine Containment}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Engine subset-of NRMO
+
+Result:
+  - Non-continuous jump: impossible
+  - Cannot cross threshold
+  - Loss of initiative
+
+Proof: Contradiction with P(Ruin) <= epsilon constraint
+\end{lstlisting}
+
+\subsection{Pattern 2: Intervention in Purpose / Strategy}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+NRMO -> Engine.purpose
+NRMO -> Engine.strategy
+NRMO -> Engine.success_definition
+
+Result:
+  - Constitution becomes ruler
+  - Disappearance of decision subject
+  - Outsourcing of responsibility
+\end{lstlisting}
+
+\subsection{Pattern 3: Exploration Suppression}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Prohibit Engine.exploration under "safety" pretext
+
+Result:
+  - Religionization (absolutizing NRMO)
+  - Stagnation (disappearance of exploration)
+  - Self-exculpation
+\end{lstlisting}
+
+% =====================================================================
+\section{Separation Principle (Formal Definition)}
+\label{sec:sep-formal}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+Separation_Principle = {
+  "placement": {
+    "Engine not-subset-of NRMO":  True,
+    "Engine.location":            "Outside(NRMO)"
+  },
+  "authority": {
+    "NRMO.authority":     "veto_only",
+    "NRMO.authority_NOT": [
+      "propulsion", "optimization",
+      "success_definition",
+      "purpose_setting",
+      "strategy_decision"
+    ]
+  },
+  "relationship": {
+    "NRMO -> Engine":   "veto possible (one-way)",
+    "NRMO !-> Engine":  "purpose/strategy intervention prohibited",
+    "Engine -> NRMO":   "cannot ignore"
+  },
+  "health": {
+    "health":       "inversely proportional to veto_frequency",
+    "pathological": [
+      "high-frequency veto",
+      "exploration suppression",
+      "becoming ruler"
+    ]
+  }
+}
+\end{lstlisting}
+
+% =====================================================================
+\section{Verification Method at Implementation}
+\label{sec:sep-verification}
+
+\subsection{Self-Check Questions}
+
+\begin{enumerate}
+\item Is Engine outside NRMO?
+\item Is NRMO not instructing ``what should be done''?
+\item Is NRMO not defining ``how to succeed''?
+\item Is NRMO exercising veto authority only?
+\item Is intervention frequency decreasing over time?
+\end{enumerate}
+
+\noindent
+All ``Yes'' = healthy. Even one ``No'' = suspected structural
+violation.
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This chapter formalises Invariant~\ref{inv:gov-exec-sep}
+(governance--execution separation).
+\item In the engineering implementation (Part~X), the separation
+principle is verified by the audit checks documented in
+\texttt{SEPARATION.md} of the v5.2 codebase: \emph{(i)} Engine
+modules contain no governance parameters; \emph{(ii)} flow order is
+\emph{invent $\to$ governance filter $\to$ engine scoring};
+\emph{(iii)} \texttt{omega\_full.py} delegates all ruin checks to
+\texttt{core.ruin.is\_ruin\_state()}.
+\item In $\Omega$ Full v5.0 (Part~IX), the separation principle
+appears as the architectural invariant: \emph{NRMO defines
+admissibility; engine searches within it.}
+\end{itemize}

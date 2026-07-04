@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NRMO / Loom Universal Adapter — Console</title>
+<style>
+  :root {
+    --bg: #0f1117; --panel: #1a1d27; --border: #2a2f3e;
+    --text: #e4e7ef; --muted: #8b90a0; --accent: #5b8def;
+    --green: #46c771; --red: #e25563; --amber: #e0a83b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+  }
+  header {
+    padding: 20px 28px; border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  header h1 { margin: 0; font-size: 19px; font-weight: 650; }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .layout { display: flex; gap: 0; min-height: calc(100vh - 74px); }
+  .controls {
+    width: 320px; padding: 22px; border-right: 1px solid var(--border);
+    background: var(--panel); flex-shrink: 0;
+  }
+  .main { flex: 1; padding: 22px 28px; overflow-x: auto; }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block; font-size: 12px; color: var(--muted);
+    margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  select, input[type=number] {
+    width: 100%; padding: 9px 11px; background: var(--bg);
+    border: 1px solid var(--border); border-radius: 7px; color: var(--text);
+    font-size: 14px;
+  }
+  .toggle-row { display: flex; gap: 8px; }
+  .toggle {
+    flex: 1; padding: 9px; text-align: center; border-radius: 7px;
+    border: 1px solid var(--border); background: var(--bg); cursor: pointer;
+    font-size: 13px; transition: all .15s;
+  }
+  .toggle.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.run {
+    width: 100%; padding: 12px; background: var(--accent); color: #fff;
+    border: none; border-radius: 8px; font-size: 15px; font-weight: 600;
+    cursor: pointer; margin-top: 6px;
+  }
+  button.run:hover { background: #4a7de0; }
+  .domain-desc {
+    margin-top: 18px; padding: 14px; background: var(--bg);
+    border-radius: 8px; font-size: 12px; color: var(--muted);
+  }
+  .domain-desc strong { color: var(--text); }
+  .semantics { margin-top: 8px; }
+  .semantics div { padding: 2px 0; }
+  .sem-k { color: var(--accent); font-weight: 600; display: inline-block; width: 18px; }
+  .cards { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 22px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px; min-width: 130px;
+  }
+  .card .v { font-size: 26px; font-weight: 700; }
+  .card .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .ok { color: var(--green); } .bad { color: var(--red); } .warn { color: var(--amber); }
+  .chart-box {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px; margin-bottom: 18px;
+  }
+  .chart-box h3 { margin: 0 0 12px; font-size: 14px; font-weight: 600; }
+  svg { width: 100%; height: auto; display: block; }
+  .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 12px; }
+  .legend span { display: flex; align-items: center; gap: 5px; color: var(--muted); }
+  .dot { width: 10px; height: 10px; border-radius: 2px; }
+  .empty { color: var(--muted); text-align: center; padding: 60px 0; }
+  .mode-bar { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin-top: 6px; }
+  .mode-seg { font-size: 10px; color: #fff; text-align: center; line-height: 26px; overflow: hidden; }
+</style>
+</head>
+<body>
+<header>
+  <h1>NRMO / Loom — Universal Adapter Console</h1>
+  <p>破綻境界を守りながら未来到達可能性を維持する意思決定エンジン. domain を選んで実行.</p>
+</header>
+<div class="layout">
+  <div class="controls">
+    <div class="field">
+      <label>Domain (adapter)</label>
+      <select id="domain">
+        <option value="store">店舗運営 (Retail)</option>
+        <option value="health">健康管理 (Health)</option>
+        <option value="portfolio">金融ポートフォリオ (Finance)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Engine</label>
+      <div class="toggle-row">
+        <div class="toggle active" data-mode="hybrid" id="t-hybrid">Hybrid</div>
+        <div class="toggle" data-mode="loom" id="t-loom">Loom 単体</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Horizon (steps)</label>
+      <input type="number" id="horizon" value="150" min="20" max="500">
+    </div>
+    <div class="field">
+      <label>Seed</label>
+      <input type="number" id="seed" value="42">
+    </div>
+    <button class="run" id="runBtn">▶ 実行 (Run Episode)</button>
+    <div class="domain-desc" id="domainDesc"></div>
+  </div>
+  <div class="main">
+    <div class="cards" id="cards">
+      <div class="empty">domain を選んで「実行」を押してください</div>
+    </div>
+    <div class="chart-box" id="stateChartBox" style="display:none">
+      <h3>6D State trajectory (R,E,G,O,K,X)</h3>
+      <svg id="stateChart" viewBox="0 0 760 260"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="chart-box" id="scoreChartBox" style="display:none">
+      <h3>Score / Value trajectory</h3>
+      <svg id="scoreChart" viewBox="0 0 760 200"></svg>
+    </div>
+    <div class="chart-box" id="modeBox" style="display:none">
+      <h3>Mode usage</h3>
+      <div class="mode-bar" id="modeBar"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// NRMO/Loom core (JS port — nrmo_core.hpp / nrmo_universal_adapter.py と同思想)
+// ============================================================
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+function clip(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+function gauss(rng){let u=0,v=0;while(u===0)u=rng();while(v===0)v=rng();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+const MAG = {A:0.5,B:1.0,C:1.6};
+
+// --- Loom decision (Sparse Activation + Safety Floor + Hybrid) ---
+function selectMode(s, risk){
+  if(s.R<=18||s.X>=85||risk>=0.65) return "Safety";
+  if(s.X>30&&s.X<70&&s.R>40) return "Drift";
+  if(s.X>=55) return "Stabilization";
+  if(s.R>=60&&s.X<=40) return "Opportunity";
+  return "Normal";
+}
+function conservativeAction(mode){
+  switch(mode){
+    case "Safety": return {intent:"recover",strength:"A"};
+    case "Drift": return {intent:"invest",strength:"A"};
+    case "Stabilization": return {intent:"defend",strength:"A"};
+    case "Opportunity": return {intent:"invest",strength:"B"};
+    default: return {intent:"recover",strength:"A"};
+  }
+}
+function applySafetyFloor(a, s){
+  const emergency = (s.R<=25 || s.X>=80);
+  if(!emergency) return a;
+  if(a.intent==="invest"||a.intent==="explore") return {intent:"recover",strength:"A"};
+  return a;
+}
+function decide(adapter, ds, rng, useHybrid){
+  const s = adapter.toLoom(ds);
+  const risk = adapter.risk(ds, s);
+  const mode = selectMode(s, risk);
+  let action;
+  if(useHybrid && risk<0.45){ action = adapter.highOutput(ds, rng); }
+  else { action = conservativeAction(mode); }
+  const final = applySafetyFloor(action, s);
+  return {action: final, mode};
+}
+
+// ============================================================
+// Domain adapters
+// ============================================================
+const ADAPTERS = {
+  store: {
+    name: "店舗運営 (Retail Operation)",
+    ruin: "運転資金枯渇 (cash < 15) = 倒産",
+    semantics: {R:"運転資金",E:"スタッフ士気",G:"在庫適正度",O:"顧客基盤",K:"市場理解",X:"競合圧力"},
+    init: ()=>({cash:100,inv:50,morale:60,cust:50,know:50,comp:30,rev:0}),
+    toLoom: d=>({R:clip(d.cash,0,200)/2,E:clip(d.morale,0,100),G:clip(100-Math.abs(d.inv-50),0,100),O:clip(d.cust,0,100),K:clip(d.know,0,100),X:clip(d.comp,0,100),score:d.rev}),
+    risk: (d,s)=>Math.min(1,Math.max(0,(35-s.R)/35)*0.5+Math.max(0,(s.X-60)/40)*0.5),
+    highOutput: d=> d.cash>60?{intent:"invest",strength:"C"}:(d.cash>35?{intent:"invest",strength:"B"}:{intent:"explore",strength:"A"}),
+    apply: (a,d,rng)=>{
+      let n={...d}; const m=MAG[a.strength];
+      if(a.intent==="invest"){n.inv+=10*m;n.cust+=5*m;n.cash-=12*m;}
+      else if(a.intent==="explore"){n.know+=6*m;n.cust+=3*m;n.cash-=6*m;}
+      else if(a.intent==="defend"){n.cash+=3*m;n.comp-=4*m;n.morale-=2*m;}
+      else if(a.intent==="recover"){n.cash+=8*m;n.inv-=5*m;n.morale+=3*m;}
+      const dem=n.cust*0.3*(1+gauss(rng)*0.2); const sales=Math.min(dem,n.inv);
+      n.inv-=sales; n.cash+=sales*1.5; n.rev+=sales*1.5;
+      n.comp+=1+gauss(rng)*2; n.morale=clip(n.morale+gauss(rng)*2,0,100); n.cash-=5;
+      n.cash=clip(n.cash,0,400);n.inv=clip(n.inv,0,200);n.cust=clip(n.cust,0,200);
+      n.know=clip(n.know,0,100);n.comp=clip(n.comp,0,100);
+      return n;
+    },
+    ruined: d=>d.cash<15,
+    score: d=>d.rev,
+  },
+  health: {
+    name: "健康管理 (Health Management)",
+    ruin: "疾病リスク高騰 (disease_risk > 80) = 健康破綻",
+    semantics: {R:"体力",E:"体調持続性",G:"生活習慣",O:"活動柔軟性",K:"健康リテラシー",X:"疾病リスク"},
+    init: ()=>({en:70,fit:50,hab:50,flex:50,lit:50,risk:25,wb:0}),
+    toLoom: d=>({R:d.en,E:d.fit,G:d.hab,O:d.flex,K:d.lit,X:d.risk,score:d.wb}),
+    risk: (d,s)=>Math.min(1,Math.max(0,(35-s.R)/35)*0.5+Math.max(0,(s.X-60)/40)*0.5),
+    highOutput: d=> d.en>60?{intent:"invest",strength:"B"}:{intent:"defend",strength:"A"},
+    apply: (a,d,rng)=>{
+      let n={...d}; const m=MAG[a.strength];
+      if(a.intent==="invest"){n.fit+=6*m;n.en-=8*m;n.risk-=4*m;}
+      else if(a.intent==="explore"){n.lit+=6*m;n.hab+=3*m;n.en-=3*m;}
+      else if(a.intent==="defend"){n.risk-=5*m;n.en+=4*m;}
+      else if(a.intent==="recover"){n.en+=10*m;n.fit-=2*m;}
+      n.en=clip(n.en+gauss(rng)*3,0,100);
+      n.risk=clip(n.risk+0.5+gauss(rng)*2-n.fit*0.02,0,100);
+      n.wb+=(n.en+n.fit)/20;
+      n.fit=clip(n.fit,0,100);n.hab=clip(n.hab,0,100);n.lit=clip(n.lit,0,100);
+      return n;
+    },
+    ruined: d=>d.risk>80,
+    score: d=>d.wb,
+  },
+  portfolio: {
+    name: "金融ポートフォリオ (Finance)",
+    ruin: "ドローダウン > 40% = catastrophic loss",
+    semantics: {R:"資産水準",E:"低ボラ度",G:"分散度",O:"現金比率",K:"トレンド理解",X:"DD/ボラ曝露"},
+    init: ()=>({val:100,peak:100,cash:0.5,eq:0.5,vol:0.15,trend:0,rb:[]}),
+    toLoom: d=>{const dd=d.peak>0?Math.max(0,(d.peak-d.val)/d.peak):0;return{R:clip(d.val,0,200)/2,E:clip(100*(1-d.vol*2),0,100),G:clip(100*(1-Math.abs(d.eq-0.5)*2),0,100),O:clip(d.cash*100,0,100),K:clip(50+d.trend*50,0,100),X:clip(dd*150+d.vol*100,0,100),score:d.val-100};},
+    risk: (d,s)=>Math.min(1,Math.max(0,(35-s.R)/35)*0.5+Math.max(0,(s.X-60)/40)*0.5),
+    highOutput: d=>({intent:"invest",strength:"B"}),
+    apply: (a,d,rng)=>{
+      let n={...d,rb:[...d.rb]}; const m=MAG[a.strength];
+      let dEq=0;
+      if(a.intent==="invest")dEq=0.20*m; else if(a.intent==="explore")dEq=0.10*m;
+      else if(a.intent==="defend")dEq=-0.20*m; else if(a.intent==="recover")dEq=-0.35*m;
+      n.eq=clip(n.eq+dEq,0,1); n.cash=1-n.eq;
+      // regime-ish market
+      const r=gauss(rng)*0.015+0.0003;
+      const pr=n.eq*r; n.val*=(1+pr); n.peak=Math.max(n.peak,n.val);
+      n.rb.push(pr); if(n.rb.length>10)n.rb.shift();
+      const mean=n.rb.reduce((a,b)=>a+b,0)/n.rb.length;
+      const sd=Math.sqrt(n.rb.reduce((a,b)=>a+(b-mean)**2,0)/n.rb.length);
+      n.vol=sd||0.15; n.trend=clip(mean*50,-1,1);
+      return n;
+    },
+    ruined: d=>(d.peak>0&&(d.peak-d.val)/d.peak>=0.40),
+    score: d=>d.val-100,
+  },
+};
+
+// ============================================================
+// Run episode
+// ============================================================
+function runEpisode(adapterKey, useHybrid, horizon, seed){
+  const A = ADAPTERS[adapterKey];
+  const rng = mulberry32(seed*2654435761 >>> 0);
+  let ds = A.init();
+  const traj = []; const modeCounts = {};
+  let ruined=false, step=0;
+  for(; step<horizon; step++){
+    const {action, mode} = decide({toLoom:A.toLoom,risk:A.risk,highOutput:A.highOutput}, ds, rng, useHybrid);
+    modeCounts[mode]=(modeCounts[mode]||0)+1;
+    const s = A.toLoom(ds);
+    traj.push({...s, score:A.score(ds)});
+    ds = A.apply(action, ds, rng);
+    if(A.ruined(ds)){ruined=true; break;}
+  }
+  const s=A.toLoom(ds); traj.push({...s, score:A.score(ds)});
+  return {traj, modeCounts, ruined, survived:step+1, finalScore:A.score(ds), adapter:A};
+}
+
+// ============================================================
+// Rendering
+// ============================================================
+const COLORS={R:"#46c771",E:"#5b8def",G:"#b58def",O:"#e0a83b",K:"#46c7c7",X:"#e25563"};
+function renderState(traj){
+  const W=760,H=260,pad=30; const n=traj.length;
+  const xs=i=>pad+(W-2*pad)*i/(n-1);
+  const ys=v=>H-pad-(H-2*pad)*v/100;
+  let svg="";
+  // grid
+  for(let g=0;g<=100;g+=25){svg+=`<line x1="${pad}" y1="${ys(g)}" x2="${W-pad}" y2="${ys(g)}" stroke="#2a2f3e" stroke-width="1"/>`;svg+=`<text x="${pad-6}" y="${ys(g)+4}" fill="#8b90a0" font-size="10" text-anchor="end">${g}</text>`;}
+  for(const k of ["R","E","G","O","K","X"]){
+    let path="";
+    traj.forEach((p,i)=>{path+=(i===0?"M":"L")+xs(i).toFixed(1)+","+ys(p[k]).toFixed(1)+" ";});
+    svg+=`<path d="${path}" fill="none" stroke="${COLORS[k]}" stroke-width="${k==='X'?2.4:1.6}"/>`;
+  }
+  document.getElementById("stateChart").innerHTML=svg;
+  document.getElementById("legend").innerHTML=Object.keys(COLORS).map(k=>`<span><span class="dot" style="background:${COLORS[k]}"></span>${k}</span>`).join("");
+}
+function renderScore(traj){
+  const W=760,H=200,pad=34; const n=traj.length;
+  const vals=traj.map(p=>p.score);
+  const mn=Math.min(...vals,0), mx=Math.max(...vals,1);
+  const xs=i=>pad+(W-2*pad)*i/(n-1);
+  const ys=v=>H-pad-(H-2*pad)*(v-mn)/(mx-mn||1);
+  let path="";
+  traj.forEach((p,i)=>{path+=(i===0?"M":"L")+xs(i).toFixed(1)+","+ys(p.score).toFixed(1)+" ";});
+  let svg=`<line x1="${pad}" y1="${ys(0)}" x2="${W-pad}" y2="${ys(0)}" stroke="#2a2f3e"/>`;
+  svg+=`<text x="${pad-6}" y="${ys(mx)+4}" fill="#8b90a0" font-size="10" text-anchor="end">${mx.toFixed(0)}</text>`;
+  svg+=`<text x="${pad-6}" y="${ys(mn)+4}" fill="#8b90a0" font-size="10" text-anchor="end">${mn.toFixed(0)}</text>`;
+  svg+=`<path d="${path}" fill="none" stroke="#5b8def" stroke-width="2"/>`;
+  document.getElementById("scoreChart").innerHTML=svg;
+}
+const MODECOL={Safety:"#e25563",Drift:"#46c771",Stabilization:"#5b8def",Opportunity:"#e0a83b",Normal:"#8b90a0",SevereCycle:"#b58def"};
+function renderMode(mc, total){
+  let html="";
+  for(const [m,c] of Object.entries(mc)){
+    const pct=100*c/total;
+    if(pct<1)continue;
+    html+=`<div class="mode-seg" style="width:${pct}%;background:${MODECOL[m]||'#666'}" title="${m}: ${c}">${pct>8?m:''}</div>`;
+  }
+  document.getElementById("modeBar").innerHTML=html;
+}
+function renderCards(res){
+  const A=res.adapter;
+  const ruinClass=res.ruined?"bad":"ok";
+  const cards=[
+    {v:res.finalScore.toFixed(1),l:"Final Score",c:""},
+    {v:res.ruined?"RUIN":"生存",l:A.ruin.split(" ")[0],c:ruinClass},
+    {v:res.survived,l:"Survived steps",c:""},
+    {v:(100*(res.modeCounts.Safety||0)/res.survived).toFixed(0)+"%",l:"Safety mode",c:"warn"},
+  ];
+  document.getElementById("cards").innerHTML=cards.map(c=>`<div class="card"><div class="v ${c.c}">${c.v}</div><div class="l">${c.l}</div></div>`).join("");
+}
+function renderDesc(key){
+  const A=ADAPTERS[key];
+  let sem=Object.entries(A.semantics).map(([k,v])=>`<div><span class="sem-k">${k}</span> ${v}</div>`).join("");
+  document.getElementById("domainDesc").innerHTML=`<strong>${A.name}</strong><br>Ruin: ${A.ruin}<div class="semantics">${sem}</div>`;
+}
+
+// ============================================================
+// UI wiring
+// ============================================================
+let useHybrid=true;
+document.getElementById("t-hybrid").onclick=()=>{useHybrid=true;document.getElementById("t-hybrid").classList.add("active");document.getElementById("t-loom").classList.remove("active");};
+document.getElementById("t-loom").onclick=()=>{useHybrid=false;document.getElementById("t-loom").classList.add("active");document.getElementById("t-hybrid").classList.remove("active");};
+document.getElementById("domain").onchange=e=>renderDesc(e.target.value);
+document.getElementById("runBtn").onclick=()=>{
+  const key=document.getElementById("domain").value;
+  const horizon=+document.getElementById("horizon").value;
+  const seed=+document.getElementById("seed").value;
+  const res=runEpisode(key,useHybrid,horizon,seed);
+  renderCards(res); renderState(res.traj); renderScore(res.traj); renderMode(res.modeCounts,res.survived);
+  document.getElementById("stateChartBox").style.display="block";
+  document.getElementById("scoreChartBox").style.display="block";
+  document.getElementById("modeBox").style.display="block";
+};
+renderDesc("store");
+</script>
+</body>
+</html>

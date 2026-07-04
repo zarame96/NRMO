@@ -1,0 +1,224 @@
+% chapters/ch07_investment_sop.tex
+% Chapter 7: Investment SOP — Benchmark-Based Ruin / TWR
+% Source: NRMO_v5_updated.pdf, Chapter 7 (lines 6457-6609 of v5_layout.txt)
+
+\chapter{Investment SOP --- Benchmark-Based Ruin / TWR}
+\label{ch:investment-sop}
+
+\nrmobox{Document identification}{
+\begin{tabular}{ll}
+\textbf{Version}: & 1.2.2 (Stability Patch) \\
+\textbf{Compatibility}: & NRMO Core v1.2.7 \\
+\textbf{Scope}: & Full Operations
+\end{tabular}\\[0.4em]
+This SOP is an operational regulation that applies NRMO theory to
+practice; the theoretical text is not altered.
+}
+
+% =====================================================================
+\section{Scope and Basic Principles}
+\label{sec:invest-scope}
+
+\begin{description}
+\item[Survival First] Avoid unrecoverable collapse as the top
+priority.
+\item[Anti-Ergodicity] Optimise time-average survival, not
+ensemble-average expected value.
+\item[Optionality] Maintain reversibility --- the ability to redo,
+exit, or rebalance.
+\item[Separation] Separate theory, judgement, and execution.
+\end{description}
+
+% =====================================================================
+\section{Ruin Management}
+\label{sec:invest-ruin}
+
+In this SOP, ``Ruin'' does \textbf{not} mean capital bankruptcy alone.
+It refers to:
+
+\begin{quote}
+\centering
+\textit{the state in which rationality for taking risk is lost.}
+\end{quote}
+
+Two grades:
+
+\begin{description}
+\item[Hard Ruin] Unrecoverable: bankruptcy, permanent capital
+dilution, forced sale of all risk assets.
+\item[Soft Ruin] Strategic failure: transition to Risk-Off mode and
+inability to take new risk for an extended period.
+\end{description}
+
+% =====================================================================
+\section{Decision Priority}
+\label{sec:invest-priority}
+
+The lexicographic priority for any investment decision:
+
+\begin{enumerate}
+\item Survival constraint (ruin avoidance).
+\item Reversibility.
+\item Time average.
+\item Short-term expected value.
+\end{enumerate}
+
+% =====================================================================
+\section{Asset Management: Benchmark-Based TWR}
+\label{sec:invest-twr}
+
+\subsection{Terms}
+\label{sec:invest-terms}
+
+\begin{description}
+\item[$m$] monthly index.
+\item[$V_m$] end-of-month portfolio market value (USD).
+\item[$\mathrm{CF}_m$] net cash in/out for the month (USD).
+\item[$I_m^B$] benchmark index value at end of month $m$ (USD).
+\end{description}
+
+\subsection{Benchmark Priority}
+\label{sec:invest-benchmark}
+
+\begin{enumerate}
+\item ACWI Total Return (USD).
+\item ACWI Price (USD) + estimated dividends.
+\item MSCI World Total Return (USD).
+\end{enumerate}
+
+\noindent
+If none of the above is obtainable in a given month: suspend
+judgement; do \textbf{not} trigger Caution or Ruin based on
+incomplete data.
+
+\subsection{Monthly Time-Weighted Return}
+\label{sec:invest-monthly-twr}
+
+\begin{equation}
+R_{P,m} = \frac{V_m - (V_{m-1} + \mathrm{CF}_m)}{V_{m-1} + \mathrm{CF}_m},
+\qquad
+R_{B,m} = \frac{I_m^B - I_{m-1}^B}{I_{m-1}^B}.
+\end{equation}
+
+\subsection{4-Month TWR --- Intermediate Judgement}
+\label{sec:invest-4m-twr}
+
+\begin{equation}
+R_P^{4m}(t) = \prod_{k=t-3}^{t} (1 + R_{P,k}) - 1,
+\qquad
+R_B^{4m}(t) = \prod_{k=t-3}^{t} (1 + R_{B,k}) - 1.
+\end{equation}
+
+\paragraph{Caution trigger.}
+$R_P^{4m}(t) < R_B^{4m}(t)$.
+
+\noindent
+Under Caution:
+\begin{itemize}
+\item New risk assets: maximum $50\%$ allocation.
+\item Dream / high-$\beta$ assets: new entry prohibited.
+\item Existing positions: maintain.
+\end{itemize}
+
+\paragraph{Caution release.}
+$R_P^{4m}(t) \ge R_B^{4m}(t)$.
+
+\subsection{12-Month TWR --- Ruin Judgement}
+\label{sec:invest-12m-twr}
+
+\begin{equation}
+R_P^{12m}(t) = \prod_{k=t-11}^{t} (1 + R_{P,k}) - 1,
+\qquad
+R_B^{12m}(t) = \prod_{k=t-11}^{t} (1 + R_{B,k}) - 1.
+\end{equation}
+
+\paragraph{Risk-Off trigger.}
+$R_P^{12m}(t) < R_B^{12m}(t)$.
+
+\noindent
+Under Risk-Off:
+\begin{itemize}
+\item New equity purchases: halted.
+\item Additional funds: bonds or cash only.
+\item Forced selling: \textbf{not} performed.
+\end{itemize}
+
+\subsection{Risk-On Return Conditions}
+\label{sec:invest-risk-on}
+
+\begin{enumerate}
+\item $R_P^{12m}(t) \ge R_B^{12m}(t)$ for three consecutive months.
+\item Normal operation (CORE mode) restored.
+\end{enumerate}
+
+% =====================================================================
+\section{Cash and Liquidity}
+\label{sec:invest-liquidity}
+
+\begin{itemize}
+\item Maintain minimum six-month living expenses in cash at all
+times.
+\item Emergency reserve: separate account, not subject to TWR
+calculation.
+\item In Risk-Off state: no cash allocation to equities.
+\end{itemize}
+
+% =====================================================================
+\section{Position Limits with Time Rules}
+\label{sec:invest-position-limits}
+
+\begin{itemize}
+\item Single name: maximum $20\%$ of total investable assets.
+\item Dream allocation: maximum $5\%$ of total assets.
+\item New position establishment: minimum $24$-hour cooling-off
+after decision.
+\item Average-down prohibited when position is down more than $30\%$
+from entry.
+\end{itemize}
+
+% =====================================================================
+\section{Exception Handling}
+\label{sec:invest-exceptions}
+
+\nrmobox{Exception structure}{
+Exceptions are \textbf{structurally prohibited}. If an exception
+feeling arises, it is a MISSION / SHUTDOWN signal.
+}
+
+% =====================================================================
+\section{Log}
+\label{sec:invest-log}
+
+Record monthly: TWR result, mode (CORE / CAUTION / RISK-OFF), any
+special events that influenced the calculation, and any
+data-availability gaps.
+
+% =====================================================================
+\section{Update Policy}
+\label{sec:invest-update}
+
+This SOP is updated \textbf{only} when NRMO theory changes.
+Operational judgement does not alter this SOP. Discretionary updates
+are forbidden.
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Caution and Risk-Off triggers map to Type ZERO modes
+(Section~\ref{sec:type-zero-modes-c2}): Caution corresponds to
+MISSION (boundary control), Risk-Off corresponds to SHUTDOWN-
+equivalent suspension of new risk acquisition.
+\item Position limits implement the $A_{\mathrm{allowed}}$ caps under
+the investment domain
+(Section~\ref{sec:a-allowed-concrete-matrix}).
+\item The benchmark-based TWR mechanism is an instance of the robust
+chance-constrained control of
+Section~\ref{sec:foundations-mech-b-constraint}: the benchmark
+substitutes for the unknown true distribution, and the
+under-performance gap substitutes for the ambiguity-set radius.
+\item In the simulator (Part~VIII), the investment SOP corresponds
+loosely to portfolio-domain agents, though the simulator works in
+abstract civilisation state and does not implement asset-class
+specifics.
+\end{itemize}

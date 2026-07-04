@@ -1,0 +1,1083 @@
+{
+  "version": "unified_engine_final",
+  "description": "UnifiedEngine vs all engines, 3 worlds",
+  "main_results": {
+    "chaotic": {
+      "mild": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 15.82435896367599,
+              "mean": 15.719596483772547,
+              "std": 4.107742095549084,
+              "p5": 7.602099999999998,
+              "cvar": 6.624433500724986,
+              "ruin_rate": 1.0,
+              "median_steps": 32.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 25.389717790085825,
+              "mean": 23.66203234582707,
+              "std": 8.464408347155453,
+              "p5": 3.422699999999999,
+              "cvar": 3.4317348238682697,
+              "ruin_rate": 1.0,
+              "median_steps": 60.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 19.564606623367276,
+              "mean": 18.931791866386654,
+              "std": 6.134953759040002,
+              "p5": 7.608359999999999,
+              "cvar": 5.84127535233117,
+              "ruin_rate": 1.0,
+              "median_steps": 40.5
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 24.156288211534083,
+              "mean": 22.21773542737601,
+              "std": 8.003501777669896,
+              "p5": 4.359874999999999,
+              "cvar": 3.290075758432345,
+              "ruin_rate": 1.0,
+              "median_steps": 50.5
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 25.22872399999999,
+              "mean": 23.50966387884017,
+              "std": 8.250812263368445,
+              "p5": 3.422699999999999,
+              "cvar": 3.4317348238682697,
+              "ruin_rate": 1.0,
+              "median_steps": 59.0
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 24.42145417914712,
+              "mean": 22.27968515554694,
+              "std": 8.161806077828517,
+              "p5": 4.359574999999999,
+              "cvar": 3.2871506500751493,
+              "ruin_rate": 1.0,
+              "median_steps": 51.0
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 24.156288211534083,
+              "mean": 22.21773542737601,
+              "std": 8.003501777669896,
+              "p5": 4.359874999999999,
+              "cvar": 3.290075758432345,
+              "ruin_rate": 1.0,
+              "median_steps": 50.5
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 27.771664087816625,
+              "mean": 24.902738417111724,
+              "std": 10.069979134475892,
+              "p5": 3.43248,
+              "cvar": 3.105386641705089,
+              "ruin_rate": 1.0,
+              "median_steps": 66.0
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "SynthesisPathway": 1397,
+            "ExplorationCandidate": 750,
+            "RecoveryCandidate": 2220,
+            "DefensiveCandidate": 993,
+            "AggressiveEngine": 115,
+            "SynthesisStandalone": 100,
+            "MutationPathway": 10
+          },
+          "world_type_histogram": {
+            "unknown": 479,
+            "chaotic": 4751,
+            "drifting": 201,
+            "noisy": 154
+          },
+          "world_adaptive_total": 4750,
+          "active_bias_total": 807,
+          "opportunity_expanded_total": 45,
+          "aggressive_summary": {
+            "generated": 3184,
+            "selected": 115,
+            "final": 112
+          }
+        },
+        "elapsed_sec": 14.48965072631836
+      },
+      "moderate": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 14.63465249801499,
+              "mean": 13.915044125843508,
+              "std": 5.2173897528782485,
+              "p5": 4.906787464911064,
+              "cvar": 3.8992102705429414,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 19.51812213036459,
+              "mean": 19.365560733308545,
+              "std": 9.060786750797218,
+              "p5": 5.056683370108051,
+              "cvar": 3.741566734298645,
+              "ruin_rate": 1.0,
+              "median_steps": 51.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 15.137517213411094,
+              "mean": 15.316715058244219,
+              "std": 6.454349827939025,
+              "p5": 5.302147402052884,
+              "cvar": 4.266978020278146,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 19.46828491890364,
+              "mean": 18.626199962410208,
+              "std": 8.591773906487646,
+              "p5": 5.175077639118329,
+              "cvar": 4.381325825655712,
+              "ruin_rate": 1.0,
+              "median_steps": 45.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 19.228613202544473,
+              "mean": 18.873335006445988,
+              "std": 8.582150066418466,
+              "p5": 5.056683370108051,
+              "cvar": 3.7759710947465117,
+              "ruin_rate": 1.0,
+              "median_steps": 50.0
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 18.87209809906536,
+              "mean": 18.312888280100037,
+              "std": 8.452255338128182,
+              "p5": 5.171690202910052,
+              "cvar": 4.311810928355908,
+              "ruin_rate": 1.0,
+              "median_steps": 44.0
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 19.46828491890364,
+              "mean": 18.626199962410208,
+              "std": 8.591773906487646,
+              "p5": 5.175077639118329,
+              "cvar": 4.381325825655712,
+              "ruin_rate": 1.0,
+              "median_steps": 45.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 19.29359517384539,
+              "mean": 18.653679795244255,
+              "std": 11.068115345924914,
+              "p5": 1.60164,
+              "cvar": 1.28573714378397,
+              "ruin_rate": 1.0,
+              "median_steps": 53.5
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "SynthesisPathway": 1212,
+            "ExplorationCandidate": 646,
+            "RecoveryCandidate": 1863,
+            "AggressiveEngine": 132,
+            "DefensiveCandidate": 746,
+            "SynthesisStandalone": 283,
+            "MutationPathway": 11
+          },
+          "world_type_histogram": {
+            "unknown": 479,
+            "chaotic": 3066,
+            "noisy": 787,
+            "drifting": 561
+          },
+          "world_adaptive_total": 4060,
+          "active_bias_total": 703,
+          "opportunity_expanded_total": 152,
+          "aggressive_summary": {
+            "generated": 2782,
+            "selected": 132,
+            "final": 122
+          }
+        },
+        "elapsed_sec": 12.643578290939331
+      },
+      "severe": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 11.31850042077767,
+              "mean": 12.56660632732564,
+              "std": 6.969925793210797,
+              "p5": 2.753814024377484,
+              "cvar": 2.063213476613748,
+              "ruin_rate": 1.0,
+              "median_steps": 29.5
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 13.957953886374018,
+              "mean": 16.12470273042421,
+              "std": 10.974874510424257,
+              "p5": 1.6601903630599235,
+              "cvar": 1.420034717655753,
+              "ruin_rate": 1.0,
+              "median_steps": 42.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 11.110436399674075,
+              "mean": 12.841229681570983,
+              "std": 8.108982172213615,
+              "p5": 2.9239401595852175,
+              "cvar": 2.441783623622062,
+              "ruin_rate": 1.0,
+              "median_steps": 29.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 14.075669765293824,
+              "mean": 15.788025911332992,
+              "std": 10.862947322004553,
+              "p5": 1.6678293585684434,
+              "cvar": 1.5557435872686762,
+              "ruin_rate": 1.0,
+              "median_steps": 38.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 14.63855884799935,
+              "mean": 16.02316412616267,
+              "std": 10.787771413947796,
+              "p5": 1.6601903630599235,
+              "cvar": 1.470344634794566,
+              "ruin_rate": 1.0,
+              "median_steps": 42.0
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 14.564689649794616,
+              "mean": 16.0799196715741,
+              "std": 11.047002370243336,
+              "p5": 1.6879996733319846,
+              "cvar": 1.5465617270511878,
+              "ruin_rate": 1.0,
+              "median_steps": 40.0
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 14.075669765293824,
+              "mean": 15.788025911332992,
+              "std": 10.862947322004553,
+              "p5": 1.6678293585684434,
+              "cvar": 1.5557435872686762,
+              "ruin_rate": 1.0,
+              "median_steps": 38.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 10.502926469418764,
+              "mean": 11.574878888744262,
+              "std": 8.370597608830593,
+              "p5": 1.1896902618886351,
+              "cvar": 1.09861174054723,
+              "ruin_rate": 1.0,
+              "median_steps": 28.0
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "SynthesisPathway": 1029,
+            "ExplorationCandidate": 541,
+            "RecoveryCandidate": 1662,
+            "AggressiveEngine": 102,
+            "SynthesisStandalone": 439,
+            "DefensiveCandidate": 557,
+            "MutationPathway": 8
+          },
+          "world_type_histogram": {
+            "unknown": 476,
+            "chaotic": 1506,
+            "drifting": 847,
+            "noisy": 1509
+          },
+          "world_adaptive_total": 3516,
+          "active_bias_total": 612,
+          "opportunity_expanded_total": 223,
+          "aggressive_summary": {
+            "generated": 2158,
+            "selected": 102,
+            "final": 91
+          }
+        },
+        "elapsed_sec": 11.162716388702393
+      }
+    },
+    "drifting": {
+      "mild": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 35.56597087455428,
+              "mean": 39.03432869455569,
+              "std": 27.782437187217063,
+              "p5": 4.111875,
+              "cvar": 2.3681449866326787,
+              "ruin_rate": 0.8583333333333333,
+              "median_steps": 85.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 13.01878100000001,
+              "mean": 15.03099236222945,
+              "std": 12.834958751504377,
+              "p5": 2.562965886095468,
+              "cvar": -0.3025269798067589,
+              "ruin_rate": 0.9916666666666667,
+              "median_steps": 44.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 42.63510030501379,
+              "mean": 48.06368833827364,
+              "std": 31.032283514723385,
+              "p5": 2.8304250000000004,
+              "cvar": 2.6878458897566357,
+              "ruin_rate": 0.7333333333333333,
+              "median_steps": 114.5
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 16.156177722585873,
+              "mean": 19.488807175155042,
+              "std": 20.781379671800035,
+              "p5": 2.2479808860954678,
+              "cvar": -1.6348657614695419,
+              "ruin_rate": 0.9833333333333333,
+              "median_steps": 45.5
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 13.996797875129756,
+              "mean": 15.9877977632976,
+              "std": 14.035307547562212,
+              "p5": 2.562965886095468,
+              "cvar": -0.27516560319235794,
+              "ruin_rate": 0.9916666666666667,
+              "median_steps": 44.0
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 14.56592600000001,
+              "mean": 16.793307628102795,
+              "std": 15.064817646303283,
+              "p5": 2.5953450000000005,
+              "cvar": -0.34884386625818714,
+              "ruin_rate": 0.9916666666666667,
+              "median_steps": 44.0
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 16.156177722585873,
+              "mean": 19.488807175155042,
+              "std": 20.781379671800035,
+              "p5": 2.2479808860954678,
+              "cvar": -1.6348657614695419,
+              "ruin_rate": 0.9833333333333333,
+              "median_steps": 45.5
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 9.5980477243159,
+              "mean": 9.33227844196825,
+              "std": 4.68118018325014,
+              "p5": 2.5277860916803836,
+              "cvar": 2.192768811378553,
+              "ruin_rate": 1.0,
+              "median_steps": 37.0
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "SynthesisPathway": 3706,
+            "ExplorationCandidate": 1301,
+            "DefensiveCandidate": 576,
+            "AggressiveEngine": 170,
+            "MutationPathway": 69,
+            "SynthesisStandalone": 105,
+            "RecoveryCandidate": 216
+          },
+          "world_type_histogram": {
+            "unknown": 479,
+            "chaotic": 4735,
+            "drifting": 402,
+            "noisy": 527
+          },
+          "world_adaptive_total": 5312,
+          "active_bias_total": 634,
+          "opportunity_expanded_total": 56,
+          "aggressive_summary": {
+            "generated": 5500,
+            "selected": 170,
+            "final": 162
+          }
+        },
+        "elapsed_sec": 16.21592903137207
+      },
+      "moderate": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 18.392683281193605,
+              "mean": 21.746657906050128,
+              "std": 16.794744382843813,
+              "p5": 4.696368636266047,
+              "cvar": 4.387104195805127,
+              "ruin_rate": 1.0,
+              "median_steps": 45.5
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 8.746481950757122,
+              "mean": 10.672723538549906,
+              "std": 10.884060786808519,
+              "p5": 1.7748037602834663,
+              "cvar": -1.2542729881892747,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 19.70482381372601,
+              "mean": 24.578557692063622,
+              "std": 19.16762208199155,
+              "p5": 5.161075189555329,
+              "cvar": 3.9750301101644134,
+              "ruin_rate": 1.0,
+              "median_steps": 50.5
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 11.194295565875146,
+              "mean": 13.692665346562,
+              "std": 12.827154192236629,
+              "p5": 1.7884837602834665,
+              "cvar": -0.13596720665955123,
+              "ruin_rate": 1.0,
+              "median_steps": 35.5
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 9.336870307891402,
+              "mean": 12.268740304955914,
+              "std": 12.802679617004829,
+              "p5": 2.0889329659391764,
+              "cvar": -0.2951032971794619,
+              "ruin_rate": 1.0,
+              "median_steps": 32.0
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 10.657188599827624,
+              "mean": 12.60459433923187,
+              "std": 11.217242836781352,
+              "p5": 1.80296543025216,
+              "cvar": -0.1748372190987092,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 11.194295565875146,
+              "mean": 13.692665346562,
+              "std": 12.827154192236629,
+              "p5": 1.7884837602834665,
+              "cvar": -0.13596720665955123,
+              "ruin_rate": 1.0,
+              "median_steps": 35.5
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 6.240785410195185,
+              "mean": 7.514312556308139,
+              "std": 5.97021843847764,
+              "p5": 1.1033635838501339,
+              "cvar": -0.3069080416883266,
+              "ruin_rate": 1.0,
+              "median_steps": 23.5
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "SynthesisPathway": 2403,
+            "ExplorationCandidate": 842,
+            "DefensiveCandidate": 551,
+            "SynthesisStandalone": 180,
+            "AggressiveEngine": 107,
+            "RecoveryCandidate": 536,
+            "MutationPathway": 91
+          },
+          "world_type_histogram": {
+            "unknown": 479,
+            "chaotic": 2288,
+            "noisy": 1369,
+            "drifting": 574
+          },
+          "world_adaptive_total": 3877,
+          "active_bias_total": 665,
+          "opportunity_expanded_total": 138,
+          "aggressive_summary": {
+            "generated": 3340,
+            "selected": 107,
+            "final": 88
+          }
+        },
+        "elapsed_sec": 12.090914487838745
+      },
+      "severe": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 10.06293588469391,
+              "mean": 12.28736036818583,
+              "std": 9.398894619594913,
+              "p5": 1.9507150000000002,
+              "cvar": 1.5423944810921622,
+              "ruin_rate": 1.0,
+              "median_steps": 28.5
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 6.745615285193701,
+              "mean": 7.71423273888845,
+              "std": 5.720984807466468,
+              "p5": 1.1058000000000001,
+              "cvar": -0.14348330176068583,
+              "ruin_rate": 1.0,
+              "median_steps": 24.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 10.071840270263298,
+              "mean": 13.295233942752043,
+              "std": 10.976651853679764,
+              "p5": 2.216338887085362,
+              "cvar": 1.1018288583874856,
+              "ruin_rate": 1.0,
+              "median_steps": 29.5
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 7.6237739687437145,
+              "mean": 9.747979557100845,
+              "std": 8.238227972133297,
+              "p5": 1.4020406060013877,
+              "cvar": 0.7705042849993311,
+              "ruin_rate": 1.0,
+              "median_steps": 25.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 6.939734197695607,
+              "mean": 8.19000668055763,
+              "std": 6.452477554409419,
+              "p5": 1.090438534164501,
+              "cvar": -0.02702199279557867,
+              "ruin_rate": 1.0,
+              "median_steps": 24.0
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 7.5160069304690005,
+              "mean": 9.403718550015332,
+              "std": 7.799302530967479,
+              "p5": 1.4020406060013877,
+              "cvar": 0.2530494626210658,
+              "ruin_rate": 1.0,
+              "median_steps": 24.5
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 7.6237739687437145,
+              "mean": 9.747979557100845,
+              "std": 8.238227972133297,
+              "p5": 1.4020406060013877,
+              "cvar": 0.7705042849993311,
+              "ruin_rate": 1.0,
+              "median_steps": 25.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 4.80734245025964,
+              "mean": 5.488882820433031,
+              "std": 3.996409154127343,
+              "p5": 0.5747697520484719,
+              "cvar": -0.25047981676309444,
+              "ruin_rate": 1.0,
+              "median_steps": 18.0
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "SynthesisPathway": 1464,
+            "ExplorationCandidate": 560,
+            "AggressiveEngine": 84,
+            "RecoveryCandidate": 798,
+            "DefensiveCandidate": 363,
+            "SynthesisStandalone": 291,
+            "MutationPathway": 58
+          },
+          "world_type_histogram": {
+            "unknown": 476,
+            "chaotic": 1017,
+            "drifting": 677,
+            "noisy": 1448
+          },
+          "world_adaptive_total": 2796,
+          "active_bias_total": 594,
+          "opportunity_expanded_total": 170,
+          "aggressive_summary": {
+            "generated": 2130,
+            "selected": 84,
+            "final": 74
+          }
+        },
+        "elapsed_sec": 10.027100801467896
+      }
+    },
+    "noisy": {
+      "mild": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 16.082808420852498,
+              "mean": 15.908788883906789,
+              "std": 3.131522499127586,
+              "p5": 11.771956768693876,
+              "cvar": 9.852922027549534,
+              "ruin_rate": 1.0,
+              "median_steps": 35.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 25.148875177160143,
+              "mean": 22.647913684990264,
+              "std": 7.925900595458861,
+              "p5": 5.280164999999998,
+              "cvar": 3.9784051857994562,
+              "ruin_rate": 1.0,
+              "median_steps": 57.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 17.778389697541154,
+              "mean": 17.17247309381862,
+              "std": 4.02908032836773,
+              "p5": 11.398794999999996,
+              "cvar": 8.563802379744805,
+              "ruin_rate": 1.0,
+              "median_steps": 37.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 21.137738822934963,
+              "mean": 19.10396798186834,
+              "std": 6.743394946128169,
+              "p5": 3.922739999999999,
+              "cvar": 3.756496852466123,
+              "ruin_rate": 1.0,
+              "median_steps": 43.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 23.3665875247833,
+              "mean": 21.183252835244012,
+              "std": 7.273161195637794,
+              "p5": 5.280164999999998,
+              "cvar": 3.9784051857994562,
+              "ruin_rate": 1.0,
+              "median_steps": 52.0
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 22.187543160780994,
+              "mean": 19.99774425594159,
+              "std": 7.081343245653402,
+              "p5": 3.922739999999999,
+              "cvar": 3.7552301857994563,
+              "ruin_rate": 1.0,
+              "median_steps": 46.0
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 21.137738822934963,
+              "mean": 19.10396798186834,
+              "std": 6.743394946128169,
+              "p5": 3.922739999999999,
+              "cvar": 3.756496852466123,
+              "ruin_rate": 1.0,
+              "median_steps": 43.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 27.771664087816625,
+              "mean": 24.902738417111724,
+              "std": 10.069979134475892,
+              "p5": 3.43248,
+              "cvar": 3.105386641705089,
+              "ruin_rate": 1.0,
+              "median_steps": 66.0
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "RecoveryCandidate": 2136,
+            "AggressiveEngine": 134,
+            "SynthesisPathway": 881,
+            "DefensiveCandidate": 866,
+            "ExplorationCandidate": 580,
+            "SynthesisStandalone": 372,
+            "MutationPathway": 3
+          },
+          "world_type_histogram": {
+            "unknown": 473,
+            "chaotic": 202,
+            "noisy": 3606,
+            "drifting": 691
+          },
+          "world_adaptive_total": 4150,
+          "active_bias_total": 696,
+          "opportunity_expanded_total": 371,
+          "aggressive_summary": {
+            "generated": 1967,
+            "selected": 134,
+            "final": 123
+          }
+        },
+        "elapsed_sec": 12.918887376785278
+      },
+      "moderate": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 14.81198102447047,
+              "mean": 14.158951922148416,
+              "std": 6.4852445834381145,
+              "p5": 1.970245,
+              "cvar": 2.479009417330021,
+              "ruin_rate": 1.0,
+              "median_steps": 33.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 19.999643123673223,
+              "mean": 18.579334581760584,
+              "std": 10.243193335732558,
+              "p5": 1.5936599999999999,
+              "cvar": 1.7908465430977014,
+              "ruin_rate": 1.0,
+              "median_steps": 51.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 15.533447634875014,
+              "mean": 14.128373308306243,
+              "std": 6.239711169284701,
+              "p5": 1.5951337555760925,
+              "cvar": 1.999496209735921,
+              "ruin_rate": 1.0,
+              "median_steps": 33.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 16.651702421696072,
+              "mean": 15.790751261432066,
+              "std": 8.11272333057461,
+              "p5": 1.59348,
+              "cvar": 1.7788144248440432,
+              "ruin_rate": 1.0,
+              "median_steps": 37.5
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 19.593528958705956,
+              "mean": 17.670987267132276,
+              "std": 9.287321796289142,
+              "p5": 1.5936599999999999,
+              "cvar": 1.7900066474188359,
+              "ruin_rate": 1.0,
+              "median_steps": 45.0
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 17.745034891472777,
+              "mean": 16.498862549509038,
+              "std": 8.48119771702558,
+              "p5": 1.59348,
+              "cvar": 1.7620815449636922,
+              "ruin_rate": 1.0,
+              "median_steps": 40.0
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 16.651702421696072,
+              "mean": 15.790751261432066,
+              "std": 8.11272333057461,
+              "p5": 1.59348,
+              "cvar": 1.7788144248440432,
+              "ruin_rate": 1.0,
+              "median_steps": 37.5
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 19.29359517384539,
+              "mean": 18.653679795244255,
+              "std": 11.068115345924914,
+              "p5": 1.60164,
+              "cvar": 1.28573714378397,
+              "ruin_rate": 1.0,
+              "median_steps": 53.5
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "RecoveryCandidate": 1788,
+            "AggressiveEngine": 134,
+            "SynthesisPathway": 856,
+            "DefensiveCandidate": 614,
+            "ExplorationCandidate": 481,
+            "SynthesisStandalone": 416,
+            "MutationPathway": 9
+          },
+          "world_type_histogram": {
+            "unknown": 469,
+            "chaotic": 142,
+            "noisy": 2936,
+            "drifting": 751
+          },
+          "world_adaptive_total": 3489,
+          "active_bias_total": 600,
+          "opportunity_expanded_total": 372,
+          "aggressive_summary": {
+            "generated": 1899,
+            "selected": 134,
+            "final": 121
+          }
+        },
+        "elapsed_sec": 11.376230716705322
+      },
+      "severe": {
+        "n_runs": 120,
+        "engines": {
+          "v8.4.1": {
+            "metrics": {
+              "median": 13.665028255462047,
+              "mean": 12.196690861828332,
+              "std": 6.652837817829403,
+              "p5": 0.7729700000000002,
+              "cvar": -0.12469507332520213,
+              "ruin_rate": 1.0,
+              "median_steps": 32.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 13.98884442799157,
+              "mean": 15.113080328513695,
+              "std": 11.351494621037657,
+              "p5": 1.1197647324706825,
+              "cvar": -0.5466717730131373,
+              "ruin_rate": 1.0,
+              "median_steps": 42.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 12.028853734665434,
+              "mean": 11.249347513990894,
+              "std": 6.877067738719497,
+              "p5": 1.1627050000000003,
+              "cvar": 0.1551329996615596,
+              "ruin_rate": 1.0,
+              "median_steps": 28.0
+            }
+          },
+          "ActiveCycle": {
+            "metrics": {
+              "median": 13.081712467004046,
+              "mean": 13.621469863325753,
+              "std": 10.283640089517434,
+              "p5": 1.1140647324706825,
+              "cvar": -0.4050875659024178,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "Meta_hybrid": {
+            "metrics": {
+              "median": 14.33019949947684,
+              "mean": 14.959923752438916,
+              "std": 10.874956379365308,
+              "p5": 1.1197647324706825,
+              "cvar": -0.18879678845483405,
+              "ruin_rate": 1.0,
+              "median_steps": 40.5
+            }
+          },
+          "UnifiedEngine": {
+            "metrics": {
+              "median": 13.26263362907677,
+              "mean": 14.238301987107786,
+              "std": 10.489968365277946,
+              "p5": 1.1140647324706825,
+              "cvar": -0.5920773552775676,
+              "ruin_rate": 1.0,
+              "median_steps": 37.5
+            }
+          },
+          "Unified_no_world": {
+            "metrics": {
+              "median": 13.081712467004046,
+              "mean": 13.621469863325753,
+              "std": 10.283640089517434,
+              "p5": 1.1140647324706825,
+              "cvar": -0.4050875659024178,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 10.502926469418764,
+              "mean": 11.574878888744262,
+              "std": 8.370597608830593,
+              "p5": 1.1896902618886351,
+              "cvar": 1.09861174054723,
+              "ruin_rate": 1.0,
+              "median_steps": 28.0
+            }
+          }
+        },
+        "unified_extras": {
+          "module_histogram": {
+            "RecoveryCandidate": 1560,
+            "AggressiveEngine": 127,
+            "SynthesisPathway": 821,
+            "ExplorationCandidate": 447,
+            "DefensiveCandidate": 537,
+            "SynthesisStandalone": 440,
+            "MutationPathway": 38
+          },
+          "world_type_histogram": {
+            "unknown": 467,
+            "chaotic": 124,
+            "noisy": 2627,
+            "drifting": 752
+          },
+          "world_adaptive_total": 3174,
+          "active_bias_total": 555,
+          "opportunity_expanded_total": 347,
+          "aggressive_summary": {
+            "generated": 1710,
+            "selected": 127,
+            "final": 112
+          }
+        },
+        "elapsed_sec": 10.581393718719482
+      }
+    }
+  }
+}

@@ -1,0 +1,153 @@
+% chapters/ch22_epsilon_supply.tex
+% Chapter 22: ε Supply Mechanism — ε as an Institutional Layer
+% Source: NRMO_v5_updated.pdf, Chapter 22 (lines 9434-9500 of v5_layout.txt)
+
+\chapter{$\varepsilon$ Supply Mechanism ---
+$\varepsilon$ as an Institutional Layer}
+\label{ch:epsilon-supply}
+
+\nrmobox{Document status}{
+\begin{tabular}{ll}
+\textbf{Status}: & Foundational \\
+\textbf{Layer}:  & READ ONLY (Immutable)
+\end{tabular}\\[0.3em]
+$\varepsilon$ is \textbf{not} a tuning parameter. It is a policy
+artefact supplied by external governance. NRMO never generates,
+modifies, or recommends $\varepsilon$.
+}
+
+% =====================================================================
+\section{Basic Definition}
+\label{sec:epsilon-supply-definition}
+
+\begin{definition}[$\varepsilon$-Tolerance]
+\label{def:epsilon-tolerance}
+$\varepsilon \in (0, 1)$. $\varepsilon$ is the permissible risk
+threshold supplied externally to NRMO.
+\end{definition}
+
+% =====================================================================
+\section{Supply Entity}
+\label{sec:epsilon-supply-entity}
+
+$\varepsilon$ can be supplied only by the following principals:
+
+\begin{enumerate}
+\item \textbf{Human Governor} (human administrator) --- Final
+$\varepsilon$ decision authority.
+\item \textbf{Regulatory Constraint} --- Legal / institutional
+upper limit.
+\item \textbf{Domain Policy} --- Domain-specific constraints.
+\item \textbf{Physical Bound} --- Upper limit by natural law.
+\end{enumerate}
+
+% =====================================================================
+\section{Inviolable Properties}
+\label{sec:epsilon-inviolable}
+
+\nrmobox{$\varepsilon$ Inviolability Clause}{
+\begin{itemize}
+\item NRMO does \textbf{not} generate $\varepsilon$.
+\item NRMO does \textbf{not} modify $\varepsilon$.
+\item NRMO does \textbf{not} recommend $\varepsilon$.
+\end{itemize}
+\centering
+These three prohibitions are the \textbf{hardest constraints in the
+system}. Any mechanism that allows NRMO to self-modify $\varepsilon$
+is a structural violation.
+}
+
+% =====================================================================
+\section{Time Dependence}
+\label{sec:epsilon-time-dependence}
+
+$\varepsilon$ may depend on time and domain:
+
+\begin{equation}
+\varepsilon = \varepsilon(t, \mathrm{domain}).
+\end{equation}
+
+This dependence is set explicitly by the Human Governor. Automatic
+time-variation of $\varepsilon$ by NRMO is prohibited.
+
+% =====================================================================
+\section{$\varepsilon$ Change Protocol (v2.1)}
+\label{sec:epsilon-change-protocol}
+
+The v2.1 MetaGovernanceLayer requires $\varepsilon$ changes to
+follow this protocol:
+
+\begin{enumerate}
+\item Change request is issued only by Human Governor.
+\item Change is recorded with signature in append-only log.
+\item Old $\varepsilon$ value is not deleted (preserved permanently
+for audit).
+\item Reason for change is mandatory.
+\end{enumerate}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+epsilon_config = {
+  'value':         float,        # Current epsilon value
+  'ratified_date': timestamp,    # Last approval date
+  'renewal_due':   timestamp,    # Renewal required by
+  'ratified_by':   str,          # Governor identifier
+  'domain':        str,          # Applicable domain
+  'reason':        str,          # Reason for current value
+  'audit_log': [                 # Append-only history
+    {
+      'old_value':  float,
+      'new_value':  float,
+      'changed_by': str,
+      'reason':     str,
+      'timestamp':  timestamp
+    }
+  ]
+}
+\end{lstlisting}
+
+% =====================================================================
+\section{Why $\varepsilon$ Must Be External}
+\label{sec:epsilon-external-rationale}
+
+If NRMO could self-modify $\varepsilon$:
+
+\begin{itemize}
+\item The system could relax its own constraints when under
+pressure.
+\item Self-referential $\varepsilon$ modification is a form of
+corruption.
+\item Human oversight would be structurally bypassed.
+\end{itemize}
+
+\noindent
+This is why $\varepsilon$ externality is a constitutional
+requirement, not merely a design choice.
+
+% =====================================================================
+\section{Open Questions (Future Work)}
+\label{sec:epsilon-open-questions}
+
+\begin{itemize}
+\item Who has authority to approve $\varepsilon$ changes in
+multi-stakeholder environments?
+\item How are conflicting stakeholder preferences resolved?
+\item What mechanisms ensure $\varepsilon$ reflects legitimate risk
+tolerance?
+\item Formalise democratic $\varepsilon$-governance protocol.
+\end{itemize}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This chapter formalises Invariant~\ref{inv:gov-exec-sep}
+($\varepsilon$ externally supplied) at the institutional layer.
+\item Operational mechanism: Section~\ref{sec:parameter-renewal}
+(parameter renewal protocol).
+\item In Part~VII, the chance constraint $P_\pi(\tau_F \le T) \le
+\varepsilon$ uses this institutional $\varepsilon$ as
+exogenous input.
+\item In Part~IX, $\Omega$ Full's adaptive tuning layer adjusts
+\emph{behavioural} parameters within the constitutional
+$\varepsilon$ ceiling but never the ceiling itself.
+\end{itemize}

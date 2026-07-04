@@ -1,0 +1,423 @@
+% =====================================================================
+\section{Stage 1.1 (v5.1): Three-Feature Expansion}
+\label{sec:stage11-v51}
+
+After v5.0.1 fixed the Faith bias, three orthogonal features were
+added to v5.1, each addressing a separate dimension of the
+specification originally laid out at the start of this Part:
+
+\begin{enumerate}
+\item \textbf{Ahistorical event catalog} (Requirement~7).
+  Twenty events spanning physical anomalies, ideological breaks,
+  resource shocks, climate collapses, and global disruptions, with
+  per-event year-windows and per-year hazard probabilities.
+\item \textbf{Frequency modes} (Requirement~8).
+  Three operational settings —~\emph{sporadic} (multiplier
+  $\times 1$), \emph{frequent} ($\times 3$), and \emph{sparse}
+  ($\times 0.3$)~— acting as a global multiplier on event hazard
+  rates. This permits ``crisis-rich'' and ``crisis-quiet'' worlds to
+  be compared with the same mechanics.
+\item \textbf{Encounter mechanism} (Requirement~4).
+  Four channels (\emph{biological},
+  \emph{technological}, \emph{ideological}, \emph{cosmological}) ×
+  four intensities (\emph{soft}, \emph{moderate}, \emph{intense},
+  \emph{catastrophic}), with intensity evolving generation by
+  generation after first contact. This realises the ``unknown
+  encounter'' world type.
+\end{enumerate}
+
+The result was a single simulator (\texttt{world\_sim\_v5\_1.py},
+1212 lines) that handles all five world families plus the
+encounter channel within one consistent action--state loop.
+
+% =====================================================================
+\section{Stage 1.2 (v5.2--v5.4): Spotlight, Time Extension, Multi-Civ}
+\label{sec:stage12-v52-v54}
+
+Three further v5.x increments addressed the ``protagonist'' problem
+(Requirement~10) and laid groundwork for multi-civilisation
+parallelism (Requirement~11):
+
+\paragraph{v5.2 (Spotlight, three-tier).}
+For each simulation run, one \emph{individual} is followed across
+generations with a per-decision chronicle (eight emotion types,
+crisis responses, career transitions, ahistorical encounters). One
+\emph{family} (four branches: main line, two cadet branches, one
+adoptee/affine line) is tracked with an ASCII family tree and a
+shared lineage chronicle. The full \emph{civilisation} is summarised
+per generation as a six-dimensional state snapshot
+(family-knowledge, education, institution, trade, assets, urban).
+This is the v5.2 ``three-tier Spotlight'': individual / family /
+civilisation observed simultaneously within one simulation.
+
+\paragraph{v5.3 (3000-year horizon).}
+The era schedule was extended past 2021 with two future eras —
+\emph{Future\_AI\_Era} (2021--2500) and \emph{Future\_Posthuman}
+(2500--3000) — and a complementary catalog of ten future
+ahistorical events (\texttt{AI\_Singularity},
+\texttt{Climate\_Tipping}, \texttt{Posthuman\_Transition},
+\texttt{Resource\_Depletion}, etc.). The simulation now spans 75
+generations (3000 years) by default rather than the historical 50
+generations (2000 years).
+
+\paragraph{v5.4 (Multi-civ parallel).}
+Four civilisations (Japan, China, Europe, Islamic) are run in
+parallel with a small inter-civ interaction catalog (six pairs ×
+four channels: trade, war, knowledge\_diffusion,
+disease\_exchange). The era-dependent interaction catalog encodes,
+for example, Japan--China at year 0--700 with high knowledge
+transmission probability (Buddhism, kanji), Europe--Islamic at
+1100--1300 with both war (Crusades) and knowledge transmission
+(translation movement). This was the first concrete realisation of
+Requirement~11 ``multi-civilisation parallel'' even at small
+scale.
+
+% =====================================================================
+\section{Stage 2 (v5.5): Cohort Spotlight}
+\label{sec:stage2-v55}
+
+The v5.2 Spotlight follows one named individual; v5.5 expands this
+to a \textbf{cohort of 100+ named individuals} chronicled
+simultaneously, addressing the original Stage 2 milestone of the
+Telescope Architecture roadmap (Section~\ref{sec:vision-roadmap}).
+
+\paragraph{Diversity grid sampling.}
+The cohort is selected by stratified sampling across a
+three-dimensional grid: (decision strategy) ×
+(initial region) × (founding occupation tier $\in$ \{agrarian,
+notable, craft-trade, urban\}). For 11 strategies × 6 regions × 4
+tiers = 264 cells, with 100 cohort slots, roughly 100/264 cells get
+filled. This guarantees the cohort is not 100 NRMO farmers in
+North Kyushu, but spans strategies and starting positions.
+
+\paragraph{Five highlight categories.}
+For each run, the cohort is automatically classified into:
+\begin{itemize}
+\item \emph{Most successful} (highest final education + assets);
+\item \emph{Most resilient} (most crises survived);
+\item \emph{Most dynamic} (most career transitions);
+\item \emph{Tragic loss} (lineage absorbed);
+\item \emph{Stayed humble} (remained agrarian throughout).
+\end{itemize}
+Each category produces a top-five highlight list with brief
+narrative summary, allowing the human reader to rapidly identify
+illustrative cases without reading all 100 chronicles.
+
+\paragraph{Cohort emotional aggregation.}
+Per-generation emotion records across all cohort members are
+aggregated into a cohort-wide emotional arc histogram. In a typical
+Normal-Earth, sporadic-frequency, 3000-year run this resolves to
+roughly: hope $\sim$42\%, equanimity $\sim$26\%, loss $\sim$11\%,
+disorientation $\sim$8\%, fear $\sim$7\%, anxiety $\sim$5\%, grief
+$\sim$1\%. This is the population-level emotional shape of a 3000
+year simulation, observed at individual resolution.
+
+% =====================================================================
+\section{Stage 3 (v6.0): Cultural Modules and Inter-Civ Interaction}
+\label{sec:stage3-v60}
+
+Stage 3 of the roadmap (10$^7$ agents, 10+ Cultural Modules,
+inter-civ interaction) was attempted in v6.0 with the following
+results:
+
+\paragraph{Nine Cultural Modules.}
+Beyond the four v5.4 modules, five additional civilisations were
+modelled:
+\begin{itemize}
+\item \emph{Indic}: Mauryan -- Gupta -- Sultanate -- Mughal --
+  British -- Independent India eras; joint family
+  \texttt{distribution\_boost}~$=1.25$; mixed Hindu / Buddhist /
+  Jain / Islamic Faith distribution.
+\item \emph{SubSaharan}: Iron Age kingdoms -- Trans-Saharan --
+  Atlantic Slave Trade -- Colonial Scramble -- Postcolonial;
+  communal extended family inheritance.
+\item \emph{Polynesian}: Lapita expansion -- Classical --
+  Contact Era (1769+, Cook contact) -- Colonial -- Modern Pacific;
+  primogeniture-with-genealogy emphasis.
+\item \emph{Steppe Nomadic}: Scythian -- Turkic Khanates --
+  Mongol Empire (1200--1400 peak) -- Post-Mongol -- Russian/Qing
+  -- Modern Sedentary; high militant Faith share (warrior tradition).
+\item \emph{IndigenousAmericas}: Classic Civilisation
+  (Maya, Teotihuacan) -- Postclassic (Aztec, Inca) -- Conquest
+  Catastrophe (1521--1700, $\sim$90\% population loss per Cook
+  1998) -- Colonial Mestizo -- Independence -- Modern Indigenous.
+\end{itemize}
+
+\paragraph{Eighteen interaction pairs.}
+The interaction catalog grew from six to eighteen civilisation
+pairs, encoding, e.g., China-Indic Buddhist transmission and
+Xuanzang's journey, China-Steppe Mongol conquest of 1200--1400
+(intensity 0.95), Europe-IndigenousAmericas Conquest of 1492
+(disease intensity 1.0, war intensity 0.95), Europe-Polynesian
+Cook-era contact (disease intensity 0.95), Islamic-SubSaharan
+Trans-Saharan trade and Islamic transmission, Indic-Islamic
+Sultanate and Mughal eras.
+
+\paragraph{Scaling: a partial achievement.}
+Stage 3's nominal target was 10$^7$ agents. In a 4\,GB-RAM,
+non-numba environment we reached 9 civilisations × 100{,}000 agents
+= 900{,}000 agents (= $\approx 10^6$) in 66 seconds, with 886
+inter-civ interactions over 75 generations. The 10$^7$ target was
+\emph{not} achieved; numba JIT installation failed in the
+constrained environment, and pure-numpy memory pressure (estimated
+$\sim$6\,GB at 9 × 10$^6$) exceeded available RAM. The honest
+status is therefore: Stage 3 \emph{partial} (1/10 of nominal scale,
+all other features in place).
+
+% =====================================================================
+\section{v6.1: Unified Integrated Simulator}
+\label{sec:v61-unified}
+
+The v5.5 cohort Spotlight and the v6.0 multi-civ machinery were
+integrated into a single configurable simulator,
+\texttt{world\_sim\_v6\_1\_unified.py}, with four scale presets:
+
+\begin{center}
+\begin{tabular}{lrrrrr}
+\toprule
+Preset & Per-civ agents & Total agents & Cohort/civ & Runtime & RAM \\
+\midrule
+\texttt{small}  &   5{,}000 &   45{,}000 &  50 &   $\sim$5\,s   & $<$0.5\,GB \\
+\texttt{medium} &  50{,}000 &  450{,}000 & 100 &   $\sim$30\,s  & $\sim$1\,GB \\
+\texttt{large}  & 200{,}000 & 1{,}800{,}000 & 200 &  $\sim$170\,s & $\sim$1.2\,GB \\
+\texttt{custom} & user-defined & --- & --- & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+A single run produces, per civilisation: a cohort summary
+markdown, a family chronicle markdown, and a per-generation
+trajectory CSV; plus cross-civilisation comparisons
+(\texttt{cross\_civ\_strategy.csv}), an inter-civ interaction
+log (\texttt{interaction\_summary.md}), an executive overall report,
+and a full data JSON dump. \textbf{Five tiers are observed
+simultaneously in one simulation:} individual (cohort) / family
+(four branches per civ) / civilisation (nine modules) / inter-civ
+(eighteen pairs) / world (random + ahistorical events).
+
+% =====================================================================
+\section{Stage 4 Partial (v6.2): Memetic, Black Swan, Counterfactual}
+\label{sec:stage4-v62}
+
+Three of the four Stage 4 features were implemented in v6.2; the
+fourth (GPU acceleration to 10$^8$ agents) remained
+environment-blocked. The three implemented features are exposed as
+optional CLI flags so the v6.1 baseline behaviour is preserved by
+default.
+
+\subsection{Memetic Dynamics}
+\label{subsec:memetic}
+
+Strategy distributions are no longer fixed. At each generation
+end, per-strategy fitness is computed as
+\begin{equation}
+\textsc{Fitness}_s
+= \frac{\#\text{alive}_s}{\#\text{total}_s}
+\times \left(\tfrac{1}{2} +
+\tfrac{1}{2}\,(\overline{\text{edu}}_s + \overline{\text{assets}}_s)\right),
+\end{equation}
+where the first factor is per-strategy survival and the second is
+mean prosperity among alive members. A replicator step then nudges
+the strategy distribution toward higher-fitness strategies, with a
+drift rate (default 0.05) controlling adoption speed. Newly-reset
+collateral lineages are reassigned strategies according to the
+updated distribution.
+
+This realises memetic evolution: ``Faith\_Militant'' that
+self-undermines (the Stage 1 empirical results above) sees declining
+share over many generations; ``NRMO\_vNext'' steady-state share
+rises in volatile worlds.
+
+\subsection{Black Swan Events}
+\label{subsec:black-swan}
+
+A separate catalog of nine ultra-rare ($p \in [10^{-5}, 10^{-4}]$
+per year) events with per-event scope (global / regional /
+civ-pair) and per-event mortality probability:
+
+\begin{center}
+\small
+\begin{tabular}{lllrr}
+\toprule
+Event & Period & Scope & Shock & Mortality \\
+\midrule
+Volcanic\_Winter\_Year       & 0--3000  & global    & 0.50 & 10\% \\
+Megaplague\_Pandemic         & 0--3000  & regional  & 0.40 & 20\% \\
+Great\_Solar\_Flare\_Carrington & 1850--3000 & global & 0.30 & 5\% \\
+Asteroid\_Regional\_Impact   & 0--3000  & regional  & 0.70 & 30\% \\
+Multi\_Empire\_Collapse      & 0--2021  & civ\_pair & 0.55 & 15\% \\
+Climate\_Tipping\_Cascade    & 2050--3000 & global  & 0.45 & 10\% \\
+AI\_Misalignment\_Crisis     & 2050--3000 & global  & 0.60 & 5\% \\
+Antibiotic\_Apocalypse       & 2030--3000 & global  & 0.35 & 18\% \\
+Posthuman\_Schism            & 2500--3000 & global  & 0.50 & 5\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+An intensity multiplier permits stress testing: with multiplier
+$\times 50$, several events fire per typical 3000-year run.
+
+\subsection{Counterfactual Mode}
+\label{subsec:counterfactual}
+
+Six pre-built counterfactual scenarios:
+
+\begin{center}
+\small
+\begin{tabular}{ll}
+\toprule
+Scenario & Description \\
+\midrule
+\texttt{no\_black\_death}  & Suppress Black Death pandemic 1347--1353 \\
+\texttt{no\_conquest}      & IndigenousAmericas not conquered (1492 contact peaceful) \\
+\texttt{no\_cook}          & Polynesia stays isolated (no European contact) \\
+\texttt{no\_mongol}        & No Mongol Empire (1200--1400 conquests prevented) \\
+\texttt{no\_industrial}    & Industrial Revolution suppressed \\
+\texttt{early\_islam}      & Islamic civilisation rises 200 years earlier \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Override types: \texttt{suppress\_event} (filter ahistorical
+labels), \texttt{civ\_protection} (reduce incoming shock to a
+civ in a year window), \texttt{civ\_extinction} (force absorption),
+\texttt{suppress\_interaction} (block specific civ pair
+interactions in a year window).
+
+\paragraph{Empirical effect (single seed, small scale).}
+At seed=100, scale=small, comparing baseline vs counterfactual:
+IndigenousAmericas continuation 14.8\% $\to$ 16.8\% with
+\texttt{no\_conquest} (+2.0\,pp); Polynesian 55.8\% $\to$ 58.4\%
+with \texttt{no\_cook} (+2.6\,pp). The effects are modest because
+the present implementation only modulates inter-civ shocks; the
+era-fixed \texttt{base\_failure} inside the Cultural Module is
+\emph{not} overridden. A fully era-dynamic counterfactual would
+require deeper hooks and is deferred.
+
+% =====================================================================
+\section{Calibration (v6.2)}
+\label{sec:calibration-v62}
+
+Cultural Module parameters were re-tuned against historical
+demography literature (Cook~1998; McEvedy \& Jones~1978;
+Diamond~1997; Reich~2018; Cavalli-Sforza~2000). Each civilisation
+was assigned a target range for 2000-year (Y0--Y2021) lineage
+continuation probability, summarised below.
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Civ & Pre-cal. & Post-cal. & Target & Status \\
+\midrule
+Japan & 0.87 & 0.87 & 0.78--0.92 & in range \\
+China & 0.84 & 0.84 & 0.78--0.90 & in range \\
+Europe & \textbf{0.29} & 0.46 & 0.40--0.70 & moved into range \\
+Islamic & 0.84 & 0.84 & 0.70--0.88 & in range \\
+Indic & 0.88 & 0.87 & 0.75--0.90 & in range \\
+SubSaharan & 0.86 & 0.82 & 0.55--0.82 & moved into range \\
+Polynesian & \textbf{0.84} & 0.51 & 0.40--0.72 & moved into range \\
+Steppe & 0.77 & 0.77 & 0.50--0.78 & in range \\
+IndigenousAmericas & \textbf{0.80} & 0.15 & 0.05--0.25 & moved into range \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The most consequential calibration was \texttt{IndigenousAmericas}
+\texttt{Conquest\_Catastrophe} era \texttt{base\_failure}, raised
+from $0.45$ to $0.65$ to reflect the $\sim$90\% population loss
+1521--1620 documented by Cook~1998. With this single change the
+simulated continuation rate fell from 80\% to 15\%, well within
+the 5--25\% target band.
+
+Parallel adjustments: Polynesian Contact-Era \texttt{base\_failure}
+$0.20 \to 0.35$ (Marquesas 90\% loss);
+Atlantic Slave Trade \texttt{base\_failure} $0.20 \to 0.30$
+(forced demographic outflow); Europe Migration Period
+\texttt{base\_failure} $0.18 \to 0.16$ (slightly relaxed).
+
+The result is the v6.2 default profile: nine civilisations all
+within target ranges under the seed=20260507 baseline. Calibration
+remains seed-sensitive — Black Swan-enabled runs may push Europe
+or Polynesian below the target range — but the central tendency is
+empirically anchored.
+
+% =====================================================================
+\section{Honest Limits and Stage 4 / Stage 5 Outlook}
+\label{sec:v62-limits-outlook}
+
+\paragraph{What v6.2 has achieved.}
+Stage~1 complete; Stage~2 complete (cohort of 100+ subjects
+chronicled per civilisation); Stage~3 \emph{partial} (9 Cultural
+Modules and 18 interaction pairs implemented at 10$^6$-agent scale,
+not the 10$^7$ nominal target); Stage~4 \emph{partial} (Memetic,
+Black Swan, Counterfactual implemented; GPU acceleration not).
+Calibration to historical demography targets has been performed.
+
+\paragraph{What v6.2 has \emph{not} achieved.}
+The 10$^7$-agent target of Stage~3 awaits numba/CUDA capability.
+Stage~4's GPU acceleration to 10$^8$ agents likewise.
+Counterfactual override of era-fixed civilisation parameters is
+implemented only via inter-civ shock modulation, not full
+era-dynamic re-parameterisation. Memetic dynamics use
+fitness-proportional drift but do not yet model strategy
+\emph{transmission} between civs (cross-cultural meme spread).
+
+\paragraph{Stage 5.}
+Stage~5's full Telescope across 10+ Cultural Modules and 10$^9$
+agents remains pending and is, in present hardware terms,
+fundamentally GPU-constrained. The architecture from
+Section~\ref{sec:vision-telescope} accommodates it; only
+implementation hardware differs.
+
+\paragraph{Source-fidelity claim.}
+Throughout v5.0--v6.2 development, the architectural invariant of
+governance-execution separation
+(the governance--execution separation invariant) was preserved without
+exception. NRMO defines the admissibility set $A_t$; the engine
+$\Omega$ searches only inside it; the warn flag from
+TimeHorizonLayer is never passed into NRMO\_CORE\@. No simulator
+revision relaxed this discipline, and no shortcut to performance
+came at its expense.
+
+% =====================================================================
+\section{Connections to Other Parts}
+
+\begin{itemize}
+\item This Part is the long-form specification of the simulation
+ambition behind Part XI's
+historical validation (the Part XI historical validation chapter).
+
+\item The decision theories used here are the same as Part XI's strategy
+set, plus \texttt{Faith} (vision-introduced).
+
+\item The Telescope Architecture extends the multi-horizon principle of
+Part II's TimeHorizonLayer: the
+same single decision is evaluated at multiple resolution scales,
+analogous to TimeHorizonLayer evaluating a decision at multiple time
+horizons.
+
+\item The Cultural Modules realise the open item from Part XII
+(the Part XII methodology limits section: ``Multi-agent
+inter-civilisation interaction''), now empirically calibrated against
+historical demography literature
+(Section~\ref{sec:calibration-v62}).
+
+\item The Counterfactual Mode realises the long-deferred goal of doing
+counterfactual analysis on NRMO's value, complementing the historical
+8-scenario validation in Part XI; it is now operational with six
+named scenarios (Section~\ref{subsec:counterfactual}).
+
+\item The Individual Layer re-introduces the cognitive 8-tuple
+Situation Parameter Model from Part II at agent-individual scale,
+now extended to a 100+ named-individual cohort
+(Section~\ref{sec:stage2-v55}).
+
+\item Stage 4's Memetic Dynamics (Section~\ref{subsec:memetic})
+operationalises the population-level analogue of the strategy
+selection mechanism that NRMO\_CORE applies at the individual
+decision level.
+
+\item Stage 4's Black Swan catalog (Section~\ref{subsec:black-swan})
+materialises the long-tail risk distribution against which the True
+Ruin constraint of Part II was originally designed.
+\end{itemize}

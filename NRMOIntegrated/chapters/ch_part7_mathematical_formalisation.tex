@@ -1,0 +1,866 @@
+% chapters/ch_part7_mathematical_formalisation.tex
+% Part VII Chapter: Mathematical Formalisation — arXiv preprint, full body
+% Source: NRMO_arXiv_Ikeya.pdf (full pdftotext extraction at /tmp/arxiv.txt)
+
+\chapter{Mathematical Formalisation: arXiv Preprint
+(Full Reproduction)}
+\label{ch:arxiv-formalisation}
+
+
+\index{arXiv preprint}
+\index{Theorem!T1}
+\index{Theorem!T2}
+\index{Theorem!T3}
+\index{Theorem!T4}
+\index{Algorithm 1!Phased Parallel}
+\nrmobox{Document identification}{
+\textbf{Title}: Non-Ruin Maximization Objective (NRMO):
+A Formal Framework for Decision-Making Under Absorbing Failure
+States.\\[0.3em]
+\textbf{Author}: Takashi Ikeya.\\[0.3em]
+\textbf{Source}: arXiv preprint --- 2026.\\[0.3em]
+\textbf{Status}: Reproduced verbatim from
+\texttt{NRMO\_arXiv\_Ikeya.pdf} (uploaded source).
+}
+
+% =====================================================================
+\section*{Abstract}
+\label{sec:arxiv-abstract}
+
+We introduce the Non-Ruin Maximization Objective (NRMO), a
+decision-theoretic framework for agents operating in environments
+with absorbing failure states. Standard constrained MDPs optimise
+expected reward subject to expected constraint satisfaction,
+permitting positive ruin probability in individual trajectories.
+NRMO places ruin avoidance as a lexicographic priority via a hard
+trajectory-level constraint. We prove four results with full rigor:
+
+\begin{itemize}
+\item \textbf{(T1)} A ruin dilution theorem showing ruin probability
+$q$ bounds the achievable unconditional time-average reward by
+$(1 - q) \cdot R_{\max}$.
+\item \textbf{(T2)} A CMDP separation theorem via a two-state MDP
+with independent per-step ruin probability, correctly computing
+finite-horizon ruin probability.
+\item \textbf{(T3)} A variational analysis showing the exponential
+threshold family achieves sup-norm near-optimality as $\lambda
+\to \infty$, with no spurious interior maximiser.
+\item \textbf{(T4)} Polynomial-time CVaR tractability for log-concave
+distributions.
+\end{itemize}
+
+Experiments across three domains demonstrate 57--65\% ruin reduction
+versus approximate baselines; limitations of the baseline
+implementations are stated explicitly.
+
+\paragraph{Keywords.}
+Non-ruin optimisation, absorbing failure states, constrained MDPs,
+safe reinforcement learning, ergodicity, CVaR, lexicographic
+constraints.
+
+% =====================================================================
+\section{Introduction}
+\label{sec:arxiv-introduction}
+
+Consider a portfolio manager subject to forced liquidation upon a
+30\% drawdown: a textbook absorbing failure state. Standard RL
+optimises $\mathbb{E}[\mathrm{return}]$, but once ruin occurs no
+future reward accrues. Peters (2019) shows that for multiplicative
+growth processes, any policy with positive ruin probability
+converges to ruin with probability one under repeated play. This
+motivates NRMO's core design: ruin avoidance as a hard constraint,
+not a soft penalty.
+
+\paragraph{Contributions.}
+
+\begin{itemize}
+\item \textbf{(C1)} Theorem~1: Ruin Dilution --- unconditional
+time-average reward is bounded by $(1 - q) \cdot R_{\max}$.
+\item \textbf{(C2)} Lemma~1: Constructive feasibility of
+$\Pi_{\mathrm{safe}}(T, \varepsilon)$.
+\item \textbf{(C3)} Theorem~2: CMDP Separation via explicit two-state
+MDP with correct finite-horizon ruin formula.
+\item \textbf{(C4)} Theorem~3: Variational near-optimality of
+exponential threshold family (corrected; no interior maximiser
+exists).
+\item \textbf{(C5)} Theorem~4: Polynomial-time CVaR tractability.
+\item \textbf{(C6)} Empirical evaluation with explicitly approximated
+baselines.
+\end{itemize}
+
+% =====================================================================
+\section{Related Work}
+\label{sec:arxiv-related-work}
+
+Constrained MDPs (Altman, 1999) and Lagrangian methods (Tessler et
+al., 2018) guarantee \emph{expected} constraint satisfaction. CPO
+(Achiam et al., 2017) provides trust-region updates with constraint
+guarantees at each iterate. These methods permit ruin in individual
+trajectories; NRMO enforces \emph{trajectory-level} safety.
+
+Risk-sensitive RL (Chow and Pavone, 2014) minimises CVaR of return;
+Theorem~4 formalises the connection between CVaR and ruin
+probability.
+
+Non-ergodic economics (Peters, 2019; Kelly, 1956) motivates
+prioritising time-average over ensemble-average; NRMO generalises
+Kelly to arbitrary MDPs.
+
+Robust MDPs (Iyengar, 2005; Nilim and El Ghaoui, 2005) handle
+uncertain kernels; NRMO's robust chance constraint uses this
+structure with online set estimation.
+
+% =====================================================================
+\section{Problem Formulation}
+\label{sec:arxiv-formulation}
+
+Let $M = (S, A, P, r, S_F)$ be an MDP with finite state space $S$,
+action space $A$, transition kernel $P$, bounded reward
+$r: S \times A \to [-R_{\max}, R_{\max}]$, and absorbing failure
+states $S_F \subset S$.
+
+\begin{definition}[Absorbing failure state]
+\label{def:arxiv-absorbing}
+$s_F \in S_F$ satisfies $P(s_F \mid s_F, a) = 1$ and
+$r(s_F, a) = 0$ for all $a$. First hitting time:
+\begin{equation}
+\tau_F := \inf\{t \ge 0 : s_t \in S_F\}.
+\end{equation}
+\end{definition}
+
+\begin{definition}[Admissible policy set]
+\label{def:arxiv-admissible}
+\begin{equation}
+\Pi_{\mathrm{safe}}(T, \varepsilon) :=
+\{\pi : P_\pi(\tau_F \le T) \le \varepsilon\}.
+\end{equation}
+\end{definition}
+
+\begin{definition}[NRMO objective --- unconditional]
+\label{def:arxiv-objective}
+\begin{equation}
+U(\pi) := \liminf_{T \to \infty}
+\frac{1}{T} \mathbb{E}_\pi\!\left[
+\sum_{t=0}^{T-1} r(s_t, a_t)
+\right].
+\end{equation}
+\end{definition}
+
+\paragraph{Design choice.}
+Defining $U(\pi)$ as the unconditional time-average (not conditioned
+on survival) avoids the measure-theoretic complication of
+conditioning on a zero-probability event when ruin probability
+approaches 1. The ruin dilution theorem (T1) shows that conditioning
+is unnecessary: the ruin event itself suppresses $U(\pi)$
+multiplicatively. For policies in $\Pi_{\mathrm{safe}}(T, 0)$,
+conditional and unconditional averages coincide since
+$P(\tau_F = \infty) = 1$.
+
+\paragraph{Robust chance constraint.}
+When $P$ is unknown, NRMO uses:
+
+\begin{equation}
+\sup_{P \in \mathcal{P}}\,
+P_{\pi, P}(\tau_F \le T) \le \varepsilon,
+\end{equation}
+
+where $\mathcal{P}$ is a Hoeffding confidence set with radius
+$O(n^{-1/2})$.
+
+% =====================================================================
+\section{Main Theoretical Results}
+\label{sec:arxiv-main-results}
+
+\subsection{Theorem 1: Ruin Dilution}
+\label{sec:arxiv-thm-1}
+
+\begin{theorem}[Ruin Dilution]
+\label{thm:arxiv-ruin-dilution}
+Let $\pi$ be any policy with $P_\pi(\tau_F < \infty) = q \in [0, 1)$
+and bounded reward $|r| \le R_{\max}$. Then:
+\begin{enumerate}
+\item[(i)] $U(\pi) \le (1 - q) \cdot R_{\max}$.
+\item[(ii)] Any policy $\pi_0$ with $U(\pi_0) > (1 - q) R_{\max}$
+strictly dominates $\pi$: $U(\pi_0) > U(\pi)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\medskip\noindent\textbf{Part (i).}
+For any $T$, decompose
+$\mathbb{E}_\pi[(1/T) \sum_{t=0}^{T-1} r_t]$ by the partition
+$\{\tau_F < \infty\}$ (probability $q$) and $\{\tau_F = \infty\}$
+(probability $1 - q$):
+
+\begin{equation}
+\mathbb{E}_\pi\!\left[\frac{1}{T} \sum r_t\right]
+= q \cdot \mathbb{E}\!\left[
+\frac{1}{T} \sum r_t \mid \tau_F < \infty
+\right]
++ (1 - q) \cdot \mathbb{E}\!\left[
+\frac{1}{T} \sum r_t \mid \tau_F = \infty
+\right].
+\end{equation}
+
+\medskip\noindent\textbf{Bounding the ruin term.}
+On $\{\tau_F < \infty\}$: for all $t \ge \tau_F$, $r(s_t, a_t) = 0$
+by Definition~\ref{def:arxiv-absorbing} (absorbing state).
+Therefore:
+
+\begin{equation}
+\mathbb{E}\!\left[\frac{1}{T} \sum_{t=0}^{T-1} r_t \mid
+\tau_F < \infty\right]
+= \mathbb{E}\!\left[\frac{1}{T} \sum_{t=0}^{\tau_F - 1} r_t \mid
+\tau_F \le T\right]
+\le R_{\max} \cdot \mathbb{E}\!\left[\frac{\tau_F}{T} \mid
+\tau_F < \infty\right].
+\end{equation}
+
+Since $|S|$ is finite and $s_F$ is absorbing,
+$\mathbb{E}[\tau_F \mid \tau_F < \infty]$ is finite (bounded hitting
+time for irreducible finite chains). Taking $\limsup$ as $T \to
+\infty$:
+
+\begin{equation}
+\lim_{T \to \infty} R_{\max} \cdot
+\mathbb{E}[\tau_F / T \mid \cdot] = 0.
+\end{equation}
+
+\medskip\noindent\textbf{Bounding the survival term.}
+$\mathbb{E}[(1/T) \sum r_t \mid \tau_F = \infty] \le R_{\max}$ for
+all $T$.
+
+\medskip\noindent\textbf{Combining.}
+Taking $\limsup$ of both sides:
+
+\begin{equation}
+U(\pi) = \liminf_{T \to \infty}
+\mathbb{E}_\pi\!\left[\frac{1}{T} \sum r_t\right]
+\le \limsup
+\le q \cdot 0 + (1 - q) \cdot R_{\max}
+= (1 - q) R_{\max}.
+\end{equation}
+
+\medskip\noindent\textbf{Part (ii)}
+is immediate: if $U(\pi_0) > (1 - q) R_{\max} \ge U(\pi)$, then
+$U(\pi_0) > U(\pi)$.
+\end{proof}
+
+\begin{remark}[Scope]
+\label{rem:arxiv-thm1-scope}
+Part~(ii) requires the existence of a policy $\pi_0$ achieving
+$U(\pi_0) > (1 - q) R_{\max}$. This is not guaranteed: when safe
+actions yield low reward, all zero-ruin policies may satisfy
+$U(\pi_0) \le (1 - q) R_{\max}$. The theorem quantifies the
+\emph{ceiling} imposed by ruin on any positive-ruin policy; whether
+a zero-ruin policy achieves above that ceiling is domain-dependent.
+\end{remark}
+
+\begin{remark}[Conditional vs unconditional]
+\label{rem:arxiv-thm1-conditional}
+The unconditional $U(\pi)$ conflates survival quality with ruin
+probability. A policy with $q = 0.5$ and high survival reward may
+have $U(\pi) \le 0.5 R_{\max}$. This is the intended behaviour:
+NRMO penalises ruin probability in the objective itself, forcing the
+agent to jointly optimise survival probability and reward.
+\end{remark}
+
+\subsection{Lemma 1: Feasibility}
+\label{sec:arxiv-lemma-1}
+
+\begin{lemma}[Feasibility of $\Pi_{\mathrm{safe}}$]
+\label{lem:arxiv-feasibility}
+Assume:
+\begin{itemize}
+\item[(A1)] $S$ is finite;
+\item[(A2)] there exists a stationary policy $\pi^{\mathrm{hold}}$
+satisfying $P_{\pi^{\mathrm{hold}}}(\tau_F \le T) = 0$ for all $T$;
+\item[(A3)] $\varepsilon > 0$.
+\end{itemize}
+Then $\Pi_{\mathrm{safe}}(T, \varepsilon) \ne \emptyset$.
+
+A sufficient condition for (A2): there exists $s^* \in S \setminus
+S_F$ and $a^* \in A$ with $P(s^* \mid s^*, a^*) = 1$ (self-loop
+action at a safe state).
+\end{lemma}
+
+\begin{proof}
+Under (A2), $P_{\pi^{\mathrm{hold}}}(\tau_F \le T) = 0 \le
+\varepsilon$ for all $T, \varepsilon > 0$. So
+$\pi^{\mathrm{hold}} \in \Pi_{\mathrm{safe}}(T, \varepsilon)$. For
+the sufficient condition: $\pi^{\mathrm{hold}}(s) = a^*$ for all $s$
+keeps all trajectories at $s^* \notin S_F$, satisfying (A2).
+\end{proof}
+
+\subsection{Theorem 2: CMDP Separation}
+\label{sec:arxiv-thm-2}
+
+\nrmobox{Correction note (from v2)}{
+The prior construction
+($s_0 \to s_1 \to s_0$ recurrent loop with $s_F$ absorbing from
+$s_0$) was flawed: for any $\theta > 0$ in such a recurrent chain,
+the long-run ruin probability equals 1 (standard absorbing Markov
+chain result). The formula
+$q(\theta) = \theta(1 - p) / (1 - \theta p)$ computed only the
+probability of ruin on a single visit, not eventually. The
+corrected construction uses a two-state MDP with independent
+per-step ruin events, for which finite-horizon ruin probability is
+exactly computable.
+}
+
+\begin{theorem}[NRMO Strictly Separates from Lagrangian CMDP]
+\label{thm:arxiv-cmdp-separation}
+There exists an explicit MDP $M^*$ and constraint budget
+$b \in (0, 1)$ such that:
+
+\begin{enumerate}
+\item[(i)] the primal Lagrangian CMDP optimum $\pi^*$ satisfies
+$P_{\pi^*}(\tau_F \le T) = b > 0$. Specifically, the unconstrained
+optimal policy violates the constraint
+$(P(\tau_F \le T) \mid \theta = 1) > b$, so by convexity the
+constrained optimum is the unique $\theta^* \in (0, 1)$ satisfying
+$\Omega(\theta^*, T) = b$, corresponding to the unique KKT
+multiplier
+$\lambda^* = (\mathrm{d}\mathbb{E}[\mathrm{return}] /
+\mathrm{d}\theta) / (\mathrm{d}\Omega / \mathrm{d}\theta)
+\rvert_{\theta = \theta^*} > 0$.
+
+\item[(ii)] $\Pi_{\mathrm{safe}}(T, 0) \ne \emptyset$, i.e., NRMO
+achieves zero ruin probability.
+\end{enumerate}
+
+Hence on $M^*$, NRMO achieves strictly lower ruin probability than
+the CMDP primal optimum.
+\end{theorem}
+
+\begin{proof}
+\medskip\noindent\textbf{Construction of $M^*$.}
+$S = \{s_0, s_F\}$, $A = \{a_{\mathrm{safe}},
+a_{\mathrm{risky}}\}$. Parameters: $R = 5$, $p = 0.7$, $T = 10$,
+$b = 0.20$. Transitions: from $s_0$, $a_{\mathrm{risky}}$ moves to
+$s_F$ with probability $(1 - p) = 0.3$ and stays at $s_0$ with
+probability $p = 0.7$, earning $r = R = 5$. From $s_0$,
+$a_{\mathrm{safe}}$ stays at $s_0$ with probability 1, $r = 0$.
+$s_F$ is absorbing with $r = 0$.
+
+\medskip\noindent\textbf{Key property: independent per-step ruin
+events.}
+Under stationary mixed policy $\theta = P(a_{\mathrm{risky}} \mid
+s_0)$: in any period where $s_t = s_0$, the agent enters $s_F$ with
+probability $\theta(1 - p)$ independently of history. Therefore the
+finite-horizon ruin probability is:
+
+\begin{equation}
+\Omega(\theta, T) := P(\tau_F \le T)
+= 1 - (1 - \theta(1 - p))^T.
+\end{equation}
+
+This formula is exact: the agent survives step $t$ if and only if it
+did not enter $s_F$ at any step $1, \ldots, t$, each event having
+probability $1 - \theta(1 - p)$ independently (while at $s_0$, which
+is guaranteed given survival so far).
+
+\medskip\noindent\textbf{CMDP analysis.}
+The Lagrangian objective is:
+
+\begin{equation}
+\mathcal{L}(\theta, \lambda)
+= \mathbb{E}[\mathrm{return}] - \lambda(\Omega(\theta, T) - b),
+\end{equation}
+
+\begin{equation}
+\mathbb{E}[\mathrm{return}] = \theta \cdot R \cdot
+\mathbb{E}[\text{steps before ruin}]
+= \theta R \cdot T(1 - \theta(1 - p))
+\quad (\text{to first order for small ruin probability per step}).
+\end{equation}
+
+The CMDP constraint $\Omega(\theta^*, T) = b$ binds at the optimum
+for $b \in (0, 1)$. Solving $1 - (1 - \theta^*(1 - p))^T = b$ gives:
+
+\begin{equation}
+\theta^* = \frac{1 - (1 - b)^{1/T}}{1 - p}.
+\end{equation}
+
+For $T = 10$, $b = 0.20$, $p = 0.7$:
+$\theta^* = (1 - (0.80)^{0.1}) / 0.3 = (1 - 0.9777) / 0.3 = 0.0744$.
+This gives $P(\tau_F \le 10) = 1 - (1 - 0.0744 \times 0.3)^{10} =
+1 - (0.9777)^{10} = 0.200 = b > 0$.
+
+Note that $\lambda$ is not a free parameter we choose; it is the
+unique KKT multiplier determined by the primal-dual optimality
+conditions. The unconstrained optimum ($\lambda = 0$) is
+$\theta = 1$ with $\Omega(1, 10) = 1 - (0.7)^{10} = 0.972 > b =
+0.20$, violating the constraint. Since $\mathbb{E}[\mathrm{return}]$
+is increasing in $\theta$ and $\Omega$ is increasing in $\theta$
+(both strictly), the constraint $\Omega(\theta, T) \le b$ is binding
+at the optimum by the complementary slackness condition: the optimal
+$\theta^*$ is the unique solution to $\Omega(\theta^*, T) = b$, and
+the unique KKT multiplier is:
+
+\begin{equation}
+\lambda^* = \frac{\mathrm{d}\mathbb{E}[\mathrm{return}] /
+\mathrm{d}\theta}{\mathrm{d}\Omega / \mathrm{d}\theta}
+\bigg\rvert_{\theta = \theta^*} > 0.
+\end{equation}
+
+Hence the primal CMDP optimum satisfies $P(\tau_F \le T) = b =
+0.20 > 0$. For $\lambda > \lambda^*$, the dual solution would push
+$\theta$ below $\theta^*$, but this is infeasible since $\theta^*$
+is the binding primal solution; for $\lambda < \lambda^*$, the
+constraint is violated. The unique primal-dual pair
+$(\theta^*, \lambda^*)$ is the CMDP optimum.
+
+\medskip\noindent\textbf{NRMO analysis.}
+Setting $\varepsilon = 0$: $\Omega(\theta, 10) = 0$ requires $\theta
+= 0$. Lemma~\ref{lem:arxiv-feasibility} applies
+($a_{\mathrm{safe}}$ is the hold action). NRMO achieves
+$P(\tau_F \le T) = 0$ while CMDP achieves $b = 0.20$.
+\end{proof}
+
+\begin{remark}[Interpretation]
+\label{rem:arxiv-thm2-interpretation}
+The CMDP optimum saturates the ruin budget $b$: it uses every unit
+of permitted ruin probability to earn reward. NRMO forfeits all
+risky reward to achieve zero ruin. The reward cost is
+$U(\pi_{\mathrm{safe}}) = 0$ vs.~$U(\pi^*(\lambda)) =
+\theta^* R \times (\text{survival factor}) > 0$. This trade-off is
+explicit and domain-dependent.
+\end{remark}
+
+\begin{remark}[Generality]
+\label{rem:arxiv-thm2-generality}
+The separation result holds for all $T \ge 1$, all $b \in (0, 1)$,
+and all $R > 0$, $p \in (0, 1)$. The specific numerical example
+($T = 10$, $b = 0.20$, $p = 0.7$, $R = 5$) is illustrative; the
+construction is valid for the full parameter range.
+\end{remark}
+
+\subsection{Theorem 3: Variational Analysis of Exponential
+Threshold}
+\label{sec:arxiv-thm-3}
+
+\nrmobox{Correction note (from v2)}{
+The prior proof applied the Euler-Lagrange equation to
+$\Sigma(f) = \int f'(x)(1 - x)\,\mathrm{d}x$, incorrectly yielding a
+logarithmic interior maximiser. The correct analysis via integration
+by parts shows
+$\Sigma(f) = -\varepsilon_{\mathrm{floor}} + \int f(x)\,
+\mathrm{d}x$, reducing the problem to maximising $\int f(x)\,
+\mathrm{d}x$. This problem has no smooth interior maximiser in
+$\mathcal{F}$: the supremum is achieved by a step function at
+$x = 0^+$, approached by $f_\lambda$ as $\lambda \to \infty$. The
+theorem is restated accordingly.
+}
+
+\begin{theorem}[Exponential Family Achieves Variational Supremum]
+\label{thm:arxiv-variational}
+Let $\mathcal{F} = \{f : [0, 1] \to [\varepsilon_{\mathrm{floor}},
+\varepsilon_{\mathrm{global}}]:$ $f$ monotone non-decreasing,
+$f(0) = \varepsilon_{\mathrm{floor}}$,
+$f(1) = \varepsilon_{\mathrm{global}}$, $f \in C^1\}$. Define the
+weighted sensitivity functional
+$\Sigma(f) = \int_0^1 f'(x)(1 - x)\,\mathrm{d}x$.
+
+\begin{enumerate}
+\item[(i)] Via integration by parts:
+$\Sigma(f) = (\varepsilon_{\mathrm{global}} -
+\varepsilon_{\mathrm{floor}}) - \int_0^1 f(x)\,\mathrm{d}x + C$,
+so maximising $\Sigma(f)$ is equivalent to maximising
+$\int f(x)\,\mathrm{d}x$ over $\mathcal{F}$.
+
+\item[(ii)] The infimum of $\int f(x)\,\mathrm{d}x$ over
+$\mathcal{F}$ is $\varepsilon_{\mathrm{floor}}$, approached but not
+achieved by
+$f_\lambda(x) = \varepsilon_{\mathrm{floor}} +
+\Delta(1 - e^{-\lambda x}) / (1 - e^{-\lambda})$ as $\lambda \to
+\infty$, where $\Delta = \varepsilon_{\mathrm{global}} -
+\varepsilon_{\mathrm{floor}}$.
+
+\item[(iii)] The convergence rate is:
+$\int f_\lambda(x)\,\mathrm{d}x - \varepsilon_{\mathrm{floor}} =
+O(1 / \lambda)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\medskip\noindent\textbf{Part (i): Integration by parts.}
+$\Sigma(f) = \int_0^1 f'(x)(1 - x)\,\mathrm{d}x$. Integrate by parts
+with $u = (1 - x)$, $\mathrm{d}v = f'(x)\,\mathrm{d}x$:
+
+\begin{equation}
+\Sigma(f) = [(1 - x) f(x)]_0^1 - \int_0^1 f(x) \cdot (-1)\,\mathrm{d}x
+= (0 \cdot f(1) - 1 \cdot f(0)) + \int_0^1 f(x)\,\mathrm{d}x
+= -\varepsilon_{\mathrm{floor}} + \int_0^1 f(x)\,\mathrm{d}x.
+\end{equation}
+
+Since $-\varepsilon_{\mathrm{floor}}$ is constant, maximising
+$\Sigma(f) \Leftrightarrow$ maximising
+$\int f(x)\,\mathrm{d}x$. The maximum of $\int f(x)\,\mathrm{d}x$
+over $\mathcal{F}$ is $\sup \int f = \varepsilon_{\mathrm{global}}$
+(constant function at upper bound), so we want $f$ as large as
+possible. For a monotone function with $f(0) =
+\varepsilon_{\mathrm{floor}}$ and $f(1) =
+\varepsilon_{\mathrm{global}}$, maximising $\int f(x)\,\mathrm{d}x$
+means rising to $\varepsilon_{\mathrm{global}}$ as quickly as
+possible from $x = 0$.
+
+\medskip\noindent\textbf{Part (ii): No smooth interior maximiser.}
+The supremum of $\int f(x)\,\mathrm{d}x$ over $\mathcal{F}$ is
+achieved in the limit by the step function
+
+\begin{equation}
+f^*(x) = \varepsilon_{\mathrm{floor}} \cdot \mathbf{1}_{\{x = 0\}}
++ \varepsilon_{\mathrm{global}} \cdot \mathbf{1}_{\{x > 0\}},
+\end{equation}
+
+which gives $\int f^* = \varepsilon_{\mathrm{global}}$. But $f^*
+\notin C^1(\mathcal{F})$. Therefore no smooth maximiser exists in
+$\mathcal{F}$; the supremum is not attained.
+
+The exponential family $f_\lambda$ with large $\lambda$ approximates
+$f^*$: $f_\lambda(x) \to \varepsilon_{\mathrm{global}}$
+exponentially fast in $\lambda x$ for any $x > 0$. Hence
+$\sup_{\lambda > 0} \int f_\lambda = \varepsilon_{\mathrm{global}}
+= \sup_{f \in \mathcal{F}} \int f$.
+
+\medskip\noindent\textbf{Part (iii): Convergence rate.}
+
+\begin{equation}
+\int_0^1 f_\lambda(x)\,\mathrm{d}x =
+\varepsilon_{\mathrm{floor}} + \frac{\Delta}{1 - e^{-\lambda}}
+\cdot \int_0^1 (1 - e^{-\lambda x})\,\mathrm{d}x =
+\varepsilon_{\mathrm{floor}} +
+\frac{\Delta}{1 - e^{-\lambda}}
+\cdot \!\left[1 - \frac{1 - e^{-\lambda}}{\lambda}\right].
+\end{equation}
+
+\begin{equation}
+\int f_\lambda = \varepsilon_{\mathrm{floor}} +
+\Delta \cdot \!\left[1 - \frac{1}{\lambda} + O(e^{-\lambda})\right].
+\end{equation}
+
+Therefore $\varepsilon_{\mathrm{global}} - \int f_\lambda =
+\Delta / \lambda + O(\Delta e^{-\lambda}) = O(\Delta / \lambda)$.
+\end{proof}
+
+\begin{remark}[Practical implication]
+\label{rem:arxiv-thm3-practical}
+The theorem justifies the exponential family as the canonical
+approximation to the variational supremum among smooth functions.
+Larger $\lambda$ gives better approximation but steeper gradient
+near $x = 0$, which can cause numerical instability in discrete
+implementations. The choice $\lambda = 3$ is a practical balance,
+not a theoretically unique optimum. For $\lambda = 3$:
+$\int f_3 - \varepsilon_{\mathrm{floor}} \approx
+\varepsilon_{\mathrm{global}} - \Delta / 3$, leaving 33\% of the
+sensitivity gain unrealised relative to the limit.
+\end{remark}
+
+\subsection{Theorem 4: CVaR Tractability}
+\label{sec:arxiv-thm-4}
+
+\begin{theorem}[Polynomial-Time CVaR Bound]
+\label{thm:arxiv-cvar}
+Let $Z = \mathbf{1}_{\{\tau_F \le T\}} \in \{0, 1\}$ be the ruin
+indicator. For any $\alpha \in (0, 1)$:
+
+\begin{enumerate}
+\item[(i)] $\mathrm{CVaR}_\alpha(Z) \ge P(Z = 1) =
+P(\tau_F \le T)$.
+
+\item[(ii)] The problem
+$\min_\pi \mathrm{CVaR}_\alpha(\mathrm{cost}_\pi)$ subject to
+$\mathrm{CVaR}_\alpha \le \varepsilon$ is solvable as an LP in time
+$O(|S|^2 |A| T \cdot \log(1 / \varepsilon))$ when the loss
+distribution is log-concave.
+\end{enumerate}
+
+Applicability: geometric stopping times (D1) and log-normal drawdown
+(D2) are log-concave.
+\end{theorem}
+
+\begin{proof}
+\medskip\noindent\textbf{Part (i).}
+For $Z \in \{0, 1\}$: $\mathrm{VaR}_\alpha(Z) \in \{0, 1\}$.
+
+\medskip\noindent\textit{Case A: $\alpha \ge 1 - P(Z = 1)$,} so
+$\mathrm{VaR}_\alpha(Z) = 1$ and $\mathrm{CVaR}_\alpha(Z) = 1 \ge
+P(Z = 1)$.
+
+\medskip\noindent\textit{Case B: $\alpha < 1 - P(Z = 1)$,} so
+$\mathrm{VaR}_\alpha(Z) = 0$ and:
+
+\begin{equation}
+\mathrm{CVaR}_\alpha(Z) = \frac{1}{1 - \alpha}
+\mathbb{E}[Z \cdot \mathbf{1}_{\{Z \ge 0\}}]
+= \frac{P(Z = 1)}{1 - \alpha} \ge P(Z = 1).
+\end{equation}
+
+In both cases $\mathrm{CVaR}_\alpha(Z) \ge P(Z = 1)$.
+
+\medskip\noindent\textbf{Part (ii).}
+By Rockafellar-Uryasev (2000):
+
+\begin{equation}
+\mathrm{CVaR}_\alpha(Z) =
+\min_v\!\left\{v + \frac{1}{1 - \alpha}
+\mathbb{E}[\max(Z - v, 0)]\right\}.
+\end{equation}
+
+In the occupancy-measure LP (Altman 1999, Ch.~2),
+$\mathbb{E}_\pi[\max(Z - v, 0)]$ is linear in occupancy measures
+$\{\mu(s, a, t)\}$ for fixed $v$. The LP has $|S| |A| T + 1$
+variables; interior-point methods require $O(|S|^2 |A| T \cdot
+\log(1 / \varepsilon))$ operations. Log-concavity ensures the cost
+distribution is unimodal, guaranteeing the CVaR bound is tight (the
+LP formulation is exact by construction; Altman 1999, Ch.~2).
+\end{proof}
+
+% =====================================================================
+\section{Algorithm}
+\label{sec:arxiv-algorithm}
+
+The Phased Parallel Execution architecture resolves the
+contradiction between full parallelism (Phase~1) and Type ZERO
+suppression authority (Phase~3 only). The DEADLOCK handler (Step~8)
+operationalises Remark~3 of Lemma~1: when all options fail APSOC,
+the system recognises near-infeasibility and outputs SAFE\_EXIT
+(the hold policy $\pi^{\mathrm{hold}}$).
+
+\paragraph{Algorithm 1: NRMO Execution.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Input:  M, T, eps_global, eps_floor, lambda, B_t
+Output: a_t in A or SAFE_EXIT
+
+1: Compute eps_t = eps_floor
+                  + (eps_global - eps_floor) * (1 - exp(-lambda*B_t))
+
+2: PHASE 1 [parallel, read-only]:
+     module m computes score_m(s_t)
+
+3: PHASE 2 [barrier]:
+     await all modules; T_max cutoff;
+     late scores set to 0
+
+4: PHASE 3 [serial]:
+     Priority Arbiter aggregates ->
+     Tri-Option Generator produces A, B, C
+
+5: For o in {A, B, C}:
+     verify APSOC (reversibility, MaxLoss, exit trigger)
+
+6: Compute CVaR upper bound on
+   P(tau_F <= T) for each o (Theorem 4)
+
+7: O_valid <- {o : CVaR bound <= eps_t and APSOC passed}
+
+8: if O_valid == empty:
+     DEADLOCK handler -> return SAFE_EXIT (pi_hold)
+
+9: else:
+     return argmax_{o in O_valid} U(pi_o)
+\end{lstlisting}
+
+% =====================================================================
+\section{Experiments}
+\label{sec:arxiv-experiments}
+
+\nrmobox{Correction note --- baseline implementations}{
+CPO and RCPO are approximated as analytic greedy Lagrangian policies
+($\lambda_{\mathrm{CPO}} = 2.0$, $\lambda_{\mathrm{RCPO}} = 4.0$).
+These capture qualitative behaviour but are not faithful
+reproductions of the published trust-region or reward-shaping
+algorithms. Results should be interpreted as directional evidence.
+Comparison against proper library implementations is deferred.
+}
+
+\subsection{Domain Descriptions}
+\label{sec:arxiv-domains}
+
+\paragraph{D1: Stochastic GridWorld ($5 \times 5$, $n = 500$ runs).}
+Absorbing holes at $\{(0, 2), (1, 4), (2, 1), (3, 3), (4, 1)\}$.
+Noisy hole-proximity observation (policy-specific noise
+$\sigma = 0.04 / 0.12 / 0.09 / 0.16$). Slip probability 5\%.
+Reward: $+10$ at goal, $-5$ at hole, $-0.02$/step.
+
+\paragraph{D2: Portfolio Management (3-year, $n = 300$ runs).}
+Risky asset $\mathcal{N}(0.035\%, 1.0\%)$/day with 3\%
+crash-regime probability ($\mathcal{N}(-2.5\%, 2.0\%)$). Ruin: 25\%
+peak drawdown. NRMO allocation: $20\% + 25\% \times B_t$;
+baselines: fixed 45--60\%.
+
+\paragraph{D3: Inventory Control (200 periods, $n = 300$ runs).}
+Demand $\mathcal{N}(20, 8)$. Ruin: 5 consecutive stockout periods.
+NRMO triggers emergency restock at streak~$\ge 2$.
+
+\subsection{Results}
+\label{sec:arxiv-results}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{lXXXXXXXX}
+\toprule
+\textbf{Method} & \textbf{D1 Reward} & \textbf{D1 Ruin$\downarrow$}
+& \textbf{D2 Return} & \textbf{D2 Ruin$\downarrow$} &
+\textbf{D2 Sharpe} & \textbf{D3 Profit} &
+\textbf{D3 Ruin$\downarrow$} & \textbf{D3 Service} \\
+\midrule
+\textbf{NRMO} & \textbf{8.22} & \textbf{0.106} & $-9.0\%$
+& \textbf{0.193} & $-0.49$ & \textbf{17{,}548} & 0.000 & 0.997 \\
+CPO & 6.13 & 0.248 & $-11.3\%$ & 0.467 & $-0.60$ & 16{,}306 & 0.000
+& 0.998 \\
+RCPO & 8.06 & 0.118 & $-9.7\%$ & 0.250 & $-0.54$ & 17{,}176 & 0.000
+& 0.995 \\
+Lagrangian & 5.69 & 0.278 & $-13.8\%$ & 0.550 & $-0.77$ & 16{,}469
+& 0.000 & 0.976 \\
+\bottomrule
+\end{tabularx}
+\caption[arXiv experimental results]{Experimental results.
+$\downarrow$ = lower is better. Baselines are analytic
+approximations (see caveat above).}
+\label{tab:arxiv-empirical}
+\end{table}
+
+\paragraph{D1.}
+NRMO reduces ruin by 57\% vs.~Lagrangian ($0.106$ vs.~$0.278$) and
+10\% vs.~RCPO ($0.118$). The hard ruin filter rejects options with
+CVaR estimate above $\varepsilon_t = 0.10$ entirely, while
+Lagrangian penalises ruin softly.
+
+\paragraph{D2.}
+Buffer-adaptive allocation reduces NRMO ruin to $0.193$ vs.~$0.550$
+for Lagrangian ($-65\%$). As drawdown approaches the threshold,
+$\varepsilon_t$ tightens ($B_t \to 0 \Rightarrow \varepsilon_t \to
+\varepsilon_{\mathrm{floor}}$) and risky allocation decreases
+mechanically.
+
+\paragraph{D3.}
+All methods achieve zero ruin; NRMO leads on profit ($+7.6\%$
+vs.~CPO) due to the emergency restock trigger preventing stockout
+cascades.
+
+% =====================================================================
+\section{Discussion}
+\label{sec:arxiv-discussion}
+
+\paragraph{T1 scope.}
+Theorem~1 bounds the achievable unconditional time-average reward of
+any policy with ruin probability $q$. It does not assert that NRMO
+achieves higher reward than CMDP in general: when safe actions earn
+zero reward (as in $M^*$ of Theorem~2), NRMO's zero-ruin policy has
+$U = 0$ while CMDP achieves $U > 0$. The practitioner's choice to
+use NRMO is the assertion that zero ruin is worth this cost.
+
+\paragraph{T2 scope.}
+The separation instance $M^*$ is simple by design to enable clean
+analysis. In environments where CMDP's ruin probability is
+negligible ($\theta^*(1 - p)^T \ll 1$), the practical difference
+between NRMO and CMDP vanishes. The separation is theoretically
+strict but practically relevant only when $T \cdot \theta^*(1 - p)
+= O(1)$.
+
+\paragraph{T3 scope.}
+The variational result identifies the exponential family as the
+canonical smooth approximation to the (unattainable) step-function
+supremum. It does not provide a unique optimal $\lambda$: larger
+$\lambda$ is always better from the variational perspective,
+constrained only by implementation numerics.
+
+\paragraph{Open problems.}
+
+\begin{enumerate}
+\item Extension to continuous state spaces via function
+approximation.
+\item POMDP adaptation of the APSOC gate.
+\item Online estimation of ambiguity set $\mathcal{P}$ with
+finite-sample guarantees.
+\item Comparison against proper CPO/RCPO implementations using
+Safety Gym benchmarks.
+\end{enumerate}
+
+% =====================================================================
+\section{Conclusion}
+\label{sec:arxiv-conclusion}
+
+We presented NRMO with four theorems proved with full mathematical
+rigour, correcting three errors identified in the prior draft.
+Theorem~1 provides a clean multiplicative bound on achievable reward
+as a function of ruin probability, using unconditional time-average
+to avoid measure-theoretic subtlety. Theorem~2 proves CMDP
+separation via an explicit two-state MDP with exact finite-horizon
+ruin formula $\Omega(\theta, T) = 1 - (1 - \theta(1 - p))^T$.
+Theorem~3 correctly identifies that no smooth interior maximiser
+exists for the sensitivity functional, and that the exponential
+family approaches the variational supremum at rate $O(1 / \lambda)$.
+Theorem~4 establishes polynomial-time CVaR tractability. Experiments
+with explicitly approximated baselines provide directional empirical
+support.
+
+% =====================================================================
+\section*{References}
+\label{sec:arxiv-references}
+
+\begin{enumerate}
+\item Achiam, J., Held, D., Tamar, A., \& Abbeel, P.~(2017).
+Constrained Policy Optimization. \textit{ICML 2017}.
+
+\item Altman, E.~(1999). \textit{Constrained Markov Decision
+Processes}. Chapman \& Hall/CRC.
+
+\item Blanchini, F.~(1999). Set invariance in control.
+\textit{Automatica}, 35(11), 1747--1767.
+
+\item Chow, Y., \& Pavone, M.~(2014). A unified approach to
+risk-sensitive MDPs. \textit{IEEE CDC 2014}.
+
+\item Chow, Y., Nachum, O., Duez-Guarneri, E., \& Ghavamzadeh,
+M.~(2018). A Lyapunov-based approach to safe RL.
+\textit{NeurIPS 2018}.
+
+\item Garcia, J., \& Fernandez, F.~(2015). A comprehensive survey on
+safe RL. \textit{JMLR}, 16(1), 1437--1480.
+
+\item Iyengar, G.~N.~(2005). Robust dynamic programming.
+\textit{Math.\ Operations Research}, 30(2), 257--280.
+
+\item Kelly, J.~L.~(1956). A new interpretation of information rate.
+\textit{Bell System Technical Journal}, 35(4), 917--926.
+
+\item Nilim, A., \& El~Ghaoui, L.~(2005). Robust control of Markov
+decision processes. \textit{Operations Research}, 53(5),
+780--798.
+
+\item Peters, O.~(2019). The ergodicity problem in economics.
+\textit{Nature Physics}, 15(12), 1216--1221.
+
+\item Rockafellar, R.~T., \& Uryasev, S.~(2000). Optimization of
+conditional value-at-risk. \textit{Journal of Risk}, 2(3),
+21--41.
+
+\item Tessler, C., Mankowitz, D.~J., \& Mannor, S.~(2018). Reward
+constrained policy optimization. \textit{ICLR 2019}.
+\end{enumerate}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This chapter is the arXiv-format paper. The same theorems are
+also presented in monograph form in
+Chapter~\ref{ch:theoretical-foundation-v4}.
+\item Theorem~\ref{thm:arxiv-ruin-dilution} (Ruin Dilution) is the
+mathematical foundation for the v2.0 invariant
+\textit{Non-Ruin Constraint}
+(Section~\ref{sec:invariants-unchanged}).
+\item Lemma~\ref{lem:arxiv-feasibility} (Feasibility) provides the
+existence guarantee for SAFE\_EXIT in the engineering implementation
+(Part~X).
+\item Algorithm~1 (Phased Parallel Execution) is implemented as the
+governance pipeline in $\Omega$ Full v5.0 (Part~IX).
+\item The empirical results
+(Section~\ref{sec:arxiv-results}) at the algorithmic level
+complement the civilisation-scale empirical validation in Part~XI.
+\end{itemize}

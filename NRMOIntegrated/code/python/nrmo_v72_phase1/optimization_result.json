@@ -1,0 +1,31 @@
+{
+  "best_active_features": [
+    "I8",
+    "H2",
+    "H5",
+    "G1",
+    "G2",
+    "G3",
+    "G6",
+    "G7",
+    "G8",
+    "G9"
+  ],
+  "n_active": 10,
+  "composite_score": -2.2415400888270347,
+  "pareto_violations": 1,
+  "strict_improvements": 2,
+  "total_improvement": 2.668459911172965,
+  "total_evaluations": 59,
+  "cell_scores": {
+    "Normal": {
+      "H200_median": 16.13046504314002
+    },
+    "Vulnerable": {
+      "H200_median": 1.2937717740347918
+    },
+    "FastExpansion": {
+      "H200_median": 8.681162997877946
+    }
+  }
+}

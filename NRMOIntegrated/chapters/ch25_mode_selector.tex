@@ -1,0 +1,62 @@
+% chapters/ch25_mode_selector.tex
+% Chapter 25: ModeSelector — Reflex ⇔ Institutional
+% Source: NRMO_v5_updated.pdf, Chapter 25 (lines 9647-9698 of v5_layout.txt)
+
+\chapter{ModeSelector --- Reflex $\Leftrightarrow$ Institutional}
+\label{ch:mode-selector}
+
+% =====================================================================
+\section{Decision Sovereignty Index (DSI)}
+\label{sec:dsi-definition}
+
+ModeSelector toggles between Reflex and Institutional modes based on
+the Decision Sovereignty Index:
+
+\begin{equation}
+\mathrm{DSI} = \frac{\mathrm{autonomous\_success}}
+{\mathrm{total\_decisions}}.
+\label{eq:dsi-definition}
+\end{equation}
+
+% =====================================================================
+\section{Promotion Conditions (Institutional $\to$ Reflex)}
+\label{sec:dsi-promotion}
+
+Promotion only when \emph{all} of the following are met:
+
+\begin{itemize}
+\item $\mathrm{total\_decisions} \ge 30$.
+\item $\mathrm{DSI} \ge 0.85$.
+\item $\mathrm{failure\_count} \le 1$.
+\end{itemize}
+
+% =====================================================================
+\section{Demotion Conditions (Reflex $\to$ Institutional)}
+\label{sec:dsi-demotion}
+
+Immediate demotion on any of the following:
+
+\begin{itemize}
+\item $\mathrm{failure\_count} \ge 3$.
+\item $\mathrm{DSI} \le 0.70$.
+\item $\mathrm{CrossDomainRuin}$ fired.
+\end{itemize}
+
+\nrmobox{Asymmetric design}{
+\centering
+\textit{Demotion is immediate; promotion is cautious.}\\
+Asymmetric design biased toward safety.
+}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item DSI demotion semantics are registered as INV-2.1-3
+(``Demotion immediate, promotion cautious'').
+\item DSI thresholds: $< 0.70$ forces Institutional mode (INV-2.1-8;
+see Section~\ref{sec:v21-invariant-registry}).
+\item ModeSelector consumes the DSI computed across the entire
+pipeline, including outputs of MetaGovernanceLayer and
+NonErgodicCumulativeMonitor.
+\end{itemize}

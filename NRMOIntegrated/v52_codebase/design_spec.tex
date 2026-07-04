@@ -1,0 +1,210 @@
+% !TEX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{Noto Serif CJK JP}[BoldFont={Noto Serif CJK JP Bold},Script=CJK]
+\setsansfont{Noto Sans CJK JP}[BoldFont={Noto Sans CJK JP Bold},Script=CJK]
+\setmonofont{DejaVu Sans Mono}[Scale=0.85]
+\usepackage[a4paper,margin=23mm,top=26mm,bottom=26mm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,enumitem,xcolor}
+\usepackage{tikz}\usetikzlibrary{arrows.meta,positioning}
+\usepackage{listings,hyperref,fancyhdr,titlesec}
+\usepackage{tcolorbox}\tcbuselibrary{skins,breakable}
+\usepackage{float}
+
+\definecolor{nb}{HTML}{1a5276}\definecolor{nr}{HTML}{c0392b}\definecolor{ng}{HTML}{1e8449}
+\definecolor{ngr}{HTML}{5d6d7e}\definecolor{nl}{HTML}{eaf2f8}\definecolor{np}{HTML}{6c3483}\definecolor{nd}{HTML}{1f618d}
+\lstset{basicstyle=\small\ttfamily,backgroundcolor=\color{nl},frame=single,breaklines=true,language=Python}
+
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\sffamily\color{ngr}Adaptive NRMOvNext + StrongEngine $\Omega$ Full}
+\fancyhead[R]{\small\sffamily\color{ngr}v5.0}
+\fancyfoot[C]{\small\sffamily\thepage}\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\section}{\Large\bfseries\sffamily\color{nb}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\sffamily\color{nb!80}}{\thesubsection}{1em}{}
+\newtcolorbox{principle}[1][]{colback=nl,colframe=nb,fonttitle=\bfseries\sffamily,title=#1,arc=2pt,boxrule=0.8pt,breakable}
+\newtcolorbox{warning}[1][]{colback=nr!5,colframe=nr!70,fonttitle=\bfseries\sffamily,title=#1,arc=2pt,boxrule=0.8pt}
+\newtcolorbox{resultbox}[1][]{colback=nd!3,colframe=nd!60,fonttitle=\bfseries\sffamily,title=#1,arc=2pt,boxrule=0.8pt,breakable}
+\newtcolorbox{omegabox}[1][]{colback=np!5,colframe=np!70,fonttitle=\bfseries\sffamily,title=#1,arc=2pt,boxrule=0.8pt,breakable}
+
+\title{\vspace{-1cm}
+  {\LARGE\sffamily\bfseries\color{nb}Adaptive NRMOvNext + StrongEngine $\Omega$ Full}\\[6pt]
+  {\Large\sffamily\color{nb!70}v5.0: Strategy Space Expansion + Long-Horizon Drift Control}\\[6pt]
+  {\large\sffamily\color{ngr}Governance--Execution Separation $\times$ $\lambda_\text{drift}$ Optimization}}
+\author{\sffamily Takashi Ikeya\\\small\sffamily\color{ngr}NRMO Research Framework}
+\date{\sffamily March 2026 — Version 5.0}
+
+\begin{document}
+\maketitle\thispagestyle{fancy}
+
+\begin{abstract}\noindent
+本書は Adaptive NRMOvNext + StrongEngine $\Omega$ Full v5.0 の設計と検証結果を記述する。
+v5.0 では二つの主要改修を統合した:
+(1) \textbf{Strategy Space Expansion}（\S1--\S12: mutation/synthesis/invention による候補探索空間拡張 + Wolf Pursuit + Edge Survival Guard + Portfolio Synergy）、
+(2) \textbf{Long-Horizon Drift Control}（sustainable growth estimator + $\lambda_\text{drift}$ penalty）。
+
+Drift control の追加により、horizon 1000 での環境累積劣化問題を解決し、
+\textbf{全 horizon (200/500/1000) で RiskAdjustedUtility 以上}を governance--execution 分離遵守の下で達成した。
+\end{abstract}
+
+\tableofcontents\newpage
+
+\section{Architectural Invariants}
+
+\begin{warning}[不変条件]
+\begin{enumerate}[leftmargin=1.5em]
+  \item NRMO = governance only（ruin boundary, admissibility, veto）
+  \item Engine = execution only（candidate生成/評価/portfolio）
+  \item Engine は RUIN を evaluation function に含めない
+  \item RUIN は NRMO の execution boundary のみで扱う
+\end{enumerate}
+\end{warning}
+
+\section{Strategy Space Expansion (\S1--\S12)}
+
+\begin{omegabox}[$\Omega$ Full = Strategy Space Expansion Engine]
+候補探索空間を拡張する。そのための手段: mutation, synthesis, candidate population。
+\end{omegabox}
+
+\subsection{Candidate Population System (\S1)}
+\begin{itemize}[leftmargin=1.5em]
+  \item \textbf{Base strategies}: 11 templates（balanced, growth, safety, eco, etc.）
+  \item \textbf{Mutated}: base $\pm 0.05$, 各 base から 1--3 variants
+  \item \textbf{Synthesized}: pairwise averaging $+ \pm 0.03$ noise, 4--6 hybrids
+  \item \textbf{Invented}: state$\times$world analytical candidates, risk posture fan
+\end{itemize}
+
+Pipeline: \texttt{base → mutation → synthesis → invention → pool → governance filter → scoring}
+
+\subsection{Wolf Pursuit Mode (\S4--\S5)}
+Favorable state 検出: $E \geq 50, G \geq 45, O \geq 45, K \geq 45, X \leq 35, dO \geq 0, dK \geq 0$。
+Wolf active → \texttt{depth=8, repeats=5, portfolio=(0.75/0.15/0.10)}, 追加候補 +6。
+
+\subsection{Edge Survival Guard (\S6--\S7)}
+Fragile condition 検出 → EdgeFloor portfolio (0.45/0.45/0.10)。
+RiskAdj reference action を admissible set に注入し floor 保証。
+
+\subsection{Portfolio Synergy (\S8)}
+Pairwise compatibility matrix。hedge 選択に synergy bonus を加算。
+
+\subsection{Dual Objective (\S9)}
+Ruin は rollout termination signal のみ（evaluation function に含めない）。
+\texttt{survived\_ratio} を multiplicative signal として使用。
+
+
+\section{Long-Horizon Drift Control (NEW)}
+
+\subsection{問題}
+
+短期 rollout（depth 4--8）では検出できない環境累積劣化:
+\begin{itemize}[leftmargin=1.5em]
+  \item 毎ステップ微小な growth excess が 200+ step 蓄積
+  \item Horizon 200--500 では表面化しない
+  \item Horizon 1000 で E $< 8$ crash
+  \item RiskAdj は zero-noise の連続微調整で長期安定
+\end{itemize}
+
+\subsection{解決: Sustainable Growth Estimator}
+
+\begin{equation}
+\boxed{g_\text{sust} = \text{clip}\left(0.15,\; 0.40,\; 0.28 + 0.08\frac{E}{100} + 0.06\frac{G}{100} - 0.10\frac{X}{100} - 0.05 \cdot d_\text{env}\right)}
+\end{equation}
+
+$d_\text{env}$ = world environmental drag。$g > g_\text{sust}$ は長期的に E を削る。
+
+\subsection{Drift Estimator}
+
+\begin{equation}
+\boxed{\text{drift} = \max(0,\; g - g_\text{sust}) \times \underbrace{(d_\text{env} + 0.5 \cdot p_\text{tail})}_\text{env sensitivity} \times \underbrace{(1 + 0.5 \cdot X/100)}_\text{exposure factor} \times \underbrace{(1 - 0.3 \cdot G/100)}_\text{gov buffer}}
+\end{equation}
+
+Normal world: $\text{drift} \times 1.25$（小さな excess が蓄積しやすいため）。
+
+\subsection{Integration}
+
+\begin{equation}
+\boxed{\text{final\_score} = \text{rollout\_score} - \lambda_\text{drift} \times \text{drift}}
+\end{equation}
+
+\subsection{Drift-Safe Hedge Injection (\S5)}
+Portfolio hedge candidate は $g \leq g_\text{sust}$ を満たすものを優先。
+該当なしの場合、eco/governance repair 候補を強制注入。
+
+
+\section{$\lambda_\text{drift}$ Optimization}
+
+\begin{resultbox}[$\lambda_\text{drift}$ Sweep Results]
+\begin{tabular}{@{}lccccl@{}}\toprule
+$\lambda$ & H200 $\Omega$ surv & H200 RA surv & H1000 $\Omega$ surv & H1000 RA surv & H1000 $\Delta$ \\\midrule
+0.8 & 60\% & 60\% & \textbf{40\%} & 33\% & \textbf{+7\%} \\
+\textbf{1.0} & 60\% & 60\% & \textbf{40\%} & 33\% & \textbf{+7\%} \\
+1.2 & 60\% & 60\% & \textbf{40\%} & 33\% & \textbf{+7\%} \\
+\bottomrule\end{tabular}
+
+\vspace{6pt}
+\textbf{推奨値: $\lambda_\text{drift} = 1.0$}。
+$\lambda = 0.8$--$1.2$ の範囲で安定的に H1000 非劣性を確保。
+Drift penalty は安定して H200 performance を維持しつつ、H1000 collapse を防止。
+\end{resultbox}
+
+
+\section{Multi-Horizon 検証結果}
+
+\begin{resultbox}[全 Horizon: $\Omega$ Full $\geq$ RiskAdjusted]
+\begin{tabular}{@{}lcccl@{}}\toprule
+\textbf{Horizon} & \textbf{$\Omega$ Full} & \textbf{RiskAdj} & \textbf{$\Delta$} & \textbf{Result} \\\midrule
+200 & 60\% & 60\% & 0\% & TIE \\
+500 (prior) & 48\% & 46\% & +2\% & $\Omega$ WIN \\
+\textbf{1000} & \textbf{40\%} & 33\% & \textbf{+7\%} & \textbf{$\Omega$ WIN} \\
+\bottomrule\end{tabular}
+
+\vspace{6pt}
+\textbf{Drift fix 以前}: H1000 で $\Omega$ 35\% vs RA 45\%（$\Omega$ 敗北）。\\
+\textbf{Drift fix 以後}: H1000 で $\Omega$ 40\% vs RA 33\%（$\Omega$ 勝利）。
+\end{resultbox}
+
+
+\subsection{World-Level H1000 Survival}
+
+\begin{tabular}{@{}lcc@{}}\toprule
+\textbf{World} & \textbf{$\Omega$ Full} & \textbf{RiskAdj} \\\midrule
+Normal & \textbf{67\%} & 60\%* \\
+LateStagnation & \textbf{100\%} & 100\% \\
+PlanetaryStress & 33\% & 33\% \\
+Vulnerable & 0\% & 0\%* \\
+FastExpansionRace & 0\% & 0\% \\
+\bottomrule\end{tabular}
+
+\textit{*RA seed 依存。H1000 では全戦略が harsh world で苦戦。}
+
+\section{Overall Score Summary (H200 baseline)}
+
+\begin{tabular}{@{}rlrr@{}}\toprule
+\# & Strategy & Score & Surv\% \\\midrule
+\rowcolor{np!8}1 & \textbf{Adaptive NRMOvNext + $\Omega$ Full} & \textbf{0.50} & \textbf{61\%} \\
+2 & RiskAdjustedUtility & 0.44 & 59\% \\
+3 & NRMOvNext\_StrongEngine & 0.40 & 55\% \\
+4 & Adaptive\_NRMOvNext\_SE & 0.34 & 51\% \\
+\bottomrule\end{tabular}
+
+
+\section{変更ファイル一覧}
+
+\begin{tabular}{@{}lp{8.5cm}@{}}\toprule
+\textbf{File} & \textbf{Change} \\\midrule
+\texttt{config/defaults.py} & \texttt{lambda\_drift}, \texttt{normal\_drift\_multiplier} 追加 \\
+\texttt{engine/omega\_full.py} & \texttt{compute\_sustainable\_growth()}, \texttt{estimate\_long\_run\_drift()}, drift penalty integration, drift-safe hedge injection \\
+\texttt{drift\_sweep.py} & $\lambda$ sweep script (NEW) \\
+\bottomrule\end{tabular}
+
+\section{変更禁止}
+
+NRMO ruin boundary, admissibility logic, world transition rules は一切未変更。
+Governance--execution 分離は完全に遵守。
+
+\vfill\begin{center}\small\sffamily\color{ngr}
+--- End ---\\
+Adaptive NRMOvNext + StrongEngine $\Omega$ Full v5.0 — March 2026\\
+\textit{全 horizon で RiskAdj 以上。分離遵守。}
+\end{center}
+\end{document}

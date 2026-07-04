@@ -1,0 +1,1233 @@
+{
+  "version": "active_cycle_final",
+  "description": "ActiveCycleEngine vs all engines in 3 worlds",
+  "main_results": {
+    "chaotic": {
+      "mild": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 12.310943719981832,
+              "mean": 12.168554322413613,
+              "std": 3.609269816335983,
+              "p5": 5.646869670863871,
+              "cvar": 4.573244227041115,
+              "ruin_rate": 1.0,
+              "median_steps": 26.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 16.248849999999997,
+              "mean": 15.905853437366089,
+              "std": 4.637329708273656,
+              "p5": 7.5410188002522345,
+              "cvar": 6.249038331157342,
+              "ruin_rate": 1.0,
+              "median_steps": 33.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 26.761095755709142,
+              "mean": 24.727738788723762,
+              "std": 7.268088431434099,
+              "p5": 6.9867114500570615,
+              "cvar": 7.416860378996116,
+              "ruin_rate": 1.0,
+              "median_steps": 61.5
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 20.38722434213718,
+              "mean": 18.87852592692678,
+              "std": 6.219370051933482,
+              "p5": 4.475527,
+              "cvar": 4.523240313016386,
+              "ruin_rate": 1.0,
+              "median_steps": 41.0
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 25.467581094976985,
+              "mean": 23.116357191156112,
+              "std": 7.2450072672456045,
+              "p5": 4.890387685441084,
+              "cvar": 5.226051047244635,
+              "ruin_rate": 1.0,
+              "median_steps": 52.5
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 26.72230811093619,
+              "mean": 24.65692799509263,
+              "std": 7.25355651321633,
+              "p5": 6.9867114500570615,
+              "cvar": 7.417580378996115,
+              "ruin_rate": 1.0,
+              "median_steps": 61.0
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 25.467581094976985,
+              "mean": 23.128216732154208,
+              "std": 7.252460385073264,
+              "p5": 4.890387685441084,
+              "cvar": 5.226051047244635,
+              "ruin_rate": 1.0,
+              "median_steps": 53.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 27.018313809662722,
+              "mean": 24.577320676234574,
+              "std": 8.68855209267966,
+              "p5": 5.99559,
+              "cvar": 6.147619550539255,
+              "ruin_rate": 1.0,
+              "median_steps": 68.0
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 1053,
+          "opportunity_expanded_total": 57,
+          "synthesis_default_total": 3639,
+          "active_action_total": 1086,
+          "passive_action_total": 6146,
+          "module_histogram": {
+            "SynthesisPathway": 1341,
+            "ExplorationCandidate": 969,
+            "RecoveryCandidate": 3170,
+            "DefensiveCandidate": 1635,
+            "AggressiveEngine": 116,
+            "SynthesisStandalone": 1
+          },
+          "context_histogram": {
+            "Normal": 2656,
+            "Recovery": 2543,
+            "Emergency": 1914,
+            "Opportunity": 67,
+            "Defense": 52
+          },
+          "aggressive_summary": {
+            "generated": 4101,
+            "selected": 116,
+            "final": 112
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": 8.219509611712589,
+          "p": 1.0543722643856437e-17
+        },
+        "paired_ac_vs_851": {
+          "median_diff": -1.1496609029556275,
+          "p": 4.691455420690908e-15
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": 3.8809986454222933,
+          "p": 3.1519085085198355e-22
+        },
+        "elapsed_sec": 24.84163498878479
+      },
+      "moderate": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 11.586413519721237,
+              "mean": 10.858634362297634,
+              "std": 4.828327567488625,
+              "p5": 1.7995650000000003,
+              "cvar": 2.0900381484362733,
+              "ruin_rate": 1.0,
+              "median_steps": 25.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 14.71232547190002,
+              "mean": 14.129079501494619,
+              "std": 6.324805218850691,
+              "p5": 1.8718850190098313,
+              "cvar": 2.0486832837464752,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 20.664840446354447,
+              "mean": 18.77469234606801,
+              "std": 10.277508229540603,
+              "p5": 1.7821757437326984,
+              "cvar": 2.052553168767831,
+              "ruin_rate": 1.0,
+              "median_steps": 52.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 16.015114218302084,
+              "mean": 14.558311338015919,
+              "std": 7.389545677662203,
+              "p5": 1.60011,
+              "cvar": 1.755041836724474,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 19.977605833564407,
+              "mean": 17.787599206815987,
+              "std": 9.345351032478238,
+              "p5": 1.5867884380871151,
+              "cvar": 1.7899183092169453,
+              "ruin_rate": 1.0,
+              "median_steps": 43.0
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 20.726429754543958,
+              "mean": 18.89018647803582,
+              "std": 10.133192606055662,
+              "p5": 1.7821757437326984,
+              "cvar": 2.065993390193709,
+              "ruin_rate": 1.0,
+              "median_steps": 50.0
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 20.33808542271229,
+              "mean": 17.96514384498519,
+              "std": 9.36825503086212,
+              "p5": 1.5867884380871151,
+              "cvar": 1.7899183092169453,
+              "ruin_rate": 1.0,
+              "median_steps": 44.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 19.067827428934976,
+              "mean": 18.17398130199635,
+              "std": 9.83520838416571,
+              "p5": 2.671649298325549,
+              "cvar": 2.7610513690178626,
+              "ruin_rate": 1.0,
+              "median_steps": 51.0
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 858,
+          "opportunity_expanded_total": 200,
+          "synthesis_default_total": 3036,
+          "active_action_total": 1006,
+          "passive_action_total": 4877,
+          "module_histogram": {
+            "SynthesisPathway": 1177,
+            "ExplorationCandidate": 827,
+            "RecoveryCandidate": 2459,
+            "DefensiveCandidate": 1234,
+            "AggressiveEngine": 157,
+            "MutationPathway": 7,
+            "SynthesisStandalone": 22
+          },
+          "context_histogram": {
+            "Normal": 2155,
+            "Recovery": 1842,
+            "Emergency": 1449,
+            "Opportunity": 260,
+            "Defense": 154,
+            "Stagnation": 21,
+            "Uncertainty": 2
+          },
+          "aggressive_summary": {
+            "generated": 3121,
+            "selected": 157,
+            "final": 133
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": 3.894467139223778,
+          "p": 2.3370914372458302e-05
+        },
+        "paired_ac_vs_851": {
+          "median_diff": -0.16523036426964266,
+          "p": 0.00036415587060416267
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": 2.8704698197027216,
+          "p": 3.76189753637487e-13
+        },
+        "elapsed_sec": 19.909294843673706
+      },
+      "severe": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 8.974233850920772,
+              "mean": 9.359230078231082,
+              "std": 5.196022633793434,
+              "p5": 1.749751014831055,
+              "cvar": 1.4302503548170165,
+              "ruin_rate": 1.0,
+              "median_steps": 23.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 12.128293488250854,
+              "mean": 11.978609072851368,
+              "std": 6.841676920712448,
+              "p5": 1.2579720512704773,
+              "cvar": 0.744704337024802,
+              "ruin_rate": 1.0,
+              "median_steps": 30.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 14.080318791234074,
+              "mean": 14.146515520550901,
+              "std": 8.79138512022825,
+              "p5": 1.1316500687115305,
+              "cvar": 1.2227701567634948,
+              "ruin_rate": 1.0,
+              "median_steps": 39.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 11.33085069537914,
+              "mean": 11.705032750336077,
+              "std": 6.9868717054797465,
+              "p5": 1.4185272273303535,
+              "cvar": 1.3756240645538327,
+              "ruin_rate": 1.0,
+              "median_steps": 29.0
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 14.870983914841762,
+              "mean": 14.619115068774287,
+              "std": 9.274489273230138,
+              "p5": 1.1657066034593984,
+              "cvar": 1.287607981879826,
+              "ruin_rate": 1.0,
+              "median_steps": 39.0
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 14.673167297473618,
+              "mean": 14.408777004087057,
+              "std": 9.136265436013318,
+              "p5": 1.1316500687115305,
+              "cvar": 1.2643511675631436,
+              "ruin_rate": 1.0,
+              "median_steps": 39.0
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 14.849478650325846,
+              "mean": 14.636665599324154,
+              "std": 9.359100460505196,
+              "p5": 1.1657066034593984,
+              "cvar": 1.100262996802574,
+              "ruin_rate": 1.0,
+              "median_steps": 39.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 13.087974010095015,
+              "mean": 14.024178985429504,
+              "std": 9.976060211512571,
+              "p5": 1.5801935934768256,
+              "cvar": 1.1536278607175594,
+              "ruin_rate": 1.0,
+              "median_steps": 36.5
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 787,
+          "opportunity_expanded_total": 237,
+          "synthesis_default_total": 2844,
+          "active_action_total": 999,
+          "passive_action_total": 4407,
+          "module_histogram": {
+            "SynthesisPathway": 1108,
+            "ExplorationCandidate": 778,
+            "RecoveryCandidate": 2190,
+            "DefensiveCandidate": 1067,
+            "AggressiveEngine": 194,
+            "SynthesisStandalone": 29,
+            "MutationPathway": 40
+          },
+          "context_histogram": {
+            "Normal": 2035,
+            "Opportunity": 332,
+            "Recovery": 1392,
+            "Defense": 230,
+            "Emergency": 1317,
+            "Uncertainty": 6,
+            "Stagnation": 94
+          },
+          "aggressive_summary": {
+            "generated": 3024,
+            "selected": 194,
+            "final": 164
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": 2.336886397359862,
+          "p": 0.0018717120904279954
+        },
+        "paired_ac_vs_851": {
+          "median_diff": 0.11033274227547074,
+          "p": 0.05792154841613258
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": 1.4538420793228326,
+          "p": 4.617083299505776e-11
+        },
+        "elapsed_sec": 17.558233976364136
+      }
+    },
+    "drifting": {
+      "mild": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 9.05185,
+              "mean": 9.37125320220521,
+              "std": 3.413508607894639,
+              "p5": 4.52061378836753,
+              "cvar": 3.8468170385871265,
+              "ruin_rate": 1.0,
+              "median_steps": 20.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 38.007130349276785,
+              "mean": 41.0674347496358,
+              "std": 27.3324420029023,
+              "p5": 6.163619350668989,
+              "cvar": 5.388850019328268,
+              "ruin_rate": 0.84,
+              "median_steps": 87.5
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 14.354509535007937,
+              "mean": 17.098647395142354,
+              "std": 13.591304165302729,
+              "p5": 1.702087098860508,
+              "cvar": 1.145117521887108,
+              "ruin_rate": 0.9933333333333333,
+              "median_steps": 48.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 42.80811818896929,
+              "mean": 49.55227462704178,
+              "std": 31.59042560199178,
+              "p5": 8.000839904639852,
+              "cvar": 6.343916239561713,
+              "ruin_rate": 0.7533333333333333,
+              "median_steps": 109.5
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 17.1096590341839,
+              "mean": 20.817472310468172,
+              "std": 16.993326908527735,
+              "p5": 1.6005285750013467,
+              "cvar": 0.9675523062082332,
+              "ruin_rate": 0.9733333333333334,
+              "median_steps": 51.5
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 14.354509535007937,
+              "mean": 17.12965677423273,
+              "std": 13.5793945424526,
+              "p5": 1.702087098860508,
+              "cvar": 1.145117521887108,
+              "ruin_rate": 0.9933333333333333,
+              "median_steps": 48.0
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 17.1096590341839,
+              "mean": 20.796289797010505,
+              "std": 16.98453220912632,
+              "p5": 1.6005285750013467,
+              "cvar": 0.9672224609132362,
+              "ruin_rate": 0.9733333333333334,
+              "median_steps": 51.5
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 9.492528000000007,
+              "mean": 8.725451538634433,
+              "std": 3.739190245428535,
+              "p5": 2.5704000000000002,
+              "cvar": 2.093924764604572,
+              "ruin_rate": 1.0,
+              "median_steps": 37.5
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 2263,
+          "opportunity_expanded_total": 60,
+          "synthesis_default_total": 1226,
+          "active_action_total": 2359,
+          "passive_action_total": 7522,
+          "module_histogram": {
+            "SynthesisPathway": 5109,
+            "ExplorationCandidate": 2228,
+            "DefensiveCandidate": 1689,
+            "AggressiveEngine": 122,
+            "RecoveryCandidate": 553,
+            "SynthesisStandalone": 19,
+            "MutationPathway": 161
+          },
+          "context_histogram": {
+            "Normal": 8120,
+            "Defense": 636,
+            "Opportunity": 109,
+            "Emergency": 334,
+            "Recovery": 238,
+            "Stagnation": 421,
+            "Uncertainty": 23
+          },
+          "aggressive_summary": {
+            "generated": 10537,
+            "selected": 122,
+            "final": 111
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": -16.206789402575748,
+          "p": 5.438994733932252e-11
+        },
+        "paired_ac_vs_851": {
+          "median_diff": 1.4467309384389626,
+          "p": 2.4299290879713183e-20
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": -25.910979732601323,
+          "p": 1.2242056567305738e-19
+        },
+        "elapsed_sec": 32.40493822097778
+      },
+      "moderate": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 8.123690803695393,
+              "mean": 8.555495941603555,
+              "std": 4.4038266745843995,
+              "p5": 1.8027912888997148,
+              "cvar": 2.002358208125907,
+              "ruin_rate": 1.0,
+              "median_steps": 19.5
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 15.122952715461807,
+              "mean": 20.186848756235257,
+              "std": 16.1930943669652,
+              "p5": 3.2329613011917804,
+              "cvar": 2.8633384375745687,
+              "ruin_rate": 1.0,
+              "median_steps": 41.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 8.778394417229212,
+              "mean": 9.925631785139423,
+              "std": 7.755719631189918,
+              "p5": 0.9034550000000001,
+              "cvar": -0.5198280169332191,
+              "ruin_rate": 1.0,
+              "median_steps": 32.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 15.910360520744941,
+              "mean": 21.199090233963293,
+              "std": 18.729577553655773,
+              "p5": 1.8325950000000002,
+              "cvar": 1.9481899132716447,
+              "ruin_rate": 0.9866666666666667,
+              "median_steps": 40.5
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 10.936044353159982,
+              "mean": 12.909445852455887,
+              "std": 10.41239800112344,
+              "p5": 1.0721503946801891,
+              "cvar": 0.428471359321778,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 9.117209859347685,
+              "mean": 10.131277099065864,
+              "std": 7.874845360377344,
+              "p5": 0.9034550000000001,
+              "cvar": -0.511865490179486,
+              "ruin_rate": 1.0,
+              "median_steps": 32.0
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 10.594834696370262,
+              "mean": 12.434322551676106,
+              "std": 9.89344163775221,
+              "p5": 1.0721503946801891,
+              "cvar": 0.41229203509036594,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 7.044399528615038,
+              "mean": 6.865786457620844,
+              "std": 3.6650945917971893,
+              "p5": 1.553964950345779,
+              "cvar": 0.9197713366020083,
+              "ruin_rate": 1.0,
+              "median_steps": 24.0
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 1177,
+          "opportunity_expanded_total": 144,
+          "synthesis_default_total": 1485,
+          "active_action_total": 1359,
+          "passive_action_total": 4507,
+          "module_histogram": {
+            "SynthesisPathway": 2483,
+            "ExplorationCandidate": 1176,
+            "DefensiveCandidate": 926,
+            "RecoveryCandidate": 991,
+            "AggressiveEngine": 146,
+            "MutationPathway": 103,
+            "SynthesisStandalone": 41
+          },
+          "context_histogram": {
+            "Normal": 3915,
+            "Defense": 428,
+            "Emergency": 440,
+            "Opportunity": 232,
+            "Recovery": 510,
+            "Uncertainty": 99,
+            "Stagnation": 242
+          },
+          "aggressive_summary": {
+            "generated": 4505,
+            "selected": 146,
+            "final": 116
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": -3.640000888097298,
+          "p": 2.4568829479475363e-05
+        },
+        "paired_ac_vs_851": {
+          "median_diff": 0.8867386452756536,
+          "p": 4.5110686282974375e-22
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": -3.72165781097021,
+          "p": 9.397575131869596e-12
+        },
+        "elapsed_sec": 18.543871879577637
+      },
+      "severe": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 7.090360720885235,
+              "mean": 7.727904185708709,
+              "std": 4.720866777728651,
+              "p5": 1.4185749354574317,
+              "cvar": 1.3345311729270861,
+              "ruin_rate": 1.0,
+              "median_steps": 19.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 10.7482018039546,
+              "mean": 12.532555222170883,
+              "std": 9.644037679992943,
+              "p5": 0.7374819821220175,
+              "cvar": -0.9580428256054649,
+              "ruin_rate": 1.0,
+              "median_steps": 30.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 4.892475811475897,
+              "mean": 5.687919162506065,
+              "std": 4.970061244932945,
+              "p5": 0.43762272960000004,
+              "cvar": -0.36551094260889544,
+              "ruin_rate": 1.0,
+              "median_steps": 21.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 9.56018665638781,
+              "mean": 11.20198325948182,
+              "std": 8.130229044245286,
+              "p5": 0.8440178965223167,
+              "cvar": -0.006756935413562859,
+              "ruin_rate": 1.0,
+              "median_steps": 32.0
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 5.45960473954224,
+              "mean": 7.117727711857606,
+              "std": 6.889957992949967,
+              "p5": 0.5405701227690715,
+              "cvar": 0.14484009054605304,
+              "ruin_rate": 1.0,
+              "median_steps": 23.0
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 5.126873537819851,
+              "mean": 5.877476789117138,
+              "std": 5.0805133622082455,
+              "p5": 0.43762272960000004,
+              "cvar": -0.3155396001244201,
+              "ruin_rate": 1.0,
+              "median_steps": 21.5
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 5.500016864028899,
+              "mean": 7.132984634064048,
+              "std": 6.8789983323103945,
+              "p5": 0.43762272960000004,
+              "cvar": 0.1273141955962546,
+              "ruin_rate": 1.0,
+              "median_steps": 23.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 4.999267211030299,
+              "mean": 5.5233000637291,
+              "std": 4.494693076958183,
+              "p5": 0.35865219244565355,
+              "cvar": -0.6439463201087852,
+              "ruin_rate": 1.0,
+              "median_steps": 19.5
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 721,
+          "opportunity_expanded_total": 139,
+          "synthesis_default_total": 1368,
+          "active_action_total": 876,
+          "passive_action_total": 3045,
+          "module_histogram": {
+            "SynthesisPathway": 1469,
+            "ExplorationCandidate": 745,
+            "RecoveryCandidate": 881,
+            "DefensiveCandidate": 552,
+            "AggressiveEngine": 92,
+            "MutationPathway": 141,
+            "SynthesisStandalone": 41
+          },
+          "context_histogram": {
+            "Normal": 2212,
+            "Opportunity": 205,
+            "Defense": 339,
+            "Emergency": 358,
+            "Recovery": 439,
+            "Stagnation": 357,
+            "Uncertainty": 11
+          },
+          "aggressive_summary": {
+            "generated": 2210,
+            "selected": 92,
+            "final": 67
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": -4.939806302396814,
+          "p": 2.0994382045138818e-10
+        },
+        "paired_ac_vs_851": {
+          "median_diff": 0.4093155999896845,
+          "p": 3.5180046335716178e-15
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": -2.256022971012908,
+          "p": 3.0115151482106683e-13
+        },
+        "elapsed_sec": 13.205547332763672
+      }
+    },
+    "noisy": {
+      "mild": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 12.208049999999998,
+              "mean": 12.011855338474,
+              "std": 3.5639589697314724,
+              "p5": 5.820603862664859,
+              "cvar": 4.815549068033748,
+              "ruin_rate": 1.0,
+              "median_steps": 27.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 15.815249999999999,
+              "mean": 15.838367188839717,
+              "std": 4.351147192991814,
+              "p5": 11.113337487569327,
+              "cvar": 7.989570458357044,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 25.010342631816417,
+              "mean": 23.31713209777381,
+              "std": 8.611083384950305,
+              "p5": 2.9024900000000002,
+              "cvar": 3.73954340773486,
+              "ruin_rate": 1.0,
+              "median_steps": 57.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 17.438462454574427,
+              "mean": 16.51662567369164,
+              "std": 5.027766174935832,
+              "p5": 6.428837956208088,
+              "cvar": 5.484514213714073,
+              "ruin_rate": 1.0,
+              "median_steps": 35.0
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 20.144575782397162,
+              "mean": 18.780353358074834,
+              "std": 7.120384885980885,
+              "p5": 2.717460404629319,
+              "cvar": 3.5299840970545344,
+              "ruin_rate": 1.0,
+              "median_steps": 41.0
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 22.817233101646067,
+              "mean": 20.958608096408334,
+              "std": 8.156419570323536,
+              "p5": 2.6721850578323445,
+              "cvar": 3.514412707717149,
+              "ruin_rate": 1.0,
+              "median_steps": 49.0
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 20.317385782397164,
+              "mean": 19.060398026278424,
+              "std": 7.115724067916863,
+              "p5": 2.717460404629319,
+              "cvar": 3.5323822295939404,
+              "ruin_rate": 1.0,
+              "median_steps": 41.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 27.018313809662722,
+              "mean": 24.577320676234574,
+              "std": 8.68855209267966,
+              "p5": 5.99559,
+              "cvar": 6.147619550539255,
+              "ruin_rate": 1.0,
+              "median_steps": 68.0
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 779,
+          "opportunity_expanded_total": 540,
+          "synthesis_default_total": 3283,
+          "active_action_total": 1206,
+          "passive_action_total": 4474,
+          "module_histogram": {
+            "SynthesisPathway": 847,
+            "RecoveryCandidate": 2451,
+            "ExplorationCandidate": 807,
+            "DefensiveCandidate": 1174,
+            "AggressiveEngine": 359,
+            "SynthesisStandalone": 40,
+            "MutationPathway": 2
+          },
+          "context_histogram": {
+            "Normal": 1501,
+            "Opportunity": 662,
+            "Recovery": 1804,
+            "Emergency": 1615,
+            "Defense": 52,
+            "Uncertainty": 39,
+            "Stagnation": 7
+          },
+          "aggressive_summary": {
+            "generated": 2397,
+            "selected": 359,
+            "final": 327
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": 3.4984927620758617,
+          "p": 2.1141468206622813e-06
+        },
+        "paired_ac_vs_851": {
+          "median_diff": -3.765465974102268,
+          "p": 9.214943812522524e-23
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": 2.7159963553804687,
+          "p": 4.185735110944645e-10
+        },
+        "elapsed_sec": 20.615593194961548
+      },
+      "moderate": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 11.557040367785449,
+              "mean": 11.609537638906493,
+              "std": 4.09018749187144,
+              "p5": 4.6672238327753375,
+              "cvar": 3.9092785865052257,
+              "ruin_rate": 1.0,
+              "median_steps": 27.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 14.679607798012604,
+              "mean": 14.794401508176179,
+              "std": 4.510717918001865,
+              "p5": 7.659154519095513,
+              "cvar": 5.986006034550273,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 21.26595956390447,
+              "mean": 19.623517325513262,
+              "std": 9.70793026190393,
+              "p5": 2.4834700282365687,
+              "cvar": 2.5438634080343627,
+              "ruin_rate": 1.0,
+              "median_steps": 50.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 15.88725237638849,
+              "mean": 15.28276279965928,
+              "std": 6.1872150503015995,
+              "p5": 3.3910242928493823,
+              "cvar": 3.5721220013270485,
+              "ruin_rate": 1.0,
+              "median_steps": 33.0
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 16.88746046941198,
+              "mean": 16.067980813624164,
+              "std": 7.777335865076969,
+              "p5": 2.462830028236569,
+              "cvar": 2.3585463107856324,
+              "ruin_rate": 1.0,
+              "median_steps": 35.5
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 18.49013906919064,
+              "mean": 17.68571527315003,
+              "std": 8.910240330075135,
+              "p5": 2.4694300282365687,
+              "cvar": 2.3613203434883676,
+              "ruin_rate": 1.0,
+              "median_steps": 43.0
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 16.742518318093666,
+              "mean": 16.29218750896188,
+              "std": 7.980215773576269,
+              "p5": 2.462830028236569,
+              "cvar": 2.361671630011568,
+              "ruin_rate": 1.0,
+              "median_steps": 36.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 19.067827428934976,
+              "mean": 18.17398130199635,
+              "std": 9.83520838416571,
+              "p5": 2.671649298325549,
+              "cvar": 2.7610513690178626,
+              "ruin_rate": 1.0,
+              "median_steps": 51.0
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 698,
+          "opportunity_expanded_total": 465,
+          "synthesis_default_total": 2924,
+          "active_action_total": 1082,
+          "passive_action_total": 3997,
+          "module_histogram": {
+            "SynthesisPathway": 822,
+            "RecoveryCandidate": 2136,
+            "ExplorationCandidate": 718,
+            "DefensiveCandidate": 1030,
+            "AggressiveEngine": 331,
+            "SynthesisStandalone": 35,
+            "MutationPathway": 7
+          },
+          "context_histogram": {
+            "Normal": 1455,
+            "Opportunity": 602,
+            "Recovery": 1519,
+            "Emergency": 1351,
+            "Defense": 107,
+            "Uncertainty": 30,
+            "Stagnation": 15
+          },
+          "aggressive_summary": {
+            "generated": 2193,
+            "selected": 331,
+            "final": 284
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": 1.5415209630518385,
+          "p": 0.08688404109199734
+        },
+        "paired_ac_vs_851": {
+          "median_diff": -1.8296049826089877,
+          "p": 2.613941067440816e-14
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": 1.840008503127196,
+          "p": 0.00012130358413357295
+        },
+        "elapsed_sec": 18.952000617980957
+      },
+      "severe": {
+        "n_runs": 150,
+        "engines": {
+          "v71_pure": {
+            "metrics": {
+              "median": 10.388094022933386,
+              "mean": 10.678176203586272,
+              "std": 4.816420147807551,
+              "p5": 2.6426277966953835,
+              "cvar": 2.5068371813508383,
+              "ruin_rate": 1.0,
+              "median_steps": 26.0
+            }
+          },
+          "v8.4.1": {
+            "metrics": {
+              "median": 12.313462713587274,
+              "mean": 11.894209759737256,
+              "std": 6.375115041303004,
+              "p5": 1.8424552112137909,
+              "cvar": 1.6888330617359448,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          },
+          "v8.5.1": {
+            "metrics": {
+              "median": 15.784992944827128,
+              "mean": 16.43833290419513,
+              "std": 9.607042530915907,
+              "p5": 2.69105131812038,
+              "cvar": 2.089200344025493,
+              "ruin_rate": 1.0,
+              "median_steps": 41.0
+            }
+          },
+          "v9_minimal": {
+            "metrics": {
+              "median": 13.28473399801512,
+              "mean": 13.238081112039472,
+              "std": 6.470029497506005,
+              "p5": 2.7076884009345554,
+              "cvar": 2.983688802584559,
+              "ruin_rate": 1.0,
+              "median_steps": 30.5
+            }
+          },
+          "ActiveCycle_full": {
+            "metrics": {
+              "median": 13.668099872318361,
+              "mean": 14.405420292711936,
+              "std": 8.217629133781841,
+              "p5": 2.6931252520767504,
+              "cvar": 2.4151637471680325,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          },
+          "AC_no_active_bias": {
+            "metrics": {
+              "median": 13.773248243810855,
+              "mean": 14.722455992730426,
+              "std": 8.524497023058062,
+              "p5": 2.5445650368733936,
+              "cvar": 1.9293668548176002,
+              "ruin_rate": 1.0,
+              "median_steps": 34.0
+            }
+          },
+          "AC_no_syn_default": {
+            "metrics": {
+              "median": 13.663140809416175,
+              "mean": 14.507599199636564,
+              "std": 8.28503043678383,
+              "p5": 2.6931252520767504,
+              "cvar": 2.4151637471680325,
+              "ruin_rate": 1.0,
+              "median_steps": 31.0
+            }
+          },
+          "recover_fixed": {
+            "metrics": {
+              "median": 13.087974010095015,
+              "mean": 14.024178985429504,
+              "std": 9.976060211512571,
+              "p5": 1.5801935934768256,
+              "cvar": 1.1536278607175594,
+              "ruin_rate": 1.0,
+              "median_steps": 36.5
+            }
+          }
+        },
+        "ac_extras": {
+          "active_bias_total": 629,
+          "opportunity_expanded_total": 444,
+          "synthesis_default_total": 2872,
+          "active_action_total": 1035,
+          "passive_action_total": 3693,
+          "module_histogram": {
+            "SynthesisPathway": 794,
+            "AggressiveEngine": 325,
+            "DefensiveCandidate": 911,
+            "RecoveryCandidate": 1972,
+            "ExplorationCandidate": 667,
+            "SynthesisStandalone": 43,
+            "MutationPathway": 16
+          },
+          "context_histogram": {
+            "Normal": 1358,
+            "Opportunity": 621,
+            "Defense": 164,
+            "Recovery": 1307,
+            "Emergency": 1219,
+            "Stagnation": 33,
+            "Uncertainty": 26
+          },
+          "aggressive_summary": {
+            "generated": 2082,
+            "selected": 325,
+            "final": 264
+          }
+        },
+        "paired_ac_vs_841": {
+          "median_diff": 3.403710319891979,
+          "p": 0.005317324494545821
+        },
+        "paired_ac_vs_851": {
+          "median_diff": -0.2281707756024982,
+          "p": 5.773445506023739e-05
+        },
+        "paired_ac_vs_v9": {
+          "median_diff": 0.7412779673198893,
+          "p": 0.0026088129976368666
+        },
+        "elapsed_sec": 17.463515281677246
+      }
+    }
+  }
+}

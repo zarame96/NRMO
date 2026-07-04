@@ -1,0 +1,83 @@
+% chapters/ch26_meta_governance.tex
+% Chapter 26: MetaGovernanceLayer — Institutional Layer
+% Source: NRMO_v5_updated.pdf, Chapter 26 (lines 9699-9744 of v5_layout.txt)
+
+\chapter{MetaGovernanceLayer --- Institutional Layer}
+\label{ch:meta-governance}
+
+% =====================================================================
+\section{CrossDomainRuin Detection}
+\label{sec:cross-domain-ruin}
+
+MetaGovernanceLayer monitors systemic risk across seven domains:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXX}
+\toprule
+\textbf{Index} & \textbf{Domain} & \textbf{Content} \\
+\midrule
+0 & Financial & Finance and assets. \\
+1 & Health & Health and body. \\
+2 & Career & Career and occupation. \\
+3 & Relationship & Relationships. \\
+4 & Legal & Legal risk. \\
+5 & Reputation & Reputation. \\
+6 & Infrastructure & Life infrastructure. \\
+\bottomrule
+\end{tabularx}
+\caption[Cross-domain risk monitoring]{Seven domains monitored by
+MetaGovernanceLayer for systemic risk.}
+\label{tab:cross-domain-domains}
+\end{table}
+
+\begin{equation}
+\mathrm{systemic\_risk} =
+\frac{1}{7} \sum_{i=0}^{6} \mathrm{domain\_risk}_i.
+\label{eq:systemic-risk}
+\end{equation}
+
+\paragraph{Trigger.}
+
+\begin{equation}
+\mathrm{systemic\_risk} \ge 0.75 \;\Rightarrow\; \mathrm{SAFE\_EXIT}.
+\label{eq:cross-domain-trigger}
+\end{equation}
+
+% =====================================================================
+\section{$\varepsilon$ Change Audit}
+\label{sec:meta-epsilon-audit}
+
+$\varepsilon$ changes are recorded in an append-only log:
+
+\begin{itemize}
+\item Signed appends only (overwriting prohibited).
+\item Stored in persistent storage.
+\item Recording reason for change is mandatory.
+\end{itemize}
+
+% =====================================================================
+\section{DSI Monitoring}
+\label{sec:meta-dsi-monitoring}
+
+$\mathrm{DSI} < 0.70$ forces Institutional mode immediately.
+
+% =====================================================================
+\section{Governance Log}
+\label{sec:meta-governance-log}
+
+Used for long-term audit as a Tier 2 log.
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Cross-domain ruin trigger formalised as INV-2.1-4
+($\mathrm{systemic\_risk} \ge 0.75 \Rightarrow \mathrm{SAFE\_EXIT}$).
+\item $\varepsilon$ change audit is the operational instantiation of
+the institutional $\varepsilon$ supply mechanism
+(Chapter~\ref{ch:epsilon-supply}).
+\item DSI monitoring threshold ($< 0.70 \Rightarrow$ Institutional)
+is registered as INV-2.1-8.
+\end{itemize}

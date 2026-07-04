@@ -1,0 +1,270 @@
+% NRMO_Complete_v5_5.tex — Master file
+% Compile with: xelatex NRMO_Complete_v5_5.tex (multi-pass with bibtex)
+% Author: Takashi Ikeya (Zarame)
+% Version 5.5 — 2026
+
+\documentclass[11pt,a4paper,twoside,openright]{book}
+
+% ─────────────────── PACKAGES (pdfLaTeX) ───────────────────
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=2.5cm,headheight=14pt]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\keepXColumns
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes, calc, fit, backgrounds, decorations.pathreplacing}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{makeidx}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{tocloft}
+% Widen the numbering boxes in ToC so 41.7.1 etc. don't get truncated
+\setlength{\cftchapnumwidth}{3.5em}
+\setlength{\cftsecnumwidth}{4.0em}
+\setlength{\cftsubsecnumwidth}{4.5em}
+\setlength{\cftsubsubsecnumwidth}{5.5em}
+\setlength{\cftsecindent}{3.5em}
+\setlength{\cftsubsecindent}{7.5em}
+\setlength{\cftsubsubsecindent}{12em}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{etoolbox}
+
+% ─────────────────── COLORS & STYLE ───────────────────
+\definecolor{NRMOblue}{RGB}{34,87,122}
+\definecolor{NRMOred}{RGB}{180,32,40}
+\definecolor{NRMOgray}{RGB}{75,75,75}
+\definecolor{NRMOlight}{RGB}{240,242,247}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=NRMOblue,
+  citecolor=NRMOred,
+  urlcolor=NRMOblue,
+  pdftitle={NRMO Integrated System v7.2},
+  pdfauthor={Takashi Ikeya},
+  pdfsubject={Non-Ruin Maximizing Objective: Integrated System v7.2},
+}
+
+% ─────────────────── HEADERS / FOOTERS ───────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\textit{NRMO Integrated System v7.2}}
+\fancyhead[LO]{\textit{\nouppercase{\leftmark}}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ─────────────────── THEOREM ENVS ───────────────────
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{principle}[theorem]{Principle}
+\newtheorem{invariant}[theorem]{Invariant}
+
+% ─────────────────── BOXES ───────────────────
+\newcommand{\nrmobox}[2]{%
+  \begin{center}
+  \fcolorbox{NRMOblue}{NRMOlight}{%
+    \begin{minipage}{0.92\linewidth}
+    \textbf{\textcolor{NRMOblue}{#1}}\par\medskip
+    #2
+    \end{minipage}
+  }
+  \end{center}
+}
+
+% ─────────────────── LISTINGS ───────────────────
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{NRMOgray},
+  numbers=left,
+  numberstyle=\tiny\color{NRMOgray},
+  numbersep=8pt,
+  showstringspaces=false,
+  keywordstyle=\color{NRMOblue}\bfseries,
+  commentstyle=\color{NRMOgray}\itshape,
+  stringstyle=\color{NRMOred},
+  inputencoding=utf8,
+  extendedchars=true,
+  literate=
+    {ä}{{\"a}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {ñ}{{\~n}}1 {ç}{{\c c}}1
+    {Ω}{$\Omega$}1 {ω}{$\omega$}1
+    {ε}{$\varepsilon$}1 {λ}{$\lambda$}1 {α}{$\alpha$}1 {β}{$\beta$}1
+    {γ}{$\gamma$}1 {δ}{$\delta$}1 {μ}{$\mu$}1 {π}{$\pi$}1
+    {σ}{$\sigma$}1 {τ}{$\tau$}1 {θ}{$\theta$}1 {φ}{$\varphi$}1
+    {χ}{$\chi$}1 {ψ}{$\psi$}1
+    {≤}{$\leq$}1 {≥}{$\geq$}1 {≠}{$\neq$}1 {∈}{$\in$}1 {∅}{$\emptyset$}1
+    {→}{$\rightarrow$}1 {←}{$\leftarrow$}1 {↑}{$\uparrow$}1 {↓}{$\downarrow$}1
+    {…}{...}1 {—}{---}1 {–}{--}1
+    {あ}{ }1 {い}{ }1 {う}{ }1 {え}{ }1 {お}{ }1
+    {か}{ }1 {き}{ }1 {く}{ }1 {け}{ }1 {こ}{ }1
+    {さ}{ }1 {し}{ }1 {す}{ }1 {せ}{ }1 {そ}{ }1
+    {た}{ }1 {ち}{ }1 {つ}{ }1 {て}{ }1 {と}{ }1
+    {な}{ }1 {に}{ }1 {ぬ}{ }1 {ね}{ }1 {の}{ }1
+    {は}{ }1 {ひ}{ }1 {ふ}{ }1 {へ}{ }1 {ほ}{ }1
+    {ま}{ }1 {み}{ }1 {む}{ }1 {め}{ }1 {も}{ }1
+    {や}{ }1 {ゆ}{ }1 {よ}{ }1
+    {ら}{ }1 {り}{ }1 {る}{ }1 {れ}{ }1 {ろ}{ }1
+    {わ}{ }1 {を}{ }1 {ん}{ }1
+    {が}{ }1 {ぎ}{ }1 {ぐ}{ }1 {げ}{ }1 {ご}{ }1
+    {ざ}{ }1 {じ}{ }1 {ず}{ }1 {ぜ}{ }1 {ぞ}{ }1
+    {だ}{ }1 {ぢ}{ }1 {づ}{ }1 {で}{ }1 {ど}{ }1
+    {ば}{ }1 {び}{ }1 {ぶ}{ }1 {べ}{ }1 {ぼ}{ }1
+    {ぱ}{ }1 {ぴ}{ }1 {ぷ}{ }1 {ぺ}{ }1 {ぽ}{ }1
+    {っ}{ }1 {ゃ}{ }1 {ゅ}{ }1 {ょ}{ }1
+    {ア}{ }1 {イ}{ }1 {ウ}{ }1 {エ}{ }1 {オ}{ }1
+    {カ}{ }1 {キ}{ }1 {ク}{ }1 {ケ}{ }1 {コ}{ }1
+    {サ}{ }1 {シ}{ }1 {ス}{ }1 {セ}{ }1 {ソ}{ }1
+    {タ}{ }1 {チ}{ }1 {ツ}{ }1 {テ}{ }1 {ト}{ }1
+    {ナ}{ }1 {ニ}{ }1 {ヌ}{ }1 {ネ}{ }1 {ノ}{ }1
+    {ハ}{ }1 {ヒ}{ }1 {フ}{ }1 {ヘ}{ }1 {ホ}{ }1
+    {マ}{ }1 {ミ}{ }1 {ム}{ }1 {メ}{ }1 {モ}{ }1
+    {ヤ}{ }1 {ユ}{ }1 {ヨ}{ }1
+    {ラ}{ }1 {リ}{ }1 {ル}{ }1 {レ}{ }1 {ロ}{ }1
+    {ワ}{ }1 {ヲ}{ }1 {ン}{ }1 {ー}{-}1
+    {ガ}{ }1 {ギ}{ }1 {グ}{ }1 {ゲ}{ }1 {ゴ}{ }1
+    {ザ}{ }1 {ジ}{ }1 {ズ}{ }1 {ゼ}{ }1 {ゾ}{ }1
+    {ダ}{ }1 {ヂ}{ }1 {ヅ}{ }1 {デ}{ }1 {ド}{ }1
+    {バ}{ }1 {ビ}{ }1 {ブ}{ }1 {ベ}{ }1 {ボ}{ }1
+    {パ}{ }1 {ピ}{ }1 {プ}{ }1 {ペ}{ }1 {ポ}{ }1
+    {ッ}{ }1 {ャ}{ }1 {ュ}{ }1 {ョ}{ }1
+    {（}{(}1 {）}{)}1 {、}{,}1 {。}{.}1 {：}{:}1 {；}{;}1
+    {「}{"}1 {」}{"}1 {『}{"}1 {』}{"}1
+    {～}{$\sim$}1 {＝}{=}1
+}
+
+% ─────────────────── INDEX ───────────────────
+\makeindex
+
+% ─────────────────── TITLE BLOCK ───────────────────
+\title{
+  \vspace{2cm}
+  {\Huge\bfseries NRMO} \\[0.5cm]
+  {\Large Non-Ruin Maximizing Objective} \\[1.5cm]
+  {\LARGE\bfseries Integrated System v7.2} \\[0.5cm]
+  {\large Architectural Completion of the Defensive Side ---\\
+   Individual and Collective Governance with Veto and Search Symmetry} \\[3cm]
+}
+\author{Takashi Ikeya \\ \small{NRMO Research Framework}}
+\date{2026 --- Version 7.2 (Integrated)}
+
+% ────────────────────────────────────────────────
+% DOCUMENT
+% ────────────────────────────────────────────────
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\input{frontmatter/final_build_statement.tex}
+\input{frontmatter/abstract.tex}
+\input{frontmatter/version_manifest.tex}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+
+% ─────── Part 0: Manifest ───────
+\input{chapters/00_manifest.tex}
+
+% ─────── Part I: Foundational Reference (preserved from v4) ───────
+\input{parts/part1_foundational.tex}
+
+% ─────── Part II: Complete System v2.1 ───────
+\input{parts/part2_complete_v21.tex}
+
+% ─────── Part III: Structural Consistency ───────
+\input{parts/part3_structural.tex}
+
+% ─────── Part IV: U-DEF-01 Addendum ───────
+\input{parts/part4_udef.tex}
+
+% ─────── Part V: Theoretical Foundation v4 ───────
+\input{parts/part5_theoretical.tex}
+
+% ─────── Part VI: R1-FIX Patch ───────
+\input{parts/part6_r1fix.tex}
+
+% ═══ NEW IN v5.5 ═══
+
+% ─────── Part VII: Mathematical Formalization (arXiv 4 Theorems) ───────
+\input{parts/part7_mathematical.tex}
+
+% ─────── Part VIII: vNext Civilisation Simulator ───────
+\input{parts/part8_vnext_simulator.tex}
+
+% ─────── Part IX: StrongEngine Ω Full ───────
+\input{parts/part9_omega_full.tex}
+
+% ─────── Part X: Engineering Implementation v2.5 ───────
+\input{parts/part10_implementation.tex}
+
+% ─────── Part XI: Empirical Validation 2026 ───────
+\input{parts/part11_empirical.tex}
+
+% ─────── Part XII: Methodological Notes ───────
+\input{parts/part12_methodology.tex}
+
+% ─────── Part XIII: World Simulation Vision (forward-looking) ───────
+\input{chapters/ch_part_xiii_world_simulation_vision.tex}
+\input{chapters/ch_part_xiii_v52_to_v62.tex}
+\input{chapters/ch_part_xiii_v63_vnext_plus.tex}
+\input{chapters/ch_part_xiii_v64_nrmo_pp.tex}
+\input{chapters/ch_part_xiii_v70_collective.tex}
+\input{chapters/ch_part_xiii_v71_collective_engine.tex}
+
+% ─────── Part XIV: Loom Final Architecture & Cumulative Findings (NEW in v7.2) ───────
+% Empirical culmination of v8.3 → Loom v3.1 + Sociable Shadow.
+% Detection ≠ Intervention theorem.
+\input{parts/part14_loom_final.tex}
+
+% ─────── Part XV: Universal Adapter Framework (NEW in v7.2 rev2) ───────
+% NRMO/Loom domain 非依存化. Hybrid + 4 domain 実証 + C++/Python/Frontend.
+\input{parts/part15_universal_adapter.tex}
+
+% ─────── Appendices ───────
+\appendix
+\input{appendices/A_code_listing.tex}
+\input{appendices/B_world_parameters.tex}
+\input{appendices/C_civilisation_roster.tex}
+\input{appendices/D_session_log.tex}
+
+% ─────── Backmatter ───────
+\backmatter
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{references}
+
+\printindex
+
+\end{document}

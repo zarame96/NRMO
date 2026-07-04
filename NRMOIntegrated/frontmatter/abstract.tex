@@ -1,0 +1,63 @@
+% frontmatter/abstract.tex
+
+\noindent
+The \emph{Non-Ruin Maximizing Objective} (NRMO) is a decision-theoretic
+framework for agents operating under absorbing failure risk. This
+\emph{Integrated System v7.2} consolidates four distinct
+research strands into a single reference document:
+
+\begin{enumerate}[leftmargin=2em,topsep=0.3em,itemsep=0.2em]
+  \item the \textbf{cognitive architecture} (Type ZERO, Passive Pattern,
+    HST-N, TTM/PPS, A\_allowed) developed through 2025 and finalised in
+    NRMO\_Origin v2.1 (Parts I--VI, preserved from the v4 monograph);
+  \item the \textbf{mathematical formalisation} of the NRMO objective via
+    four theorems---ruin dilution, CMDP separation, variational analysis
+    of the exponential threshold family, and polynomial-time CVaR
+    tractability---establishing that NRMO strictly separates from
+    Lagrangian constrained MDPs (Part VII);
+  \item the \textbf{NRMO vNext + StrongEngine $\Omega$ Full} civilisation
+    simulator, comprising a six-dimensional state vector
+    $(R, E, G, O, K, X)$, five world families, a nine-strategy
+    benchmark, an adaptive tuning layer with hysteresis, and a
+    governance--execution separation invariant (Parts VIII--IX);
+  \item the \textbf{engineering implementation v2.5}, an integrated
+    Python stack (NRMO Kernel + Adaptive Tuning + MAPLayer + Shinobi
+    Fleet + Norn/Skuld + $\Omega$ Full) that achieves
+    $66.8\%$ overall survival across five world families at $n = 250$
+    five-world episodes, exceeding the v5.2 baseline of
+    $61\%$ by $+5.8$~percentage points, with the largest gains in the
+    most adversarial worlds: Vulnerable from $5\%$ to $26\%$, and
+    FastExpansionRace from $35\%$ to $60\%$ (Parts X--XI).
+\end{enumerate}
+
+\noindent
+Part XII documents the methodological lessons of the April 2026
+implementation: five failed approaches to PlanetaryStress recovery, an
+Option C hybrid experiment that ported v5.2's $\Omega$ Full unchanged
+into the v2.5 stack via a monkey-patch adapter, and the verification
+tools (transition equivalence to $10^{-6}$, RNG wrapper consumption
+audit, monkey-patch invocation tracing) used to certify that
+measurement differences are causal rather than artefactual. The
+appendices contain the full code listing, world parameter
+specifications, the 30-civilisation roster, and a chronological
+session-by-session development log.
+
+\medskip\noindent
+The principal architectural invariant maintained throughout v7.2 is
+\emph{governance--execution separation}: the NRMO core defines an
+admissible action set $A_t$ via veto rules; the execution engine
+($\Omega$ Full) selects $a_t \in A_t$ but never modifies the boundary.
+This invariant has been preserved through every revision since v2.0
+(March 2025) and is the structural reason the system can be safely
+extended without reasoning about combined safety--performance
+optimisation: the layers do not share an objective function.
+
+\medskip\noindent
+The system is presented neither as a doctrine of fear nor as a
+generic productivity framework. It is a \emph{long-horizon navigation
+system} for environments where the difference between recoverable loss
+and absorbing failure is structural rather than statistical. Its claim
+is bounded: the cognitive architecture provides discipline, the
+mathematics provides bounds, and the simulator provides empirical
+discrimination---together they reduce the rate at which a long-running
+agent enters states from which no future is reachable.

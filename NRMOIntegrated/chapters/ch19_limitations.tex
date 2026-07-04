@@ -1,0 +1,341 @@
+% chapters/ch19_limitations.tex
+% Chapter 19: Limitations and Future Work + High-Speed Adaptive Layer
+% Source: NRMO_v5_updated.pdf, Chapter 19 (lines 8734-9146 of v5_layout.txt)
+
+\chapter{Limitations and Future Work ---
+High-Speed Adaptive Layer}
+\label{ch:limitations}
+
+This chapter combines the v2.0 limitations and future-work catalogue
+with the formal definition of the high-speed adaptive layer
+(NRMO REIN High-Speed Theory). It includes the engine architecture
+and pseudocode that are the cognitive counterpart of the engineering
+implementation in Part~X.
+
+% =====================================================================
+\section{Purpose and Layer Architecture}
+\label{sec:limit-purpose}
+
+\subsection{Subject of the High-Speed Theory}
+
+NRMO Core specifies admissibility (the irreversible boundary). The
+High-Speed Theory specifies how to act \emph{within} that boundary
+when timescale collapses (e.g., market shock, incident, adversarial
+encounter). The shorter timescale is the subject; the longer
+timescale (Long-Term Layer / NRMO REIN) provides constraints.
+
+\subsection{Formal Definitions}
+
+\paragraph{State.}
+$s \in S$, observation $x \in X$, action $a \in A$. State
+transition: $s(t+1) \sim P(s(t), a(t))$.
+
+\paragraph{Irreversible (Ruin).}
+
+\begin{equation}
+R \subset S, \qquad
+s \in R \;\Rightarrow\; \forall u \ge t,\;\; s(u) \in R.
+\end{equation}
+
+\noindent
+Purpose: Ruin avoidance.
+
+% =====================================================================
+\section{Layer Structure}
+\label{sec:limit-layer-structure}
+
+\subsection{NRMO Core (Veto)}
+\label{sec:limit-nrmo-core}
+
+\begin{equation}
+\mathrm{adm}_N(x, a) \in \{\mathrm{YES},\, \mathrm{NO},\,
+\mathrm{HOLD},\, \mathrm{SAFE\_EXIT}\}.
+\end{equation}
+
+\begin{itemize}
+\item \textbf{YES}: action permissible.
+\item \textbf{NO}: action prohibited.
+\item \textbf{HOLD}: shutdown (defer for human review).
+\item \textbf{SAFE\_EXIT}: emergency termination.
+\end{itemize}
+
+\subsection{Action Space and Execution}
+
+\begin{equation}
+A_H(x) \subset A; \qquad
+\mathrm{execution} = \{a \in A_H(x) : \mathrm{adm}_N(x, a) =
+\mathrm{YES}\}.
+\end{equation}
+
+% =====================================================================
+\section{Five Engine Patterns}
+\label{sec:limit-engine-patterns}
+
+\subsection{A: Assumption Kill-Switch (Premise Monitor)}
+
+Premise set $A_{\mathrm{ass}} = \{a_1, a_2, \ldots, a_n\}$;
+kill-conditions $K_i: X \to \{0, 1\}$.
+
+\begin{equation}
+\exists i\; K_i(x) = 1
+\;\Rightarrow\;
+\mathrm{HOLD}\; \text{or}\; \mathrm{SAFE\_EXIT}.
+\end{equation}
+
+\noindent
+Effect: any premise violation immediately demotes action space.
+
+\subsection{B: Abort-First Design}
+
+Abort condition set $B = \{b_1, \ldots, b_m\}$.
+
+\begin{equation}
+\exists b_j\; b_j(x, z) = 1 \;\Rightarrow\; \mathrm{SAFE\_EXIT}.
+\end{equation}
+
+\noindent
+Effect: prioritises abort over continued action.
+
+\subsection{C: Pre-Commit Trigger}
+
+Trigger set $T = \{(C_k, A_k)\}$.
+
+\begin{equation}
+C_k(x) = 1 \;\Rightarrow\; a := A_k.
+\end{equation}
+
+\noindent
+Effect: pre-committed action executes deterministically when
+triggered.
+
+\subsection{D: Explicit Expiry}
+
+Each commitment $d = (\mathrm{content}, t_0, \Delta t)$ expires:
+
+\begin{equation}
+t > t_0 + \Delta t \;\Rightarrow\; d := \mathrm{expired}.
+\end{equation}
+
+\noindent
+Effect: prevents indefinite commitment carry-forward.
+
+\subsection{E: Fast / Slow Split Memory}
+
+\begin{equation}
+M_f(t) = \{m_i : t - t_i \le \tau\}; \qquad
+M_s = \mathrm{archive}(M_f).
+\end{equation}
+
+\noindent
+Effect: fast memory governs active operation; slow memory archives
+for long-horizon reference. Their separation prevents short-horizon
+transients from corrupting long-horizon constraints.
+
+% =====================================================================
+\section{Regime Profiles}
+\label{sec:limit-regimes}
+
+The five engine patterns are tuned per regime:
+
+\paragraph{Market-Speed Regime.}
+Premise: liquidity depth. Kill: gap/jump. Abort: drawdown.
+Expiry: short. Notes: applicable to active trading.
+
+\paragraph{Incident Regime.}
+Premise: containment integrity. Kill: containment breach.
+Abort: escalation. Expiry: 30--60 minutes. Notes: incident response.
+
+\paragraph{Adversarial Regime.}
+Premise: trust assumptions. Kill: trust breach. Abort: power
+concession. Expiry: variable. Notes: adversarial encounter.
+
+\paragraph{Long-Horizon Regime (Asset Allocation).}
+Premise: macro alignment. Kill: regime change. Abort: irreversible
+loss. Expiry: 6--12 months. Notes: long-horizon allocation.
+
+% =====================================================================
+\section{High-Speed Adaptive Layer: System Flow}
+\label{sec:limit-system-flow}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
++---------------------------------------+
+|         HUMAN (Final Judgment)        |
++---------------------------------------+
+                  |
++---------------------------------------+
+| Long-Term Layer (life/daily scale)    |
+| OUTER_SHELL (always-on)               |
++---------------------------------------+
+                  | (on rupture)
++---------------------------------------+
+| HUMIDITY_BUFFER (conditional)         |
++---------------------------------------+
+                  | (on irreversible risk)
++---------------------------------------+
+| Short-Term Layer: HIGH-SPEED          |
+| ADAPTIVE                              |
+| +-- Kill-Switch                       |
+| +-- Abort-First                       |
+| +-- Pre-Commit                        |
+| +-- Expiry                            |
+| +-- Fast Memory                       |
++---------------------------------------+
+                  |
++---------------------------------------+
+| APCSO (3-option generation)           |
++---------------------------------------+
+                  |
++---------------------------------------+
+| UNIFIED NRMO CORE (veto judgment)     |
++---------------------------------------+
+                  |
++---------------------------------------+
+| DECISION_SURVIVAL_ENGINE              |
++---------------------------------------+
+                  |
++---------------------------------------+
+| SLOW MEMORY (persistent)              |
++---------------------------------------+
+\end{lstlisting}
+
+% =====================================================================
+\section{High-Speed Mode Pseudocode}
+\label{sec:limit-pseudocode}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+HIGH_SPEED_MODE:
+    # Kill-Switch evaluation
+    for assumption in ASSUMPTIONS:
+        if assumption.kill_condition(state):
+            goto SAFE_EXIT
+
+    # Pre-Commit evaluation
+    for trigger in PRECOMMIT_TRIGGERS:
+        if trigger.condition(state):
+            action = trigger.action
+            goto NRMO_CHECK
+
+    # Abort-First evaluation
+    if abort_condition():
+        goto SAFE_EXIT
+
+    # APCSO
+    choice_set = apcso.generate_3_choices()
+
+    # UNIFIED NRMO CORE
+NRMO_CHECK:
+    approved = []
+    for action in choice_set:
+        if unified_nrmo_core.check(action) == YES:
+            approved.append(action)
+
+    present_to_human(approved)
+
+    # Expiry
+    if action_executed:
+        set_expiry(action, dt)
+    fast_memory.append(action)
+
+    # Slow memory archive
+    if episode_finished:
+        slow_memory.store(fast_memory.snapshot())
+\end{lstlisting}
+
+% =====================================================================
+\section{OUTER\_SHELL}
+\label{sec:limit-outer-shell}
+
+Structure for maintaining daily continuity \emph{without} judgement.
+Always present; no startup / shutdown concept.
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+PURPOSE: maintain_daily_continuity_without_decision
+MODE:    always_on
+
+ACCEPTS:
+  - external_pressure
+  - internal_urgency
+  - ambiguity
+  - no_event_state
+
+OPERATIONS:
+  - log_only
+  - normalize
+  - decay_over_time
+
+FORBIDDEN:
+  - interpretation
+  - prioritization
+  - decision_request
+  - deadline_internalization
+
+RUPTURE_CRITERIA:
+  - daily_continuity_break:
+      sleep / food / shelter / income x2 cycles
+  - irreversible_risk:
+      legal_or_physical_immediacy
+  - external_coercion_with_third_party_harm
+
+ON_RUPTURE:
+  - escalate_to:  DECISION_SURVIVAL_ENGINE
+  - bypass:       HUMIDITY_BUFFER (optional)
+\end{lstlisting}
+
+% =====================================================================
+\section{HUMIDITY\_BUFFER}
+\label{sec:limit-humidity-buffer}
+
+Isolation layer to prevent emotional state from being converted to
+judgement or tool.
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+PURPOSE:    preserve_affective_state
+ACTIVATION: conditional
+
+TRIGGERS:
+  - urge_to_define
+  - relational_density_high
+  - silence_instability
+  - observation_point_shift
+
+ACTIONS:
+  - hold_state
+  - delay_response
+  - schedule_remeasurement
+
+FORBIDDEN:
+  - evaluate_daily_continuity
+  - consider_deadlines
+  - assess_risk
+\end{lstlisting}
+
+% =====================================================================
+\section{DECISION\_SURVIVAL\_ENGINE}
+\label{sec:limit-decision-survival}
+
+Final judgement engine for irreversibility avoidance and survival.
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+PURPOSE: decision_engine
+
+INVARIANTS:
+  - survival_first
+  - irreversible_risk_avoidance
+  - remeasurement_assumed
+\end{lstlisting}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item The five engine patterns A/B/C/D/E correspond to
+implementation modules in Part~X: Kill-Switch / Abort-First / Pre-Commit /
+Expiry / Memory split. The Python codebase
+(\texttt{nrmo\_full/engine/}) maintains an analogous module structure
+for the high-frequency civilisation simulator.
+\item Regime profiles (market-speed / incident / adversarial /
+long-horizon) correspond to the world families of Part~VIII (Normal,
+LateStagnation, FastExpansionRace, Vulnerable, PlanetaryStress).
+\item OUTER\_SHELL is the cognitive analogue of the always-on
+governance layer in $\Omega$ Full (Part~IX).
+\end{itemize}

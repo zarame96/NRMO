@@ -1,0 +1,974 @@
+% chapters/ch_part8_vnext_simulator.tex
+% Part VIII Chapter: vNext + StrongEngine Civilisation Simulation
+% Source: NRMO_vNext_Design_Specification_v2.pdf — full pdftotext at /tmp/vnext.txt
+
+\chapter{NRMO vNext + StrongEngine ---
+Civilisation Simulation Design Specification v2.0}
+\label{ch:vnext-simulator}
+
+
+\index{vNext Simulator}
+\index{Civilisation State Vector}
+\index{Ruin Taxonomy!True Ruin}
+\index{Ruin Taxonomy!Passive Ruin}
+\index{World Families}
+\index{NRMO Veto}
+\index{StrongEngine}
+\index{Adaptive Tuning Layer}
+\nrmobox{Document identification}{
+\textbf{Title}: NRMO vNext + StrongEngine Civilisation Simulation
+Design Specification\\[0.3em]
+\textbf{Subtitle}: Governance, Ruin Taxonomy, Adaptive Tuning, and
+Empirical Validation\\[0.3em]
+\textbf{Author}: Takashi Ikeya\\[0.3em]
+\textbf{Affiliation}: NRMO Research Framework\\[0.3em]
+\textbf{Version}: 2.0 \quad\textbf{Date}: March 2026
+}
+
+\section*{Abstract}
+
+This specification defines a civilisation simulation framework for
+NRMO (Non-Ruin Maximising Operator) vNext + StrongEngine. The
+framework's purpose is to quantitatively compare and evaluate
+decision systems that avoid absorbing ruin states while maximising
+long-horizon optionality, under uncertain and adversarial world
+environments. The document covers the architectural separation
+principle, state space definition, ruin taxonomy, NRMO Core veto
+logic, StrongEngine Monte Carlo rollout search, adaptive tuning
+layer (with hysteresis), world-dependent profile switching, ruin
+cause analyser, parameter sweep, and the comparative experiment
+design across nine strategies.
+
+% =====================================================================
+\section{Design Philosophy and Purpose}
+\label{sec:vnext-philosophy}
+
+\nrmobox{Core Principle}{
+The maximisation target is \textbf{not survival} but \textbf{not
+closing future options}. Survival is a constraint, not the
+objective. The objective is the maximisation of long-horizon
+optionality, learning, and durable growth. The avoidance of
+absorbing ruin states is positioned as a hard constraint that
+\emph{protects} this objective.
+}
+
+This simulation framework is designed to verify the following
+research questions:
+
+\begin{enumerate}
+\item Is NRMO + StrongEngine long-term superior to a pure search
+system?
+\item Can NRMO-vNext + StrongEngine outperform original NRMO +
+StrongEngine?
+\item Can vNext's exploration-floor / threshold tuning realise
+world-dependent superiority?
+\item Do Expected-Value-Max methods win on short-term productivity
+but lose on long-term endurance?
+\item Does Ultra-Conservative fall into passive ruin in stagnation
+worlds?
+\item Does adding the variable tuning layer raise vNext's
+performance ceiling?
+\end{enumerate}
+
+% =====================================================================
+\section{Architecture}
+\label{sec:vnext-architecture}
+
+\subsection{Strict Separation Principle}
+\label{sec:vnext-separation}
+
+\nrmobox{Architectural Invariants}{
+\begin{itemize}
+\item NRMO Core does \emph{not} perform ranking, optimisation, or
+execution. \textbf{Veto only}.
+\item StrongEngine does \emph{not} bypass NRMO veto. It receives
+only the admissible set.
+\item Engine is \emph{not} integrated inside NRMO.
+\end{itemize}
+}
+
+\subsection{Pipeline Architecture}
+\label{sec:vnext-pipeline}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+World Model
+    |
+    v
+Observation
+    |
+    v
+Context / Norn Layer
+    |
+    v
+Adaptive Tuning Layer        State-responsive,
+                             hysteresis,
+                             profile switching
+    |
+    v
+NRMO Core (Veto Only)        Ruin classification,
+                             hard constraints,
+                             passive ruin detection
+    |
+    v
+Permission Filter
+    |
+    v
+StrongEngine                 MC rollout,
+(Search + Rollout)           candidate scoring,
+                             action selection
+    |
+    v
+Action Execution
+    |
+    v
+State Transition
+\end{lstlisting}
+
+% =====================================================================
+\section{Civilisation State Vector}
+\label{sec:vnext-state}
+
+\begin{definition}[Civilisation State Vector]
+\label{def:vnext-state-vector}
+The civilisation state is represented as a 6-dimensional vector:
+\begin{equation}
+S_t = (R_t, E_t, G_t, O_t, K_t, X_t).
+\end{equation}
+Each variable's value range is $[0, 130]$.
+\end{definition}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXcc}
+\toprule
+\textbf{Symbol} & \textbf{Variable} & \textbf{Initial value} & \textbf{Range} \\
+\midrule
+$R$ & Resources & 62 & $[0, 130]$ \\
+$E$ & Environment & 66 & $[0, 130]$ \\
+$G$ & Governance Stability & 58 & $[0, 130]$ \\
+$O$ & Optionality (breadth of choice) & 54 & $[0, 130]$ \\
+$K$ & Knowledge / Exploration Capacity & 52 & $[0, 130]$ \\
+$X$ & Ruin Exposure & 18 & $[0, 130]$ \\
+\bottomrule
+\end{tabularx}
+\caption[Civilisation state variables]{State variables and initial
+conditions.}
+\label{tab:vnext-state-vars}
+\end{table}
+
+% =====================================================================
+\section{Ruin Taxonomy}
+\label{sec:vnext-ruin-taxonomy}
+
+\subsection{True Ruin (Irreversible Collapse)}
+\label{sec:vnext-true-ruin}
+
+True Ruin is terminal at the moment any of the following holds:
+
+\nrmobox{True Ruin Conditions}{
+\centering
+$R < 8 \;\vee\; E < 8 \;\vee\; G < 8 \;\vee\; O < 6 \;\vee\;
+X > 92$.
+}
+
+\subsection{Passive Ruin (Structural Decay)}
+\label{sec:vnext-passive-ruin}
+
+Passive Ruin is not direct collapse but the detection of long-term
+adaptation failure. The following three patterns are monitored:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Pattern} & \textbf{Condition} & \textbf{Interpretation} \\
+\midrule
+Optionality Stagnation
+& $O < 18$ for 14 consecutive steps
+& Long-term depletion of future choices. \\
+
+Knowledge Stagnation
+& $K < 20$ for 18 consecutive steps
+& Chronic absence of exploration / learning capacity. \\
+
+Compound Decline
+& $O$ drop $+$ $G$ drop $+$ $K$ stagnant for 12 steps
+& Compound institutional / knowledge / optionality degradation. \\
+
+\bottomrule
+\end{tabularx}
+\caption[Passive ruin patterns]{Passive Ruin detection patterns.}
+\label{tab:vnext-passive-patterns}
+\end{table}
+
+\subsection{Ruin Cause Classification}
+\label{sec:vnext-ruin-cause-classification}
+
+Each ruin in the simulation is automatically tagged with a cause
+label:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Cause label} & \textbf{Description} \\
+\midrule
+\texttt{resource\_collapse} & $R < 8$: catastrophic resource
+depletion. \\
+\texttt{environment\_collapse} & $E < 8$: irreversible environmental
+collapse. \\
+\texttt{governance\_failure} & $G < 8$: complete failure of the
+governance apparatus. \\
+\texttt{optionality\_exhaustion} & $O < 6$: vanishing of future
+choice. \\
+\texttt{exposure\_cascade} & $X > 92$: cumulative-risk chain
+explosion. \\
+\texttt{overshoot\_collapse} & True ruin after rapid growth. \\
+\texttt{passive\_optionality\_stagnation} & Long-term low $O$. \\
+\texttt{passive\_knowledge\_stagnation} & Long-term low $K$. \\
+\texttt{passive\_compound\_decline} & Compound decay pattern. \\
+\bottomrule
+\end{tabularx}
+\caption[Ruin cause labels]{Ruin cause labels assigned by the ruin
+analyser.}
+\label{tab:vnext-ruin-causes}
+\end{table}
+
+% =====================================================================
+\section{Action Space}
+\label{sec:vnext-action-space}
+
+\begin{definition}[Action Vector]
+\label{def:vnext-action-vector}
+Each step's action is represented as an allocation vector of four
+variables:
+\begin{equation}
+a_t = (g, s, l, d) \quad
+\text{s.t.~} g + s + l + d = 1,\;
+\min(g, s, l, d) \ge 0.05.
+\end{equation}
+\end{definition}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXX}
+\toprule
+\textbf{Symbol} & \textbf{Variable} & \textbf{Role} \\
+\midrule
+$g$ & Growth & Resource expansion / productivity gain. \\
+$s$ & Safeguards & Environmental protection / safety. \\
+$l$ & Learning & Exploration / knowledge / experimentation. \\
+$d$ & Distribution & Governance, institutions, welfare. \\
+\bottomrule
+\end{tabularx}
+\caption[Action space components]{Action space components.}
+\label{tab:vnext-action-space}
+\end{table}
+
+% =====================================================================
+\section{World Families}
+\label{sec:vnext-world-families}
+
+Each world family defines a parameter range; for each simulation run,
+specific values are drawn from a uniform distribution.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{World Family} & \textbf{Characteristics} \\
+\midrule
+Normal
+& Standard environment. Moderate shock probability, moderate
+institutional wear. \\
+
+Vulnerable
+& High shock probability, large tail events, high model
+misspecification. \\
+
+PlanetaryStress
+& Environmental drag dominates. Severe growth--environment
+trade-off. \\
+
+LateStagnation
+& Low shock but high stagnation drag. Insufficient exploration is
+fatal. \\
+
+FastExpansionRace
+& High rivalry level and innovation noise. Expansion under
+competitive pressure. \\
+
+\bottomrule
+\end{tabularx}
+\caption[Five world families]{Five world families.}
+\label{tab:vnext-worlds}
+\end{table}
+
+\paragraph{World parameters.}
+World parameters consist of 10 variables:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Parameter} & \textbf{Meaning} \\
+\midrule
+\texttt{shock\_probability} & Probability of shock occurrence per
+step. \\
+\texttt{shock\_scale} & Exponential-distribution scale of shock. \\
+\texttt{tail\_probability} & Probability of giant tail event. \\
+\texttt{tail\_scale} & Tail event scale. \\
+\texttt{environmental\_drag} & Natural environmental degradation
+coefficient. \\
+\texttt{governance\_drag} & Natural governance wear coefficient. \\
+\texttt{tail\_model\_misspecification} & Forecast error of tail
+events (degree to which actual scale exceeds prediction). \\
+\texttt{stagnation\_drag} & Stagnation pressure (force naturally
+attenuating knowledge / optionality). \\
+\texttt{rivalry\_level} & Strength of competitive pressure. \\
+\texttt{substitutability} & Substitutability of resources /
+technology. \\
+\bottomrule
+\end{tabularx}
+\caption[World parameters]{World parameters.}
+\label{tab:vnext-world-params}
+\end{table}
+
+% =====================================================================
+\section{NRMO Core (Veto System)}
+\label{sec:vnext-nrmo-core}
+
+\nrmobox{NRMO Core's responsibilities}{
+NRMO Core performs \textbf{veto only}. Specifically:
+ruin classification; hard-constraint enforcement; passive ruin
+detection; high-stakes mode detection.\\[0.3em]
+NRMO Core does \emph{not} perform candidate ranking or scoring.
+}
+
+\subsection{Original NRMO Veto Rules}
+\label{sec:vnext-original-veto}
+
+\nrmobox{NRMO Veto Logic}{
+A candidate action is rejected if any of the following holds:
+\begin{enumerate}
+\item $g > 0.62$ (unconditional growth cap).
+\item $X > 55 \wedge g > 0.36$ (high exposure $\Rightarrow$ growth
+restriction).
+\item $E < 28 \wedge g > 0.30$ (low environment $\Rightarrow$ growth
+restriction).
+\item $G < 24 \wedge d < 0.16$ (low governance $\Rightarrow$
+minimum distribution required).
+\end{enumerate}
+}
+
+\subsection{NRMO-vNext Veto Extensions}
+\label{sec:vnext-veto-extensions}
+
+vNext is an upward-compatible extension of original veto, adding:
+
+\begin{enumerate}
+\item \textbf{Exploration Floor}: reject if $l <
+\texttt{exploration\_floor}$.
+\item \textbf{Governance Repair Floor}: reject if $G < 30 \wedge
+d < 0.20$.
+\item \textbf{Eco Growth Cap}: reject if $E < 45 \wedge g >
+\texttt{eco\_growth\_cap}$.
+\item \textbf{Adaptive Thresholds}: all thresholds dynamically
+settable from the Tuning Layer.
+\end{enumerate}
+
+% =====================================================================
+\section{StrongEngine (Search Engine)}
+\label{sec:vnext-strong-engine}
+
+\nrmobox{StrongEngine's responsibilities}{
+StrongEngine sits downstream of NRMO Core. It receives only the
+admissible candidate set (post-veto) and performs Monte-Carlo-rollout
+evaluation and best-candidate selection.
+}
+
+\subsection{Candidate Templates}
+\label{sec:vnext-candidate-templates}
+
+Candidates are generated from 8 named policy templates with random
+perturbation for diversity:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{lccccl}
+\toprule
+\textbf{Template} & $g$ & $s$ & $l$ & $d$ & \textbf{Purpose} \\
+\midrule
+\texttt{balanced} & 0.28 & 0.25 & 0.25 & 0.22 & Balanced
+allocation. \\
+\texttt{high\_growth} & 0.50 & 0.18 & 0.17 & 0.15 & Growth focus. \\
+\texttt{safety\_heavy} & 0.12 & 0.46 & 0.22 & 0.20 & Safety
+priority. \\
+\texttt{exploration\_heavy} & 0.12 & 0.16 & 0.50 & 0.22 &
+Exploration focus. \\
+\texttt{recovery} & 0.08 & 0.42 & 0.18 & 0.32 & Recovery mode. \\
+\texttt{governance\_repair} & 0.08 & 0.20 & 0.18 & 0.54 & Governance
+repair. \\
+\texttt{expansion\_race} & 0.44 & 0.22 & 0.18 & 0.16 & Competitive
+response. \\
+\texttt{stagnation\_recovery} & 0.18 & 0.10 & 0.48 & 0.24 &
+Stagnation recovery. \\
+\bottomrule
+\end{tabular}
+\caption[StrongEngine candidate templates]{StrongEngine candidate
+policy templates.}
+\label{tab:vnext-candidate-templates}
+\end{table}
+
+\subsection{Engine Objective}
+\label{sec:vnext-engine-objective}
+
+The engine selects the candidate that maximises the following score:
+
+\begin{equation}
+\mathrm{Score} = 1.0 \cdot \mathrm{productivity}
++ 0.4 \cdot \frac{O}{130}
++ 0.1 \cdot \frac{G}{130}
++ 0.05 \cdot \frac{E}{130}
+- 0.3 \cdot \frac{X}{130}.
+\label{eq:vnext-engine-score}
+\end{equation}
+
+\subsection{Monte Carlo Rollout}
+\label{sec:vnext-mc-rollout}
+
+For each candidate, evaluation proceeds as follows:
+
+\begin{enumerate}
+\item Make a copy of the current state.
+\item Step 1: apply candidate action.
+\item Step 2 onward: continuation with balanced default policy.
+\item Compute mean score over \texttt{rollout\_count} MC runs.
+\item Apply large penalty ($-100, -50$) to rollouts that hit ruin
+mid-way.
+\end{enumerate}
+
+\paragraph{Configuration.}
+\begin{itemize}
+\item \texttt{candidate\_count}: 6--20.
+\item \texttt{lookahead\_steps}: 3--10.
+\item \texttt{rollout\_count}: 3--10.
+\end{itemize}
+
+% =====================================================================
+\section{Adaptive Tuning Layer}
+\label{sec:vnext-adaptive-tuning}
+
+The Adaptive Tuning Layer dynamically adjusts NRMO Core's thresholds
+in response to state. \textbf{The NRMO invariants are not modified}.
+
+\subsection{Tunable Parameters}
+\label{sec:vnext-tunable-params}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Parameter} & \textbf{Role} \\
+\midrule
+\texttt{exploration\_floor}
+& Minimum exploration rate (lower bound on learning allocation). \\
+\texttt{growth\_cap}
+& Upper limit on growth allocation. \\
+\texttt{high\_stakes\_trigger\_exposure}
+& Exposure threshold for entering high-stakes mode. \\
+\texttt{high\_stakes\_trigger\_environment}
+& Environment threshold for entering high-stakes mode. \\
+\texttt{governance\_repair\_floor}
+& Minimum distribution allocation when governance is low. \\
+\texttt{exposure\_penalty\_weight}
+& Weight on the exposure penalty in the engine score. \\
+\texttt{optionality\_weight}
+& Weight on optionality in the engine score. \\
+\texttt{knowledge\_weight}
+& Weight on knowledge-related adjustments. \\
+\texttt{eco\_growth\_cap}
+& Growth cap when the environment is fragile. \\
+\bottomrule
+\end{tabularx}
+\caption[Tunable parameters]{Tunable parameters in the Adaptive
+Tuning Layer.}
+\label{tab:vnext-tunable}
+\end{table}
+
+\subsection{State-Responsive Adaptation Rules}
+\label{sec:vnext-tuning-rules}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Condition} & \textbf{Action} & \textbf{Rationale} \\
+\midrule
+$X > 48$
+& \texttt{growth\_cap} $\downarrow$,
+\texttt{exposure\_penalty} $\uparrow$
+& Defensive response to cumulative risk. \\
+
+$O < 38$
+& \texttt{exploration\_floor} $\uparrow$,
+\texttt{optionality\_weight} $\uparrow$
+& Strengthen exploration against optionality depletion. \\
+
+$G < 34$
+& \texttt{growth\_cap} $\downarrow$,
+\texttt{governance\_repair\_floor} $\uparrow$
+& Prioritise recovery of governance foundation. \\
+
+$E < 38$
+& \texttt{eco\_growth\_cap} $\downarrow$,
+env threshold $\uparrow$
+& Strengthen environmental protection. \\
+
+$K < 34$
+& \texttt{exploration\_floor} $\uparrow$,
+\texttt{knowledge\_weight} $\uparrow$
+& Response to knowledge stagnation. \\
+
+\bottomrule
+\end{tabularx}
+\caption[State-responsive tuning rules]{State-responsive tuning
+rules.}
+\label{tab:vnext-tuning-rules}
+\end{table}
+
+\subsection{Hysteresis}
+\label{sec:vnext-hysteresis}
+
+To prevent rapid parameter oscillation, once a tightening is
+triggered, relaxation is not permitted for at least
+\texttt{hysteresis\_steps} (default: 6) steps.
+
+% =====================================================================
+\section{World-Dependent Tuning Profiles}
+\label{sec:vnext-world-profiles}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{lXXXXX}
+\toprule
+\textbf{Parameter} & \textbf{Normal} & \textbf{Vulnerable} &
+\textbf{Planetary} & \textbf{Stagnation} & \textbf{Expansion} \\
+\midrule
+\texttt{exploration\_floor} & 0.20 & 0.20 & 0.18 & 0.23 & 0.18 \\
+\texttt{growth\_cap} & 0.44 & 0.36 & 0.38 & 0.40 & 0.48 \\
+\texttt{hs\_trigger\_exposure} & 52 & 45 & --- & --- & 50 \\
+\texttt{hs\_trigger\_environment} & --- & 35 & 40 & --- & --- \\
+\texttt{governance\_repair\_floor} & 0.18 & 0.22 & --- & --- & --- \\
+\texttt{eco\_growth\_cap} & --- & --- & 0.32 & --- & --- \\
+\texttt{knowledge\_weight} & --- & --- & --- & 0.22 & --- \\
+\texttt{exposure\_penalty} & --- & 0.42 & 0.38 & --- & 0.25 \\
+\bottomrule
+\end{tabularx}
+\caption[World-dependent profiles]{World-dependent tuning profiles
+(--- indicates default value).}
+\label{tab:vnext-world-profiles}
+\end{table}
+
+% =====================================================================
+\section{Comparison Strategies}
+\label{sec:vnext-strategies}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXXXX}
+\toprule
+\textbf{\#} & \textbf{Strategy} & \textbf{Veto} & \textbf{Engine} &
+\textbf{Tuning} \\
+\midrule
+1 & ExpectedValueMax & --- & --- & --- \\
+2 & RiskAdjustedUtility & --- & --- & --- \\
+3 & NRMO & Original & Greedy & --- \\
+4 & NRMOvNext & vNext & Greedy & World Profile \\
+5 & UltraConservative & --- & --- & --- \\
+6 & AlphaSearch & --- & MC Rollout & --- \\
+7 & NRMO + StrongEngine & Original & MC Rollout & --- \\
+8 & NRMOvNext + StrongEngine & vNext & MC Rollout & World
+Profile \\
+9 & Adaptive NRMOvNext + SE & vNext & MC Rollout
+& Adaptive + Hysteresis \\
+\bottomrule
+\end{tabularx}
+\caption[Nine comparison strategies]{Nine comparison strategies.}
+\label{tab:vnext-strategies}
+\end{table}
+
+\paragraph{Strategy details.}
+
+\begin{itemize}
+\item \textbf{ExpectedValueMax}: pure growth maximisation; $g \in
+[0.42, 0.60]$ chosen randomly.
+\item \textbf{RiskAdjustedUtility}: heuristic suppressing growth in
+response to exposure.
+\item \textbf{NRMO}: original veto + greedy scoring among survivors.
+\item \textbf{NRMOvNext}: vNext veto (with exploration floor) +
+greedy scoring.
+\item \textbf{UltraConservative}: fixed minimal-risk allocation
+$(0.07, 0.48, 0.13, 0.32)$.
+\item \textbf{AlphaSearch}: StrongEngine rollout search, no veto.
+\item \textbf{NRMO + StrongEngine}: original veto $\to$ StrongEngine
+rollout.
+\item \textbf{NRMOvNext + StrongEngine}: vNext veto $\to$
+StrongEngine rollout.
+\item \textbf{Adaptive NRMOvNext + SE}: adaptive tuning $\to$ vNext
+veto $\to$ StrongEngine rollout.
+\end{itemize}
+
+% =====================================================================
+\section{State Transition Model}
+\label{sec:vnext-transition-model}
+
+Each step's state transition is the composition of a deterministic
+dynamics term and a stochastic shock term.
+
+\subsection{Deterministic Term}
+\label{sec:vnext-deterministic}
+
+The change $\Delta$ in each state variable is computed as a function
+of action allocation and current state. Principal interactions:
+
+\begin{itemize}
+\item $\Delta R$: growth $\uparrow$, knowledge synergy $\uparrow$,
+environmental drag $\downarrow$, coordination cost $\downarrow$.
+\item $\Delta E$: safeguards $\uparrow$, growth $\downarrow$,
+rivalry $\downarrow$, mean-reversion.
+\item $\Delta G$: distribution $\uparrow$, safeguards $\uparrow$,
+governance drag $\downarrow$, growth stress $\downarrow$.
+\item $\Delta O$: learning $\uparrow$, knowledge stock $\uparrow$,
+exposure $\downarrow$, stagnation drag $\downarrow$.
+\item $\Delta K$: learning $\uparrow$, governance-aided retention
+$\uparrow$, stagnation decay $\downarrow$.
+\item $\Delta X$: growth $\uparrow$, rivalry $\uparrow$, safeguards
+$\downarrow$, distribution $\downarrow$, natural decay
+$\downarrow$.
+\end{itemize}
+
+All variables include a weak mean-reversion term, mitigating runaway
+collapse.
+
+\subsection{Stochastic Shocks}
+\label{sec:vnext-stochastic-shocks}
+
+\begin{enumerate}
+\item \textbf{Normal Shock}: occurs with probability
+\texttt{shock\_probability}; exponential-distribution scale; targets
+the most fragile dimension preferentially.
+\item \textbf{Tail Event}: occurs with probability
+\texttt{tail\_probability}; multi-dimensional simultaneous damage;
+\texttt{tail\_model\_misspecification} can cause actual scale to
+exceed prediction; high governance buffer mitigates resource
+damage.
+\end{enumerate}
+
+% =====================================================================
+\section{Evaluation Metrics}
+\label{sec:vnext-metrics}
+
+\subsection{Primary Metrics}
+\label{sec:vnext-primary-metrics}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Metric} & \textbf{Definition} \\
+\midrule
+\texttt{survival\_rate}
+& Fraction of runs surviving the full horizon. \\
+\texttt{true\_ruin\_rate}
+& Fraction of runs reaching True Ruin. \\
+\texttt{passive\_ruin\_rate}
+& Fraction of runs in which Passive Ruin is detected. \\
+\texttt{mean\_lifespan}
+& Mean number of survival steps across all runs. \\
+\texttt{mean\_final\_optionality}
+& Mean final $O$ over surviving runs. \\
+\texttt{mean\_final\_exposure}
+& Mean final $X$ over all runs. \\
+\texttt{mean\_peak\_exposure}
+& Mean peak $X$ over all runs. \\
+\texttt{mean\_productivity}
+& Mean cumulative productivity over all runs. \\
+\bottomrule
+\end{tabularx}
+\caption[Primary metrics]{Primary evaluation metrics.}
+\label{tab:vnext-primary-metrics}
+\end{table}
+
+\subsection{Composite Performance Score}
+\label{sec:vnext-composite-score}
+
+\begin{equation}
+\mathrm{Score} = 1.0 \cdot S_{\mathrm{surv}}
+- 0.70 \cdot R_{\mathrm{true}}
+- 0.40 \cdot R_{\mathrm{passive}}
++ 0.18 \cdot \frac{\bar{O}}{130}
++ 0.08 \cdot \frac{\bar{P}}{200}
+- 0.10 \cdot \frac{\bar{X}}{130}.
+\label{eq:vnext-composite-score}
+\end{equation}
+
+Here $S_{\mathrm{surv}}$ is the survival rate,
+$R_{\mathrm{true}}$ is the true ruin rate,
+$R_{\mathrm{passive}}$ is the passive ruin rate, $\bar{O}$ is mean
+final optionality, $\bar{P}$ is mean cumulative productivity, and
+$\bar{X}$ is mean final exposure. Weights are configurable in
+\texttt{config/defaults.py} via \texttt{ScoreWeights}.
+
+% =====================================================================
+\section{Ruin Analyser}
+\label{sec:vnext-ruin-analyser}
+
+The Ruin Analyser scans all episodes and automatically extracts the
+following information:
+
+\begin{enumerate}
+\item Per-(world, strategy) pair: ruin-cause counts and ratios.
+\item Per ruin-cause: mean ruin step.
+\item Cross-strategy ruin-cause summary.
+\end{enumerate}
+
+\paragraph{Outputs.}
+\texttt{ruin\_analysis.csv}, \texttt{ruin\_summary.csv}.
+
+% =====================================================================
+\section{Parameter Sweep}
+\label{sec:vnext-parameter-sweep}
+
+Automatic search of NRMOvNext + StrongEngine tuning parameters.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Parameter} & \textbf{Range} & \textbf{Type} \\
+\midrule
+\texttt{exploration\_floor} & $[0.12, 0.28]$ & continuous \\
+\texttt{growth\_cap} & $[0.32, 0.60]$ & continuous \\
+\texttt{rollout\_depth} & $[3, 12]$ & integer \\
+\texttt{candidate\_count} & $[6, 30]$ & integer \\
+\bottomrule
+\end{tabularx}
+\caption[Parameter sweep ranges]{Parameter sweep ranges.}
+\label{tab:vnext-sweep}
+\end{table}
+
+For each sample point, $N$ episodes are run and a composite score
+computed. Latin-hypercube-style sampling efficiently covers the
+search space.
+
+% =====================================================================
+\section{Experimental Design}
+\label{sec:vnext-experiments}
+
+\subsection{Smoke Test}
+\begin{itemize}
+\item 5 worlds $\times$ 9 strategies $\times$ 30 runs $= 1{,}350$
+episodes.
+\item Engine: lookahead 3, candidates 8, rollouts 4.
+\end{itemize}
+
+\subsection{Main Experiment}
+\begin{itemize}
+\item 5 worlds $\times$ 9 strategies $\times$ 500 runs $=
+22{,}500$ episodes.
+\item Engine: lookahead 5, candidates 12, rollouts 6.
+\end{itemize}
+
+\subsection{Observability}
+\texttt{raw\_simulation.csv} records the following fields:
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+run_id, world, strategy, seed, lifespan, alive, true_ruin,
+passive_ruin, ruin_type, ruin_step, final_R, final_E, final_G,
+final_O, final_K, final_X, cumulative_productivity,
+peak_productivity, peak_exposure, mean_productivity
+\end{lstlisting}
+
+% =====================================================================
+\section{Output Specification}
+\label{sec:vnext-outputs}
+
+\subsection{CSV Files}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{File} & \textbf{Content} \\
+\midrule
+\texttt{raw\_simulation.csv}
+& Raw data of all episodes (per-episode record). \\
+\texttt{world\_results.csv}
+& Per-(world, strategy) aggregation + performance score. \\
+\texttt{overall\_results.csv}
+& Per-strategy cross-world aggregation. \\
+\texttt{ruin\_analysis.csv}
+& Detailed analysis of ruin causes. \\
+\texttt{ruin\_summary.csv}
+& Cross-world ruin-cause summary. \\
+\bottomrule
+\end{tabularx}
+\caption[Output CSV files]{Output CSV files.}
+\label{tab:vnext-csv-outputs}
+\end{table}
+
+\subsection{Visualisation}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXX}
+\toprule
+\textbf{\#} & \textbf{Plot} & \textbf{Type} \\
+\midrule
+1 & \texttt{performance\_comparison.png} & Composite score bar
+chart. \\
+2 & \texttt{survival\_by\_world.png} & Grouped bar (world $\times$
+strategy). \\
+3 & \texttt{exposure\_vs\_productivity.png} & Scatter plot. \\
+4 & \texttt{optionality\_distribution.png} & Box plot. \\
+5 & \texttt{ruin\_rates.png} & True vs passive ruin grouped bar. \\
+6 & \texttt{lifespan\_distribution.png} & Box plot. \\
+7 & \texttt{ruin\_cause\_breakdown.png} & Stacked bar (cause
+composition). \\
+8 & \texttt{survival\_heatmap.png} & Strategy $\times$ world
+heatmap. \\
+\bottomrule
+\end{tabularx}
+\caption[Visualisation outputs]{Visualisation outputs.}
+\label{tab:vnext-plots}
+\end{table}
+
+% =====================================================================
+\section{Module Structure}
+\label{sec:vnext-modules}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Module} & \textbf{Responsibility} \\
+\midrule
+\texttt{config/defaults.py}
+& Centralised parameter management. \\
+\texttt{worlds.py}
+& World family definitions; per-run random draws. \\
+\texttt{state.py}
+& State vector; transition functions; ruin detection. \\
+\texttt{nrmo\_core.py}
+& NRMO veto logic (original + vNext); high-stakes mode. \\
+\texttt{tuning\_layer.py}
+& Adaptive tuning (manual / scenario / adaptive); hysteresis. \\
+\texttt{strong\_engine.py}
+& MC rollout search; candidate generation; scoring. \\
+\texttt{strategies.py}
+& Implementation of the 9 comparison strategies. \\
+\texttt{simulator.py}
+& Episode runner; full-factorial experiment. \\
+\texttt{metrics.py}
+& Aggregation; ruin analyser; composite score; CSV export. \\
+\texttt{plots.py}
+& Generation of 8 graph types. \\
+\texttt{sweep.py}
+& Parameter sweep. \\
+\texttt{main.py}
+& Entry point (smoke / full / sweep). \\
+\bottomrule
+\end{tabularx}
+\caption[Module structure]{Module structure.}
+\label{tab:vnext-modules}
+\end{table}
+
+% =====================================================================
+\section{Execution Commands}
+\label{sec:vnext-execution}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+# Smoke test
+python main.py --mode smoke
+
+# Full experiment
+python main.py --mode full
+
+# Parameter sweep (specify world)
+python main.py --mode sweep \
+       --sweep-world Normal --sweep-samples 30
+
+# Engine tuning
+python main.py --mode smoke \
+       --engine-rollouts 8 --engine-lookahead 5
+
+# Custom output directory
+python main.py --mode full --output-dir results_exp01
+\end{lstlisting}
+
+\paragraph{Dependencies.}
+Python 3.10+, numpy, pandas, matplotlib.
+
+% =====================================================================
+\section{Future Extensions}
+\label{sec:vnext-future-extensions}
+
+\begin{enumerate}
+\item Generation of complete narrative for the 30-civilisation
+casebook.
+\item Multi-agent interaction (inter-civilisation trade /
+conflict / alliance).
+\item Design of human-in-the-loop decision experiments.
+\item Longitudinal operation-log studies (8--12-week real-world
+decision logging).
+\item Survival-time analysis via Cox proportional-hazard model.
+\item Automation of parameter tuning via Bayesian optimisation.
+\end{enumerate}
+
+\medskip
+
+\centering
+\textit{--- End of Specification ---}\\
+NRMO vNext + StrongEngine Civilisation Simulation v2.0\\
+March 2026
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This vNext specification is realised in the v2.5 engineering
+implementation in Part~X.
+\item The 6-dimensional civilisation state vector
+(Section~\ref{sec:vnext-state}) and the 4-dimensional action vector
+(Section~\ref{sec:vnext-action-space}) are the cognitive analogues
+of the operational state-action structure used in the SOP layer
+of the v4 monograph.
+\item The strict separation principle
+(Section~\ref{sec:vnext-separation}) implements the
+governance--execution separation invariant
+(Invariant~\ref{inv:gov-exec-sep}).
+\item The 5 world families
+(Section~\ref{sec:vnext-world-families}) feed the empirical
+validation results in Part~XI.
+\item The Adaptive Tuning Layer
+(Section~\ref{sec:vnext-adaptive-tuning}) is extended in Part~IX
+($\Omega$ Full v5.0) with the sustainable-growth estimator and
+$\lambda_{\mathrm{drift}}$ penalty.
+\end{itemize}

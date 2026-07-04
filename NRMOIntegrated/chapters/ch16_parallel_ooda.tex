@@ -1,0 +1,168 @@
+% chapters/ch16_parallel_ooda.tex
+% Chapter 16: Parallel OODA — APCSO Auto-Proposal Generation Trigger Specification
+% Source: NRMO_v5_updated.pdf, Chapter 16 (lines 8425-8532 of v5_layout.txt)
+
+\chapter{Parallel OODA --- APCSO Auto-Proposal Generation
+Trigger Specification}
+\label{ch:parallel-ooda}
+
+\nrmobox{Status and scope}{
+\begin{tabular}{ll}
+\textbf{Status}: & Reference / Frozen \\
+\textbf{Affects}: & Interpretation Only
+\end{tabular}\\[0.3em]
+This document does not alter APCSO theory, operations, or OS
+integration. Its purpose is to fix the following in a form that
+cannot be misread in the future:\\[0.3em]
+\centering
+\textit{``Receive passively, propose actively, but do not decide.''}
+}
+
+% =====================================================================
+\section{Positioning}
+\label{sec:parallel-ooda-positioning}
+
+This document is a supplementary specification for preserving
+interpretation. APCSO's explanation is summarised henceforth in one
+sentence:
+
+\begin{quote}
+\itshape
+Receive passively, propose actively, but do not decide.
+\end{quote}
+
+% =====================================================================
+\section{Three-Layer Structure (Immutable)}
+\label{sec:parallel-ooda-layers}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Layer} & \textbf{Role} & \textbf{Constraint} \\
+\midrule
+
+Passive Pattern (Passive Layer)
+& Receives observation only; no evaluation / proposal
+& Only HALT or HOLD permitted \\
+
+APCSO (Active Generation Layer)
+& Generates proposal set (3 options) when conditions met
+& Does not decide; outputs unordered set \\
+
+Human / Governance (Selection Layer)
+& Supplies $\varepsilon$, selects from proposal set, retains
+responsibility
+& Final authority \\
+
+\bottomrule
+\end{tabularx}
+\caption[Parallel OODA layer roles]{Three-layer immutable structure
+of the APCSO architecture.}
+\label{tab:parallel-ooda-layers}
+\end{table}
+
+% =====================================================================
+\section{Definition of Activeness}
+\label{sec:parallel-ooda-activeness}
+
+\textit{Activeness} means only: reacting to conditions and
+generating a proposal set.
+
+\begin{itemize}
+\item \textbf{Does not perform}: judgement / recommendation /
+action promotion / ranking / $\varepsilon$ proposal.
+\item APCSO is an \emph{active generator}, not a decision-maker.
+\end{itemize}
+
+% =====================================================================
+\section{Auto-Proposal Generation Trigger}
+\label{sec:parallel-ooda-trigger}
+
+Generate a proposal set even without explicit request if all of the
+following are met:
+
+\begin{itemize}
+\item Passive Pattern Gate is SAFE.
+\item At least one of the following holds:
+\begin{itemize}
+\item Irreversibility is present.
+\item Non-Zero Ruin Risk cannot be denied.
+\item Option degeneration (binary framing / forced choice)
+detected.
+\end{itemize}
+\end{itemize}
+
+\noindent
+After generation, APCSO performs no additional action.
+
+% =====================================================================
+\section{Output Constraints}
+\label{sec:parallel-ooda-output}
+
+\begin{itemize}
+\item Number of proposals: always exactly 3.
+\item At least 1 proposal must be Hold / Exit.
+\item No ranking, recommendation, or emphasis attached.
+\item Each proposal satisfies $\varepsilon$ constraint.
+\item Narrative / Ethics is post-hoc only.
+\end{itemize}
+
+% =====================================================================
+\section{Relationship with Upper-Level Grammar}
+\label{sec:parallel-ooda-grammar}
+
+APCSO is responsible only for generation. Display intensity,
+abstraction level, and grammar selection
+(INFO / HOLD / APCSO / HALT) are the responsibility of
+\emph{Upper-Level Grammar}. APCSO has no display format.
+
+% =====================================================================
+\section{Prohibitions}
+\label{sec:parallel-ooda-prohibitions}
+
+\begin{itemize}
+\item APCSO judging ``should use.''
+\item Hurrying decision under reason of auto-generation.
+\item Expressions that cause active generation to be misread as
+autonomous judgement.
+\end{itemize}
+
+% =====================================================================
+\section{Freeze Declaration}
+\label{sec:parallel-ooda-freeze}
+
+This document is a supplementary specification for preservation and
+does not involve changes to theory, SOP, or OS.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{ll}
+\toprule
+\textbf{Status} & Reference / Frozen \\
+\textbf{Affects} & Interpretation Only \\
+\textbf{Modifies} & None \\
+\textbf{Compatible With} & APCSO Theory / Choice-Set Governance SOP /
+NRMO Decision Architecture Pack \\
+\bottomrule
+\end{tabular}
+\caption[Parallel OODA freeze declaration]{Freeze declaration for
+the Parallel OODA APCSO Auto-Proposal Generation specification.}
+\label{tab:parallel-ooda-freeze}
+\end{table}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item APCSO formal theory and applied guide: Chapter~\ref{ch:operational-refinements}.
+\item APCSO operational layered view: Chapter~\ref{ch:apcso-guide}.
+\item Passive Pattern formal theory:
+Section~\ref{sec:passive-pattern-paper}.
+\item Auto-proposal generation is the structural counterpart of the
+candidate-population system in $\Omega$ Full's Strategy Space
+Expansion engine (Part~IX), which similarly generates without
+deciding.
+\end{itemize}

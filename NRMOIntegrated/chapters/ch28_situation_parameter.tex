@@ -1,0 +1,68 @@
+% chapters/ch28_situation_parameter.tex
+% Chapter 28: Situation Parameter Model — 3000
+% Source: NRMO_v5_updated.pdf, Chapter 28 (lines 9765-9806 of v5_layout.txt)
+
+\chapter{Situation Parameter Model --- 3000-Case Replacement}
+\label{ch:situation-parameter-model}
+
+% =====================================================================
+\section{8-Tuple}
+\label{sec:situation-8-tuple}
+
+The Situation Parameter Model describes any situation as an
+8-dimensional vector:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{clX}
+\toprule
+\textbf{\#} & \textbf{Parameter} & \textbf{Description} \\
+\midrule
+1 & \texttt{domain} & Domain identifier. \\
+2 & \texttt{reversibility} & Reversibility ($0.0$--$1.0$). \\
+3 & \texttt{systemic\_correlation} & Systemic correlation. \\
+4 & \texttt{time\_horizon} & Time horizon. \\
+5 & \texttt{social\_density} & Social density. \\
+6 & \texttt{power\_gradient} & Power gradient. \\
+7 & \texttt{emotional\_volatility} & Emotional volatility. \\
+8 & \texttt{capital\_exposure} & Capital exposure. \\
+\bottomrule
+\end{tabularx}
+\caption[Situation 8-tuple]{8-dimensional situation parameter vector.
+The continuous-parameter encoding replaces 3000-case static
+branching.}
+\label{tab:situation-8-tuple}
+\end{table}
+
+% =====================================================================
+\section{Risk Calculation}
+\label{sec:situation-risk}
+
+\begin{equation}
+\mathrm{risk} = \mathrm{base\_risk} \times
+\mathrm{emotional\_amplifier} \times
+\mathrm{capital\_weight}.
+\label{eq:situation-risk}
+\end{equation}
+
+\nrmobox{Design principle}{
+\centering
+\textit{No static branches. No 3000-case match statements.}\\
+Dynamic calculation in continuous parameter space handles any
+situation.
+}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item The continuous-parameter design is registered as INV-2.1-10
+(``Situation: continuous parameters'').
+\item The 8-tuple encoding is the cognitive analogue of the
+14-parameter world vector schema used in the simulator (Part~VIII)
+and the StrongEngine $\Omega$ Full's state vector (Part~IX).
+\item The risk-amplifier formula is the operational version of the
+ruin-upper-bound function $\widehat{p}_R(a, b)$ used in APCSO
+(Equation~\ref{eq:apcso-ruin-upper}).
+\end{itemize}

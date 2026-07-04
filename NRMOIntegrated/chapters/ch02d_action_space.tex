@@ -1,0 +1,84 @@
+% chapters/ch02d_action_space.tex
+% Section 2.7: Action Space and Permission Determination
+
+\section{Action Space and Permission Determination}
+\label{sec:action-space-permission-c2}
+
+\subsection{Action Categories}
+\label{sec:action-categories-c2}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Category} & \textbf{Description} & \textbf{Examples (abstract)} \\
+\midrule
+A: Reversible, low-impact
+& Reversible. Freedom remains even on failure.
+& Confirmation, hold, options presentation, information gathering. \\
+
+B: Reversible, medium-impact
+& Reversible, but may increase load or volatility.
+& Proposals, negotiation, bounded trials. \\
+
+C: Boundary-Approaching
+& Tends to bring the irreversible boundary closer.
+& Strong demands, sudden conclusions, relationship-staking
+statements. \\
+
+D: Irreversible
+& Irreversibly reduces degrees of freedom.
+& Serious destruction, relationship severance, unrecoverable
+commitments. \\
+\bottomrule
+\end{tabularx}
+\caption[Action Classification]{Action Classification
+(Table 2.2 --- SOP Action Space). The categorisation governs
+permission determination across operational modes.}
+\label{tab:action-classification-c2}
+\end{table}
+
+\subsection{Execution Procedure}
+\label{sec:action-space-execution}
+
+\begin{enumerate}
+\item Determine state labels ($\mathrm{LOAD}$ / $\mathrm{VOL}$ /
+$\mathrm{IRREV}$).
+\item Determine mode ($\mathrm{CORE}$ / $\mathrm{VENTURE}$ /
+$\mathrm{MISSION}$ / $\mathrm{SHUTDOWN}$).
+\item Identify permitted category ($A$ / $B$ / $C$ / $D$).
+\item Execute reversible categories first ($A \to B \to C$ when
+permitted).
+\item Category $D$ requires explicit confirmation (decision
+procedure / audit / human-in-the-loop).
+\item After execution, update state labels.
+\end{enumerate}
+
+\nrmobox{Investment SOP cross-reference}{
+The investment-specific application of this SOP is detailed in
+Chapter~\ref{ch:investment-sop}: SOP v1.2.2 (Stability Patch),
+fully aligned with NRMO Core v1.2.7. Refer to
+Chapter~\ref{ch:investment-sop} for the benchmark-based TWR formulas
+and Risk-On / Risk-Off conditions.
+}
+
+\subsection{Cross-Reference: Embedded Investment SOP}
+\label{sec:action-space-investment-cross-ref}
+
+The original v4 monograph embedded the full Investment SOP
+(SOP v1.2.2) inside Chapter 2 immediately after Section~2.7. In
+v5.5 the Investment SOP is hosted as Chapter~\ref{ch:investment-sop}
+to preserve a clean per-domain organisation. The full content ---
+benchmark priority, monthly TWR, 4-month TWR (Caution trigger /
+release), 12-month TWR (Risk-Off trigger), Risk-On return condition,
+position limits, exception handling, log requirements, and update
+policy --- is reproduced there without abridgement.
+
+\subsection{Investment SOP Compatibility Note}
+\label{sec:action-space-investment-compat}
+
+The Investment SOP referenced above is fully aligned with NRMO Core
+v1.2.7 and inherits its notation, admissibility-first ordering, and
+MathJax configuration. Investment SOP version: 1.2.2 (Stability
+Patch). Scope: Full Operations.

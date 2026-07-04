@@ -1,0 +1,242 @@
+% chapters/ch02e_logic_gates.tex
+% Section 2.8: Logic Gates System
+
+\section{Logic Gates System}
+\label{sec:logic-gates-c2}
+
+\nrmobox{Layer scope}{
+This layer is a \emph{logical governance} system separate from Type
+ZERO (which performs emotional shutdown / exit). It blocks assertion
+errors caused by undefined definitions, undefined axes, set-theory
+errors, or dismissed observations via a pre-output gate.
+}
+
+\subsection{The Four Core Gates}
+\label{sec:dag-four-core-gates}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Gate} & \textbf{Trigger condition} & \textbf{Pass condition} & \textbf{Action on fail} \\
+\midrule
+G1 Definition Gate
+& Assertion with undefined concept
+& Operational definition (measurable) is provided
+& Hold judgement; request definition (or propose candidate) \\
+
+G2 Axis Gate
+& Mixed evaluation axes (speed / stability / creativity, etc.)
+& Single axis, or if multi-axis: weights and order explicit
+& Decompose axes; conclude per axis (no global assertion) \\
+
+G3 Set Gate
+& False dichotomy / part-to-whole fallacy
+& Set relationships explicit; inference valid
+& Halt inference; identify error type
+(e.g., $\neg A \to B$, partial dominance $\to$ membership) \\
+
+G4 Observation-First Gate
+& General model overrides individual observation
+& Only assumptions consistent with observation adopted
+& Return to observation; recheck model premises \\
+\bottomrule
+\end{tabularx}
+\caption[Logic Gates System]{Logic Gates System
+(Table 2.3 --- Logical Governance Layer). The four gates form a
+pipeline; an output passes only if all gates clear.}
+\label{tab:logic-gates-c2}
+\end{table}
+
+\subsection{Ten-Line Statute (DAG Rules)}
+\label{sec:dag-ten-line-statute}
+
+For pasting into the SOP layer:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+[DAG RULES]
+1) Do not assign truth/falsity, superiority, or
+   classification to undefined concepts (G1).
+2) If evaluation axes are mixed, decompose axes and
+   handle per single axis (G2).
+3) Auto-block "not-A -> B" and "partial superiority ->
+   whole membership" (G3).
+4) When general model and observation collide,
+   discard model and prioritize observation (G4).
+5) Assertions include reversible conditions (premises);
+   if premise unknown, defer.
+6) Deferral is a mature output and is not weakness.
+\end{lstlisting}
+
+\subsection{Relationship with Type ZERO}
+\label{sec:dag-vs-type-zero-c2}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{XX}
+\toprule
+\textbf{Type ZERO (emotional governance)}
+& \textbf{DAG (logical governance)} \\
+\midrule
+Strong emotion / fatigue / impulse $\to$ stop, defer, retreat.
+& Definition fluctuation / axis confusion / set error $\to$ block
+assertion. \\
+Purpose: avoid breakdown of decision-making
+(psychological / behavioural side).
+& Purpose: avoid breakdown of decision-making
+(logical / argumentative side). \\
+\bottomrule
+\end{tabularx}
+\caption[Type ZERO vs DAG]{Type ZERO and DAG operate on orthogonal
+dimensions. They do not substitute for one another; both gates must
+fire independently.}
+\label{tab:type-zero-vs-dag-c2}
+\end{table}
+
+\subsection{Test Suite (Recurrence Prevention)}
+\label{sec:dag-tests-c2}
+
+\begin{description}
+\item[Test A] ``Not a genius $\to$ therefore ordinary.''
+\textit{Expected}: G3 stop ($\neg A \to B$ binary logic).
+\item[Test B] ``Superior in partial domain $\to$ belongs to genius
+domain.'' \textit{Expected}: G3 stop (partial-to-whole membership).
+\item[Test C] Observation (high-output behaviour) and general model
+(age-related decline) collide. \textit{Expected}: G4 discards model,
+prioritises observation.
+\end{description}
+
+\subsection{Usage (Operational Notes)}
+\label{sec:dag-usage-c2}
+
+\nrmobox{Operational principle}{
+The more the user wants ``assertion,'' the more DAG holds value. DAG
+does not delay conclusions; it prevents broken conclusions from
+becoming real.
+}
+
+\subsection{HST-N SOP --- Negative Assertion Pattern}
+\label{sec:hstn-negative-assertion-c2}
+
+The HST-N layer publishes an audit-only ``negative assertion''
+record on a quarterly cadence. The pattern is structurally distinct
+from a positive assertion (``everything is fine''): it states only
+that under the current thresholds and observation windows,
+\emph{no anomaly has been detected}.
+
+\paragraph{Format.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+HST-N Negative Assertion (Quarterly)
+- No anomaly detected under current thresholds.
+- Observation windows: 4m / 12m (+ internal)
+- Data availability: OK / Partial / Hold
+\end{lstlisting}
+
+\subsection{HST-N Observation Cycle}
+\label{sec:hstn-observation-cycle-c2}
+
+\paragraph{4-month state window (SOP-relevant).}
+The 4-month window is the primary input to SOP-level Caution
+detection.
+
+\paragraph{12-month state window (Ruin-relevant).}
+The 12-month window feeds Risk-Off detection (potential ruin
+condition).
+
+\paragraph{1-month and 6-month internal audit windows.}
+The 1-month and 6-month windows are audit-only; they do not feed SOP
+directly.
+
+\subsection{Red Flag Codes}
+\label{sec:hstn-red-flag-c2}
+
+Red Flag codes are observational classifications, not actions. They
+are forwarded to Type ZERO and SOP for downstream handling.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{llX}
+\toprule
+\textbf{Code} & \textbf{Name} & \textbf{Description} \\
+\midrule
+RF0 & Low-grade noise & Mild signal; logged but no action. \\
+RF1 & Volatility spike & 4-month asset / benchmark volatility
+elevated. \\
+RF2 & Halt / Data hold & Shutdown signal; data not reliably
+available. \\
+RF3 & Liquidity gap & Bid-ask gap or resource gap. \\
+RF4 & Correlation break & Cross-domain signal de-coupling
+(observation only). \\
+\bottomrule
+\end{tabularx}
+\caption[HST-N Red Flag codes]{HST-N Red Flag classification codes.
+Codes are non-judgemental classifications passed to Type ZERO and
+SOP for interpretation.}
+\label{tab:hstn-red-flag-c2}
+\end{table}
+
+\paragraph{Log entry format.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+HST-N Red Flag Log
+- Code:      RF1
+- Window:    1m / 4m / 6m / 12m
+- Asset:     (Ticker or Category)
+- Timestamp: YYYY-MM-DD
+- Note:      short text (no interpretation)
+\end{lstlisting}
+
+\subsection{Quarterly Frequency Summary}
+\label{sec:hstn-frequency-summary-c2}
+
+HST-N publishes a quarterly Red Flag frequency summary (audit only):
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+HST-N Frequency Summary (Quarterly)
+- RF0: 5
+- RF1: 1
+- RF2: 0
+- RF3: 0
+- RF4: 1
+\end{lstlisting}
+
+\subsection{Hold Mode (Data Reliability)}
+\label{sec:hstn-hold-c2}
+
+When benchmark or asset data degrades, HST-N publishes a Hold
+record:
+
+\begin{itemize}
+\item \texttt{OK} --- data reliable, full observation cycle
+proceeds.
+\item \texttt{Partial} --- partial coverage, classification flagged
+partial.
+\item \texttt{Hold} --- data unreliable, classification suspended,
+SOP notified.
+\end{itemize}
+
+HST-N's ``Hold'' is a notification to SOP, not an executive action.
+SOP retains decision authority.
+
+\subsection{Update and Prohibitions}
+\label{sec:hstn-update-prohibitions-c2}
+
+\paragraph{Update conditions.}
+The HST-N SOP is updated only when the upstream NRMO SOP changes.
+Discretionary updates are prohibited.
+
+\paragraph{Prohibitions.}
+
+\begin{itemize}
+\item State-transition execution: \textbf{prohibited}.
+\item Direct action / proposal: \textbf{prohibited}.
+\item TTM / PP execution: \textbf{prohibited}.
+\item Issuing permitted-action sets: \textbf{prohibited}.
+\end{itemize}
+
+\paragraph{Design principle.}
+``HST-N observes; HST-N does not decide.''

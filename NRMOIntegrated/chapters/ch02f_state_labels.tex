@@ -1,0 +1,243 @@
+% chapters/ch02f_state_labels.tex
+% Section 2.9: State Labels (HST-N to SOP Interface)
+
+\section{State Labels (HST-N to SOP Interface)}
+\label{sec:state-labels-c2}
+
+\nrmobox{HST-N non-operational charter}{
+HST-N is the \emph{state-topology map} for NRMO. It is not an
+operational module; it produces only state classifications. SOP is
+the consumer interface; HST-N never executes.
+}
+
+\subsection{HST-N State Labels (SOP Input)}
+\label{sec:hstn-state-labels-c2}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Label} & \textbf{Meaning} & \textbf{Design intent} \\
+\midrule
+LOAD
+& Intensity of load where judgement errors increase
+& When errors increase: accumulate reversible trials. \\
+VOL
+& Situational volatility (instability)
+& When volatility is high: refrain from boundary-approaching
+actions. \\
+IRREV
+& Proximity to irreversible boundary
+& Category $D$ requires procedure; may require SHUTDOWN. \\
+\bottomrule
+\end{tabularx}
+\caption[HST-N State Labels (SOP Input)]{HST-N State Labels (Table
+2.4). Labels are produced by HST-N and consumed by the SOP layer.}
+\label{tab:hstn-state-labels-c2}
+\end{table}
+
+\subsection{State Label Value Definitions}
+\label{sec:hstn-state-label-values-c2}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{llX}
+\toprule
+\textbf{Label} & \textbf{Values} & \textbf{Description} \\
+\midrule
+LOAD
+& $L_0$ / $L_1$ / $L_2$
+& $L_0$ = low load, $L_1$ = medium load, $L_2$ = high load.
+Higher $\Rightarrow$ more judgement / dialogue errors likely. \\
+VOL
+& $V_0$ / $V_1$ / $V_2$
+& $V_0$ = stable, $V_1$ = volatile, $V_2$ = highly volatile.
+Higher $\Rightarrow$ situation more likely to break down. \\
+IRREV
+& $I_0$ / $I_1$
+& $I_0$ = boundary distant, $I_1$ = boundary near.
+Near $\Rightarrow$ higher irreversible-transition risk. \\
+\bottomrule
+\end{tabularx}
+\caption[State Label Value Definitions]{State Label Value
+Definitions (Table 2.5). Each label takes one value at any given
+time.}
+\label{tab:hstn-state-label-values-c2}
+\end{table}
+
+\subsection{Observation Inputs}
+\label{sec:hstn-observation-inputs-c2}
+
+HST-N classifies observations into the discrete state labels. The
+classification is non-judgemental.
+
+\paragraph{Observation classes.}
+
+\begin{itemize}
+\item Subjective: mood self-report, fatigue self-report.
+\item Objective: sleep duration, work hours, recent commitments,
+financial state, relational signals.
+\item Behavioural: deviation from baseline patterns; blame-shifting
+behaviour at boundaries; out-of-band communication.
+\end{itemize}
+
+\subsection{Output Specification (SOP Output)}
+\label{sec:hstn-output-spec-c2}
+
+The HST-N output is consumed by SOP only:
+
+\begin{itemize}
+\item LOAD --- load-judgement signal (when high $\Rightarrow$
+restrict to reversible).
+\item VOL --- volatility signal (when $V_2$ $\Rightarrow$ refrain
+from boundary actions).
+\item IRREV --- irreversibility-imminent signal (when $I_1$
+$\Rightarrow$ category $D$ requires procedure or SHUTDOWN).
+\end{itemize}
+
+\nrmobox{HST-N principle}{
+HST-N \textbf{does not propose actions}. Observations $\to$
+classifications $\to$ SOP input. SOP retains all decision authority.
+}
+
+\subsection{Irreversibility Types}
+\label{sec:hstn-irreversible-types-c2}
+
+The irreversibility boundary is not one-dimensional. HST-N
+classifies four types of irreversibility:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Type} & \textbf{What decreases} & \textbf{Common triggers} & \textbf{Avoidance principle} \\
+\midrule
+R-Trust
+& Reputation, relational credibility
+& Public statements, broken commitments
+& Slow tempo; reversible expressions; confirmation. \\
+
+R-Resource
+& Capital (time, money, attention)
+& Over-commitment, ultimatum-driven binding
+& Limit-based commitment; staged release. \\
+
+R-Relationship
+& Specific bilateral relationship integrity
+& Ultimatums, public airing of grievances
+& Slow tempo; private confirmation; no broadcast. \\
+
+R-Agency
+& Personal autonomy and self-direction
+& Coercion, dependency formation
+& Confirm own action; third-party check. \\
+\bottomrule
+\end{tabularx}
+\caption[Irreversibility types]{Four types of irreversibility used
+by HST-N. Each type has its own avoidance principle, applied by
+SOP based on HST-N classification.}
+\label{tab:hstn-irreversibility-types-c2}
+\end{table}
+
+\paragraph{NRMO interpretation of irreversibility.}
+NRMO treats irreversibility as a \emph{first-class loss}: the
+contraction of future degrees of freedom. The avoidance principle
+above is the SOP-level operationalisation.
+
+\subsection{HST-N Boundary Principle}
+\label{sec:hstn-boundary-principle-c2}
+
+HST-N never crosses the boundary into evaluation or persuasion.
+
+\begin{itemize}
+\item HST-N does \emph{not} say ``the situation is good'' or ``the
+situation is bad.''
+\item HST-N's outputs are classifications, never evaluations.
+\item Strong observations are passed to SOP without
+interpretation.
+\item Output flow is one-way pass-through: HST-N $\to$ SOP. No
+direct action.
+\end{itemize}
+
+\subsection{HST-N Operational Document File}
+\label{sec:hstn-html-c2}
+
+The reference HST-N implementation is locally generated and stored
+in the file \texttt{hst-n.html}. The HTML file restates the
+specification in form-fillable shape: NRMO OS state premise,
+permitted-state transitions, and audit log fields.
+
+\subsection{Operational Declaration (Non-Operational)}
+\label{sec:hstn-operational-declaration-c2}
+
+\nrmobox{Non-Operational Charter (restated)}{
+HST-N maps state. HST-N does not change state.\\[0.3em]
+HST-N's outputs are SOP inputs. HST-N is never standalone.
+}
+
+\paragraph{Purpose.}
+The HST-N charter is to provide a stable, non-judgemental,
+non-operational mapping of subject state. It exists to keep SOP
+inputs clean.
+
+\paragraph{Relation to NRMO.}
+NRMO treats the HST-N output as factual classification. NRMO does
+not negotiate with HST-N classifications: if HST-N reports $L_2$,
+NRMO assumes $L_2$.
+
+\subsection{NRMO Layered Diagram}
+\label{sec:hstn-nrmo-layered-diagram-c2}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+[ NRMO (OS / governance / final authority) ]
+                    ^
+                    | (veto only)
+                    |
+[ Observation OS / monitoring / classification ]
+                    ^
+                    |
+              HST-N labels
+                  (LOAD, VOL, IRREV)
+\end{lstlisting}
+
+\paragraph{NRMO authority.}
+NRMO retains final veto. HST-N feeds; NRMO decides; Type ZERO
+operationalises.
+
+\subsection{Permitted / Prohibited (Restated)}
+\label{sec:hstn-permitted-prohibited-c2}
+
+\paragraph{Permitted (HST-N may).}
+
+\begin{itemize}
+\item Observe, classify, log.
+\item Publish negative assertions.
+\item Publish Red Flag codes.
+\item Publish Hold notifications.
+\end{itemize}
+
+\paragraph{Prohibited (HST-N must not).}
+
+\begin{itemize}
+\item Make judgements (good/bad).
+\item Cross irreversibility-boundary commentary
+(``you should / must / shouldn't'').
+\item Issue actions (NRMO and Type ZERO and SOP own this).
+\item Modify own classification thresholds without explicit external
+re-approval.
+\end{itemize}
+
+\subsection{Final Declaration}
+\label{sec:hstn-final-declaration-c2}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+STATE = DAILY_NRMO
+\end{lstlisting}
+
+\paragraph{Meaning.}
+The default operational state is daily NRMO. HST-N classifications
+deviate the state only when their thresholds are crossed; the
+default is a no-action posture.

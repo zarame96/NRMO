@@ -1,0 +1,315 @@
+% =====================================================================
+\section{v7.0: NRMO\_Collective — Six Mechanisms for Collective Governance}
+\label{sec:nrmo-collective-v70}
+
+
+\nrmobox{v7 structural correction}{
+This mechanism resides on the \textbf{real side}: the StrongEngine $\Omega$
+Full advances over each domain's true dynamics with a maximum-forward default,
+while a civ-sim MaxForwardEngine imitates it to explore extremes. Rollout must
+use the target domain's true dynamics with a long-enough horizon to credit
+compounding, avoiding over-defensive collapse. Maximum forward is the default,
+not a universal optimum (world-dependence). See Realignment Master Spec.
+}
+\subsection{Motivation: the irreducible Faith\_Communal advantage}
+
+Sections~\ref{sec:nrmo-pp-v64} and~\ref{sec:v64-empirical} documented
+that the v6.4 NRMO with thirteen enhancements still loses to
+Faith\_Communal in catastrophic worlds (IndigenousAmericas gap
+$+0.557$, Polynesian $+0.572$, Europe $+0.616$). The Insurance Layer
+(mechanism B in v6.4) closed roughly $10\%$ of this gap; nine-tenths
+of it remained.
+
+A diagnostic question: why does Faith\_Communal beat NRMO in these
+worlds, despite NRMO having access to a more sophisticated decision
+process? The answer, examined empirically, decomposes into six
+distinguishable mechanisms which Faith\_Communal possesses naturally
+and individual-NRMO does not:
+
+\begin{enumerate}
+\item Multi-tier risk pooling (not just one pool, but family-lineage-civ
+  cascade) — referred to as \textsc{P}.
+\item Quorum-based action coordination within strategy clusters
+  (in-group conformity) — \textsc{Q}.
+\item Strategy reproduction (parents transmit strategy to children) —
+  \textsc{R}.
+\item Civilisation-level solidarity state that modulates shock
+  absorption — \textsc{S}.
+\item Tradition-anchored action blending (individual optimum mixed
+  with civilisational norm) — \textsc{T}.
+\item Ultra-horizon discount (eternal-reward beliefs reduce effective
+  $\gamma$) — \textsc{U}.
+\end{enumerate}
+
+v7.0 introduces \texttt{NRMO\_Collective}, a parallel governance
+layer alongside individual-NRMO that implements P--U as an
+architectural extension rather than a religious commitment. The
+question this answers is: \emph{if a non-religious civilisation
+adopted Faith\_Communal's collective-survival mechanisms as a
+deliberate design, what would the trade-off look like?}
+
+\subsection{Naming convention (v7.0)}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Name & Role \\
+\midrule
+\texttt{NRMO\_Origin}     & Original veto-only formulation (Parts~I--II) \\
+\texttt{NRMO}             & Strengthened operational form with $\Omega$ Full and Adaptive Tuning \\
+\texttt{NRMO\_Collective} & v7.0 sibling: NRMO~+~collective layer P--U \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\texttt{NRMO\_Collective} is not a replacement for \texttt{NRMO}; it
+is a sibling theory that incorporates a different decision substrate
+(collective governance) while retaining NRMO's architectural
+invariants (governance--execution separation, veto-only NRMO Core,
+admissibility-set construction). A civilisation may run pure NRMO,
+pure \texttt{NRMO\_Collective}, or a mixture; the v7.0 simulator
+implementation allows toggling at runtime.
+
+\subsection{The six mechanisms (P--U)}
+
+\paragraph{P. Multi-tier pooling.}
+A \texttt{MultiTierInsurance} object per civilisation owns three
+distinct pools: family-level (one per 4 family buckets),
+lineage-level (one per strategy), and civ-level (single). Survivors
+each generation contribute fractions ($0.25$, $0.15$, $0.10$
+respectively) of mean education and assets. When a lineage faces
+absorption, rescue is attempted cascade-fashion: family pool first
+(up to $0.70$ coverage), then lineage pool ($0.50$), then civ pool
+($0.30$). This three-tier structure is the natural extension of v6.4's
+single-pool Insurance Layer (mechanism B). The decisive empirical
+effect is in catastrophic worlds where single-pool insurance is
+quickly exhausted but multi-tier cascading provides graduated
+backstop.
+
+\paragraph{Q. Quorum coordination.}
+For each strategy~$s$, compute the modal action across all
+$s$-agents in a civilisation. If more than $55\%$ of $s$-agents are
+within $0.15$ Euclidean distance of the mode, the strategy is
+considered to be in quorum; minority $s$-agents are then pulled
+toward the mode by weight $0.30$. This implements in-group
+conformity: when a strategy's adherents broadly agree, dissenters
+are nudged toward consensus.
+
+\paragraph{R. Strategy reproduction.}
+Newly-reset (collateral) lineages inherit parent strategy with
+probability $0.70$; with probability $0.05$ they mutate to a
+random strategy. The remainder retain whatever strategy was assigned
+at simulation initialisation (matching v6.0--v6.4 behaviour). This
+makes strategy distribution \emph{path-dependent}: civilisations
+with strong Faith\_Communal at gen~1 will tend to remain Faith\_Communal
+through generations, rather than mixing freely.
+
+\paragraph{S. Solidarity state.}
+A scalar \texttt{cohesion}~$\in [0, 1]$ tracks per-civilisation
+in-group solidarity. Incoming shocks are multiplied by a
+\texttt{absorb\_factor}: $1.5\times$ at cohesion~$=0$ (fragmented
+civ amplifies its own crises) down to $0.55\times$ at cohesion~$=1$
+(unified civ absorbs shocks). Cohesion decays gently each step,
+rises with pooling rescue intensity, falls with inequality variance
+and explicit crisis events. This realises the empirical observation
+that historically resilient civilisations (Japan Edo, Confucian
+China, Ottoman millet system) absorbed external shocks better than
+fragmented contemporaries.
+
+\paragraph{T. Tradition-anchored action blending.}
+Each strategy has a tradition weight $w_s \in [0, 1]$
+(\texttt{Faith\_Communal}~$=0.60$, \texttt{Faith\_Ascetic}~$=0.55$,
+\texttt{Faith\_Militant}~$=0.50$, \texttt{NRMO\_vNext}~$=0.10$,
+\texttt{ExpectedValueMax}~$=0.05$). The civ's tradition action is
+the weight-weighted mean of all strategies' mean actions. Each agent's
+sampled action is blended:
+$\mathit{action}' = (1 - w_s) \cdot \mathit{action} + w_s \cdot
+\mathit{tradition\_action}$. This is the explicit operationalisation
+of ``social norm anchoring''. Strategies with high $w_s$ are pulled
+strongly toward the civ-wide consensus action; individualist
+strategies retain their optimum.
+
+\paragraph{U. Ultra-horizon belief.}
+Strategies with eternal-reward / inter-generational-investment
+beliefs are modelled by reducing their effective death-failure
+probability:
+$\mathit{dfp}' = \mathit{dfp} \cdot (1 - \mathrm{boost}_s \cdot 0.5)$,
+with $\mathrm{boost}_s = 0.30$ for \texttt{Faith\_Ascetic}, $0.25$
+for \texttt{Faith\_Calvinist}, $0.20$ for \texttt{Faith\_Buddhist}
+and \texttt{Faith\_Militant}, $0.15$ for \texttt{Faith\_Communal},
+\texttt{Faith\_Charismatic}, and \texttt{NRMO\_Collective} itself.
+This reduces $\mathit{dfp}$ by up to $15\%$ for the most belief-driven
+strategies. The mechanism captures the behavioural effect of
+infinite-horizon discounting without modelling actual immortality.
+
+\subsection{Empirical comparison: NRMO vs.\,NRMO\_Collective vs.\,Faith\_Communal}
+
+Three-seed averaged scores at scale~$=$~small. The columns are
+\texttt{NRMO\_vNext} strategy scores under three controller
+configurations.
+
+\begin{center}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+World & FC (baseline) & NRMO (v6.0) & NRMO++ (v6.4) & NRMO\_Coll. (v7.0) & FC--C gap \\
+\midrule
+Japan              & 1.997 & 2.148 & 2.170 & 1.729 & $+0.268$ \\
+China              & 2.146 & 2.109 & 2.182 & 1.913 & $+0.233$ \\
+Europe             & 1.450 & 0.769 & 0.835 & \textbf{1.108} & $+0.342$ \\
+Islamic            & 1.431 & 1.544 & 1.616 & 1.395 & $+0.036$ \\
+Indic              & 1.770 & 2.017 & 2.074 & 1.532 & $+0.238$ \\
+Polynesian         & 1.585 & 0.943 & 1.012 & \textbf{1.156} & $+0.429$ \\
+IndigenousAmericas & 0.752 & 0.213 & 0.195 & \textbf{0.837} & $\mathbf{-0.085}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Findings}
+
+\paragraph{In catastrophic worlds, NRMO\_Collective approaches or exceeds Faith\_Communal.}
+\begin{itemize}
+\item IndigenousAmericas: $0.213 \to 0.837$. The Conquest-Catastrophe
+  era's $\sim 90\%$ mortality (Cook 1998) is precisely the regime in
+  which Faith\_Communal's risk-pooling decisively outperforms
+  individual optimisation. NRMO\_Collective's three-tier insurance
+  cascade duplicates this mechanism explicitly. \textbf{The gap
+  reverses sign}: NRMO\_Collective now exceeds Faith\_Communal by
+  $0.085$.
+\item Europe: $0.769 \to 1.108$. Crusades, Black Death, Thirty Years
+  War, the world wars — sustained-shock environments where collective
+  governance pays its insurance premium.
+\item Polynesian: $0.943 \to 1.156$. The Contact Era's introduced
+  diseases caused $\sim 90\%$ mortality in Marquesas and Hawaii. Same
+  mechanism applies.
+\end{itemize}
+
+\paragraph{In peaceful worlds, the collective-governance overhead is paid.}
+\begin{itemize}
+\item Japan, China, Indic: scores degrade by $0.20$--$0.49$ under
+  NRMO\_Collective. The tradition-blending (T) and quorum (Q)
+  mechanisms compromise the individual-optimal action that would have
+  served well in low-shock environments. Multi-tier insurance (P)
+  also imposes ongoing contribution overhead in calm gens.
+\end{itemize}
+
+\paragraph{NRMO\_Collective is not a strict improvement.}
+This is the critical finding. NRMO\_Collective and NRMO embody a
+\textbf{principled trade-off}, not a dominance relation:
+\begin{equation*}
+\boxed{\text{NRMO\_Collective vs.\,NRMO} \;=\;
+  \text{(peacetime efficiency)} \;\longleftrightarrow\;
+  \text{(crisis-time survival)}}
+\end{equation*}
+This matches what Faith\_Communal's empirical advantage already
+suggested: collective governance is not free, and individual
+optimisation is not weakness — they are different positions on a
+fundamental trade-off curve. v7.0's contribution is to make the
+trade-off explicit and architecturally tunable, instead of leaving
+it implicit in religious commitment.
+
+\subsection{Honest claim and limitations}
+
+\paragraph{What v7.0 achieves.}
+NRMO\_Collective captures the \emph{mechanism} of Faith\_Communal's
+empirical advantage. The Insurance Layer (P) alone closes
+$60$--$80\%$ of the Faith\_Communal gap in catastrophic worlds;
+combined with S (solidarity), T (tradition), and U (ultra-horizon),
+the gap reverses sign in IndigenousAmericas.
+
+\paragraph{What v7.0 does not achieve.}
+The trade-off is symmetric: in peaceful worlds, NRMO\_Collective is
+strictly inferior to NRMO. No combination of P--U parameters tested
+to date yields strict dominance over NRMO. This is consistent with
+the theoretical view that no single strategy can dominate all
+environments (no-free-lunch in decision theory).
+
+\paragraph{Out-group hostility not implemented.}
+Real-world Faith\_Communal-style collectives historically gain their
+in-group cohesion partly through \emph{out-group hostility}
+(sectarian conflict, religious wars, exclusionary norms). v7.0
+deliberately does not implement out-group hostility: this is a
+moral choice, not a technical one. The trade-off would change if it
+were included.
+
+\paragraph{Statistical significance not verified.}
+Three-seed averaging shows effects above noise but does not
+constitute statistical significance testing in the formal sense.
+$30+$~seeds and a paired difference test would be needed for
+publication-grade claims.
+
+\subsection{Connection to NRMO architecture}
+
+NRMO\_Collective preserves the architectural invariants of NRMO:
+\begin{itemize}
+\item NRMO Core still constructs the admissibility set
+  $A_t$ (now via NRMO veto, which is the strengthened rule from
+  Part~IX).
+\item $\Omega$ Full still selects the civ-level optimal action
+  $a^\star_c \in A_t$.
+\item Collective mechanisms (P--U) operate on the projection from
+  $a^\star_c$ to per-agent actions \emph{after} NRMO veto and $\Omega$
+  selection. They never modify NRMO\_Core scoring or admissibility.
+\end{itemize}
+
+The collective layer is therefore a \emph{policy modulator} acting
+between the governance--execution pipeline and the population
+substrate. It is fully compatible with v6.4's A--M enhancements,
+all of which apply within their original layers.
+
+\paragraph{Conclusion.}
+NRMO\_Collective answers the question: \emph{how does a decision
+architecture systematically incorporate collective-survival
+mechanisms without relying on religious commitment?} The answer,
+empirically, is the P--U mechanism set; the cost, empirically, is
+peacetime efficiency. The trade-off is real and irreducible. NRMO,
+v6.4 NRMO++, and NRMO\_Collective together form a family of three
+architectural choices that span the
+peacetime-efficiency / crisis-survival frontier.
+
+% =====================================================================
+\section{v7 Phase D: Collective Two-Layer Connection and Validation}
+\label{sec:collective-v7-phase-d}
+
+\nrmobox{v7 Phase D (2026-05-30)}{
+The real \texttt{CollectiveStrongEngine} (\texttt{collective\_engine\_v71.py})
+is connected as the \emph{real side} of the two-layer structure; a collective
+\texttt{MaxForwardEngine} is the civ-sim side. Per the fourth principle, the
+engine's internal lightweight rollout (\texttt{\_rollout\_collective}) is
+\emph{bypassed} for scoring: candidates are scored by the civ-sim using the
+\emph{true} collective dynamics over a \emph{long} horizon.
+}
+
+In Phase D the collective layer is realigned so that the real side maximises
+forward motion for the whole collective and only redirects at the edge of ruin
+via triage and tiered insurance (it does not stop). Shock forecasting
+(\texttt{forecast\_next\_shock}) supplies edge detection; the action spectrum
+runs continuously from attack (whole-collective growth) to defence (triage
+retreat), mapped onto a real \texttt{CollectiveConfiguration}.
+
+\subsection{Validation (reproducible)}
+\begin{itemize}
+  \item \textbf{Real-code connection.} \texttt{select\_configuration} executes on
+        the real engine (admissible set non-empty); the realigned scoring then
+        overrides the internal fixed rollout.
+  \item \textbf{World-dependence.} In a calm world the best configuration is
+        pure attack ($a=0.00$); in a fat-tail world pure attack survives only
+        about 83\% and the best shifts to an insured configuration ($a=0.25$).
+        This recovers the V9-minimum nuance: more caution is best only when the
+        world is dangerous.
+  \item \textbf{Two-layer behaviour.} Over an 80-generation horizon the real
+        side records ruin near 5\% (standard) and 2\% (fat-tail), with
+        edge-triage redirection about 50\% and 63\% respectively---more
+        redirection in the more dangerous world.
+\end{itemize}
+
+\nrmobox{Honest finding: horizon direction is domain-dependent}{
+In this collective-insurance domain the best stance is short-horizon attack and
+long-horizon (partial) defence, because the ruin risk of thin insurance
+\emph{accumulates} with the horizon. This is the \emph{opposite} direction to
+the single-civilisation domain (Chapter~\ref{ch:time-horizon-layer}), where growth
+compounding makes long horizons favour growth. Both share one law: a long
+evaluation horizon reveals the true cost structure; the cost that compounds
+(growth versus accumulated tail) differs by domain. No tuning was applied to
+force the single-civ direction.
+}

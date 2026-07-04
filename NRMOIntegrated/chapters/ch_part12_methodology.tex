@@ -1,0 +1,678 @@
+% chapters/ch_part12_methodology.tex
+% Part XII: Methodological Notes — Session Handoff Documents
+% Sources: SESSION_HANDOFF.md (v5.2, March 17, 2026, 251 lines)
+%          SESSION_HANDOFF-8.md (v2.5, April 25, 2026, 193 lines)
+
+\chapter{Methodological Notes ---
+Engineering Session Handoff Records}
+\label{ch:methodology-notes}
+
+
+
+% =====================================================================
+\section*{v7 Realignment Note}
+\addcontentsline{toc}{section}{v7 Realignment Note}
+\nrmobox{v7 structural correction}{
+This chapter's mechanism resides on the \textbf{real side}: the StrongEngine
+$\Omega$ Full advances over each domain's true dynamics with a maximum-forward
+default, while a civ-sim MaxForwardEngine imitates it to explore extremes and
+return a best score. The rollout must use the target domain's true dynamics,
+with an evaluation horizon long enough to credit compounding growth ---
+otherwise the choice collapses into over-defense. Maximum forward is the
+\emph{default} posture, not a universal optimum (world-dependence: some worlds
+favour aggression, others sustainable growth, others extreme caution). See the
+Realignment Master Spec.
+}
+\index{SESSION HANDOFF}
+\index{v5.0 Session}
+\index{v2.5 Session}
+\index{PROBE Penalty}
+\nrmobox{Document scope and source}{
+\textbf{Source documents}:
+\begin{itemize}
+\item \texttt{SESSION\_HANDOFF.md} (v5.2 codebase, dated March 17,
+2026, 251 lines).
+\item \texttt{SESSION\_HANDOFF-8.md} (v2.5 codebase, dated
+April 25, 2026, 193 lines).
+\end{itemize}
+\textbf{Purpose}: Preserve the engineering-session record showing
+how the production state of $\Omega$ Full v5.0 (March 2026) and
+v2.5 (April 2026) was reached, including measurement-error
+discoveries, deferred priorities, and architectural-invariant
+audits.
+}
+
+This chapter reproduces the methodological history of two terminal
+engineering sessions: (i) the March 2026 session that finalised
+$\Omega$ Full v5.0 with the Long-Horizon Drift Control fix, and
+(ii) the April 2026 session that arrived at v2.5 via a single-line
+PROBE-mode productivity-weight change after rejecting a more
+elaborate hypothesis.
+
+% =====================================================================
+\section{v5.0 Session (March 17, 2026) ---
+$\Omega$ Full Complete Implementation}
+\label{sec:methodology-v50-session}
+
+\subsection{What Was Built}
+\label{sec:methodology-v50-deliverable}
+
+\paragraph{Final deliverable.}
+Adaptive NRMOvNext + StrongEngine $\Omega$ Full v5.0.
+
+\begin{itemize}
+\item \texttt{NRMO\_StrongEngine\_OmegaFull\_v5.zip}.
+\item Integrated specification:
+\texttt{NRMO\_Integrated\_Spec\_v2.pdf} (15 pages, 28 sections).
+\item All source code, smoke results, plots, CSVs included.
+\end{itemize}
+
+\paragraph{Architecture (immutable).}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+NRMO (governance only)         StrongEngine Omega Full
+                               (execution only)
++--ruin boundary definition    +--candidate generation
++--admissibility judgment      |    (mutation/synthesis/invention)
++--veto (YES/NO/HOLD)          +--candidate search & evaluation
++--passive ruin detection      +--risk-adjusted scoring
++--mode restriction            +--portfolio construction
++--execution legitimacy        +--drift control
+
+Formal: A_t = NRMO(X_t),  a_t = Omega(A_t),  a_t in A_t always.
+Engine does NOT evaluate RUIN. RUIN = NRMO boundary only.
+\end{lstlisting}
+
+\subsection{$\Omega$ Full Engine --- What It Does}
+\label{sec:methodology-v50-engine}
+
+\paragraph{$\S 1$ Candidate Population System.}
+base (11 templates) $\to$ mutation ($\pm 0.05$, 1--3 variants) $\to$
+synthesis (pairwise avg + $\pm 0.03$) $\to$ invention
+(state $\times$ world analytical) $\to$ pool (~23--35 candidates).
+Pool passes through governance filter before scoring.
+
+\paragraph{$\S 2$--$\S 3$ Mutation \& Synthesis.}
+Mutation: local perturbation of each action component. Synthesis:
+average of random pairs $+$ noise.
+
+\paragraph{$\S 4$--$\S 5$ Wolf Pursuit Mode.}
+Trigger: $E \ge 50$, $G \ge 45$, $O \ge 45$, $K \ge 45$, $X \le 35$,
+$\mathrm{d}O \ge 0$, $\mathrm{d}K \ge 0$. Effect: depth $= 8$,
+repeats $= 5$, portfolio $= (0.75 / 0.15 / 0.10)$, +6 extra
+candidates.
+
+\paragraph{$\S 6$--$\S 7$ Edge Survival Guard.}
+Trigger: fragility $> 0.65$, Vulnerable world, $E < 40 + X$ rising,
+$G < 40 + O$ falling. Effect: portfolio $= (0.45 / 0.45 / 0.10)$,
+RiskAdj reference injected.
+
+\paragraph{$\S 8$ Portfolio Synergy.}
+Pairwise compatibility matrix for hedge selection.
+
+\paragraph{$\S 9$ Dual Objective.}
+Ruin is \emph{not} in evaluation function (rollout just terminates).
+\texttt{survived\_ratio} as multiplicative signal.
+
+\paragraph{Long-Horizon Drift Control (critical fix).}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+g_sust = clip(0.15, 0.40,
+              0.28 + 0.08*E/100 + 0.06*G/100
+              - 0.10*X/100 - 0.05*env_drag)
+drift = max(0, g - g_sust)
+        * env_sensitivity
+        * exposure_factor
+        * gov_buffer
+final_score = rollout_score - lambda_drift * drift
+\end{lstlisting}
+
+\begin{itemize}
+\item $\lambda_{\mathrm{drift}} = 1.0$ (default, validated).
+\item Normal world: drift $\times 1.25$.
+\item Portfolio hedge: prefers $g \le g_{\mathrm{sust}}$ candidates.
+\end{itemize}
+
+\subsection{Performance Summary}
+\label{sec:methodology-v50-perf}
+
+\paragraph{Overall Score (H200, 20 runs/cell).}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXcc}
+\toprule
+\textbf{\#} & \textbf{Strategy} & \textbf{Score} & \textbf{Surv\%} \\
+\midrule
+1 & \textbf{$\Omega$ Full (default stack)} & \textbf{0.50}
+& \textbf{61\%} \\
+2 & RiskAdjustedUtility & 0.44 & 59\% \\
+3 & NRMOvNext + SE & 0.40 & 55\% \\
+4 & Adaptive + SE & 0.34 & 51\% \\
+\bottomrule
+\end{tabularx}
+\caption[v5.0 overall score]{v5.0 overall score across strategies
+($n = 20$ runs/cell).}
+\label{tab:methodology-v50-overall}
+\end{table}
+
+\paragraph{Multi-Horizon (Drift Fix).}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXXX}
+\toprule
+\textbf{Horizon} & \textbf{$\Omega$ Full} & \textbf{Risk-Adj} &
+\textbf{Winner} \\
+\midrule
+200 & 60\% & 60\% & TIE \\
+500 & 48\% & 46\% & $\Omega$ WIN \\
+1000 & \textbf{40\%} & 33\% & \textbf{$\Omega$ WIN} \\
+\bottomrule
+\end{tabularx}
+\caption[v5.0 multi-horizon]{v5.0 multi-horizon comparison after the
+drift-control fix.}
+\label{tab:methodology-v50-horizon}
+\end{table}
+
+\paragraph{Before drift fix (H1000).}
+$\Omega = 35\%$ vs RA $= 45\%$ $\to$ $\Omega$ lost. After fix:
+$\Omega = 40\%$ vs RA $= 33\%$ $\to$ $\Omega$ wins.
+
+\paragraph{World-level (H200).}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xcc}
+\toprule
+\textbf{World} & \textbf{$\Omega$ Full} & \textbf{Risk-Adj} \\
+\midrule
+Normal & \textbf{100\%} & 100\% \\
+LateStagnation & \textbf{100\%} & 100\% \\
+PlanetaryStress & \textbf{65\%} & 35\% \\
+FastExpansionRace & 35\% & \textbf{50\%} \\
+Vulnerable & 5\% & \textbf{10\%} \\
+\bottomrule
+\end{tabularx}
+\caption[v5.0 world-level survival]{v5.0 world-level survival
+comparison.}
+\label{tab:methodology-v50-world}
+\end{table}
+
+\subsection{Version History (v5.0 Session)}
+\label{sec:methodology-v50-history}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{XlXc}
+\toprule
+\textbf{Version} & \textbf{Score} & \textbf{Key change} &
+\textbf{Sep.} \\
+\midrule
+Initial $\Omega$ Full
+& 0.34 & 8 modules working & $\checkmark$ \\
+Portfolio dilution fix
+& $0.26 \to 0.33$ & Decisive pass-through & $\checkmark$ \\
+P6 + action\_risk
+& \textbf{0.55} & World-aware scoring & $\times$ (violated) \\
+Separation restored
+& 0.26 & Removed gov thresholds from engine & $\checkmark$ \\
+$\S 1$--$\S 12$ Strategy Space Expansion
+& \textbf{0.50} & Mutation / synthesis / invention &
+$\checkmark$ \\
+v5.0 + Drift Control
+& \textbf{0.50} + H1000 fix & Sustainable growth estimator &
+$\checkmark$ \\
+\bottomrule
+\end{tabularx}
+\caption[v5.0 version history]{v5.0 session version history.}
+\label{tab:methodology-v50-version}
+\end{table}
+
+\nrmobox{Critical methodological honesty}{
+0.55 was achieved by violating governance--execution separation.
+\textbf{It is not legitimate.}\\[0.3em]
+0.50 is the correct score under constitutional compliance.
+}
+
+\subsection{Key Design Decisions and Rationale}
+\label{sec:methodology-v50-rationale}
+
+\paragraph{Why $\Omega$ Full underperformed initially.}
+
+\begin{enumerate}
+\item \textbf{Portfolio dilution}: Blending every step destroyed the
+best candidate's signal. Fix: pass-through when score gap $> 0.05$.
+\item \textbf{Growth bias in scoring}: productivity $\propto g$,
+weight $= 1.00$ dominated other factors. Fix: sustainable
+productivity $= \mathrm{prod} \times \min(E / 55, 1) \times
+\min(G / 45, 1)$.
+\item \textbf{Candidate rejection}: Too many invented candidates
+were vetoed by governance. Fix: over-generate (mutation +
+synthesis) so filter still leaves diversity.
+\item \textbf{H1000 collapse}: Short rollout (depth 4--8) couldn't
+detect cumulative $E$ depletion. Fix: drift estimator as cheap
+long-horizon surrogate.
+\end{enumerate}
+
+\paragraph{Why governance--execution separation matters.}
+
+\begin{itemize}
+\item Passing governance thresholds (\texttt{growth\_cap},
+\texttt{exploration\_floor}) to engine $=$ violation.
+\item Engine becomes dependent on governance internals $\to$
+architectural invariant broken.
+\item The 0.55 score required this violation; the 0.50 score does
+not.
+\item Monograph: ``Engine has no independent legitimacy without
+upstream clearance.''
+\end{itemize}
+
+\subsection{Configuration Defaults}
+\label{sec:methodology-v50-config}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+# config/defaults.py
+OmegaFullConfig(
+    candidate_count=14,
+    rollout_depth=4,             # Wolf: 8
+    rollout_repeats=3,           # Wolf: 5
+    counterfactual_branches=0,   # Disabled for speed in smoke
+    lambda_drift=1.0,            # Long-horizon drift penalty
+    normal_drift_multiplier=1.25,
+    failure_memory_size=64,
+    failure_penalty=0.15,
+    fragility_prior=0.5,
+)
+\end{lstlisting}
+
+\subsection{v5.0 Remaining Weaknesses}
+\label{sec:methodology-v50-weaknesses}
+
+\begin{enumerate}
+\item \textbf{Vulnerable world}: 5\% survival (all strategies
+struggle here).
+\item \textbf{FastExpansionRace}: 35\% vs Risk-Adj 50\% (zero-noise
+heuristic advantage).
+\item \textbf{Score 0.75 not reached}: Smoke budget limits
+statistical power.
+\item \textbf{Full-scale validation pending}: Need 500+ runs/cell,
+rollouts $= 16$+.
+\item \textbf{Passive ruin 3\%}: Not zero, room for improvement.
+\item \textbf{Empirical basis thin}: Synthetic testbed only, no
+human deployment.
+\end{enumerate}
+
+\subsection{Files That Must Not Be Changed (v5.0)}
+\label{sec:methodology-v50-frozen}
+
+\begin{itemize}
+\item \texttt{governance/nrmo\_core.py} --- NRMO veto logic.
+\item \texttt{governance/tuning\_layer.py} --- MetaController,
+adaptive tuning.
+\item \texttt{core/ruin.py} --- Ruin boundary definition.
+\item \texttt{core/state.py} --- State transition rules (world
+physics).
+\item \texttt{core/worlds.py} --- World parameter generation.
+\end{itemize}
+
+These are governance / world rules. Engine changes go in
+\texttt{engine/omega\_full.py} and \texttt{strategies/strategies.py}
+only.
+
+\subsection{Key Phrases for Future Sessions (v5.0)}
+\label{sec:methodology-v50-phrases}
+
+\begin{itemize}
+\item ``Adaptive NRMOvNext + StrongEngine $\Omega$ Full'' $=$ the
+default stack.
+\item ``governance--execution separation'' $=$ the invariant that
+must not be broken.
+\item ``Engine does NOT evaluate RUIN'' $=$ ruin is NRMO boundary,
+not scoring penalty.
+\item ``$\lambda_{\mathrm{drift}} = 1.0$'' $=$ long-horizon
+drift-control parameter.
+\item ``score 0.50 (constitutional)'' vs.~``score 0.55 (violation)''
+$=$ the honest comparison.
+\item ``Wolf Pursuit'' $=$ aggressive search in favourable states.
+\item ``Edge Survival Guard'' $=$ floor protection in fragile
+states.
+\end{itemize}
+
+% =====================================================================
+\section{v2.5 Session (April 25, 2026) ---
+The One-Line Change}
+\label{sec:methodology-v25-session}
+
+\subsection{Lineage and Headline Result}
+\label{sec:methodology-v25-headline}
+
+\nrmobox{Lineage}{
+v1 (regressed) $\to$ v2.0 $\to$ v2.1 $\to$ v2.5\\[0.2em]
+\textbf{Status}: v2.5 finalised as production version.
+}
+
+\paragraph{Per-world survival ($n = 50$/world, $n = 250$ total).}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xccc}
+\toprule
+\textbf{World} & \textbf{v2.1} & \textbf{v2.5 (final)} &
+\textbf{$\Delta$} \\
+\midrule
+Normal & 98 $\pm$ 2.0\% & 96 $\pm$ 2.8\% & $-2$ (within SE) \\
+Vulnerable & 24 $\pm$ 6.0\% & \textbf{26 $\pm$ 6.2\%} & $+2$ \\
+PlanetaryStress & 52 $\pm$ 7.1\% & 52 $\pm$ 7.1\% & 0 \\
+LateStagnation & 100\% & 100\% & 0 \\
+FastExpansionRace & 50 $\pm$ 7.1\% & \textbf{60 $\pm$ 6.9\%}
+& \textbf{$+10$ ($z = 1.01$)} \\
+\midrule
+\textbf{Overall} & \textbf{64.8 $\pm$ 3.0\%} & \textbf{66.8 $\pm$ 3.0\%}
+& \textbf{$+2.0$ ($z = 0.47$)} \\
+\bottomrule
+\end{tabularx}
+\caption[v2.5 headline result]{v2.5 vs v2.1 head-to-head.}
+\label{tab:methodology-v25-headline}
+\end{table}
+
+Compared to v5.2 baseline (61\% surv, 0.497 score):
+\textbf{v2.5 = $+5.8$ pt overall, $+21$ pt Vulnerable,
+$+25$ pt FER}.
+
+\paragraph{Important caveats.}
+
+\begin{itemize}
+\item $n = 50$ means SE $\pm 7$--10 pt per world. FER $+10$ is the
+strongest trend but still $p \approx 0.16$.
+\item Overall $+2$ is within noise. v2.5 is ``v2.1 with no
+measurable downside and a meaningful FER trend.''
+\item 500-run validation deferred to next session if needed.
+\end{itemize}
+
+\subsection{The Single Change in v2.5}
+\label{sec:methodology-v25-change}
+
+\nrmobox{One-line diff}{
+The entire delta from v2.1 to v2.5 is the single line
+\texttt{prod\_w = 0.92} added to the PROBE branch in
+\texttt{engine/omega\_full.py:\_evaluate()}.
+}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+# v2.5 (Apr 25, 2026): PROBE penalty added (was 1.00).
+if mode == MODE_RETREAT:
+    prod_w = 0.70
+elif mode == MODE_BUFFER:
+    prod_w = 0.85
+elif mode == MODE_PROBE:
+    prod_w = 0.92      # <- NEW: was implicit 1.00 in v2.1
+elif mode == MODE_RACE:
+    prod_w = 1.10
+else:                  # NEUTRAL
+    prod_w = 1.00
+\end{lstlisting}
+
+\subsection{How This Was Found}
+\label{sec:methodology-v25-discovery}
+
+\subsubsection{The Option C detour}
+
+This session started by attempting Option C from
+SESSION\_HANDOFF-7: drop v5.2's unmodified \texttt{OmegaFullEngine}
+into the new stack via an adapter
+(\texttt{engine/omega\_v52\_adapter.py}), to test the hypothesis
+that v5.2's PStress 65\% comes from coupled $\Omega$ Full internals
+lost in v2.1's piecemeal port.
+
+Three configurations were tested:
+
+\begin{itemize}
+\item \textbf{C1}: adapter only, v5.2 $\Omega$ Full unmodified.
+\item \textbf{C2}: adapter + post-action correction
+($g \to s_f$ shift in fragile worlds).
+\item \textbf{C3}: adapter + monkey-patched
+\texttt{score\_candidate} with mode-aware penalty.
+\end{itemize}
+
+Initial measurements at $n = 20$--30 suggested big wins
+(C3 PStress 70\%, FER 70\%). But the next subsection explains why
+those numbers were unreliable.
+
+\subsubsection{Concern resolution}
+
+Before drawing conclusions, the user asked for the listed concerns
+to be resolved:
+
+\begin{enumerate}
+\item \textbf{Monkey-patch effectiveness (\#5)}: $\checkmark$
+Verified --- patch is invoked (363 calls per 50-step Vulnerable
+episode), produces measurable score deltas (Recovery mode avg
+$-0.0446$, max $-0.20$). v5.2's \texttt{OmegaFullEngine} accesses
+\texttt{score\_candidate} through module-attribute resolution, not
+local capture, so patches apply correctly.
+\item \textbf{RNG wrapper equivalence (\#3)}: $\checkmark$
+Acceptable --- \texttt{\_RngAdapter} consumes uniforms correctly for
+\texttt{random / exponential / choice / uniform} (matches numpy).
+\texttt{standard\_normal} uses Box-Muller (2 uniforms) where numpy
+uses ziggurat ($\sim 1$ uniform), but distribution is correct.
+\item \textbf{Transition equivalence (\#2)}: $\checkmark$
+\textbf{Exact match} --- v2.1 and v5.2 transition functions agree to
+0.000000 on the deterministic part. Physics is identical.
+\end{enumerate}
+
+\subsubsection{The decisive measurement}
+
+After resolving the structural concerns, we re-measured v2.1, C1, C3
+at $n = 50$ with identical seeds, identical chunked-run methodology,
+all environment variables explicitly set. Results were dramatically
+different from previous $n = 20$--30 measurements --- and revealed
+that several earlier ``C1 vs C3'' comparisons had been measuring
+\textbf{C3 vs C3} because \texttt{OMEGA\_C3=1} was the implicit
+default.
+
+True $n = 50$ results (chunked, env-controlled):
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xccc}
+\toprule
+& \textbf{v2.1} & \textbf{C1 (adapter)} &
+\textbf{C3 (adapter + patch)} \\
+\midrule
+FER & 50\% & 48\% & 62\% \\
+\bottomrule
+\end{tabularx}
+\caption[v2.5 decisive measurement]{The decisive $n = 50$
+measurement.}
+\label{tab:methodology-v25-decisive}
+\end{table}
+
+\paragraph{Two findings.}
+
+\begin{itemize}
+\item C1 (adapter alone) provides \textbf{no benefit} over v2.1 ---
+the v5.2 $\Omega$ Full coupling hypothesis from
+SESSION\_HANDOFF-7 \S 8 is not supported.
+\item C3's FER $+12$ comes from the \textbf{score patch itself},
+specifically the \texttt{Recovery} mode penalty
+($-0.25 \cdot g$), not from v5.2 internals.
+\end{itemize}
+
+\subsubsection{The C3 $\to$ v2.5 transplant}
+
+Source attribution test: disabled the Recovery patch in C3 $\to$
+FER dropped back to 48\% ($=$ C1). So the FER gain depends entirely
+on the productivity penalty. v2.1 already has mode-aware
+productivity weights for BUFFER / RETREAT but \textbf{leaves PROBE
+at 1.00}.
+
+In MAPLayer mode distribution, FER spends $\sim 32\%$ of its steps
+in PROBE. Adding a PROBE penalty (\texttt{prod\_w = 0.92}) to v2.1
+captures the same effect without needing v5.2 adapter, monkey-patch,
+or 40\% speed loss.
+
+\paragraph{Result.}
+v2.5 $=$ v2.1 + 1 line. FER $50 \to 60$ (close to C3's 62),
+Vulnerable $24 \to 26$ (slightly better than v2.1, much better than
+C3's 16). Overall best of the three.
+
+\subsection{Honest Limits}
+\label{sec:methodology-v25-honest-limits}
+
+\subsubsection{Statistical}
+
+\begin{itemize}
+\item $n = 50$ per world, SE $\pm 7$--10 pt. FER's $+10$ pt at
+$z = 1.01$ means $p \approx 0.16$ --- a real trend but not
+statistically significant at $p < 0.05$.
+\item Overall $+2.0$ pt at $z = 0.47$ is within noise. \textbf{v2.5
+is ``v2.1 with PROBE penalty''; cannot be claimed as significantly
+better overall, only as same-or-better with a meaningful FER
+trend.}
+\item 500-run confirmation needed before the FER number can be
+quoted in publication.
+\end{itemize}
+
+\subsubsection{Methodological}
+
+This session caught \textbf{its own measurement errors} during
+C1 / C2 / C3 comparisons. The previous SESSION\_HANDOFF-7 also had
+measurement errors (the v5.2 65\% PStress baseline was $n = 3$ in
+some configs; v2.1's 24\% Vulnerable was 500-run robust but compared
+against unstable C3 numbers). The chunked-run methodology with
+explicit env vars (\texttt{OMEGA\_BACKEND}, \texttt{OMEGA\_C3},
+\texttt{OMEGA\_C2}) and json-checkpointed results is now the
+standard going forward.
+
+\subsubsection{Architectural}
+
+\begin{itemize}
+\item v2.5 preserves the governance--execution separation that has
+held since v2.0.
+\item \texttt{governance/nrmo\_core.py} and
+\texttt{governance/tuning\_layer.py} untouched.
+\item The PROBE penalty reads only \texttt{mode} (passed parameter,
+not governance state) and \texttt{action[0]} (g component). No
+leak.
+\item \texttt{engine/omega\_v52\_adapter.py} remains in the codebase
+as a research artifact and toggle (\texttt{OMEGA\_BACKEND=v52}).
+It works, but is not the production path.
+\end{itemize}
+
+\subsection{What's Closed / What's Open (v2.5)}
+\label{sec:methodology-v25-closed-open}
+
+\paragraph{Closed.}
+
+\begin{itemize}
+\item v1 $\to$ v2.0 regression (physics drift) --- fixed in v2.0 by
+aligning \texttt{core/state.py} and \texttt{core/worlds.py} to v5.2.
+\item v2 PStress investigation (5 attempts in
+SESSION\_HANDOFF-6.5) --- closed as ``not the right framing''; v5.2
+\texttt{OmegaFullEngine} in C1 also fails to reach 65\% PStress, so
+the v5.2 baseline number itself was likely unstable at the $n$ it
+was measured.
+\item Option C hybrid experiment --- closed; produced v2.5
+transplant.
+\item Concerns from SESSION\_HANDOFF-7 \S 8 --- verified (patch
+effective, transition exact, RNG distribution correct).
+\end{itemize}
+
+\paragraph{Open (low priority).}
+
+\begin{itemize}
+\item 500-run validation of v2.5 to confirm FER $+10$ trend reaches
+significance.
+\item 30-civilisation casebook (deferred for $\sim 2$ sessions
+now).
+\item Monograph update with v2.5 numbers.
+\end{itemize}
+
+\subsection{One-Line Takeaway}
+\label{sec:methodology-v25-takeaway}
+
+\nrmobox{One-line takeaway}{
+\centering
+v2.5 $=$ v2.1 + a single PROBE productivity-weight tuning. FER
+$+10$ pt, no measurable downsides, $n = 50$ confirmed. The C3
+adapter experiment was the diagnostic vehicle that found this; the
+production version doesn't need it.
+}
+
+% =====================================================================
+\section{Cross-Session Methodological Principles}
+\label{sec:methodology-cross-session}
+
+The two session-handoff documents establish the following recurring
+methodological principles:
+
+\begin{enumerate}
+\item \textbf{Constitutional compliance is non-negotiable.}
+The 0.55 score in v5.0 was abandoned because achieving it required
+violating governance--execution separation. The 0.50 score is
+correct under constitutional compliance. ``Engine has no independent
+legitimacy without upstream clearance.''
+
+\item \textbf{Honest reporting of measurement errors.}
+Both sessions explicitly recount their own measurement errors:
+v5.0's portfolio dilution discovery; v2.5's discovery that ``C1 vs
+C3'' comparisons were measuring C3 vs C3 due to
+\texttt{OMEGA\_C3=1} default. This honesty is itself part of the
+methodological standard.
+
+\item \textbf{Chunked-run methodology with explicit environment.}
+v2.5 standardised the chunked-run pattern with explicit
+environment-variable control and JSON checkpointing. This is now
+the production standard.
+
+\item \textbf{Architectural-invariant audit at each session.}
+Every session reports separation status ($\checkmark$ vs.~$\times$).
+v5.0 row ``P6 + action\_risk'' was explicitly marked $\times$
+(violated) and the design was reverted.
+
+\item \textbf{Single-line changes preferred over architectural
+changes.}
+v2.5's entire delta is one line. The session caught itself
+attempting a more elaborate adapter-based hypothesis (Option~C) and
+reduced it to the minimal change with the same effect.
+
+\item \textbf{Statistical honesty about $n$.}
+v2.5 explicitly reports SE $\pm 7$--10 pt and refuses to claim
+significance for the FER $+10$ pt trend ($p \approx 0.16$).
+500-run validation is on the deferred-priority list.
+
+\item \textbf{Source-of-truth files are frozen.}
+Both v5.0 and v2.5 list explicit ``do not change'' files
+(\texttt{governance/}, \texttt{core/state.py},
+\texttt{core/worlds.py}). Engine changes are confined to
+\texttt{engine/} and \texttt{strategies/}.
+\end{enumerate}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item v5.0's $\Omega$ Full architecture in
+Section~\ref{sec:methodology-v50-engine} is documented in detail in
+Part~IX (Section~\ref{sec:omega-full-spec}).
+\item v2.5's PROBE-mode change in
+Section~\ref{sec:methodology-v25-change} corresponds to the v2.5
+critical tuning recorded in
+Section~\ref{sec:impl-engine-auxiliary}.
+\item The empirical results referenced in this chapter are
+documented in Part~XI (Empirical Validation).
+\item The governance--execution separation invariant invoked
+throughout this chapter is the engineering form of
+Invariant~\ref{inv:gov-exec-sep} and the principle articulated in
+Chapter~\ref{ch:strong-engine}.
+\item The deferred priorities (full-scale validation, 30-civilisation
+casebook, monograph update) connect to Future Extensions in
+Part~VIII (Section~\ref{sec:vnext-future-extensions}).
+\end{itemize}

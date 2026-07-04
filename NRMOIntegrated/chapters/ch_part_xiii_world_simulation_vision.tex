@@ -1,0 +1,709 @@
+% chapters/ch_part_xiii_world_simulation_vision.tex
+% Part XIII: World Simulation Vision — The Ideal Form
+%
+% This chapter documents what the world simulation OUGHT to be when fully
+% realised. Not what currently runs (Stage 1 prototype: 100k agents, single
+% civilisation, 5 world types). The Vision is a 1-billion-agent multi-world
+% multi-civilisation simulation with full individual layer, cultural
+% pluralism, theory pluralism, and counterfactual mode.
+%
+% Author note: This chapter is a *forward-looking specification document*.
+% Implementation is incremental (Stage 1 -> Stage 5 = v∞). Including this
+% Vision in the monograph preserves the design intent across the gap
+% between Stage 1 reality and full realisation.
+
+\part{World Simulation Vision (Forward-Looking Specification)}
+
+\noindent\textit{Source: Direct authorial specification from Zarame
+(NRMO research lead). This Part documents the \emph{ideal form} of the
+NRMO ecosystem, of which the Stage 1 prototype (Part XI Chapter
+\ref{ch:historical-validation} and the v4.1 Lineage Monte Carlo) is
+the first running realisation. The implementation roadmap from Stage 1
+to Stage $\infty$ is described in
+Section~\ref{sec:vision-roadmap}.}
+
+\chapter{The World Simulation Vision}
+\label{ch:vision}
+
+\nrmobox{Document scope (CRITICAL)}{
+This chapter \textbf{specifies} a system not yet implemented at full
+scale. The current implementation reaches \textbf{Stage 1} of \textbf{5}
+stages: 100,000 agents in a single civilisation across 5 world variants.
+The Vision describes \textbf{Stage~$\infty$}: 1 billion agents, multiple
+co-evolving civilisations, full individual life layer, pluralistic
+decision theories, counterfactual history mode, and unknown-contact
+worlds.\\[0.4em]
+The Vision is documented here so that:
+\begin{itemize}
+\item Future development has a target architecture rather than ad-hoc
+extension;
+\item Readers (including future selves) understand the research
+ambition that motivated incremental Stage 1 work;
+\item The honest gap between Stage 1 reality and Stage~$\infty$ goal is
+visible, preventing accidental over-claim.
+\end{itemize}
+}
+
+% =====================================================================
+\section{Architectural Vision}
+\label{sec:vision-architecture}
+
+\subsection{The Telescope Architecture}
+\label{sec:vision-telescope}
+
+A 1-billion-agent simulation cannot give every agent identical
+computational resolution; not on any plausible 2026 hardware, and
+arguably not on any future hardware while preserving the per-agent
+fidelity required for "people who decide independently." The
+\textbf{Telescope Architecture} resolves this by stratifying agents
+into four resolution tiers:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{XlrXl}
+\toprule
+\textbf{Tier} & \textbf{Resolution} & \textbf{N} & \textbf{Information}
+& \textbf{Use} \\
+\midrule
+Spotlight & 1 day & 1 person & full event log, full memory, full
+decision theory & main subject \\
+Local Field & 1 month & $\approx 10^3$ & per-agent state, mid-detail
+events & social network \\
+Civilisation & 1 year & $\approx 10^7$ & vectorised state arrays,
+agent classes & civilisation-level dynamics \\
+Global Background & 10 years & $\approx 10^9$ & cohort
+representations (100 per cohort) & aggregate global dynamics \\
+\bottomrule
+\end{tabularx}
+\caption[Telescope Architecture tiers]{Four-tier Telescope
+Architecture. Total \emph{counted} agents reach $10^9$; full-detail
+simulation effort scales as $\sim10^6$.}
+\label{tab:vision-telescope}
+\end{table}
+
+\paragraph{Spotlight protocol.}
+At the start of each simulation, the operator selects a Spotlight
+target (one individual, identified by birth year, civilisation, family
+seed, and birth order). The simulation runs at maximum resolution for
+this individual; reduced resolution for everyone else. The Spotlight
+can be re-bound mid-simulation, allowing alternative perspectives on
+the same simulated world.
+
+\paragraph{Why this matters for NRMO.}
+NRMO's central claim is that governance under absorbing failure risk
+generalises across scales (individual, family, civilisation). The
+Telescope Architecture is the minimal mechanism that lets all three
+scales be simulated \emph{simultaneously and mutually consistently} ---
+the Spotlight individual's choices feed into family dynamics, which
+feed into civilisation aggregates, which loop back as world-level
+shocks affecting the Spotlight individual.
+
+\subsection{Multi-World Generator}
+\label{sec:vision-multiworld}
+
+Real history is a single sample from a much larger space of possible
+worlds. The Vision implements a parametric generator over alternative
+worlds:
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xl}
+\toprule
+\textbf{World variant} & \textbf{Characterising parameters} \\
+\midrule
+Normal Earth & Historical baseline (calibrated to recorded shocks). \\
+Science-Heavy & Tech inflection 168 years earlier; religion strength 0.2. \\
+Religion-Heavy & Tech inflection deferred; religion strength 0.9; faith
+buffer 0.20. \\
+Sci-Religion-Mix & Both science and religion strong (1.2 / 0.7). \\
+Accelerated-Tech & Industrial revolution at 1500 (300 yr early); tech
+acceleration 2.0. \\
+Unknown-Encounter & External contact event in 1480--1520 window;
+catalyst tech transfer. \\
+Custom & User-supplied parameter vector. \\
+\bottomrule
+\end{tabularx}
+\caption[World variants]{World variants. Each variant is a parameter
+override on the Normal Earth baseline.}
+\label{tab:vision-worlds}
+\end{table}
+
+\paragraph{Why multi-world.}
+A single-world simulation cannot tell us which features of NRMO's
+performance are due to the structure of NRMO and which are artefacts
+of a particular historical sequence. Running NRMO across the world
+parameter space identifies:
+
+\begin{enumerate}
+\item Which world parameters break NRMO (showing its boundary of
+applicability);
+\item Which competing decision theories dominate in worlds different
+from ours (Faith dominates in Religion-Heavy worlds; NRMO dominates
+in Science-Heavy and Mix worlds);
+\item Whether \textbf{NRMO advantage} is robust or brittle across
+worlds.
+\end{enumerate}
+
+This is the honest framing required by the
+\texttt{honest claim regimen} that has guided this research from the
+beginning. Stage 1 has confirmed that NRMO is not universally
+dominant; it is dominant in worlds resembling our own and in
+science-leaning futures, but Faith outperforms NRMO in Religion-Heavy
+and Accelerated-Tech worlds.
+
+\subsection{Cultural Modules}
+\label{sec:vision-cultural-modules}
+
+Each civilisation in the simulation is represented by a
+\textbf{Cultural Module} that encapsulates region-specific
+institutions:
+
+\begin{itemize}[itemsep=2pt]
+\item \texttt{Japan\_Module}: honke/bunke/yōshi-saki (multi-branch
+portfolio), jisha-azuke, za, buke-hōkō, Edo occupational matrix.
+\item \texttt{China\_Module}: zōngzú (extended kinship), kējǔ
+(imperial examination), dézhì (rule by virtue), wàiqī (consort
+families).
+\item \texttt{Europe\_Module}: primogeniture (eldest son inherits),
+guild apprenticeship, monasteries, feudal vassalage, princely
+states.
+\item \texttt{Islamic\_Module}: waqf (charitable endowments),
+ulama scholar networks, merchant trade networks, family-based
+craft inheritance.
+\item \texttt{SubSaharan\_Module}: extended kinship
+(\textit{patronymic}), age-grade systems, oral tradition transmission.
+\item \texttt{Indic\_Module}: caste-based occupational
+heritability, joint-family households, dharma-grounded duty
+ethics.
+\item \texttt{Indigenous\_Americas\_Module}, \texttt{Polynesian\_Module},
+\texttt{Steppe\_Nomadic\_Module}, etc.
+\end{itemize}
+
+\paragraph{Module interface.}
+Each Cultural Module exposes a common interface:
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+class CulturalModule:
+    occupations: list[Occupation]       # local job categories
+    inheritance_rules: InheritanceFn    # who inherits what
+    region_matrix: ndarray              # geographic mobility
+    social_classes: list[Class]         # vertical strata
+    marriage_rules: MarriageFn          # who marries whom
+    shock_response: ShockFn             # cultural response to crisis
+    decision_theory_dist: dict          # how strategies are distributed
+\end{lstlisting}
+
+This permits multiple modules to coexist (for inter-civilisation
+interaction) while preserving each culture's idiosyncratic Special.
+
+\paragraph{Why this matters.}
+The current Stage 1 implementation hard-codes Japan-specific
+parameters. The Vision generalises this so the simulation runs across
+civilisations \emph{simultaneously}, and the operator can ask:
+``How does NRMO perform if applied universally vs.\ if applied only in
+the civilisation that invents it?''
+
+% =====================================================================
+\section{The Individual Layer}
+\label{sec:vision-individual}
+
+The current Stage 1 implementation tracks individuals only as
+state-vector summaries (occupation, region, six-dim state). The Vision
+treats individuals as first-class entities with rich subjective and
+biographical detail.
+
+\subsection{Individual State Schema}
+\label{sec:vision-individual-state}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Field} & \textbf{Description} & \textbf{Example} \\
+\midrule
+\texttt{birth\_year} & Birth year in simulation & 1842 \\
+\texttt{civilisation} & Cultural module & "Japan" \\
+\texttt{region} & Region within civilisation & "Setouchi-Kibi" \\
+\texttt{family\_seed} & Reference to family lineage & UUID \\
+\texttt{birth\_order} & 1st son, 2nd daughter, etc. & 3 \\
+\texttt{health} & Vitality, decreasing with age and shock & 0.62 \\
+\texttt{skill\_specialty} & Concrete skill (not just occupation class) &
+"silk weaving" \\
+\texttt{social\_capital} & Connections in social graph & 0.34 \\
+\texttt{psychological\_traits} & Risk tolerance, trust, etc. & vec[0.4,
+0.7, 0.2, ...] \\
+\texttt{decision\_theory} & The theory they personally use & "NRMO\_vNext" \\
+\texttt{life\_event\_log} & Log of major events & list[Event] \\
+\texttt{memory} & Past lessons and family wisdom inherited & list[Memory] \\
+\texttt{subjective\_experiences} & Emotional records of key moments & list[Experience] \\
+\bottomrule
+\end{tabularx}
+\caption[Individual state schema]{Vision-level individual state.
+Stage 1 tracks only fields with vectorisable correspondence
+(occupation, region, 6-dim aggregate state); the Vision exposes the
+full schema for at least the Spotlight individual.}
+\label{tab:vision-individual-state}
+\end{table}
+
+\subsection{Decision Moments}
+\label{sec:vision-decision-moments}
+
+Real human lives are punctuated by a small number of decisive moments.
+Each Spotlight individual encounters approximately:
+
+\begin{itemize}[itemsep=1pt]
+\item Marriage choice (timing, partner, region of partner's family).
+\item Career transition (continue family business, learn new craft,
+emigrate to city, enter clergy).
+\item Inheritance acceptance (accept main heir status, decline in
+favour of sibling, leave the family).
+\item Migration (stay in birthplace, relocate to capital, emigrate to
+distant province / colony / overseas).
+\item Crisis response (war evacuation, plague flight, famine
+adaptation, religious conversion).
+\item Children allocation (how many sons enter family business
+vs.\ marry into other families vs.\ enter temple/monastery).
+\end{itemize}
+
+Each Decision Moment is resolved by the individual's decision theory,
+applied to their specific subjective state. This is where NRMO,
+EVMax, Faith, etc.\ produce different choices for the \emph{same}
+external situation.
+
+\subsection{Subjective Experience Logging}
+\label{sec:vision-subjective}
+
+For the Spotlight individual, the simulation maintains a chronicle of
+internal experience:
+
+\begin{itemize}
+\item Year 1842 (birth): no record.
+\item Year 1855 (age 13, first plague exposure): \emph{terror, gratitude
+upon survival}.
+\item Year 1862 (age 20, marriage): \emph{relief, social anchoring}.
+\item Year 1868 (age 26, Meiji Restoration): \emph{disorientation, new
+opportunity sensed}.
+\item Year 1880 (age 38, business decision): \emph{deliberation,
+choice}.
+\item Year 1895 (age 53, son's death in war): \emph{grief, reflection on
+purpose}.
+\item Year 1910 (age 68): \emph{retrospective on a life lived}.
+\end{itemize}
+
+This is the literary substrate of "human-life-as-narrative." It is not
+required for NRMO performance evaluation, but it is required for the
+research project to remain \emph{about people}.
+
+% =====================================================================
+\section{Multi-Theory Pluralism}
+\label{sec:vision-pluralism}
+
+\subsection{Decision Theory as Plugin}
+\label{sec:vision-plugin}
+
+The Vision treats every decision theory as a plugin conforming to a
+common interface:
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+class DecisionTheory(ABC):
+    @abstractmethod
+    def choose(self, state, observations, memory) -> Action:
+        ...
+    @abstractmethod
+    def update_after_outcome(self, action, outcome) -> None:
+        ...
+
+class NRMOTheory(DecisionTheory): ...        # NRMO_vNext + Omega Full
+class EVMaxTheory(DecisionTheory): ...       # expected-value max
+class FaithTheory(DecisionTheory): ...       # providence-based
+class FamilyTraditionTheory(DecisionTheory): # follow ancestral wisdom
+class ImitationTheory(DecisionTheory): ...   # mimic local successful
+class DriftTheory(DecisionTheory): ...       # null model (v3.7)
+class CharismaTheory(DecisionTheory): ...    # follow charismatic leader
+class IdeologyTheory(DecisionTheory): ...    # follow doctrine
+\end{lstlisting}
+
+\subsection{Theory Distribution and Memetic Dynamics}
+\label{sec:vision-memetic}
+
+The Vision implements two levels of theory pluralism:
+
+\paragraph{Static distribution.}
+At simulation start, each agent is assigned a theory by sampling from
+a per-civilisation distribution. This is the level Stage 1 implements.
+
+\paragraph{Memetic dynamics (Vision only).}
+Theories themselves \emph{evolve}: agents observe nearby successes and
+failures, and may switch theories. The dominant theory in a society
+shifts over time, and crisis events accelerate switching. Specifically:
+
+\begin{itemize}
+\item After a major collapse (lineage failure, civilisation collapse),
+neighbours of the failed agent re-evaluate their theory.
+\item After a major success (lineage flourishing, professional
+elevation), neighbours partially adopt the successful theory.
+\item In stable times, theory inheritance is high (children adopt
+parents' theory).
+\item Black-swan events (Reformation, Enlightenment, Industrial
+Revolution) can flip whole populations between theories.
+\end{itemize}
+
+This is the mechanism by which a world's dominant decision theory
+becomes \emph{endogenous} to the world's history rather than
+exogenously fixed.
+
+% =====================================================================
+\section{Random Event Catalog}
+\label{sec:vision-events}
+
+\subsection{Event Types}
+\label{sec:vision-event-types}
+
+The Vision includes a catalog of $\sim$50 randomisable historical
+events spanning four categories:
+
+\begin{itemize}
+\item \textbf{Natural}: volcanic eruptions (Tambora 1815-style),
+earthquakes, tsunamis, droughts, Little Ice Age, climate inflection
+points.
+\item \textbf{Epidemic}: Black Death, smallpox waves, Spanish flu,
+cholera, plague reservoirs.
+\item \textbf{Technological}: printing press, gunpowder, steam engine,
+electricity, antibiotics, computing, biotechnology.
+\item \textbf{Political/Cultural}: religious reformations, dynastic
+collapses, ideologies (Enlightenment, nationalism, communism,
+neoliberalism), unknown-civilisation contact.
+\end{itemize}
+
+\subsection{Frequency Modes}
+\label{sec:vision-frequency}
+
+The operator selects one of three frequency modes per simulation
+run:
+
+\begin{itemize}
+\item \textbf{Sporadic}: Each event type's occurrence probability is
+calibrated to historical record (median run: 8--12 events occur).
+\item \textbf{Frequent}: Probabilities scaled $\times 3$. Events become
+common; civilisation must absorb continuous turbulence.
+\item \textbf{Sparse}: Probabilities scaled $\times 0.3$. Few events
+occur; civilisation drifts under near-stable conditions.
+\end{itemize}
+
+The frequency mode is itself a key world parameter. Civilisations may
+be optimised for one frequency regime and fail catastrophically in
+another. \textbf{NRMO's drift control mechanism is hypothesised to be
+particularly valuable in the Frequent regime}, where many small shocks
+sum into long-horizon environmental degradation.
+
+\subsection{Black Swan Events}
+\label{sec:vision-black-swan}
+
+Beyond the catalog, the Vision implements a \textbf{Black Swan
+generator}: events with very low probability but very high impact, not
+in the catalog. These include:
+
+\begin{itemize}
+\item Sudden technological discontinuity (faster-than-historical
+inventions);
+\item Civilisation-ending astrophysical events (asteroid strike,
+gamma-ray burst, supernova);
+\item Unknown-contact events (alien encounter, parallel-civilisation
+contact, etc.);
+\item Sudden ideology birth (a new theory emerging that does not exist
+in the plugin catalog).
+\end{itemize}
+
+These are sampled at probability $\sim 10^{-4}$ per simulation year.
+Their inclusion forces the simulation to stress-test decision theories
+against truly unforeseen circumstances.
+
+% =====================================================================
+\section{Counterfactual History Mode}
+\label{sec:vision-counterfactual}
+
+The Vision supports a counterfactual mode in which the operator selects
+a specific historical decision point and overrides the actor's
+choice:
+
+\begin{itemize}
+\item ``Japan does not adopt sakoku (national seclusion) in 1639.''
+\item ``Constantinople does not fall in 1453.''
+\item ``Industrial Revolution begins in Song Dynasty China (1100).''
+\item ``Aztec Empire encounters Europeans first as merchants
+(1480) instead of conquerors (1519).''
+\item ``Tokugawa Yoshimune fails the Kyōhō Reforms (1716).''
+\end{itemize}
+
+For each counterfactual, the simulation runs forward from the override
+point and produces a \emph{counterfactual world history}. The operator
+can then compare:
+
+\begin{itemize}
+\item Civilisation trajectory (R, E, G, O, K, X over time);
+\item Spotlight individual's life chronicle in counterfactual world
+vs.\ original;
+\item Strategy ranking (which decision theories thrive in the
+counterfactual);
+\item Random event distribution (counterfactual histories may produce
+different events).
+\end{itemize}
+
+This is the highest-leverage research mode, because it directly
+answers ``what does NRMO buy us?'' --- by comparing worlds where NRMO
+is and is not adopted at a specific decision point.
+
+% =====================================================================
+\section{Implementation Roadmap}
+\label{sec:vision-roadmap}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{ccXc}
+\toprule
+\textbf{Stage} & \textbf{Agents} & \textbf{Features added} & \textbf{Memory} \\
+\midrule
+\textbf{Stage 1 (v5.0)} & $10^5$ & 5 worlds, 6 theories, simple
+random events, single-civ Spotlight & 4 GB \\
+Stage 2 (v5.5) & $10^6$ & + Individual layer expansion, full life
+chronicle for 100+ subjects & 16 GB \\
+Stage 3 (v6.0) & $10^7$ & + Cultural Modules (Japan + 3 others),
+inter-civilisation interaction & 64 GB \\
+Stage 4 (v7.0) & $10^8$ & + Memetic dynamics, Black Swan events,
+counterfactual mode, GPU acceleration & 128 GB \\
+\textbf{Stage 5 (v$\infty$)} & $\boldsymbol{10^9}$ & \textbf{+ Full
+Telescope across 10+ Cultural Modules; complete subjective experience
+logging for Spotlight; full counterfactual matrix} & 256 GB \\
+\bottomrule
+\end{tabularx}
+\caption[Implementation roadmap]{Five-stage roadmap. Stage 1 complete
+(this document); Stages 2-5 pending. Memory and runtime estimates
+reflect 2026 hardware extrapolations.}
+\label{tab:vision-roadmap}
+\end{table}
+
+\paragraph{Status as of v5.5 monograph.}
+\textbf{Stage 1 complete}: 100,000-agent simulation across 6 world
+variants confirms that decision theory dominance is world-dependent.
+NRMO dominates in Science-Heavy, Mix, and Unknown-Encounter worlds;
+Faith dominates in Religion-Heavy and Accelerated-Tech worlds; Drift is
+universally last. This validates the Vision's core hypothesis that
+multi-world testing is necessary for honest assessment.
+
+% =====================================================================
+\section{Stage 1 Empirical Result}
+\label{sec:vision-stage1-result}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{XCCCCCCC}
+\toprule
+\textbf{Theory} & \textbf{Normal} & \textbf{Sci-Heavy} & \textbf{Rel-Heavy}
+& \textbf{Sci-Rel-Mix} & \textbf{Accel-Tech} & \textbf{Unknown-Enc} & \textbf{Mean} \\
+\midrule
+Faith & 1.154 & 1.140 & \textbf{1.169} & 1.160 & \textbf{1.623} & 1.222 & 1.245 \\
+Adaptive\_OmegaFull & 1.148 & \textbf{1.258} & 1.153 & 1.182 & 1.564 & 1.249 & 1.259 \\
+NRMO\_vNext & 1.153 & 1.256 & 1.146 & \textbf{1.186} & 1.565 & \textbf{1.256} & 1.260 \\
+RiskAdjustedUtility & 1.145 & 1.213 & 1.143 & 1.155 & 1.531 & 1.225 & 1.235 \\
+ExpectedValueMax & 1.140 & 1.149 & 1.150 & 1.148 & 1.338 & 1.156 & 1.180 \\
+Drift & 0.817 & 0.837 & 0.818 & 0.822 & 0.850 & 0.817 & 0.827 \\
+\bottomrule
+\end{tabularx}
+\caption[Stage 1 cross-world result]{Composite score per theory per
+world variant (n=100{,}000 per cell). \textbf{Bold}: best theory in
+column. NRMO/$\Omega$ Full dominates 3/6 worlds; Faith dominates 2/6;
+$\Omega$ Full leads in cross-world mean.}
+\label{tab:vision-stage1-result}
+\end{table}
+
+\paragraph{Key findings (Stage 1).}
+
+\begin{enumerate}
+\item \textbf{World dependence is real.} The best theory varies across
+world types. NRMO is not universally dominant.
+
+\item \textbf{NRMO has the best cross-world mean} (1.260 vs.\ Faith
+1.245), supporting the claim that NRMO is the best general-purpose
+governance theory across diverse worlds.
+
+\item \textbf{Faith dominates Religion-Heavy and Accelerated-Tech.}
+Religion-Heavy is intuitive (faith-aligned world). Accelerated-Tech is
+surprising and warrants further analysis: rapid technological progress
+appears to favour low-decision-cost theories (Faith ranks $\#1$ in
+Accelerated-Tech).
+
+\item \textbf{Drift is uniformly last.} Across all 6 worlds, the no-agency
+baseline ranks last, confirming the agency dividend identified in
+v4.1 (lineage simulation).
+\end{enumerate}
+
+\paragraph{What Stage 1 cannot say.}
+
+\begin{itemize}
+\item No claim about Vision-only features: cultural modules,
+inter-civilisation interaction, memetic dynamics, counterfactual mode.
+\item No claim about emergent behaviour at $10^9$ agent scale.
+\item No claim about specific historical individuals or events.
+\item No claim that the world parameters are calibrated to physical
+reality.
+\end{itemize}
+
+% =====================================================================
+\section{Stage 1 Critical Revision: Two-Sided Faith (v5.0.1)}
+\label{sec:vision-stage1-revision}
+
+\nrmobox{Critical fix to Stage 1}{
+The initial Stage 1 implementation (v5.0) implemented Faith as a single
+theory with a unilateral failure-reduction buffer (the ``Faith Buffer'').
+This is structurally a \textbf{God's-Invisible-Hand bias}: Faith agents
+got a free survival bonus with no costs. The result that Faith dominated
+in Religion-Heavy and Accelerated-Tech worlds was therefore a
+\textbf{simulation artefact, not a genuine empirical finding}.\\[0.4em]
+v5.0.1 fixes this by decomposing Faith into 6 historically-grounded
+sub-theories (Buddhist / Communal / Calvinist / Charismatic / Ascetic /
+Militant), each with explicit positive AND negative mechanisms; making
+\texttt{religion\_strength} an endogenous variable evolving with shock
+history and tech acceleration; and implementing endogenous religious
+conflict shocks when Militant Faith share is high.
+}
+
+\subsection{Six Faith Sub-Theories}
+\label{sec:vision-faith-subtheories}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Sub-theory} & \textbf{Positive mechanism} & \textbf{Negative mechanism} \\
+\midrule
+Buddhist & Psychological resilience (impermanence acceptance), literacy promotion (sutras) & Sengoku suppression of Ikkō-ikki, Meiji haibutsu-kishaku \\
+Communal & Strong communal insurance (waqf, charity), kinship support, education promotion & None major (historically robust) \\
+Calvinist & Discipline, work ethic, scripture literacy push & Persecution by Catholic regimes (Sengoku/Edo eras) \\
+Charismatic & Hope-based resilience for individuals & \textbf{Cult collapse tail events} (mass-death possibility) \\
+Ascetic & Personal psychological resilience & \textbf{Vow of celibacy} -- structural dead-end for biological lineage \\
+Militant & Warrior-brotherhood mutual aid & Combat mortality, \textbf{generates endogenous religious wars when share is large} \\
+\bottomrule
+\end{tabularx}
+\caption[Faith sub-theories with both effects]{Six Faith sub-theories with
+both positive and negative mechanisms. Each sub-theory is calibrated to
+historical-sociological evidence rather than asserted by fiat.}
+\label{tab:vision-faith-sides}
+\end{table}
+
+\subsection{Endogenous Religion Strength}
+\label{sec:vision-religion-endogenous}
+
+\texttt{religion\_strength} is no longer a fixed world parameter; it
+evolves over time:
+
+\begin{itemize}
+\item Major shock (epidemic, war) raises religion\_strength
+($+0.03 \times$ shock magnitude). Historical analogue: flagellant
+movements following the Black Death (1347--1353).
+\item Tech acceleration lowers religion\_strength
+($-0.008 \times$ excess factor). Historical analogue: Inglehart--Welzel
+secularisation thesis.
+\item Militant share above 15\% causes polarisation
+($+0.01$ per generation).
+\item Modern long-run secularisation: $-0.005$ per generation after
+1900.
+\end{itemize}
+
+\subsection{Endogenous Religious Conflict}
+\label{sec:vision-religious-conflict}
+
+When Militant Faith agents form a sufficient minority in a religious
+society, they generate \textbf{shocks affecting all agents (not just
+Faith agents)}:
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+if militant_share > 0.05 and religion_strength > 0.30:
+    P_conflict = 0.12 * militant_share * religion_strength * era_mult
+    if conflict_triggered:
+        global_shock += 0.04 + 0.10 * militant_share * religion_strength
+\end{lstlisting}
+
+This mechanism realises the historical truth that ``\emph{religious
+wars produce no winners}.'' In Stage 1 v5.0.1 stress tests, when Militant
+share is forced to 33\%, three endogenous conflicts add a cumulative
+$+0.218$ shock to the world; Militant Faith itself drops from would-be
+\#1 to \#6 in ranking, while non-violent Faith\_Communal becomes \#1
+(beneficiary of the conflict-induced demand for stability).
+
+\subsection{v5.0.1 Cross-World Result}
+\label{sec:vision-stage1-revised-result}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{XCCCCCCC}
+\toprule
+\textbf{Theory} & \textbf{Normal} & \textbf{Sci-Heavy} & \textbf{Rel-Heavy}
+& \textbf{Sci-Rel-Mix} & \textbf{Accel-Tech} & \textbf{Unknown-Enc} & \textbf{Mean} \\
+\midrule
+Faith\_Communal & 1.16 & 1.26 & 1.16 & 1.20 & \textbf{1.75} & \textbf{1.51} & \textbf{1.34} \\
+Faith\_Buddhist & \textbf{1.19} & 1.25 & \textbf{1.17} & 1.20 & 1.61 & 1.31 & 1.29 \\
+Adaptive\_OmegaFull & 1.15 & 1.26 & 1.13 & 1.18 & 1.56 & 1.25 & 1.25 \\
+NRMO\_vNext & 1.15 & 1.25 & 1.14 & 1.17 & 1.54 & 1.26 & 1.25 \\
+RiskAdjustedUtility & 1.15 & 1.21 & 1.14 & 1.16 & 1.49 & 1.23 & 1.23 \\
+Faith\_Militant & 1.10 & 1.22 & 1.13 & 1.16 & 1.51 & 1.14 & 1.21 \\
+Faith\_Calvinist & 1.15 & 1.17 & 1.16 & 1.17 & 1.34 & 1.19 & 1.20 \\
+ExpectedValueMax & 1.14 & 1.15 & 1.14 & 1.15 & 1.22 & 1.15 & 1.16 \\
+Faith\_Charismatic & 1.06 & 1.15 & 0.94 & 1.02 & 1.61 & 1.06 & 1.14 \\
+Drift & 0.82 & 0.83 & 0.81 & 0.83 & 0.82 & 0.82 & 0.82 \\
+\textbf{Faith\_Ascetic} & 0.29 & 0.29 & 0.29 & 0.30 & 0.28 & 0.30 & \textbf{0.29} \\
+\bottomrule
+\end{tabularx}
+\caption[Stage 1 v5.0.1 result]{Cross-world ranking with two-sided
+Faith implementation. Faith\_Communal achieves the highest mean, but
+this reflects historical reality of communal-based religions
+(Confucianism, Islamic waqf, early Christianity), not simulation bias.
+Faith\_Ascetic correctly suffers structural collapse due to
+celibacy-induced biological dead-end.}
+\label{tab:vision-stage1-v501}
+\end{table}
+
+\paragraph{Honest interpretation.}
+The v5.0.1 result reveals three key insights:
+
+\begin{enumerate}
+\item \textbf{Communal Faith is robust because it implements the same
+distribution-heavy strategy as NRMO\_vNext.} The two are not really in
+competition; they are different verbal framings of similar action
+allocations.
+
+\item \textbf{NRMO is third in cross-world mean but uniformly robust.}
+Unlike Faith\_Communal which dominates only certain worlds,
+NRMO\_vNext / $\Omega$ Full perform consistently well in all 6 worlds
+without ever achieving runaway success or catastrophic failure.
+
+\item \textbf{Faith\_Ascetic correctly suffers structural collapse.}
+The vow of celibacy in monastic traditions produces no biological
+heirs. Stage 1 v5.0.1 reproduces this with continuation rates of
+17--22\% across all worlds.
+
+\item \textbf{Faith\_Charismatic is world-dependent.} In high-religion
+worlds, cult collapse events trigger more often. This is consistent
+with historical patterns (Jonestown, Heaven's Gate, etc.\ require a
+broader religiously-receptive cultural milieu).
+
+\item \textbf{Faith\_Militant cannot self-perpetuate.} When Militant
+share is high, it generates shocks harming itself. This realises the
+``no winners in religious wars'' historical pattern.
+\end{enumerate}
+
+The v5.0 result that ``Faith universally dominates'' was a
+simulation artefact. The v5.0.1 result that ``Faith is heterogeneous;
+Communal Faith and NRMO are converging on similar policies; Ascetic
+Faith fails structurally; Militant Faith self-undermines'' is
+\textbf{the more honest empirical finding}.
+
+% =====================================================================
+% Note: "Connections to Other Parts" section moved to ch_part_xiii_v52_to_v62.tex
+%       (after the v5.2--v6.2 development chapters)

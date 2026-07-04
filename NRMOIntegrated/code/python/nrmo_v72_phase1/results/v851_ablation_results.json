@@ -1,0 +1,1744 @@
+{
+  "version": "v8.5.1_ablation_suite",
+  "description": "handoff doc § 15 — 12 variant ablation",
+  "main_results": {
+    "mild": {
+      "n_runs": 150,
+      "v841_baseline": {
+        "median": 16.279558574280216,
+        "mean": 15.815483400734738,
+        "std": 4.944065952785084,
+        "p25": 14.427652908936519,
+        "p5": 4.07202651630133,
+        "cvar_lower_10pct": 4.6243685046892455,
+        "ruin_rate": 1.0,
+        "median_steps": 33.0
+      },
+      "recover_fixed_baseline": {
+        "median": 25.464647571969202,
+        "mean": 22.872523473637745,
+        "std": 10.410317781295047,
+        "p25": 16.233752774348197,
+        "p5": 3.9096231784282303,
+        "cvar_lower_10pct": 3.428253600459992,
+        "ruin_rate": 1.0,
+        "median_steps": 63.0
+      },
+      "variants": {
+        "full": {
+          "metrics": {
+            "median": 25.8766559698051,
+            "mean": 23.84678906856174,
+            "std": 8.83252659052756,
+            "p25": 21.611207617985993,
+            "p5": 3.88987635685646,
+            "cvar_lower_10pct": 3.7554476325919603,
+            "ruin_rate": 1.0,
+            "median_steps": 61.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2918,
+            "DefensiveCandidate": 1631,
+            "RecoveryCandidate": 3585
+          },
+          "context_histogram": {
+            "Normal": 4910,
+            "Recovery": 1474,
+            "Emergency": 1750
+          },
+          "aggressive_counters": {
+            "generated_count": 1017,
+            "eligible_count": 852,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_recovery": {
+          "metrics": {
+            "median": 18.279927216941488,
+            "mean": 17.941383932616233,
+            "std": 5.541396977203294,
+            "p25": 16.445611152763597,
+            "p5": 11.920253751920441,
+            "cvar_lower_10pct": 8.393646914442053,
+            "ruin_rate": 1.0,
+            "median_steps": 42.0
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 4721,
+            "ExplorationCandidate": 1074,
+            "AggressiveEngine": 143
+          },
+          "context_histogram": {
+            "Normal": 1159,
+            "Recovery": 2929,
+            "Emergency": 1850
+          },
+          "aggressive_counters": {
+            "generated_count": 4065,
+            "eligible_count": 1856,
+            "selected_by_merger_count": 143,
+            "final_accepted_count": 143,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "recovery_only": {
+          "metrics": {
+            "median": 25.464647571969202,
+            "mean": 22.872523473637745,
+            "std": 10.410317781295047,
+            "p25": 16.233752774348197,
+            "p5": 3.9096231784282303,
+            "cvar_lower_10pct": 3.428253600459992,
+            "ruin_rate": 1.0,
+            "median_steps": 63.0
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 8043
+          },
+          "context_histogram": {
+            "Normal": 4997,
+            "Recovery": 1374,
+            "Emergency": 1672
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_aggressive": {
+          "metrics": {
+            "median": 25.8766559698051,
+            "mean": 23.84678906856174,
+            "std": 8.83252659052756,
+            "p25": 21.611207617985993,
+            "p5": 3.88987635685646,
+            "cvar_lower_10pct": 3.7554476325919603,
+            "ruin_rate": 1.0,
+            "median_steps": 61.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2918,
+            "DefensiveCandidate": 1631,
+            "RecoveryCandidate": 3585
+          },
+          "context_histogram": {
+            "Normal": 4910,
+            "Recovery": 1474,
+            "Emergency": 1750
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "aggressive_forced": {
+          "metrics": {
+            "median": 25.8766559698051,
+            "mean": 23.84678906856174,
+            "std": 8.83252659052756,
+            "p25": 21.611207617985993,
+            "p5": 3.88987635685646,
+            "cvar_lower_10pct": 3.7554476325919603,
+            "ruin_rate": 1.0,
+            "median_steps": 61.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2918,
+            "DefensiveCandidate": 1631,
+            "RecoveryCandidate": 3585
+          },
+          "context_histogram": {
+            "Normal": 4910,
+            "Recovery": 1474,
+            "Emergency": 1750
+          },
+          "aggressive_counters": {
+            "generated_count": 13964,
+            "eligible_count": 6384,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_mutation": {
+          "metrics": {
+            "median": 25.8766559698051,
+            "mean": 23.84678906856174,
+            "std": 8.83252659052756,
+            "p25": 21.611207617985993,
+            "p5": 3.88987635685646,
+            "cvar_lower_10pct": 3.7554476325919603,
+            "ruin_rate": 1.0,
+            "median_steps": 61.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2918,
+            "DefensiveCandidate": 1631,
+            "RecoveryCandidate": 3585
+          },
+          "context_histogram": {
+            "Normal": 4910,
+            "Recovery": 1474,
+            "Emergency": 1750
+          },
+          "aggressive_counters": {
+            "generated_count": 1017,
+            "eligible_count": 852,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_synthesis": {
+          "metrics": {
+            "median": 24.422903063723005,
+            "mean": 23.718388611209622,
+            "std": 6.3646810984385915,
+            "p25": 21.697014977471333,
+            "p5": 16.79146873236238,
+            "cvar_lower_10pct": 11.258719175403312,
+            "ruin_rate": 1.0,
+            "median_steps": 55.0
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 3170,
+            "RecoveryCandidate": 4643
+          },
+          "context_histogram": {
+            "Normal": 3427,
+            "Recovery": 2452,
+            "Emergency": 1934
+          },
+          "aggressive_counters": {
+            "generated_count": 5399,
+            "eligible_count": 2307,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_invention": {
+          "metrics": {
+            "median": 25.8766559698051,
+            "mean": 23.84678906856174,
+            "std": 8.83252659052756,
+            "p25": 21.611207617985993,
+            "p5": 3.88987635685646,
+            "cvar_lower_10pct": 3.7554476325919603,
+            "ruin_rate": 1.0,
+            "median_steps": 61.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2918,
+            "DefensiveCandidate": 1631,
+            "RecoveryCandidate": 3585
+          },
+          "context_histogram": {
+            "Normal": 4910,
+            "Recovery": 1474,
+            "Emergency": 1750
+          },
+          "aggressive_counters": {
+            "generated_count": 1017,
+            "eligible_count": 852,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "original_merger": {
+          "metrics": {
+            "median": 25.464647571969202,
+            "mean": 22.872523473637745,
+            "std": 10.410317781295047,
+            "p25": 16.233752774348197,
+            "p5": 3.9096231784282303,
+            "cvar_lower_10pct": 3.428253600459992,
+            "ruin_rate": 1.0,
+            "median_steps": 63.0
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 8043
+          },
+          "context_histogram": {
+            "Normal": 4997,
+            "Recovery": 1374,
+            "Emergency": 1672
+          },
+          "aggressive_counters": {
+            "generated_count": 966,
+            "eligible_count": 832,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        }
+      },
+      "elapsed_sec": 46.48852252960205
+    },
+    "moderate": {
+      "n_runs": 150,
+      "v841_baseline": {
+        "median": 15.159360850203226,
+        "mean": 14.938968166865157,
+        "std": 5.954151757742755,
+        "p25": 11.821863457202104,
+        "p5": 4.09172,
+        "cvar_lower_10pct": 3.832348679227571,
+        "ruin_rate": 1.0,
+        "median_steps": 32.0
+      },
+      "recover_fixed_baseline": {
+        "median": 20.01506944897328,
+        "mean": 19.230555631087196,
+        "std": 10.318468722528644,
+        "p25": 10.200684149372666,
+        "p5": 3.5218109202471277,
+        "cvar_lower_10pct": 3.057772502561204,
+        "ruin_rate": 1.0,
+        "median_steps": 52.5
+      },
+      "variants": {
+        "full": {
+          "metrics": {
+            "median": 22.64672953132338,
+            "mean": 21.304273507335573,
+            "std": 10.15463966543341,
+            "p25": 14.15807478279337,
+            "p5": 3.512350920247127,
+            "cvar_lower_10pct": 3.1418736896152164,
+            "ruin_rate": 1.0,
+            "median_steps": 54.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2504,
+            "DefensiveCandidate": 1610,
+            "RecoveryCandidate": 3261,
+            "MutationPathway": 23
+          },
+          "context_histogram": {
+            "Normal": 4126,
+            "Recovery": 1719,
+            "Emergency": 1511,
+            "Stagnation": 42
+          },
+          "aggressive_counters": {
+            "generated_count": 1592,
+            "eligible_count": 1080,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_recovery": {
+          "metrics": {
+            "median": 16.274318864622053,
+            "mean": 16.451301361156627,
+            "std": 6.063875698849376,
+            "p25": 13.494319274152907,
+            "p5": 5.918614849459562,
+            "cvar_lower_10pct": 5.488382213096744,
+            "ruin_rate": 1.0,
+            "median_steps": 40.0
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 4609,
+            "ExplorationCandidate": 1150,
+            "AggressiveEngine": 135,
+            "SynthesisPathway": 11
+          },
+          "context_histogram": {
+            "Normal": 1359,
+            "Recovery": 2721,
+            "Emergency": 1801,
+            "Stagnation": 23,
+            "Opportunity": 1
+          },
+          "aggressive_counters": {
+            "generated_count": 3862,
+            "eligible_count": 1805,
+            "selected_by_merger_count": 135,
+            "final_accepted_count": 135,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "recovery_only": {
+          "metrics": {
+            "median": 20.01506944897328,
+            "mean": 19.230555631087196,
+            "std": 10.318468722528644,
+            "p25": 10.200684149372666,
+            "p5": 3.5218109202471277,
+            "cvar_lower_10pct": 3.057772502561204,
+            "ruin_rate": 1.0,
+            "median_steps": 52.5
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 7129
+          },
+          "context_histogram": {
+            "Normal": 4334,
+            "Recovery": 1445,
+            "Emergency": 1286,
+            "Stagnation": 64
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_aggressive": {
+          "metrics": {
+            "median": 22.64672953132338,
+            "mean": 21.304273507335573,
+            "std": 10.15463966543341,
+            "p25": 14.15807478279337,
+            "p5": 3.512350920247127,
+            "cvar_lower_10pct": 3.1418736896152164,
+            "ruin_rate": 1.0,
+            "median_steps": 54.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2504,
+            "DefensiveCandidate": 1610,
+            "RecoveryCandidate": 3261,
+            "MutationPathway": 23
+          },
+          "context_histogram": {
+            "Normal": 4126,
+            "Recovery": 1719,
+            "Emergency": 1511,
+            "Stagnation": 42
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "aggressive_forced": {
+          "metrics": {
+            "median": 22.64672953132338,
+            "mean": 21.304273507335573,
+            "std": 10.15463966543341,
+            "p25": 14.15807478279337,
+            "p5": 3.512350920247127,
+            "cvar_lower_10pct": 3.1418736896152164,
+            "ruin_rate": 1.0,
+            "median_steps": 54.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2504,
+            "DefensiveCandidate": 1610,
+            "RecoveryCandidate": 3261,
+            "MutationPathway": 23
+          },
+          "context_histogram": {
+            "Normal": 4126,
+            "Recovery": 1719,
+            "Emergency": 1511,
+            "Stagnation": 42
+          },
+          "aggressive_counters": {
+            "generated_count": 13272,
+            "eligible_count": 5887,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_mutation": {
+          "metrics": {
+            "median": 22.64672953132338,
+            "mean": 21.32699004219935,
+            "std": 10.115209201589844,
+            "p25": 14.15807478279337,
+            "p5": 3.6881238871965603,
+            "cvar_lower_10pct": 3.3550080339641495,
+            "ruin_rate": 1.0,
+            "median_steps": 54.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2511,
+            "DefensiveCandidate": 1620,
+            "RecoveryCandidate": 3270,
+            "ExplorationCandidate": 9
+          },
+          "context_histogram": {
+            "Normal": 4126,
+            "Recovery": 1722,
+            "Emergency": 1527,
+            "Stagnation": 35
+          },
+          "aggressive_counters": {
+            "generated_count": 1592,
+            "eligible_count": 1080,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_synthesis": {
+          "metrics": {
+            "median": 22.142550718174103,
+            "mean": 22.092970588922537,
+            "std": 7.96683514751438,
+            "p25": 18.317805294341262,
+            "p5": 7.238719666464833,
+            "cvar_lower_10pct": 7.0665779281435,
+            "ruin_rate": 1.0,
+            "median_steps": 52.0
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 3098,
+            "RecoveryCandidate": 4499,
+            "MutationPathway": 22,
+            "ExplorationCandidate": 7
+          },
+          "context_histogram": {
+            "Normal": 3137,
+            "Recovery": 2588,
+            "Emergency": 1873,
+            "Stagnation": 28
+          },
+          "aggressive_counters": {
+            "generated_count": 4061,
+            "eligible_count": 1891,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_invention": {
+          "metrics": {
+            "median": 22.64672953132338,
+            "mean": 21.304273507335573,
+            "std": 10.15463966543341,
+            "p25": 14.15807478279337,
+            "p5": 3.512350920247127,
+            "cvar_lower_10pct": 3.1418736896152164,
+            "ruin_rate": 1.0,
+            "median_steps": 54.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 2504,
+            "DefensiveCandidate": 1610,
+            "RecoveryCandidate": 3261,
+            "MutationPathway": 23
+          },
+          "context_histogram": {
+            "Normal": 4126,
+            "Recovery": 1719,
+            "Emergency": 1511,
+            "Stagnation": 42
+          },
+          "aggressive_counters": {
+            "generated_count": 1592,
+            "eligible_count": 1080,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "original_merger": {
+          "metrics": {
+            "median": 20.01506944897328,
+            "mean": 19.230555631087196,
+            "std": 10.318468722528644,
+            "p25": 10.200684149372666,
+            "p5": 3.5218109202471277,
+            "cvar_lower_10pct": 3.057772502561204,
+            "ruin_rate": 1.0,
+            "median_steps": 52.5
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 7129
+          },
+          "context_histogram": {
+            "Normal": 4334,
+            "Recovery": 1445,
+            "Emergency": 1286,
+            "Stagnation": 64
+          },
+          "aggressive_counters": {
+            "generated_count": 1250,
+            "eligible_count": 959,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        }
+      },
+      "elapsed_sec": 43.482093811035156
+    },
+    "severe": {
+      "n_runs": 150,
+      "v841_baseline": {
+        "median": 11.294233469207056,
+        "mean": 11.208615033233285,
+        "std": 6.472829467270141,
+        "p25": 5.780626200790753,
+        "p5": 1.6521759963007923,
+        "cvar_lower_10pct": 1.5531586880601436,
+        "ruin_rate": 1.0,
+        "median_steps": 29.0
+      },
+      "recover_fixed_baseline": {
+        "median": 10.270754049429833,
+        "mean": 11.304564495750467,
+        "std": 8.797533644470802,
+        "p25": 4.7400385095255135,
+        "p5": 1.1812799999999999,
+        "cvar_lower_10pct": -0.9468082082163366,
+        "ruin_rate": 1.0,
+        "median_steps": 29.0
+      },
+      "variants": {
+        "full": {
+          "metrics": {
+            "median": 13.022667471654856,
+            "mean": 13.59497051465483,
+            "std": 9.527777368166745,
+            "p25": 5.797534725948338,
+            "p5": 1.1812799999999999,
+            "cvar_lower_10pct": -0.3646622605934083,
+            "ruin_rate": 1.0,
+            "median_steps": 37.5
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1905,
+            "DefensiveCandidate": 1219,
+            "RecoveryCandidate": 2265,
+            "MutationPathway": 94
+          },
+          "context_histogram": {
+            "Normal": 2929,
+            "Recovery": 1333,
+            "Emergency": 1039,
+            "Stagnation": 182
+          },
+          "aggressive_counters": {
+            "generated_count": 1520,
+            "eligible_count": 1047,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_recovery": {
+          "metrics": {
+            "median": 12.910675721462116,
+            "mean": 12.246284362254286,
+            "std": 6.617366060502142,
+            "p25": 6.831058059378527,
+            "p5": 1.0860465696965982,
+            "cvar_lower_10pct": 1.1501494691749883,
+            "ruin_rate": 1.0,
+            "median_steps": 36.5
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 3928,
+            "ExplorationCandidate": 1158,
+            "AggressiveEngine": 114,
+            "SynthesisPathway": 48,
+            "MutationPathway": 4
+          },
+          "context_histogram": {
+            "Normal": 1488,
+            "Recovery": 2150,
+            "Emergency": 1488,
+            "Stagnation": 126
+          },
+          "aggressive_counters": {
+            "generated_count": 3214,
+            "eligible_count": 1607,
+            "selected_by_merger_count": 114,
+            "final_accepted_count": 114,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "recovery_only": {
+          "metrics": {
+            "median": 10.270754049429833,
+            "mean": 11.304564495750467,
+            "std": 8.797533644470802,
+            "p25": 4.7400385095255135,
+            "p5": 1.1812799999999999,
+            "cvar_lower_10pct": -0.9468082082163366,
+            "ruin_rate": 1.0,
+            "median_steps": 29.0
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 4756
+          },
+          "context_histogram": {
+            "Normal": 2960,
+            "Recovery": 931,
+            "Stagnation": 199,
+            "Emergency": 666
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_aggressive": {
+          "metrics": {
+            "median": 13.022667471654856,
+            "mean": 13.59497051465483,
+            "std": 9.527777368166745,
+            "p25": 5.797534725948338,
+            "p5": 1.1812799999999999,
+            "cvar_lower_10pct": -0.3646622605934083,
+            "ruin_rate": 1.0,
+            "median_steps": 37.5
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1905,
+            "DefensiveCandidate": 1219,
+            "RecoveryCandidate": 2265,
+            "MutationPathway": 94
+          },
+          "context_histogram": {
+            "Normal": 2929,
+            "Recovery": 1333,
+            "Emergency": 1039,
+            "Stagnation": 182
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "aggressive_forced": {
+          "metrics": {
+            "median": 13.022667471654856,
+            "mean": 13.59497051465483,
+            "std": 9.527777368166745,
+            "p25": 5.797534725948338,
+            "p5": 1.1812799999999999,
+            "cvar_lower_10pct": -0.3646622605934083,
+            "ruin_rate": 1.0,
+            "median_steps": 37.5
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1905,
+            "DefensiveCandidate": 1219,
+            "RecoveryCandidate": 2265,
+            "MutationPathway": 94
+          },
+          "context_histogram": {
+            "Normal": 2929,
+            "Recovery": 1333,
+            "Emergency": 1039,
+            "Stagnation": 182
+          },
+          "aggressive_counters": {
+            "generated_count": 10061,
+            "eligible_count": 4444,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_mutation": {
+          "metrics": {
+            "median": 13.022667471654856,
+            "mean": 13.695210272065664,
+            "std": 9.327642689818964,
+            "p25": 5.9045478274380105,
+            "p5": 1.1812799999999999,
+            "cvar_lower_10pct": 0.32643515708907084,
+            "ruin_rate": 1.0,
+            "median_steps": 37.5
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1924,
+            "DefensiveCandidate": 1210,
+            "RecoveryCandidate": 2259,
+            "ExplorationCandidate": 48
+          },
+          "context_histogram": {
+            "Normal": 2928,
+            "Recovery": 1339,
+            "Emergency": 1018,
+            "Stagnation": 156
+          },
+          "aggressive_counters": {
+            "generated_count": 1525,
+            "eligible_count": 1047,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_synthesis": {
+          "metrics": {
+            "median": 15.159374657418407,
+            "mean": 15.055003004907777,
+            "std": 8.8977804637218,
+            "p25": 8.742587334696626,
+            "p5": 1.1684201071832525,
+            "cvar_lower_10pct": 0.4786732072380213,
+            "ruin_rate": 1.0,
+            "median_steps": 44.0
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 2407,
+            "RecoveryCandidate": 3463,
+            "MutationPathway": 131,
+            "ExplorationCandidate": 40
+          },
+          "context_histogram": {
+            "Normal": 2471,
+            "Recovery": 2080,
+            "Emergency": 1319,
+            "Stagnation": 171
+          },
+          "aggressive_counters": {
+            "generated_count": 2654,
+            "eligible_count": 1400,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_invention": {
+          "metrics": {
+            "median": 13.022667471654856,
+            "mean": 13.59497051465483,
+            "std": 9.527777368166745,
+            "p25": 5.797534725948338,
+            "p5": 1.1812799999999999,
+            "cvar_lower_10pct": -0.3646622605934083,
+            "ruin_rate": 1.0,
+            "median_steps": 37.5
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1905,
+            "DefensiveCandidate": 1219,
+            "RecoveryCandidate": 2265,
+            "MutationPathway": 94
+          },
+          "context_histogram": {
+            "Normal": 2929,
+            "Recovery": 1333,
+            "Emergency": 1039,
+            "Stagnation": 182
+          },
+          "aggressive_counters": {
+            "generated_count": 1520,
+            "eligible_count": 1047,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "original_merger": {
+          "metrics": {
+            "median": 10.270754049429833,
+            "mean": 11.304564495750467,
+            "std": 8.797533644470802,
+            "p25": 4.7400385095255135,
+            "p5": 1.1812799999999999,
+            "cvar_lower_10pct": -0.9468082082163366,
+            "ruin_rate": 1.0,
+            "median_steps": 29.0
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 4756
+          },
+          "context_histogram": {
+            "Normal": 2960,
+            "Recovery": 931,
+            "Stagnation": 199,
+            "Emergency": 666
+          },
+          "aggressive_counters": {
+            "generated_count": 1236,
+            "eligible_count": 937,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        }
+      },
+      "elapsed_sec": 33.94480919837952
+    },
+    "extreme": {
+      "n_runs": 150,
+      "v841_baseline": {
+        "median": 6.66569636032213,
+        "mean": 8.027641031829189,
+        "std": 6.183849278686609,
+        "p25": 3.1747509872430366,
+        "p5": 0.762065,
+        "cvar_lower_10pct": 0.4758010979935362,
+        "ruin_rate": 1.0,
+        "median_steps": 23.0
+      },
+      "recover_fixed_baseline": {
+        "median": 6.553913041406719,
+        "mean": 7.556857119324875,
+        "std": 6.064861605645771,
+        "p25": 3.354104207200294,
+        "p5": 0.39904308573128916,
+        "cvar_lower_10pct": -0.04889666914372735,
+        "ruin_rate": 1.0,
+        "median_steps": 21.0
+      },
+      "variants": {
+        "full": {
+          "metrics": {
+            "median": 7.015479581209615,
+            "mean": 8.588341895674324,
+            "std": 7.035522676042337,
+            "p25": 3.554748933797696,
+            "p5": 0.7422274810601612,
+            "cvar_lower_10pct": 0.35694843079233574,
+            "ruin_rate": 1.0,
+            "median_steps": 24.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1578,
+            "DefensiveCandidate": 754,
+            "RecoveryCandidate": 1600,
+            "MutationPathway": 60
+          },
+          "context_histogram": {
+            "Normal": 2455,
+            "Recovery": 826,
+            "Emergency": 598,
+            "Stagnation": 113
+          },
+          "aggressive_counters": {
+            "generated_count": 1559,
+            "eligible_count": 1044,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_recovery": {
+          "metrics": {
+            "median": 8.269882097442679,
+            "mean": 9.106270648704351,
+            "std": 7.070162811578417,
+            "p25": 3.965871368539066,
+            "p5": 0.7356234775565922,
+            "cvar_lower_10pct": 0.3278681813573947,
+            "ruin_rate": 1.0,
+            "median_steps": 31.0
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 3260,
+            "ExplorationCandidate": 1181,
+            "AggressiveEngine": 65,
+            "SynthesisPathway": 62,
+            "MutationPathway": 17
+          },
+          "context_histogram": {
+            "Normal": 1543,
+            "Recovery": 1732,
+            "Emergency": 1105,
+            "Stagnation": 205
+          },
+          "aggressive_counters": {
+            "generated_count": 2232,
+            "eligible_count": 1269,
+            "selected_by_merger_count": 65,
+            "final_accepted_count": 65,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "recovery_only": {
+          "metrics": {
+            "median": 6.553913041406719,
+            "mean": 7.556857119324875,
+            "std": 6.064861605645771,
+            "p25": 3.354104207200294,
+            "p5": 0.39904308573128916,
+            "cvar_lower_10pct": -0.04889666914372735,
+            "ruin_rate": 1.0,
+            "median_steps": 21.0
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 3592
+          },
+          "context_histogram": {
+            "Normal": 2517,
+            "Recovery": 533,
+            "Emergency": 414,
+            "Stagnation": 126,
+            "Defense": 2
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_aggressive": {
+          "metrics": {
+            "median": 7.015479581209615,
+            "mean": 8.588341895674324,
+            "std": 7.035522676042337,
+            "p25": 3.554748933797696,
+            "p5": 0.7422274810601612,
+            "cvar_lower_10pct": 0.35694843079233574,
+            "ruin_rate": 1.0,
+            "median_steps": 24.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1578,
+            "DefensiveCandidate": 754,
+            "RecoveryCandidate": 1600,
+            "MutationPathway": 60
+          },
+          "context_histogram": {
+            "Normal": 2455,
+            "Recovery": 826,
+            "Emergency": 598,
+            "Stagnation": 113
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "aggressive_forced": {
+          "metrics": {
+            "median": 7.015479581209615,
+            "mean": 8.588341895674324,
+            "std": 7.035522676042337,
+            "p25": 3.554748933797696,
+            "p5": 0.7422274810601612,
+            "cvar_lower_10pct": 0.35694843079233574,
+            "ruin_rate": 1.0,
+            "median_steps": 24.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1578,
+            "DefensiveCandidate": 754,
+            "RecoveryCandidate": 1600,
+            "MutationPathway": 60
+          },
+          "context_histogram": {
+            "Normal": 2455,
+            "Recovery": 826,
+            "Emergency": 598,
+            "Stagnation": 113
+          },
+          "aggressive_counters": {
+            "generated_count": 7372,
+            "eligible_count": 3394,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_mutation": {
+          "metrics": {
+            "median": 7.015479581209615,
+            "mean": 8.572831772947717,
+            "std": 7.051725462001944,
+            "p25": 3.554748933797696,
+            "p5": 0.5451118115086773,
+            "cvar_lower_10pct": 0.23347510100025273,
+            "ruin_rate": 1.0,
+            "median_steps": 24.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1613,
+            "DefensiveCandidate": 747,
+            "RecoveryCandidate": 1595,
+            "ExplorationCandidate": 50
+          },
+          "context_histogram": {
+            "Normal": 2455,
+            "Recovery": 827,
+            "Emergency": 585,
+            "Stagnation": 138
+          },
+          "aggressive_counters": {
+            "generated_count": 1577,
+            "eligible_count": 1053,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_synthesis": {
+          "metrics": {
+            "median": 6.787156379337695,
+            "mean": 8.38091999631229,
+            "std": 6.642162600688197,
+            "p25": 3.782522126897099,
+            "p5": 0.8555425701836294,
+            "cvar_lower_10pct": -0.1819303819384567,
+            "ruin_rate": 1.0,
+            "median_steps": 26.5
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 1656,
+            "RecoveryCandidate": 2371,
+            "MutationPathway": 118,
+            "ExplorationCandidate": 28
+          },
+          "context_histogram": {
+            "Normal": 2254,
+            "Recovery": 1149,
+            "Emergency": 619,
+            "Stagnation": 146,
+            "Defense": 5
+          },
+          "aggressive_counters": {
+            "generated_count": 1678,
+            "eligible_count": 1063,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_invention": {
+          "metrics": {
+            "median": 7.015479581209615,
+            "mean": 8.588341895674324,
+            "std": 7.035522676042337,
+            "p25": 3.554748933797696,
+            "p5": 0.7422274810601612,
+            "cvar_lower_10pct": 0.35694843079233574,
+            "ruin_rate": 1.0,
+            "median_steps": 24.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1578,
+            "DefensiveCandidate": 754,
+            "RecoveryCandidate": 1600,
+            "MutationPathway": 60
+          },
+          "context_histogram": {
+            "Normal": 2455,
+            "Recovery": 826,
+            "Emergency": 598,
+            "Stagnation": 113
+          },
+          "aggressive_counters": {
+            "generated_count": 1559,
+            "eligible_count": 1044,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "original_merger": {
+          "metrics": {
+            "median": 6.553913041406719,
+            "mean": 7.556857119324875,
+            "std": 6.064861605645771,
+            "p25": 3.354104207200294,
+            "p5": 0.39904308573128916,
+            "cvar_lower_10pct": -0.04889666914372735,
+            "ruin_rate": 1.0,
+            "median_steps": 21.0
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 3592
+          },
+          "context_histogram": {
+            "Normal": 2517,
+            "Recovery": 533,
+            "Emergency": 414,
+            "Stagnation": 126,
+            "Defense": 2
+          },
+          "aggressive_counters": {
+            "generated_count": 1175,
+            "eligible_count": 894,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        }
+      },
+      "elapsed_sec": 26.049848318099976
+    },
+    "total": {
+      "n_runs": 150,
+      "v841_baseline": {
+        "median": 3.8200368704662706,
+        "mean": 5.3840987701442735,
+        "std": 5.562913455878673,
+        "p25": 1.7502365740828103,
+        "p5": 0.11632741568293992,
+        "cvar_lower_10pct": -0.14864155501708368,
+        "ruin_rate": 1.0,
+        "median_steps": 14.5
+      },
+      "recover_fixed_baseline": {
+        "median": 3.3078667419470538,
+        "mean": 4.728548233132236,
+        "std": 4.658003718499229,
+        "p25": 1.6456689548367585,
+        "p5": 0.02132390294115185,
+        "cvar_lower_10pct": -0.12445274114828167,
+        "ruin_rate": 1.0,
+        "median_steps": 14.0
+      },
+      "variants": {
+        "full": {
+          "metrics": {
+            "median": 3.4639431870803925,
+            "mean": 4.9447809136815675,
+            "std": 5.009828834477805,
+            "p25": 1.6717493330566275,
+            "p5": -0.061331875523057605,
+            "cvar_lower_10pct": -0.1459598275433371,
+            "ruin_rate": 1.0,
+            "median_steps": 15.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1130,
+            "RecoveryCandidate": 1122,
+            "DefensiveCandidate": 496,
+            "MutationPathway": 45
+          },
+          "context_histogram": {
+            "Normal": 1780,
+            "Recovery": 478,
+            "Defense": 4,
+            "Stagnation": 80,
+            "Emergency": 451
+          },
+          "aggressive_counters": {
+            "generated_count": 867,
+            "eligible_count": 756,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_recovery": {
+          "metrics": {
+            "median": 4.106690531192597,
+            "mean": 5.291025773318921,
+            "std": 5.012160009287348,
+            "p25": 1.6060132381321055,
+            "p5": -0.25207540970916,
+            "cvar_lower_10pct": -0.7055715890787383,
+            "ruin_rate": 1.0,
+            "median_steps": 20.0
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 2379,
+            "ExplorationCandidate": 956,
+            "AggressiveEngine": 17,
+            "SynthesisPathway": 60
+          },
+          "context_histogram": {
+            "Normal": 1364,
+            "Recovery": 1133,
+            "Stagnation": 132,
+            "Emergency": 763,
+            "Defense": 20
+          },
+          "aggressive_counters": {
+            "generated_count": 968,
+            "eligible_count": 801,
+            "selected_by_merger_count": 17,
+            "final_accepted_count": 17,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "recovery_only": {
+          "metrics": {
+            "median": 3.3078667419470538,
+            "mean": 4.728548233132236,
+            "std": 4.658003718499229,
+            "p25": 1.6456689548367585,
+            "p5": 0.02132390294115185,
+            "cvar_lower_10pct": -0.12445274114828167,
+            "ruin_rate": 1.0,
+            "median_steps": 14.0
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 2634
+          },
+          "context_histogram": {
+            "Normal": 1839,
+            "Recovery": 301,
+            "Stagnation": 114,
+            "Emergency": 373,
+            "Defense": 7
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_aggressive": {
+          "metrics": {
+            "median": 3.4639431870803925,
+            "mean": 4.9447809136815675,
+            "std": 5.009828834477805,
+            "p25": 1.6717493330566275,
+            "p5": -0.061331875523057605,
+            "cvar_lower_10pct": -0.1459598275433371,
+            "ruin_rate": 1.0,
+            "median_steps": 15.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1130,
+            "RecoveryCandidate": 1122,
+            "DefensiveCandidate": 496,
+            "MutationPathway": 45
+          },
+          "context_histogram": {
+            "Normal": 1780,
+            "Recovery": 478,
+            "Defense": 4,
+            "Stagnation": 80,
+            "Emergency": 451
+          },
+          "aggressive_counters": {
+            "generated_count": 0,
+            "eligible_count": 0,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "aggressive_forced": {
+          "metrics": {
+            "median": 3.4639431870803925,
+            "mean": 4.9447809136815675,
+            "std": 5.009828834477805,
+            "p25": 1.6717493330566275,
+            "p5": -0.061331875523057605,
+            "cvar_lower_10pct": -0.1459598275433371,
+            "ruin_rate": 1.0,
+            "median_steps": 15.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1130,
+            "RecoveryCandidate": 1122,
+            "DefensiveCandidate": 496,
+            "MutationPathway": 45
+          },
+          "context_histogram": {
+            "Normal": 1780,
+            "Recovery": 478,
+            "Defense": 4,
+            "Stagnation": 80,
+            "Emergency": 451
+          },
+          "aggressive_counters": {
+            "generated_count": 4663,
+            "eligible_count": 2342,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_mutation": {
+          "metrics": {
+            "median": 3.4639431870803925,
+            "mean": 4.966268490219183,
+            "std": 5.00605915826637,
+            "p25": 1.6717493330566275,
+            "p5": 0.01707724357665466,
+            "cvar_lower_10pct": -0.12222300500941367,
+            "ruin_rate": 1.0,
+            "median_steps": 15.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1153,
+            "RecoveryCandidate": 1136,
+            "DefensiveCandidate": 502,
+            "ExplorationCandidate": 21
+          },
+          "context_histogram": {
+            "Normal": 1783,
+            "Recovery": 490,
+            "Defense": 4,
+            "Stagnation": 78,
+            "Emergency": 457
+          },
+          "aggressive_counters": {
+            "generated_count": 867,
+            "eligible_count": 756,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_synthesis": {
+          "metrics": {
+            "median": 3.3643965061357415,
+            "mean": 4.169899090555688,
+            "std": 4.22956875270346,
+            "p25": 1.3255163637277456,
+            "p5": -0.3004569671874688,
+            "cvar_lower_10pct": -1.1370918561817414,
+            "ruin_rate": 1.0,
+            "median_steps": 16.0
+          },
+          "module_histogram": {
+            "DefensiveCandidate": 1170,
+            "RecoveryCandidate": 1511,
+            "MutationPathway": 90,
+            "ExplorationCandidate": 25
+          },
+          "context_histogram": {
+            "Normal": 1562,
+            "Recovery": 616,
+            "Defense": 21,
+            "Stagnation": 112,
+            "Emergency": 485
+          },
+          "aggressive_counters": {
+            "generated_count": 868,
+            "eligible_count": 757,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "no_invention": {
+          "metrics": {
+            "median": 3.4639431870803925,
+            "mean": 4.9447809136815675,
+            "std": 5.009828834477805,
+            "p25": 1.6717493330566275,
+            "p5": -0.061331875523057605,
+            "cvar_lower_10pct": -0.1459598275433371,
+            "ruin_rate": 1.0,
+            "median_steps": 15.0
+          },
+          "module_histogram": {
+            "SynthesisPathway": 1130,
+            "RecoveryCandidate": 1122,
+            "DefensiveCandidate": 496,
+            "MutationPathway": 45
+          },
+          "context_histogram": {
+            "Normal": 1780,
+            "Recovery": 478,
+            "Defense": 4,
+            "Stagnation": 80,
+            "Emergency": 451
+          },
+          "aggressive_counters": {
+            "generated_count": 867,
+            "eligible_count": 756,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        },
+        "original_merger": {
+          "metrics": {
+            "median": 3.3078667419470538,
+            "mean": 4.728548233132236,
+            "std": 4.658003718499229,
+            "p25": 1.6456689548367585,
+            "p5": 0.02132390294115185,
+            "cvar_lower_10pct": -0.12445274114828167,
+            "ruin_rate": 1.0,
+            "median_steps": 14.0
+          },
+          "module_histogram": {
+            "RecoveryCandidate": 2634
+          },
+          "context_histogram": {
+            "Normal": 1839,
+            "Recovery": 301,
+            "Stagnation": 114,
+            "Emergency": 373,
+            "Defense": 7
+          },
+          "aggressive_counters": {
+            "generated_count": 781,
+            "eligible_count": 724,
+            "selected_by_merger_count": 0,
+            "final_accepted_count": 0,
+            "blocked_by_guard_count": 0,
+            "blocked_by_revalidation_count": 0
+          }
+        }
+      },
+      "elapsed_sec": 18.96336531639099
+    }
+  },
+  "extended_criteria": {
+    "8_recover_fixed_not_equiv_full": {
+      "passed": false,
+      "evidence": [
+        {
+          "level": "mild",
+          "full_med": 25.8766559698051,
+          "rec_fixed_med": 25.464647571969202,
+          "diff": 0.4120083978358977
+        },
+        {
+          "level": "moderate",
+          "full_med": 22.64672953132338,
+          "rec_fixed_med": 20.01506944897328,
+          "diff": 2.631660082350102
+        },
+        {
+          "level": "severe",
+          "full_med": 13.022667471654856,
+          "rec_fixed_med": 10.270754049429833,
+          "diff": 2.751913422225023
+        },
+        {
+          "level": "extreme",
+          "full_med": 7.015479581209615,
+          "rec_fixed_med": 6.553913041406719,
+          "diff": 0.4615665398028961
+        },
+        {
+          "level": "total",
+          "full_med": 3.4639431870803925,
+          "rec_fixed_med": 3.3078667419470538,
+          "diff": 0.15607644513333874
+        }
+      ]
+    },
+    "12_contextual_vs_original_merger": {
+      "passed": true,
+      "evidence": [
+        {
+          "level": "mild",
+          "full_med": 25.8766559698051,
+          "original_med": 25.464647571969202,
+          "diff": 0.4120083978358977
+        },
+        {
+          "level": "moderate",
+          "full_med": 22.64672953132338,
+          "original_med": 20.01506944897328,
+          "diff": 2.631660082350102
+        },
+        {
+          "level": "severe",
+          "full_med": 13.022667471654856,
+          "original_med": 10.270754049429833,
+          "diff": 2.751913422225023
+        },
+        {
+          "level": "extreme",
+          "full_med": 7.015479581209615,
+          "original_med": 6.553913041406719,
+          "diff": 0.4615665398028961
+        },
+        {
+          "level": "total",
+          "full_med": 3.4639431870803925,
+          "original_med": 3.3078667419470538,
+          "diff": 0.15607644513333874
+        }
+      ]
+    },
+    "7_pathway_module_contributions": {
+      "passed": true,
+      "evidence": {
+        "mutation": {
+          "avg_contribution": 0.0,
+          "by_level": [
+            {
+              "level": "mild",
+              "contribution": 0.0
+            },
+            {
+              "level": "moderate",
+              "contribution": 0.0
+            },
+            {
+              "level": "severe",
+              "contribution": 0.0
+            },
+            {
+              "level": "extreme",
+              "contribution": 0.0
+            },
+            {
+              "level": "total",
+              "contribution": 0.0
+            }
+          ],
+          "measurable": false
+        },
+        "synthesis": {
+          "avg_contribution": 0.02981888325687816,
+          "by_level": [
+            {
+              "level": "mild",
+              "contribution": 1.4537529060820944
+            },
+            {
+              "level": "moderate",
+              "contribution": 0.5041788131492773
+            },
+            {
+              "level": "severe",
+              "contribution": -2.1367071857635516
+            },
+            {
+              "level": "extreme",
+              "contribution": 0.22832320187191968
+            },
+            {
+              "level": "total",
+              "contribution": 0.09954668094465102
+            }
+          ],
+          "measurable": false
+        },
+        "invention": {
+          "avg_contribution": 0.0,
+          "by_level": [
+            {
+              "level": "mild",
+              "contribution": 0.0
+            },
+            {
+              "level": "moderate",
+              "contribution": 0.0
+            },
+            {
+              "level": "severe",
+              "contribution": 0.0
+            },
+            {
+              "level": "extreme",
+              "contribution": 0.0
+            },
+            {
+              "level": "total",
+              "contribution": 0.0
+            }
+          ],
+          "measurable": false
+        }
+      }
+    },
+    "5_aggressive_forced_diagnostic": {
+      "passed": true,
+      "evidence": [
+        {
+          "level": "mild",
+          "forced_med": 25.8766559698051,
+          "full_med": 25.8766559698051,
+          "forced_diff": 0.0,
+          "agg_selected": 0,
+          "agg_final_accepted": 0
+        },
+        {
+          "level": "moderate",
+          "forced_med": 22.64672953132338,
+          "full_med": 22.64672953132338,
+          "forced_diff": 0.0,
+          "agg_selected": 0,
+          "agg_final_accepted": 0
+        },
+        {
+          "level": "severe",
+          "forced_med": 13.022667471654856,
+          "full_med": 13.022667471654856,
+          "forced_diff": 0.0,
+          "agg_selected": 0,
+          "agg_final_accepted": 0
+        },
+        {
+          "level": "extreme",
+          "forced_med": 7.015479581209615,
+          "full_med": 7.015479581209615,
+          "forced_diff": 0.0,
+          "agg_selected": 0,
+          "agg_final_accepted": 0
+        },
+        {
+          "level": "total",
+          "forced_med": 3.4639431870803925,
+          "full_med": 3.4639431870803925,
+          "forced_diff": 0.0,
+          "agg_selected": 0,
+          "agg_final_accepted": 0
+        }
+      ]
+    }
+  }
+}

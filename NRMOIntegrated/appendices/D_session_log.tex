@@ -1,0 +1,287 @@
+% appendices/D_session_log.tex
+\chapter{Session Log Compendium}
+\label{app:session-log}
+
+\nrmobox{Document scope}{
+This appendix compiles the chronological session log of the NRMO
+research and engineering project from late 2025 through April 2026.
+Entries are derived from session-handoff records and reconstruction
+trackers.\\[0.3em]
+\textbf{Note on dates}: All dates are 2025--2026. Specific dates are
+given when the source records preserve them; otherwise relative
+ordering only.
+}
+
+% =====================================================================
+\section{Phase 1: Constitutional Foundation (Late 2025 -- Jan 2026)}
+\label{sec:session-log-phase-1}
+
+\subsection*{NRMO v2.0 / v2.1 Authoring}
+
+\begin{itemize}
+\item NRMO Constitutional governance layer drafted with APCSO as a
+mandatory step, formal separation of NRMO veto authority from a
+``Strong Engine''.
+\item v2.0 final $=$ v2.1 base. Introduces ReflexLayer
+(R1--R6 fixed-order rules), ModeSelector with DSI, MetaGovernance
+with $\varepsilon$ supply mechanism.
+\item TTM/PPS 200-pattern catalogue authored: 40 base patterns with
+5 intensity levels each.
+\item Test Suite v1.2 authored: 200 cases (66 INV / 66 WOR / 68 REL)
++ 9 failure-reproduction cases.
+\end{itemize}
+
+\subsection*{NRMO Core Paper Peer Review}
+
+\begin{itemize}
+\item NRMO Core paper reaches v1.2.7 through academic peer review
+cycles.
+\item Final acceptance with publication strategy recommendations
+targeting Operations Research or Management Science.
+\item Three errors from the v2 draft identified and corrected:
+\begin{itemize}
+\item Conditional vs.~unconditional $U(\pi)$ formulation (Plan A
+adopted: unconditional).
+\item Two-state MDP construction for CMDP separation (recurrent-loop
+flaw replaced with independent-step formulation).
+\item Variational analysis of exponential threshold (Euler--Lagrange
+mis-application replaced with integration-by-parts).
+\end{itemize}
+\end{itemize}
+
+% =====================================================================
+\section{Phase 2: Full-Active Combat-Constitution OS
+(February 2026)}
+\label{sec:session-log-phase-2}
+
+\subsection*{NRMO v3.0 R1-FIX Patch}
+
+\begin{itemize}
+\item February 18, 2026: NRMO v3.0 Patch R1-FIX published.
+\item Five revised chapters (26--35): Phased Parallel Execution
+(Phase 1 fork / Phase 2 barrier / Phase 3 join); APSOC Boundary
+Contract (Max Loss Cap, Reversibility Class, Exit Trigger);
+Scoreboard reformulated with $[0,1]$-normalised metrics; Challenge
+Window with explicit update equations and constraint validation.
+\item Conflicts identified and resolved: C-01 (Parallel vs Type
+ZERO), C-04 (APSOC DEADLOCK), D-01 (Scoreboard weighting), D-02
+($\varepsilon_{\max}(B_t)$ definition), D-03 (Challenge Window
+update condition).
+\end{itemize}
+
+% =====================================================================
+\section{Phase 3: vNext + StrongEngine (March 2026)}
+\label{sec:session-log-phase-3}
+
+\subsection*{Civilisation Simulator Build}
+
+\begin{itemize}
+\item NRMO vNext + StrongEngine specification v2.0 drafted.
+\item 6-dimensional civilisation state vector $(R, E, G, O, K, X)$
+introduced.
+\item 5 world families parametrised: Normal, Vulnerable,
+PlanetaryStress, LateStagnation, FastExpansionRace.
+\item 9 comparison strategies defined; full-factorial smoke-test
+design 5 worlds $\times$ 9 strategies $\times$ 30 runs $= 1{,}350$
+episodes.
+\end{itemize}
+
+\subsection*{$\Omega$ Full Implementation}
+
+\begin{itemize}
+\item March 17, 2026 (\texttt{SESSION\_HANDOFF.md}):
+$\Omega$ Full v5.0 finalised.
+\item 8 modules implemented: Strategic Regime Layer / Tactical
+Candidate Layer / Candidate Invention / Fragility Detection /
+Failure Memory / Branch Ruin Attribution / Risk-Adjusted Scoring /
+Portfolio Planner.
+\item Wolf Pursuit, Edge Survival Guard, Long-Horizon Drift Control
+features added.
+\item $\lambda_{\mathrm{drift}} = 1.0$ validated across H200, H500,
+H1000.
+\item Score 0.50 (constitutional) accepted; score 0.55 (separation
+violated) rejected.
+\item Smoke validation: $5 \times 10 \times 30 = 1{,}500$
+episodes.
+\end{itemize}
+
+\subsection*{Architecture Audit}
+
+\begin{itemize}
+\item \texttt{SEPARATION.md} authored; explicit invariant
+documentation.
+\item Separation map: governance (\texttt{core/ruin.py},
+\texttt{governance/nrmo\_core.py},
+\texttt{governance/tuning\_layer.py}) vs.~execution
+(\texttt{engine/strong\_engine.py},
+\texttt{engine/omega\_full.py}).
+\item Audit checks pass on all 6 invariants.
+\end{itemize}
+
+% =====================================================================
+\section{Phase 4: v2.5 Production (April 2026)}
+\label{sec:session-log-phase-4}
+
+\subsection*{Lineage v1 $\to$ v2.0 $\to$ v2.1 $\to$ v2.5}
+
+\begin{itemize}
+\item v1: Initial port from v5.2 baseline. Physics drift discovered
+(non-aligned transition coefficients).
+\item v2.0 (April 22, 2026): Physics drift fixed by aligning
+\texttt{core/state.py} and \texttt{core/worlds.py} to v5.2
+baseline. Verified deterministic-part match to 0.000000.
+\item v2.1: MAPLayer thresholds re-calibrated (soft = 0.10,
+medium = 0.20, hard = 0.35, race = 0.15) to match observed
+\texttt{danger\_confidence} values. Survival improvement
+across all worlds.
+\item v2.5 (April 25, 2026): Single-line PROBE penalty
+\texttt{prod\_w = 0.92} added. FER survival
+$50\% \to 60\%$ ($+10$ pt).
+\end{itemize}
+
+\subsection*{Option C Adapter Experiment}
+
+\begin{itemize}
+\item Hypothesis: v5.2 $\Omega$ Full coupling produces effects lost
+in v2.1's piecemeal port.
+\item Test: \texttt{engine/omega\_v52\_adapter.py} with three
+variants C1 / C2 / C3.
+\item Concerns resolved before drawing conclusions:
+monkey-patch effectiveness verified; RNG distribution correct;
+transition exact match.
+\item Decisive measurement at $n = 50$: C1 (adapter alone) provides
+no benefit; C3's gain comes from the score patch itself, not from
+v5.2 internals.
+\item Conclusion: $\Omega$ Full coupling hypothesis from
+SESSION\_HANDOFF-7 \S 8 is not supported.
+\end{itemize}
+
+\subsection*{C3 $\to$ v2.5 Transplant}
+
+\begin{itemize}
+\item Source-attribution test: disabling Recovery patch in C3 drops
+FER back to 48\%.
+\item Insight: v2.1 already has mode-aware productivity weights for
+BUFFER and RETREAT, but PROBE was implicit 1.00.
+\item Action: add \texttt{prod\_w = 0.92} to PROBE branch (one-line
+diff).
+\item Result: FER $50 \to 60$, Vulnerable $24 \to 26$, overall best
+of three; no measurable downsides.
+\end{itemize}
+
+% =====================================================================
+\section{Phase 5: Monograph v5.5 Reconstruction (April 2026)}
+\label{sec:session-log-phase-5}
+
+\subsection*{Multi-Session LaTeX Rebuild}
+
+\begin{itemize}
+\item Sessions A-K: progressive reconstruction of v4 monograph
+(Parts I--VI) into LaTeX, plus authoring of new Parts VII--XII.
+\item Sources used: \texttt{NRMO\_v5\_updated.pdf} (OCR-extracted
+v4 monograph), \texttt{NRMO\_v5.tex} (v4 LaTeX original, 4722 lines,
+312KB), \texttt{NRMO\_arXiv\_Ikeya.pdf} (Part VII source),
+\texttt{NRMO\_vNext\_Design\_Specification\_v2.pdf} (Part VIII
+source), \texttt{NRMO\_Integrated\_Spec\_v2.pdf} (Part IX source),
+\texttt{nrmo\_full\_v2\_5\_final.zip} (Part X codebase),
+\texttt{NRMO\_v5\_2\_FINAL.zip} (v5.2 reference codebase + smoke
+results).
+\item Three HTML files preserved as additional source material:
+\texttt{nrmo\_complete\_v2.html}, \texttt{nrmo\_rein\_v2\_unified.html},
+\texttt{nrmo\_integrated\_v2.html}.
+\end{itemize}
+
+\subsection*{Test Suite Recovery}
+
+\begin{itemize}
+\item Initial OCR pass: 134/200 cases recovered (INV-001--066 +
+REL-133--200).
+\item After \texttt{NRMO\_v5.tex} upload: full 200 + 9 = 209 cases
+recovered with verbatim LaTeX.
+\item All cases preserved: investment 66 + work 66 + relationship
+68 = 200 main cases; 3 failures per domain = 9 failure
+reproductions.
+\end{itemize}
+
+\subsection*{Master Document Compilation}
+
+\begin{itemize}
+\item Master \texttt{NRMO\_Complete\_v5\_5.tex} compiles cleanly
+with pdflatex (no errors).
+\item v4 LaTeX original preserved separately in \texttt{v4\_source/}
+for OCR-loss-free archival.
+\item Final monograph: 12 parts, 381 pages, $\approx 1.7$ MB PDF.
+\end{itemize}
+
+% =====================================================================
+\section{Cross-Phase Methodological Lessons}
+\label{sec:session-log-cross-phase}
+
+\begin{enumerate}
+\item \textbf{Constitutional discipline beats tactical scores}.
+The 0.55-violation result was rejected; the 0.50-constitutional
+result accepted. The 0.16 score gap was paid in exchange for
+architectural integrity.
+
+\item \textbf{Single-line changes outperform architectural
+changes}. The v2.5 PROBE penalty is one line; it produced the
+$+10$-pt FER improvement that the elaborate Option-C adapter
+experiment failed to find.
+
+\item \textbf{Honest measurement methodology}. The v2.5 session
+caught its own measurement errors during C1 / C2 / C3 comparisons.
+The chunked-run methodology with explicit env-var control and JSON
+checkpointing became standard.
+
+\item \textbf{Source-fidelity over inference}. The reconstruction
+sessions consistently preferred raw source material
+(\texttt{NRMO\_v5.tex}, smoke CSVs, SESSION\_HANDOFF .md) over
+inference-based content. When the OCR pass yielded 134 of 200 test
+cases, the user was asked to provide the source rather than
+having Claude infer the missing 66.
+
+\item \textbf{Frozen files protect invariants}.
+\texttt{governance/}, \texttt{core/state.py}, and
+\texttt{core/worlds.py} are explicitly do-not-change. Engine
+changes are confined to \texttt{engine/} and
+\texttt{strategies/}.
+
+\item \textbf{Statistical honesty}. v2.5 explicitly reports
+$z = 1.01$ ($p \approx 0.16$) for its FER $+10$-pt finding and
+refuses to claim publication-grade significance.
+\end{enumerate}
+
+% =====================================================================
+\section{Open Items at Time of v5.5 Monograph}
+\label{sec:session-log-open-items}
+
+\begin{itemize}
+\item 500-run validation of v2.5 to confirm FER $+10$ trend reaches
+significance.
+\item Full-scale main experiment (5 worlds $\times$ 10 strategies
+$\times$ 500 runs $= 25{,}000$ episodes) with full engine settings.
+\item Vulnerable world structural fix (5\% survival ceiling).
+\item Bayesian parameter tuning of scoring weights.
+\item Cox proportional-hazard analysis on survival statistics.
+\item Multi-agent interaction (trade / conflict / alliance between
+civilisations).
+\item Human-in-the-loop decision experiments.
+\item Longitudinal operational logging (8--12 weeks real-world
+decision logging).
+\end{itemize}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Phase 3--4 details are in Part~XII
+(Chapter~\ref{ch:methodology-notes}).
+\item Phase 5 reconstruction is the meta-level activity that
+produced the v5.5 monograph itself.
+\item Phase 1--2 content fills Parts~I--VI of the v4 monograph
+(reproduced in this v5.5 edition).
+\item Cross-phase principles in
+Section~\ref{sec:session-log-cross-phase} extend the methodological
+principles in
+Part~XII Section~\ref{sec:methodology-cross-session}.
+\end{itemize}

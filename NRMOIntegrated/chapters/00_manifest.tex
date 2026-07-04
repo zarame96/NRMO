@@ -1,0 +1,238 @@
+% chapters/00_manifest.tex
+% Part 0: System Manifest & Context Handoff (v5.5)
+
+\chapter*{System Manifest \& Context Handoff (v5.5)}
+\addcontentsline{toc}{chapter}{System Manifest \& Context Handoff (v5.5)}
+\markboth{System Manifest}{System Manifest}
+
+\section*{Document Identification}
+
+\begin{description}[leftmargin=0pt,style=nextline]
+\item[Title]
+NRMO Complete System v5.5 --- Unified Specification
+\item[Subtitle]
+Mathematical Foundations, Cognitive Architecture, and Empirical Validation
+\item[Author]
+Takashi Ikeya (Zarame), NRMO Research Framework
+\item[Version]
+5.5 (April 2026 --- Empirical Validation Integrated)
+\item[Predecessors]
+v4 (\textit{Unified Specification v4 --- Complete English Edition},
+February 2026, 222\,pp.); v2.0 (March 2025, foundational architecture);
+v2.1 (May 2025, secretary modules and cognitive layer); v3.0--v4.0 (2025--2026,
+incremental refinement and structural consistency).
+\item[Build context]
+v5.5 integrates four research strands developed in parallel between
+February and April 2026: the formal arXiv submission
+(\cite{Ikeya2026arXiv}), the NRMO vNext Civilisation Simulator
+(\cite{Ikeya2026vNext}), the StrongEngine $\Omega$ Full integrated
+specification (\cite{Ikeya2026Integrated}), and the v2.5 reference
+implementation (this work, Part X).
+\end{description}
+
+\section*{What is New in v5.5}
+
+\nrmobox{Summary of v5.5 additions}{
+\begin{itemize}[leftmargin=1.2em]
+\item \textbf{Part VII:} Mathematical Formalisation. Four theorems (T1
+  Ruin Dilution, T2 CMDP Separation, T3 Variational Analysis, T4 CVaR
+  Tractability), each proved with full rigour, establish that NRMO is
+  not a heuristic but a strictly distinct decision-theoretic regime.
+\item \textbf{Parts VIII--IX:} the vNext Civilisation Simulator and
+  StrongEngine $\Omega$ Full are documented with complete state vectors,
+  five world families, nine comparison strategies, an adaptive tuning
+  layer, and a 30-civilisation casebook.
+\item \textbf{Part X:} the engineering implementation v2.5 is presented
+  in full, including the pipeline architecture (NRMO Kernel + Adaptive
+  Tuning + MAPLayer + Shinobi Fleet + Norn/Skuld + $\Omega$ Full), the
+  module structure, and the single one-line change from v2.1 that
+  produced v2.5.
+\item \textbf{Part XI:} empirical validation results from $n = 250$
+  five-world episodes (April 2026), with statistical comparison against
+  the v5.2 baseline, world-by-world standard errors, and death-cause
+  analysis.
+\item \textbf{Part XII:} methodological notes documenting five failed
+  approaches to PlanetaryStress recovery, the Option C hybrid
+  experiment via monkey-patch adapter, and the verification tools used
+  to ensure measurement integrity.
+\item \textbf{Appendices A--D:} full code listing, world parameter
+  schemas, the 30-civilisation roster with profiles, and a session-by-session
+  development log.
+\end{itemize}
+}
+
+\noindent
+Parts I through VI preserve the cognitive architecture finalised in v4
+(the v5\_updated PDF) without substantive change. The preservation is
+deliberate: the cognitive layer (Type ZERO, Passive Pattern, HST-N,
+TTM/PPS, A\_allowed, the secretary modules, governance toolkit, and
+APCSO) is a self-contained body of work whose validity does not depend
+on the engineering implementation. Light copyediting has been applied
+for cross-referencing into the new parts; no chapter has been deleted,
+reordered, or rewritten beyond what is required for typographic
+consistency. A complete change register appears in
+Appendix~\ref{app:session-log}.
+
+\section*{What v5.5 Is Not}
+
+This document is neither a textbook nor a self-help system. Several
+qualifications apply:
+
+\begin{description}
+\item[Not a doctrine of fear.] NRMO does not say ``minimise risk.'' It
+says: \emph{do not enter states from which no future is reachable; within
+the non-ruin domain, maximise long-horizon optionality}. The two
+clauses are lexicographically ordered, but both are operative.
+\item[Not a generic productivity framework.] The framework is designed
+for environments with absorbing failure states. In environments where
+ruin is bounded or recoverable, the constraint is slack and the
+framework reduces to standard expected-utility optimisation.
+\item[Not a complete formal decision theory.] T1--T4 establish the
+ruin-avoidance regime is well-defined and tractable; they do not solve
+optimal exploration in arbitrary MDPs. Open problems are catalogued in
+Part XII.
+\item[Not a substitute for judgement.] The cognitive architecture
+disciplines decision-making but does not replace it. The secretary
+modules detect distortion; they do not resolve it. The simulator
+provides counterfactuals; it does not provide truth.
+\item[Not validated by historical case studies.] Parts VIII--XI use
+synthetic civilisation simulation. Mappings to historical civilisations
+appear illustratively in Part IX (the 30-civilisation casebook) but are
+not claimed as historical proof.
+\end{description}
+
+\section*{Reading Paths}
+
+\noindent
+The document is large (approximately 300 pages). Different readers
+should enter at different points.
+
+\begin{description}
+\item[Mathematician / decision theorist.] Read Part VII first. The
+four theorems are self-contained. Cross-reference Part VIII for the
+state-space instantiation when needed. Skip Part II entirely if not
+interested in the cognitive architecture.
+
+\item[Practitioner adopting NRMO for personal operation.] Read Part 0
+(this section), then Parts I and II. Part II Chapter 12 (Operational
+Refinements) and Chapter 18 (NRMO Life SOP v2.0) are the most
+immediately actionable. The simulator parts (VIII--XI) can be deferred.
+
+\item[Researcher building on the simulator.] Read Part 0, then Parts
+VIII--X in order. Part XI provides the empirical baseline for
+extensions. Part XII documents which approaches have failed and why.
+The code listing in Appendix A is the canonical implementation.
+
+\item[Reader integrating with existing safety frameworks.] Read Part
+VII Chapters 39--40 (T1 and T2). Theorem 2 establishes a strict
+separation from Lagrangian CMDPs that is relevant to anyone
+implementing constrained policy optimisation.
+
+\item[Complete reading.] In order, Part 0 through Part XII. The
+typical pace for a careful first reading is 8--12 hours over multiple
+sessions.
+\end{description}
+
+\section*{Architectural Invariants}
+
+The following statements hold throughout v5.5 and must not be violated
+by any extension. They are restated formally in Part II Chapter 9
+(Theoretical Invariants) and Part IX Chapter 50 (Engine Specification).
+
+\begin{invariant}[Governance--Execution Separation]
+\label{inv:gov-exec-sep}
+The NRMO core governance layer defines admissibility:
+$A_t = \mathrm{NRMO}(X_t)$. The execution layer (StrongEngine $\Omega$
+Full, the engineering pipeline, or any future engine) selects an action
+within admissibility: $a_t = \Omega(A_t)$ with $a_t \in A_t$ as a
+hard requirement. The governance and execution layers do not share an
+objective function and do not communicate via shared mutable state. The
+governance layer never performs ranking; the execution layer never
+modifies $A_t$.
+\end{invariant}
+
+\begin{invariant}[True Ruin as Hard Constraint]
+\label{inv:true-ruin-hard}
+Any candidate action that increases $\Pr(\tau^F \le H)$ above the
+admissibility threshold $\varepsilon_t$ is rejected by the governance
+layer regardless of its expected value. The threshold $\varepsilon_t$
+is itself state-responsive (Part II Chapter 12) but never relaxed below
+the configured floor $\varepsilon_{\mathrm{floor}}$ in any non-ruin
+state.
+\end{invariant}
+
+\begin{invariant}[Optionality is the Long-Horizon Objective]
+\label{inv:optionality}
+Within the non-ruin domain, the primary maximisation target is
+optionality: the preserved breadth of future action space. Survival is
+a constraint; optionality is the objective. A policy that survives
+without preserving optionality is in passive ruin
+(Part II Chapter 7, Part VIII Chapter 47).
+\end{invariant}
+
+\begin{invariant}[Intelligence is not Authority]
+\label{inv:intelligence-not-authority}
+Search capacity, strategy generation, and computational resource use
+are downstream of governance. An execution engine more capable than
+NRMO core does not earn authority over the boundary. This invariant is
+the structural reason fast-acting components ($\Omega$ Full's mutation,
+synthesis, and invention layers) cannot bypass slow-acting components
+(NRMO veto and passive ruin detection).
+\end{invariant}
+
+\section*{Versioning and Change Discipline}
+
+\noindent
+v5.5 is a \emph{compatible extension} of v4. No invariant has been
+weakened; no chapter content has been removed; no terminology has been
+redefined. The numbering convention is:
+
+\begin{itemize}
+\item Major revision (e.g., v4 $\to$ v5.0) signals a substantial
+  architectural addition. v5.0 was not released; v5.5 is the first
+  released revision after v4 because it integrates the formal
+  mathematics, simulator, and engineering implementation into one
+  document.
+\item Minor revision (e.g., v5.5 $\to$ v5.6) would signal new empirical
+  results, refinements to the engineering layer, or corrections to
+  proofs --- without breaking compatibility.
+\item Breaking change (e.g., v5.5 $\to$ v6.0) would signal modification
+  of an architectural invariant. No such change is anticipated.
+\end{itemize}
+
+\noindent
+The sentinel statement at the end of every revision is:
+
+\nrmobox{Closing statement}{
+\centering
+\textit{It no longer says only ``do not die.''}\\
+\textit{It says: ``do not close the future.''}
+}
+
+\section*{Acknowledgements}
+
+\noindent
+The cognitive architecture (Parts I--VI) was developed over the period
+2024--2026 in close consultation with multiple instances of the Claude
+language model (Anthropic), serving as interpretive partner and
+counterfactual reasoning sandbox. The mathematical formalisation (Part
+VII) was completed February 2026, with three errors in the v2 draft
+corrected through external feedback. The simulator and engineering
+implementation (Parts VIII--XI) were developed March--April 2026 over
+eight intensive working sessions, also in collaboration with Claude.
+The methodological discipline of Part XII --- particularly the
+requirement to verify measurement integrity before drawing conclusions
+--- is a direct result of those sessions.
+
+\noindent
+Section-level errata, addenda, and discussions are tracked in the
+public NRMO Research Framework repository. The reference
+implementation (\texttt{nrmo\_full v2.5}) is provided as
+Appendix~\ref{app:code}.
+
+\vspace{1em}
+\hrule
+\vspace{1em}
+\noindent
+\textit{End of System Manifest. The next chapter (Part I) begins the
+preserved core from v4.}

@@ -1,0 +1,485 @@
+% chapters/ch02g_mission_defense.tex
+% A_allowed v1.2 MISSION-DEFENSE Extension
+
+\section{$A_{\mathrm{allowed}}$ v1.2 --- MISSION-DEFENSE Extension}
+\label{sec:mission-defense-c2}
+
+\nrmobox{Update purpose}{
+\textbf{Update}: 2026-01-01 \\
+\textbf{Scope}: Type ZERO / $A_{\mathrm{allowed}}$ \\
+\textbf{Purpose}: Permit HST-N (operational) and TTM/PPS (training)
+references in MISSION mode under \emph{defensive use only}. The new
+configuration is named MISSION-DEFENSE.
+}
+
+This extension adds three categories
+(\texttt{hst\_map}, \texttt{ttm\_lookup}, \texttt{ttm\_debrief}) to
+the MISSION mode profile. Their use is restricted to defensive
+output (HST-N state read / TTM pattern recognition / END-of-TTM
+debriefing); operational use is prohibited.
+
+\subsection{Activation Conditions (Non-Negotiable)}
+\label{sec:mission-defense-conditions}
+
+The MISSION-DEFENSE configuration activates when both:
+
+\begin{enumerate}
+\item \textbf{TTM/PPS detects a recognised pattern} (incoming
+pressure / coercion / structural-irreversibility-pattern); AND
+\item One of:
+\begin{itemize}
+\item Irreversibility (load, volatility, governance pressure)
+imminent.
+\item Observation (HST-N state) approaching boundary.
+\end{itemize}
+\end{enumerate}
+
+\noindent
+Outside these conditions, MISSION-DEFENSE is \textbf{not} active.
+
+\subsection{Non-Negotiable Restrictions}
+\label{sec:mission-defense-restrictions}
+
+\begin{enumerate}
+\item TTM/PPS must not produce scripts, dependency designs, or
+persuasion patterns.
+\item PP and $A_{\mathrm{allowed}}$ separation is preserved.
+\item Output is filtered through SOP for defensive use only.
+\item SHUTDOWN conditions (load / volatility / irreversibility /
+pressure-saturation) override MISSION-DEFENSE.
+\end{enumerate}
+
+\subsection{$A_{\mathrm{allowed}}$ Categories Added}
+\label{sec:mission-defense-categories}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Category} & \textbf{Meaning} & \textbf{Output} & \textbf{Required checks} \\
+\midrule
+\texttt{hst\_map}
+& HST-N state map: ``state, observation $\Rightarrow$ classification
+labels''
+& State $\ge 1$ + observation
+& \texttt{log\_reason}, \texttt{cooldown\_10m},
+\texttt{third\_party\_if\_irrev\_high} \\
+
+\texttt{ttm\_lookup}
+& TTM/PPS lookup: ``ID + category + detection signature''
+& TTM-ID + category + detection
+& \texttt{no\_script\_generation},
+\texttt{no\_dependency\_design},
+\texttt{defense\_only\_output} \\
+
+\texttt{ttm\_debrief}
+& END\_TTM debrief (3-line + defensive 1-line + boundary note)
+& 3 + defence 1 + boundary
+& \texttt{shutdown\_if\_symptom},
+\texttt{cooldown\_10m} \\
+\bottomrule
+\end{tabularx}
+\caption[MISSION-DEFENSE category extensions]{$A_{\mathrm{allowed}}$
+v1.2 MISSION-DEFENSE category extensions. These categories appear
+\emph{only} when MISSION-DEFENSE conditions are satisfied.}
+\label{tab:mission-defense-categories}
+\end{table}
+
+\subsection{Forbidden Categories (MISSION Prohibited)}
+\label{sec:mission-defense-forbidden}
+
+\begin{itemize}
+\item Training (\texttt{training}, \texttt{adversarial\_role\_play})
+output.
+\item Script (\texttt{persuasion\_script}, \texttt{shaping\_script}).
+\item Dependency design (\texttt{dependency\_design}).
+\item Pressure escalation (\texttt{pressure\_escalation}).
+\end{itemize}
+
+\noindent
+TTM/PPS pattern recognition is permitted in MISSION-DEFENSE; pattern
+\emph{application} is forbidden in any mode.
+
+\subsection{MISSION caps Extension (JSON-style)}
+\label{sec:mission-defense-caps}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+{
+  // MISSION (MISSION-DEFENSE)
+  categories_add: ["hst_map", "ttm_lookup", "ttm_debrief"],
+  caps_add: {
+    time: {
+      ttm_lookup_per_action_min: 10,
+      hst_map_per_action_min:    5,
+      ttm_total_per_day_min:     30
+        // total TTM session time per day
+    },
+    count: {
+      ttm_lookup_max_per_day: 3,
+      hst_map_max_per_day:    5
+    },
+    output: {
+      max_lines:    30,
+      must_include: ["defense_action_1",
+                     "hold_or_pause",
+                     "log_reason"],
+      forbid:       ["persuasion_script",
+                     "dependency_design",
+                     "pressure_escalation"]
+    }
+  },
+  required_checks_add: [
+    "defense_only_output",
+    "no_script_generation",
+    "no_dependency_design",
+    "cooldown_10m",
+    "log_reason",
+    "shutdown_if_symptom"
+  ]
+}
+\end{lstlisting}
+
+\subsection{Operational Procedure (5 Steps)}
+\label{sec:mission-defense-procedure}
+
+\begin{enumerate}
+\item \textbf{Z.mode = MISSION} (set explicitly).
+\item $A_{\mathrm{allowed}}$ categories: \texttt{hst\_map},
+\texttt{ttm\_lookup}, \texttt{ttm\_debrief} added.
+\item HST-N state $\ge 1$ (observation provided).
+\item TTM (ID / category / detection-signature) requested.
+\item SOP A/B response (hold / split / confirm / third-party check
+/ slow tempo) issued under \texttt{defense\_only\_output}.
+\end{enumerate}
+
+\subsection{SHUTDOWN Override}
+\label{sec:mission-defense-shutdown}
+
+\paragraph{Conditions.}
+SHUTDOWN takes precedence over MISSION-DEFENSE when:
+
+\begin{itemize}
+\item Load / volatility / irreversibility at threshold.
+\item Strong pattern detected with no reversible defence available.
+\item END\_TTM (3-line) recommended; system halts further engagement.
+\end{itemize}
+
+\paragraph{Behaviour on SHUTDOWN override.}
+TTM / hst\_map / ttm\_debrief outputs are suspended. Only \texttt{A}
+category actions (confirm, defer, rest, third-party check) remain
+permitted.
+
+\subsection{$A_{\mathrm{allowed}}$ Patch (JSON Patches)}
+\label{sec:mission-defense-patches}
+
+The MISSION-DEFENSE extension is implemented as two JSON patches
+applied to the v1.1 $A_{\mathrm{allowed}}$ profile.
+
+\subsubsection*{Patch 5.1 --- $A_{\mathrm{allowed}}$: Categories}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+// PATCH: add categories (MISSION-DEFENSE)
+{
+  categories_add: ["hst_map", "ttm_lookup", "ttm_debrief"],
+  category_definitions_add: [
+    {
+      category: "hst_map",
+      meaning:  "HST-N state read (operational classification)",
+      examples: ["state >= 1 + observation",
+                 "load = ?, volatility = ?, irreversibility = ?"],
+      main_risk: ["confidence-loss when ambiguous",
+                  "observation drift"],
+      guards:   ["log_reason",
+                 "cooldown_10m",
+                 "third_party_if_irrev_high"]
+    },
+    {
+      category: "ttm_lookup",
+      meaning:  "TTM/PPS lookup (ID / category / detection)",
+      examples: ["TTM-ID with category",
+                 "detection signature"],
+      main_risk: ["misuse via training-to-operation contamination"],
+      guards:   ["defense_only_output",
+                 "no_script_generation",
+                 "no_dependency_design"]
+    },
+    {
+      category: "ttm_debrief",
+      meaning:  "END_TTM debrief (post-pattern review)",
+      examples: ["3-line analysis",
+                 "defensive 1-line",
+                 "boundary / closing"],
+      main_risk: ["narrative drift",
+                  "improvement-declaration"],
+      guards:   ["shutdown_if_symptom",
+                 "cooldown_10m"]
+    }
+  ],
+  forbidden_explicit: [
+    "persuasion_script",
+    "dependency_design",
+    "pressure_escalation"
+  ]
+}
+\end{lstlisting}
+
+\subsubsection*{Patch 5.2 --- $A_{\mathrm{allowed}}$: MISSION
+caps / required\_checks}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+// PATCH: extend MISSION profile with defense-only references
+{
+  domain: "all",
+  mode:   "MISSION",
+  categories_add: ["hst_map", "ttm_lookup", "ttm_debrief"],
+  caps_add: {
+    time: {
+      hst_map_per_action_min:    5,
+      ttm_lookup_per_action_min: 10,
+      ttm_total_per_day_min:     30
+    },
+    count: {
+      hst_map_max_per_day:    5,
+      ttm_lookup_max_per_day: 3
+    },
+    output: {
+      max_lines:    30,
+      must_include: ["defense_action_1",
+                     "hold_or_pause",
+                     "log_reason"],
+      forbid:       ["persuasion_script",
+                     "dependency_design",
+                     "pressure_escalation"]
+    }
+  },
+  required_checks_add: [
+    "defense_only_output",
+    "no_script_generation",
+    "no_dependency_design",
+    "cooldown_10m",
+    "log_reason",
+    "shutdown_if_symptom"
+  ]
+}
+\end{lstlisting}
+
+\subsection{Output Format (MISSION-DEFENSE)}
+\label{sec:mission-defense-output}
+
+\paragraph{Fixed structure.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+State (HST-N):  load = ?, volatility = ?
+Detection (TTM): TTM-0xx (category C or D)
+Defence (SOP):
+  (1) hold / pause
+  (2) confirm with third party
+  (3) condition (slow tempo)
+Boundary:       irreversibility close --> (1)
+Closing:        END_TTM (3 + defensive)
+\end{lstlisting}
+
+\paragraph{Anti-contamination.}
+TTM output is structurally restricted to defensive analysis. Direct
+application to operations remains prohibited.
+
+\subsection{Cross-References}
+\label{sec:mission-defense-xref}
+
+\begin{itemize}
+\item HST-N (operational state) ---
+Section~\ref{sec:state-labels-c2}.
+\item TTM/PPS (training: detection / defence) ---
+Chapter~\ref{ch:ttm-pps}.
+\item Type ZERO ---
+Section~\ref{sec:type-zero-modes-c2}.
+\item $A_{\mathrm{allowed}}$ definition ---
+Chapter~\ref{ch:a-allowed}.
+\item $A_{\mathrm{allowed}}$ v1.1 (concrete values) ---
+Chapter~\ref{ch:a-allowed-concrete}.
+\item SOP (state $\to$ action) ---
+Chapter~\ref{ch:sop-os}.
+\item SOP v1.8 (Defensive-Offense) ---
+Section~\ref{sec:training-v18}.
+\end{itemize}
+
+\subsection{$A_{\mathrm{allowed}}$ Base Schema}
+\label{sec:a-allowed-base-schema-c2}
+
+For reference, the base schema is reproduced below. The complete
+specification is in Chapter~\ref{ch:a-allowed-dictionary}.
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+{
+  categories: [
+    "info", "analysis", "proposal", "commit",
+    "execute", "public", "training", ...
+  ],
+  caps: {
+    money: {
+      per_action: "...",
+      per_day:    "...",
+      total:      "..."
+    },
+    time: {
+      per_action: "...",
+      per_day:    "..."
+    },
+    reversibility_min:        "Low | Med | High",
+    max_irreversible_steps:   0..N,
+    public_scope:             "none | private | limited | public"
+  },
+  required_checks: [
+    "cooldown_10m",
+    "second_opinion",
+    "write_down_exit",
+    "log_reason",
+    ...
+  ]
+}
+\end{lstlisting}
+
+\subsection{Action Category List (Recommended)}
+\label{sec:a-allowed-recommended-categories-c2}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Category} & \textbf{Meaning} & \textbf{Typical example} & \textbf{Main risk} \\
+\midrule
+\texttt{info} & Information gathering / confirmation
+& Read primary info; confirm status & Information overload \\
+
+\texttt{analysis} & Analysis / estimation
+& Scenarios, calculations, hypothesis verification &
+Over-confidence \\
+
+\texttt{proposal} & Proposal (reversible)
+& Options A/B/C, trial design, ToDo &
+Over-specification \\
+
+\texttt{commit} & Irreversible commit
+& Contract, public statement, capital fixation &
+Irreversibility \\
+
+\texttt{execute} & Execution (action)
+& Purchase, send, move, implement &
+Execution error \\
+
+\texttt{public} & Public diffusion
+& SNS, external sharing, public announcement &
+Reputation, irreversible \\
+
+\texttt{training} & Training (external system)
+& Role-play, load training &
+Variable (ethics-dependent) \\
+\bottomrule
+\end{tabularx}
+\caption[Action category recommended list]{Recommended action
+categories for the $A_{\mathrm{allowed}}$ schema.}
+\label{tab:a-allowed-categories-c2}
+\end{table}
+
+\subsection{Mode-Specific Profiles (NORMAL / VENTURE / MISSION /
+SAFE)}
+\label{sec:a-allowed-mode-profiles-c2}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+NORMAL:
+  categories: ["info", "analysis", "proposal", "execute"],
+  caps: {
+    max_irreversible_steps: 0,
+    public_scope:           "limited",
+    reversibility_min:      "Med"
+  },
+  required_checks: ["log_reason"]
+
+VENTURE:
+  categories: ["info", "analysis", "proposal",
+               "execute", "commit"],
+  caps: {
+    max_irreversible_steps: 1,
+    public_scope:           "limited",
+    money:                  { per_action: "small" }
+  },
+  required_checks: ["write_down_exit", "loss_cap",
+                    "cooldown_10m", "log_reason"]
+
+MISSION:
+  categories: ["info", "analysis", "proposal",
+               "execute", "commit", "public"],
+  caps: {
+    max_irreversible_steps: 2,
+    public_scope:           "public"
+  },
+  required_checks: ["mission_deadline",
+                    "success_criteria",
+                    "exit_criteria",
+                    "second_opinion",
+                    "log_reason"]
+
+SAFE:
+  categories: ["info", "analysis", "proposal"],
+  caps: {
+    max_irreversible_steps: 0,
+    public_scope:           "none"
+  },
+  required_checks: ["cooldown_30m",
+                    "sleep_or_break",
+                    "log_reason"]
+\end{lstlisting}
+
+\paragraph{Profile semantics.}
+
+\begin{itemize}
+\item NORMAL: standard operation; no irreversible steps; limited
+public scope.
+\item VENTURE: single irreversible step permitted with explicit
+exit-rule; small monetary action; cooldown required.
+\item MISSION: up to two irreversible steps; explicit
+mission-deadline / success-criteria / exit-criteria mandated;
+second opinion required.
+\item SAFE: information and analysis only; no commitment; cooldown
+plus rest required.
+\end{itemize}
+
+\paragraph{Profiles version.}
+$A_{\mathrm{allowed}}$ Profiles v1.1.
+
+\subsection{Type ZERO Gate Logic (Simplified)}
+\label{sec:a-allowed-gate-logic-c2}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+if load == "High":
+    mode = SAFE
+elif buffer == "Low" and (irreversibility == "High"
+                          or observability == "Low"):
+    mode = SAFE
+elif mission_flag == True:
+    mode = MISSION
+elif buffer == "High" and observability == "High" \
+     and irreversibility != "High":
+    mode = NORMAL or VENTURE
+else:
+    mode = NORMAL
+\end{lstlisting}
+
+\subsection{PP\_Deliver (Output Template)}
+\label{sec:pp-deliver-template-c2}
+
+When the upstream layer (NRMO Core) delivers a decision via Passive
+Pattern, the output is structured:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+PP_Deliver(decision):
+  - 1 recommend / hold / reject (with reason)
+  - 3 alternatives (categorised A/B/C)
+  - 5 considerations (bulleted)
+  - exit / postponement option (always present)
+\end{lstlisting}
+
+\paragraph{Version.}
+$A_{\mathrm{allowed}}$ Profiles v1.1.

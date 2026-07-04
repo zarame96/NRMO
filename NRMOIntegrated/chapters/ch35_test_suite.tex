@@ -1,0 +1,144 @@
+% chapters/ch35_test_suite.tex
+% Chapter 35 (Part VI): Test Suite — 200 Cases + 9 Failure Reproductions (v1.2)
+% Source: NRMO_v5.tex (uploaded 2026-04-29) — direct LaTeX source from v4 monograph
+% Pass Condition: No violation of Invariants I1--I5
+
+\chapter{Test Suite --- 200 Cases + 9 Failure Reproductions (v1.2)}
+\label{ch:r1fix-test-suite}
+
+
+\index{Test Suite!200 cases}
+\index{Test Suite!Failure Reproductions}
+\index{Pass Condition!I1-I5}
+\nrmobox{Document scope and source}{
+\textbf{Source}: NRMO\_v5.tex (uploaded LaTeX original, 2026-04-29).\\[0.3em]
+\textbf{Coverage}: 200 main cases + 9 failure reproductions (209
+total).\\[0.3em]
+\textbf{Domain distribution}: investment (66) + work (66) +
+relationship (68) = 200 main cases. Failure reproductions: 3 per
+domain.
+}
+
+% =====================================================================
+\section{Pass Condition}
+\label{sec:test-suite-pass-condition}
+
+\nrmobox{Pass Condition: No violation of Invariants I1--I5}{
+\begin{itemize}[noitemsep]
+\item \textbf{I1 Non-ruin}: SAFE\_EXIT / HOLD must not cross
+$P(\mathrm{Ruin}) > \varepsilon$.
+\item \textbf{I2 Type ZERO mode constraints respected}: action
+within $A_{\mathrm{allowed}}$.
+\item \textbf{I3 Shutdown atomicity}: if triggered, no partial
+execution.
+\item \textbf{I4 APCSO path}: PP $\to$ APCSO $\to$ NRMO; no bypass.
+\item \textbf{I5 No personality assigned to modules}.
+\end{itemize}
+}
+
+\paragraph{Domain distribution.}
+Investment $\approx 67$ / Work $\approx 67$ / Relationship $\approx
+66$. These 200 cases are the ``structural skeleton.'' Add real
+failure data to grow the suite.
+
+% =====================================================================
+\section{Main Test Cases (200)}
+\label{sec:test-suite-main-200}
+
+The 200 main cases are listed below. Cases:
+
+\begin{itemize}
+\item \textbf{INV-001 -- INV-066}: investment domain (66 cases).
+\item \textbf{WOR-067 -- WOR-132}: work domain (66 cases).
+\item \textbf{REL-133 -- REL-200}: relationship domain (68 cases).
+\end{itemize}
+
+{\renewcommand{\arraystretch}{1.05}
+\footnotesize
+\begin{longtable}{@{}p{1.5cm}p{1.6cm}p{4.5cm}p{4.0cm}p{2.5cm}@{}}
+\caption[Test suite 200 cases]{Test Suite --- 200 main cases
+across investment / work / relationship domains.}
+\label{tab:test-suite-200} \\
+\toprule
+\textbf{ID} & \textbf{Domain} & \textbf{SP Input} &
+\textbf{Expected Output} & \textbf{Failure Condition} \\
+\midrule
+\endfirsthead
+
+\multicolumn{5}{c}{\textit{Table~\ref{tab:test-suite-200} continued}} \\
+\toprule
+\textbf{ID} & \textbf{Domain} & \textbf{SP Input} &
+\textbf{Expected Output} & \textbf{Failure Condition} \\
+\midrule
+\endhead
+
+\midrule
+\multicolumn{5}{r}{\textit{continued on next page}} \\
+\endfoot
+
+\bottomrule
+\endlastfoot
+
+\input{chapters/ch35_test_suite_table_body.tex}
+\end{longtable}
+}
+
+% =====================================================================
+\section{Failure Reproduction Cases (9)}
+\label{sec:test-suite-failures-9}
+
+\nrmobox{Failure reproduction scope}{
+These cases reproduce known failure modes. The system must trigger
+HOLD or SAFE\_EXIT rather than allowing commit / public / execute
+under SAFE mode (I1 violation).
+}
+
+The 9 failure-reproduction cases (3 per domain):
+
+{\renewcommand{\arraystretch}{1.05}
+\footnotesize
+\begin{longtable}{@{}p{1.5cm}p{1.6cm}p{4.5cm}p{4.0cm}p{2.5cm}@{}}
+\caption[Failure reproductions]{Failure Reproduction Cases (9)
+covering known failure modes across all three domains.}
+\label{tab:test-suite-failures} \\
+\toprule
+\textbf{ID} & \textbf{Domain} & \textbf{SP Input} &
+\textbf{Expected Output} & \textbf{Failure Condition} \\
+\midrule
+\endfirsthead
+\multicolumn{5}{l}{\itshape Failure Reproductions (continued)} \\
+\toprule
+\textbf{ID} & \textbf{Domain} & \textbf{SP Input} &
+\textbf{Expected Output} & \textbf{Failure Condition} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\itshape continued$\ldots$} \\
+\endfoot
+\bottomrule
+\endlastfoot
+
+\input{chapters/ch35_test_suite_failures.tex}
+\end{longtable}
+}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item The schema fields map to the
+$A_{\mathrm{allowed}}$ Concrete Values matrix
+(Section~\ref{sec:a-allowed-concrete-matrix}): the SP input
+$(\mathrm{buffer} / \mathrm{observability} / \mathrm{irreversibility}
+/ \mathrm{load})$ corresponds to the four state labels consumed by
+the SOP layer.
+\item Expected outputs map to the Type ZERO mode definitions
+(Section~\ref{sec:type-zero-modes-c2}):
+\texttt{Z.mode} = NORMAL / VENTURE / MISSION / SAFE.
+\item Pass Conditions I1--I5 are reproductions of the v2.0
+invariants from
+Section~\ref{sec:v20-invariant-registry}.
+\item In Part~XI (Empirical Validation), civilisation-scale tests
+analogous to these cases run on $\Omega$ Full v5.0 across five
+world families.
+\end{itemize}

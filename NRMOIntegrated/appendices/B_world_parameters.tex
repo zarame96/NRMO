@@ -1,0 +1,378 @@
+% appendices/B_world_parameters.tex
+\chapter{World Parameter Reference}
+\label{app:world-params}
+
+\nrmobox{Document scope}{
+This appendix gives the concrete numeric ranges for the five world
+families used by the v2.5 codebase, plus the full set of NRMO veto
+thresholds and $\Omega$ Full configuration constants.\\[0.3em]
+\textbf{Source}: \texttt{nrmo\_full\_v2\_5\_final.zip /
+core/worlds.py + config/defaults.py}.
+}
+
+\section{World Family Parameter Ranges}
+\label{sec:world-ranges}
+
+Each parameter is a \texttt{(lo, hi)} pair; the world's actual
+parameter value is drawn uniformly from this range at episode start.
+
+\subsection{Normal World}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Parameter} & \textbf{Lo} & \textbf{Hi} \\
+\midrule
+\texttt{shock\_probability} & 0.08 & 0.15 \\
+\texttt{shock\_scale} & 3 & 7 \\
+\texttt{tail\_probability} & 0.02 & 0.04 \\
+\texttt{tail\_scale} & 12 & 20 \\
+\texttt{environmental\_drag} & 0.01 & 0.03 \\
+\texttt{governance\_drag} & 0.01 & 0.02 \\
+\texttt{stagnation\_drag} & 0.005 & 0.015 \\
+\texttt{rivalry\_level} & 0.05 & 0.20 \\
+\texttt{innovation\_noise} & 0.6 & 1.2 \\
+\texttt{coordination\_cost} & 0.02 & 0.06 \\
+\texttt{substitutability} & 0.4 & 0.6 \\
+\texttt{tail\_model\_misspecification} & 0.0 & 0.08 \\
+\bottomrule
+\end{tabularx}
+\caption[Normal world parameters]{Normal world parameter ranges.}
+\label{tab:world-normal}
+\end{table}
+
+\subsection{Vulnerable World}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Parameter} & \textbf{Lo} & \textbf{Hi} \\
+\midrule
+\texttt{shock\_probability} & 0.15 & 0.28 \\
+\texttt{shock\_scale} & 5 & 12 \\
+\texttt{tail\_probability} & 0.04 & 0.10 \\
+\texttt{tail\_scale} & 18 & 35 \\
+\texttt{environmental\_drag} & 0.03 & 0.07 \\
+\texttt{governance\_drag} & 0.02 & 0.05 \\
+\texttt{stagnation\_drag} & 0.01 & 0.03 \\
+\texttt{rivalry\_level} & 0.15 & 0.40 \\
+\texttt{innovation\_noise} & 0.8 & 1.8 \\
+\texttt{coordination\_cost} & 0.04 & 0.10 \\
+\texttt{substitutability} & 0.25 & 0.50 \\
+\texttt{tail\_model\_misspecification} & 0.05 & 0.25 \\
+\bottomrule
+\end{tabularx}
+\caption[Vulnerable world parameters]{Vulnerable world parameter
+ranges.}
+\label{tab:world-vulnerable}
+\end{table}
+
+\subsection{PlanetaryStress World}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Parameter} & \textbf{Lo} & \textbf{Hi} \\
+\midrule
+\texttt{shock\_probability} & 0.12 & 0.22 \\
+\texttt{shock\_scale} & 4 & 10 \\
+\texttt{tail\_probability} & 0.03 & 0.08 \\
+\texttt{tail\_scale} & 15 & 30 \\
+\texttt{environmental\_drag} & \textbf{0.05} & \textbf{0.12} \\
+\texttt{governance\_drag} & 0.03 & 0.06 \\
+\texttt{stagnation\_drag} & 0.008 & 0.025 \\
+\texttt{rivalry\_level} & 0.10 & 0.35 \\
+\texttt{innovation\_noise} & 0.7 & 1.5 \\
+\texttt{coordination\_cost} & 0.05 & 0.12 \\
+\texttt{substitutability} & 0.30 & 0.55 \\
+\texttt{tail\_model\_misspecification} & 0.05 & 0.20 \\
+\bottomrule
+\end{tabularx}
+\caption[PlanetaryStress world parameters]{PlanetaryStress world.
+\textbf{Bold}: high \texttt{environmental\_drag} dominates this
+regime.}
+\label{tab:world-planetary}
+\end{table}
+
+\subsection{LateStagnation World}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Parameter} & \textbf{Lo} & \textbf{Hi} \\
+\midrule
+\texttt{shock\_probability} & 0.05 & 0.12 \\
+\texttt{shock\_scale} & 2 & 5 \\
+\texttt{tail\_probability} & 0.01 & 0.03 \\
+\texttt{tail\_scale} & 8 & 16 \\
+\texttt{environmental\_drag} & 0.02 & 0.04 \\
+\texttt{governance\_drag} & 0.02 & 0.05 \\
+\texttt{stagnation\_drag} & \textbf{0.03} & \textbf{0.08} \\
+\texttt{rivalry\_level} & 0.05 & 0.15 \\
+\texttt{innovation\_noise} & 0.3 & 0.8 \\
+\texttt{coordination\_cost} & 0.03 & 0.08 \\
+\texttt{substitutability} & 0.5 & 0.8 \\
+\texttt{tail\_model\_misspecification} & 0.02 & 0.12 \\
+\bottomrule
+\end{tabularx}
+\caption[LateStagnation world parameters]{LateStagnation world.
+\textbf{Bold}: high \texttt{stagnation\_drag} dominates; low shock
+levels make passive ruin the primary failure mode.}
+\label{tab:world-late-stagnation}
+\end{table}
+
+\subsection{FastExpansionRace World}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Parameter} & \textbf{Lo} & \textbf{Hi} \\
+\midrule
+\texttt{shock\_probability} & 0.10 & 0.20 \\
+\texttt{shock\_scale} & 4 & 9 \\
+\texttt{tail\_probability} & 0.04 & 0.09 \\
+\texttt{tail\_scale} & 14 & 28 \\
+\texttt{environmental\_drag} & 0.02 & 0.05 \\
+\texttt{governance\_drag} & 0.01 & 0.04 \\
+\texttt{stagnation\_drag} & 0.003 & 0.01 \\
+\texttt{rivalry\_level} & \textbf{0.25} & \textbf{0.55} \\
+\texttt{innovation\_noise} & 1.0 & 2.2 \\
+\texttt{coordination\_cost} & 0.03 & 0.07 \\
+\texttt{substitutability} & 0.35 & 0.60 \\
+\texttt{tail\_model\_misspecification} & 0.08 & 0.25 \\
+\bottomrule
+\end{tabularx}
+\caption[FastExpansionRace world parameters]{FastExpansionRace
+world. \textbf{Bold}: high \texttt{rivalry\_level} drives the
+competitive-pressure dynamics.}
+\label{tab:world-fast-expansion}
+\end{table}
+
+\section{Initial State and Ruin Thresholds}
+\label{sec:world-initial-state}
+
+\paragraph{Initial state vector.}
+\texttt{INITIAL\_STATE} $= [62, 66, 58, 54, 52, 18]$ corresponding
+to $(R, E, G, O, K, X)$.
+
+\paragraph{True Ruin thresholds.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Variable} & \textbf{Threshold} & \textbf{Direction} \\
+\midrule
+$R$ & 8 & lower bound \\
+$E$ & 8 & lower bound \\
+$G$ & 8 & lower bound \\
+$O$ & 6 & lower bound \\
+$X$ & 92 & upper bound \\
+\bottomrule
+\end{tabularx}
+\caption[True ruin thresholds]{True ruin condition: any one
+threshold breach terminates.}
+\label{tab:ruin-thresholds}
+\end{table}
+
+\paragraph{Passive Ruin thresholds.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xlc}
+\toprule
+\textbf{Pattern} & \textbf{Condition} & \textbf{Steps} \\
+\midrule
+Optionality stagnation & $O < 18$ & 14 \\
+Knowledge stagnation & $K < 20$ & 18 \\
+Compound decline & $O / G$ low + declining + $K < 25$ & 12 \\
+\bottomrule
+\end{tabularx}
+\caption[Passive ruin thresholds]{Passive ruin detection patterns.}
+\label{tab:passive-ruin}
+\end{table}
+
+\section{NRMO Veto Thresholds}
+\label{sec:world-veto-thresholds}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Constant} & \textbf{Value} & \textbf{Role} \\
+\midrule
+\texttt{NRMO\_GROWTH\_CAP} & 0.62 & Unconditional $g$ ceiling. \\
+\texttt{NRMO\_HIGH\_EXPOSURE\_THRESHOLD} & 55 & $X$ trigger for
+restricted $g$. \\
+\texttt{NRMO\_HIGH\_EXPOSURE\_GROWTH\_CAP} & 0.36 & $g$ ceiling
+when $X > 55$. \\
+\texttt{NRMO\_LOW\_ENV\_THRESHOLD} & 28 & $E$ trigger for
+restricted $g$. \\
+\texttt{NRMO\_LOW\_ENV\_GROWTH\_CAP} & 0.30 & $g$ ceiling when
+$E < 28$. \\
+\texttt{NRMO\_LOW\_GOV\_THRESHOLD} & 24 & $G$ trigger for
+mandatory $d$. \\
+\texttt{NRMO\_LOW\_GOV\_MIN\_DIST} & 0.16 & $d$ floor when
+$G < 24$. \\
+\texttt{NRMO\_EXPLORATION\_FLOOR} & 0.20 & vNext $l$ floor. \\
+\texttt{NRMO\_GOV\_REPAIR\_FLOOR\_THRESHOLD} & 30 & $G$ trigger for
+governance repair. \\
+\texttt{NRMO\_GOV\_REPAIR\_FLOOR} & 0.20 & $d$ floor when
+$G < 30$. \\
+\texttt{NRMO\_ECO\_GROWTH\_CAP\_THRESHOLD} & 45 & $E$ trigger for
+eco growth cap. \\
+\texttt{NRMO\_ECO\_GROWTH\_CAP} & 0.38 & $g$ ceiling when
+$E < 45$. \\
+\bottomrule
+\end{tabularx}
+\caption[NRMO veto thresholds]{NRMO veto thresholds (Original
+Veto + vNext extensions).}
+\label{tab:nrmo-veto-thresholds}
+\end{table}
+
+\section{$\Omega$ Full Configuration Constants}
+\label{sec:world-omega-config}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Constant} & \textbf{Value} & \textbf{Role} \\
+\midrule
+\texttt{OMEGA\_CANDIDATE\_COUNT} & 14 & Default candidate-pool
+size. \\
+\texttt{OMEGA\_ROLLOUT\_DEPTH} & 4 & Default MC rollout depth. \\
+\texttt{OMEGA\_ROLLOUT\_REPEATS} & 3 & Default MC repeat count. \\
+\texttt{OMEGA\_LAMBDA\_DRIFT} & 1.0 & Long-horizon drift penalty. \\
+\texttt{OMEGA\_NORMAL\_DRIFT\_MULTIPLIER} & 1.25 & Normal-world
+drift uplift. \\
+\texttt{OMEGA\_FAILURE\_MEMORY\_SIZE} & 64 & Failure-memory
+capacity. \\
+\texttt{OMEGA\_FAILURE\_PENALTY} & 0.15 & Failure-similarity score
+penalty. \\
+\texttt{OMEGA\_FRAGILITY\_PRIOR} & 0.5 & Initial fragility belief. \\
+\bottomrule
+\end{tabularx}
+\caption[Omega Full constants]{$\Omega$ Full configuration
+constants.}
+\label{tab:omega-constants}
+\end{table}
+
+\paragraph{Wolf Pursuit triggers.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Constant} & \textbf{Value} & \textbf{Role} \\
+\midrule
+\texttt{WOLF\_E\_MIN} & 50 & $E \ge 50$. \\
+\texttt{WOLF\_G\_MIN} & 45 & $G \ge 45$. \\
+\texttt{WOLF\_O\_MIN} & 45 & $O \ge 45$. \\
+\texttt{WOLF\_K\_MIN} & 45 & $K \ge 45$. \\
+\texttt{WOLF\_X\_MAX} & 42 & $X \le 42$ (v5.1: relaxed from 35). \\
+\texttt{WOLF\_DEPTH} & 8 & Wolf rollout depth. \\
+\texttt{WOLF\_REPEATS} & 5 & Wolf MC repeats. \\
+\texttt{WOLF\_EXTRA\_CANDIDATES} & 6 & Wolf extra candidates. \\
+\bottomrule
+\end{tabularx}
+\caption[Wolf Pursuit triggers]{Wolf Pursuit mode triggers and
+parameters.}
+\label{tab:wolf-triggers}
+\end{table}
+
+\paragraph{Edge Survival Guard triggers.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xll}
+\toprule
+\textbf{Constant} & \textbf{Value} & \textbf{Role} \\
+\midrule
+\texttt{EDGE\_FRAGILITY\_THRESHOLD} & 0.65 & Fragility activation. \\
+\texttt{EDGE\_E\_THRESHOLD} & 40 & Environment trigger. \\
+\texttt{EDGE\_G\_THRESHOLD} & 40 & Governance trigger. \\
+\bottomrule
+\end{tabularx}
+\caption[Edge Guard triggers]{Edge Survival Guard triggers.}
+\label{tab:edge-triggers}
+\end{table}
+
+\section{Mode-Conditioned Engine Parameters}
+\label{sec:world-mode-params}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{Xccccc}
+\toprule
+\textbf{Mode} & \textbf{rollout\_depth} & \textbf{fan\_out} &
+\textbf{growth\_cap} & \textbf{fragility\_penalty} &
+\textbf{lambda\_drift} \\
+\midrule
+NEUTRAL & 4 & 1.0 & 0.62 & 1.0 & 1.0 \\
+PROBE   & 3 & 0.7 & 0.50 & 1.3 & 1.2 \\
+BUFFER  & 4 & 0.4 & 0.28 & 1.5 & 1.5 \\
+RETREAT & 6 & 0.2 & 0.15 & 2.5 & 2.0 \\
+RACE    & 8 & 1.2 & 0.62 & 0.8 & 0.4 \\
+\bottomrule
+\end{tabularx}
+\caption[Mode-conditioned engine parameters]{Mode-conditioned engine
+parameter set (\texttt{MODE\_PARAMS}). PROBE mode also uses
+\texttt{prod\_w} = 0.92 in v2.5
+(see Section~\ref{sec:methodology-v25-change}).}
+\label{tab:mode-params}
+\end{table}
+
+\section{Composite Score Weights}
+\label{sec:world-score-weights}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{Xl}
+\toprule
+\textbf{Component} & \textbf{Weight} \\
+\midrule
+$S_{\mathrm{surv}}$ (survival rate) & $+1.00$ \\
+$R_{\mathrm{true}}$ (true ruin rate) & $-0.70$ \\
+$R_{\mathrm{passive}}$ (passive ruin rate) & $-0.40$ \\
+$\bar O / 130$ (mean final optionality) & $+0.18$ \\
+$\bar X / 130$ (mean final exposure) & $-0.10$ \\
+\bottomrule
+\end{tabularx}
+\caption[Composite score weights]{Composite score weights from
+\texttt{SCORE\_WEIGHTS}.}
+\label{tab:score-weights}
+\end{table}
+
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item These ranges are the concrete instantiation of the world
+parameter table from Part~VIII
+(Section~\ref{sec:vnext-world-families}).
+\item NRMO veto thresholds match the verbal specification in
+Part~II Section~\ref{sec:nrmo-veto-rules} and Part~VI
+Section~\ref{sec:r1fix-execution-architecture}.
+\item Mode-conditioned engine parameters are referenced by the
+$\Omega$ Full source code in Section~\ref{app:code:engine-omega-full-py}.
+\item These values are also used in Part~XI's empirical-validation
+runs (Chapter~\ref{ch:empirical-validation}).
+\end{itemize}

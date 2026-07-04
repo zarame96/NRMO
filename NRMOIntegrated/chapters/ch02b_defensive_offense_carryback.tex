@@ -1,0 +1,327 @@
+% chapters/ch02b_defensive_offense_carryback.tex
+% Defensive-Offense and Carryback specifications
+
+\section{Defensive-Offense and Carryback Specification}
+\label{sec:defensive-offense-carryback}
+
+This sub-document governs how training-context outputs (TTM/PPS,
+adversarial role-play, structural exercises) interface with the
+operational layer. It is normative: training and operations are
+separated, and the only sanctioned re-entry path is via the
+Carryback procedure.
+
+\subsection{Definition}
+\label{sec:def-offense-definition}
+
+\begin{description}
+\item[Operation (Core)] The decision and execution layer. The
+``Strong'' face of the system.
+\item[Passive Pattern (PP)] Continuous background design pattern;
+defensive monitoring only.
+\item[Training] The sandbox layer. ``Structure'' and ``defense'' are
+analysed here. \emph{Direct application to operations is
+prohibited.}
+\item[Defensive-Offense] An offensive-pattern recognition and
+defensive-response training mode. Operates only on premise of
+survival, never as ``attack execution.''
+\item[Anti-Contamination] The principle that training must never
+contaminate operational judgement.
+\end{description}
+
+\subsection{Ruin Premise}
+\label{sec:def-offense-ruin}
+
+\begin{description}
+\item[Ruin First] Irreversible state preservation is the primary
+constraint.
+\item[Optionality Preservation] Future selection capacity is
+preserved.
+\item[Non-Transfer of Agency] Judgement is never transferred to
+training-context systems (they are never authoritative).
+\item[Anti-Contamination] Training judgement must not leak into
+operations.
+\end{description}
+
+\subsection{Defensive-Offense Specification}
+\label{sec:def-offense-spec}
+
+The Defensive-Offense system is a permitted Passive Pattern and Type
+ZERO interface. It is a \emph{recognition-and-defence} layer, not an
+attack-execution layer.
+
+\subsubsection{Permitted Defensive-Offense (Allowed)}
+\label{sec:def-offense-allowed}
+
+\begin{itemize}
+\item Pattern recognition (incoming pressure / coercion /
+manipulation).
+\item Threat-signal categorisation.
+\item Defensive-response design (restricted to Type ZERO categories).
+\item Audit logging (record-only).
+\item Premise checking (definition / condition / restriction).
+\item Reversible selection (slow tempo, reversible expressions).
+\end{itemize}
+
+\subsubsection{Disallowed Offense (Prohibited)}
+\label{sec:def-offense-prohibited}
+
+\begin{itemize}
+\item Active manipulation, persuasion, exploitation.
+\item Attack-design, scripted aggressive sequences, dependency
+formation.
+\item Use of pattern catalogues to engineer compliance.
+\item Any training output forwarded to operations without Carryback.
+\end{itemize}
+
+\subsection{Architecture (Training Separation)}
+\label{sec:def-offense-architecture}
+
+\paragraph{Principle.}
+The Core (operations) layer and the Training layer are
+\emph{architecturally separated}. They cannot share state or
+authority.
+
+\paragraph{Layer roles.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Layer} & \textbf{Role} \\
+\midrule
+Core SOP & State $\to$ permitted action. Permitted output:
+shutdown / hold / proposal (with ON guard). \\
+Type ZERO & Mode determination and execution gating. \\
+Passive Pattern (PP) & Design pattern (defensive monitoring). \\
+Training & Structure-only analysis: Defensive-Offense analysis,
+defence design, sandbox practice. \\
+Carryback & The \emph{only} sanctioned Training $\to$ Core
+direction. \\
+\bottomrule
+\end{tabularx}
+\caption[Defensive-Offense layer architecture]{Layer architecture.
+Core $\to$ Training direction is \textbf{prohibited}; Training $\to$
+Core is permitted only via the Carryback procedure.}
+\label{tab:def-offense-arch}
+\end{table}
+
+\subsection{Training v1.8 (Specification)}
+\label{sec:training-v18}
+
+\paragraph{Purpose.}
+Avoid ruin in adversarial / pressure scenarios; analyse pattern
+structures; generate defensive responses. \emph{No execution.}
+
+\subsubsection{5.1 Input}
+\label{sec:training-v18-input}
+
+\begin{itemize}
+\item ``Structure'' (e.g., scenario type, pattern ID).
+\item Constraint (load, volatility, irreversibility flags).
+\end{itemize}
+
+\subsubsection{5.2 Output (Training)}
+\label{sec:training-v18-output}
+
+\begin{itemize}
+\item Structure analysis (pattern recognition).
+\item Defensive-Offense (defence design).
+\item Prohibited-condition analysis (SOP-level conditions).
+\item Conditions analysis (when shutdown / hold should be
+considered).
+\end{itemize}
+
+\subsection{Carryback Specification}
+\label{sec:carryback-spec}
+
+Training outputs must traverse the Carryback procedure (4 steps)
+before influencing operations. Direct/script/operation transfer is
+\textbf{prohibited}.
+
+\begin{enumerate}
+\item \textbf{Tripwire}: ruin-related signal recognition (e.g., a
+specific input pattern matches a Defensive-Offense category).
+\item \textbf{Gate}: Type ZERO judgement gate (e.g., ``does this
+trigger a mode transition?'').
+\item \textbf{PP Template}: defensive design template recorded as a
+Passive Pattern artefact.
+\item \textbf{SOP Patch}: prohibited-condition / condition update at
+the SOP layer (permitted-action set update, never direct execution).
+\end{enumerate}
+
+\paragraph{Effect.}
+Training findings flow into the operational layer only as
+\emph{constraints} (extending the prohibited set or refining the
+permitted set), never as \emph{actions}.
+
+\subsection{Prohibited (Hard Rules)}
+\label{sec:def-offense-hard-prohibitions}
+
+\begin{itemize}
+\item Forwarding training output as operational action.
+\item Forwarding ``persuasion patterns'' / scripted manipulation.
+\item Direct training-to-operation use without Carryback.
+\item ``It worked in training, so apply it'' --- this triggers
+SHUTDOWN.
+\end{itemize}
+
+\subsection{v1.7 Notes (Historical, Two Items)}
+\label{sec:def-offense-v17-notes}
+
+\begin{enumerate}
+\item \textbf{Defensive-Offense}: PP and Type ZERO must remain the
+sole ``defensive'' interface; expansion is forbidden.
+\item \textbf{Training}: v1.7 introduced ``Adversarial role-play''
+with two clauses --- (a) it must not modify operational state, and
+(b) it must not bypass the Carryback procedure. v1.8 formalises
+Carryback (Tripwire / Gate / PP Template / SOP Patch).
+\end{enumerate}
+
+\paragraph{Signature.}
+NRMO / Type ZERO (Revised Spec Draft) --- generated for operational
+clarity. ``Design'' boundary is explicit: NRMO Core handles ruin
+constraints; Type ZERO handles execution-action governance-layer
+definition; SOP / TTM / HST-N handle their respective sub-domains.
+
+\subsection{Positioning (Type ZERO Within NRMO)}
+\label{sec:def-offense-positioning}
+
+\paragraph{Action flow.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+[ Observation ]
+       |
+       v
+   Action proposal A
+       |
+       v
+[ Type ZERO ] -- ex-ante --> A_allowed definition
+       |
+       v
+[ NRMO Core ] -- A_allowed evaluated against
+                 ruin-constraint --> YES / NO / HOLD
+       |
+       v
+   Selection / Execution
+\end{lstlisting}
+
+\begin{itemize}
+\item NRMO Core: evaluates against the ruin constraint (time-path
+survival).
+\item Type ZERO: defines the action category (permitted set), based
+on observed state.
+\end{itemize}
+
+\subsection{Design Invariants}
+\label{sec:def-offense-design-invariants}
+
+\begin{description}
+\item[Ex-ante Governance] Action restriction occurs \emph{before}
+NRMO Core is invoked, not after.
+\item[Separation] Evaluation (NRMO) is structurally separated from
+operation (Type ZERO) and training (SOP / TTM).
+\item[Minimalism] No optimisation, no ranking, only audit-trail.
+\item[Fail-Safe] Default is restriction, not permission.
+\item[Non-Persuasion] No purpose-driven action shaping; no
+narrative.
+\end{description}
+
+\subsection{Modes Summary}
+\label{sec:def-offense-modes}
+
+(Modes are defined formally in
+Section~\ref{sec:type-zero-modes-c2}.)
+
+\begin{itemize}
+\item \textbf{Core} --- normal operation.
+\item \textbf{Venture} --- exploration, bounded.
+\item \textbf{Mission} --- goal-constrained, conditional commitment.
+\item \textbf{Shutdown} --- defensive halt.
+\end{itemize}
+
+\subsection{I/O Specification}
+\label{sec:def-offense-io}
+
+\paragraph{Input (observation).}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Context:        (investment / work / relationship / etc.)
+Buffer:         (capital / time / attention / etc.)
+Observability:  observation strength
+Irreversibility-Flag: irreversibility-imminent flag
+Load:           load / fatigue
+\end{lstlisting}
+
+\paragraph{Output.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Mode:        m in {Core, Venture, Mission, Shutdown}
+A_allowed(m): permitted action category
+Guardrails:  audit, conditions, restrictions
+\end{lstlisting}
+
+\subsection{Transition Rules}
+\label{sec:def-offense-transition-rules}
+
+\paragraph{Pseudocode (mode selection).}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+if   shutdown_trigger():       mode = Shutdown
+elif mission_armed():          mode = Mission
+elif venture_conditions():     mode = Venture
+else:                          mode = Core
+\end{lstlisting}
+
+\paragraph{Triggers.}
+
+\begin{description}
+\item[Shutdown-trigger]
+\begin{itemize}
+\item Buffer depleted.
+\item Irreversibility imminent.
+\item Observation state degraded.
+\item Load saturated.
+\end{itemize}
+\item[Venture-conditions]
+\begin{itemize}
+\item Buffer sufficient.
+\item Observability adequate.
+\item Loss cap defined.
+\end{itemize}
+\item[Mission-armed]
+\begin{itemize}
+\item Mission condition (deadline, success criterion) defined.
+\item Audit conditions met.
+\item Irreversibility commitment justified.
+\end{itemize}
+\end{description}
+
+\subsection{Hard Prohibitions}
+\label{sec:def-offense-hard-rules}
+
+\begin{itemize}
+\item Direct execution by Type ZERO (no actuator authority).
+\item In-play modification (Type ZERO does not modify itself during
+operation).
+\item Training requirement modification (training cannot modify SOP
+/ TTM / specifications).
+\end{itemize}
+
+\subsection{Audit Items (Required Log Fields)}
+\label{sec:def-offense-audit}
+
+\begin{itemize}
+\item Definition: 4 input variables.
+\item $A_{\mathrm{allowed}}$ category definition (info / analysis /
+proposal / etc.).
+\item Shutdown-trigger occurrences (3--5 categories).
+\item Mission / venture conditions and audits (definition /
+deadline / criteria).
+\end{itemize}
+
+\paragraph{Version.}
+Type ZERO Spec v1.0 (No-Psych) --- governance-layer definition only.
+The version number is intentional: ``No-Psych'' indicates that the
+Type ZERO governance layer does not perform psychological inference
+(inference is reserved for HST-N).

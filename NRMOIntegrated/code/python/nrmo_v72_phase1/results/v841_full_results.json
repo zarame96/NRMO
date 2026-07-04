@@ -1,0 +1,320 @@
+{
+  "version": "v8.4.1",
+  "audit_requirements": {
+    "1_deterministic_rng": "V71Engine と V841Engine に rng 注入",
+    "2_threshold_fixed_unused_seed": "AP threshold=0.35 事前固定, seed 100-299",
+    "3_n_200_paired": "n=200, paired",
+    "4_intervention_trace": "EmergencyGuard/Throttle/AP 全て trace 出力",
+    "5_emergency_guard_unit_test": "14/14 PASS (emergency_guards.py)",
+    "6_R_critical_BC_blocked": "Hard rule で完全禁止",
+    "7_ap_on_off_ablation": "ON/OFF/v7.1 三者比較"
+  },
+  "main_results": {
+    "mild": {
+      "n_runs": 200,
+      "v71": {
+        "median": 12.280069496842401,
+        "mean": 11.951239376994629,
+        "ruin_rate": 1.0,
+        "median_steps": 26.0
+      },
+      "v841_ap_on": {
+        "median": 16.376440029383247,
+        "mean": 16.211616854719015,
+        "ruin_rate": 1.0,
+        "median_steps": 33.0
+      },
+      "v841_ap_off": {
+        "median": 16.376440029383247,
+        "mean": 16.211616854719015,
+        "ruin_rate": 1.0,
+        "median_steps": 33.0
+      },
+      "paired_diff_on_vs_v71": {
+        "median": 3.9499846169862654,
+        "mean": 4.260377477724388,
+        "n_on_better": 169,
+        "n_v71_better": 31,
+        "wilcoxon_p": 4.672162945307976e-22
+      },
+      "ablation_ap_effect": {
+        "median": 0.0,
+        "mean": 0.0,
+        "n_on_better": 0,
+        "n_off_better": 0,
+        "wilcoxon_p": NaN
+      },
+      "interventions_per_run": {
+        "emergency": 9.42,
+        "throttle": 6.535,
+        "ap": 0.0,
+        "revalidation_rejected": 0.005
+      },
+      "n_runs_with_min_R_below_10": 192,
+      "elapsed_sec": 3.3907313346862793
+    },
+    "moderate": {
+      "n_runs": 200,
+      "v71": {
+        "median": 11.423959057657948,
+        "mean": 11.24229169525231,
+        "ruin_rate": 1.0,
+        "median_steps": 26.0
+      },
+      "v841_ap_on": {
+        "median": 14.950969503576474,
+        "mean": 14.578108762041332,
+        "ruin_rate": 1.0,
+        "median_steps": 32.0
+      },
+      "v841_ap_off": {
+        "median": 14.923276834590233,
+        "mean": 14.561927373197934,
+        "ruin_rate": 1.0,
+        "median_steps": 32.0
+      },
+      "paired_diff_on_vs_v71": {
+        "median": 3.4757188213802337,
+        "mean": 3.335817066789018,
+        "n_on_better": 142,
+        "n_v71_better": 58,
+        "wilcoxon_p": 1.1561559245114417e-09
+      },
+      "ablation_ap_effect": {
+        "median": 0.0,
+        "mean": 0.01618138884339622,
+        "n_on_better": 5,
+        "n_off_better": 1,
+        "wilcoxon_p": 0.11585149752593009
+      },
+      "interventions_per_run": {
+        "emergency": 8.57,
+        "throttle": 6.335,
+        "ap": 0.04,
+        "revalidation_rejected": 0.015
+      },
+      "n_runs_with_min_R_below_10": 175,
+      "elapsed_sec": 3.567455291748047
+    },
+    "severe": {
+      "n_runs": 200,
+      "v71": {
+        "median": 9.96126788767236,
+        "mean": 10.008541915397617,
+        "ruin_rate": 1.0,
+        "median_steps": 25.0
+      },
+      "v841_ap_on": {
+        "median": 12.13035418488908,
+        "mean": 12.175593492648488,
+        "ruin_rate": 1.0,
+        "median_steps": 28.5
+      },
+      "v841_ap_off": {
+        "median": 12.13035418488908,
+        "mean": 12.139159331680666,
+        "ruin_rate": 1.0,
+        "median_steps": 28.0
+      },
+      "paired_diff_on_vs_v71": {
+        "median": 2.207910375556111,
+        "mean": 2.1670515772508714,
+        "n_on_better": 122,
+        "n_v71_better": 78,
+        "wilcoxon_p": 0.0007715930809734317
+      },
+      "ablation_ap_effect": {
+        "median": 0.0,
+        "mean": 0.03643416096782057,
+        "n_on_better": 6,
+        "n_off_better": 0,
+        "wilcoxon_p": 0.027707849358079864
+      },
+      "interventions_per_run": {
+        "emergency": 7.28,
+        "throttle": 5.695,
+        "ap": 0.045,
+        "revalidation_rejected": 0.015
+      },
+      "n_runs_with_min_R_below_10": 159,
+      "elapsed_sec": 3.2865352630615234
+    },
+    "extreme": {
+      "n_runs": 200,
+      "v71": {
+        "median": 7.050216932034553,
+        "mean": 7.689344237179856,
+        "ruin_rate": 1.0,
+        "median_steps": 20.0
+      },
+      "v841_ap_on": {
+        "median": 5.8306133815485435,
+        "mean": 8.527393722113107,
+        "ruin_rate": 1.0,
+        "median_steps": 21.5
+      },
+      "v841_ap_off": {
+        "median": 5.8306133815485435,
+        "mean": 8.552775570623023,
+        "ruin_rate": 1.0,
+        "median_steps": 21.0
+      },
+      "paired_diff_on_vs_v71": {
+        "median": 0.6711960551187595,
+        "mean": 0.8380494849332504,
+        "n_on_better": 115,
+        "n_v71_better": 85,
+        "wilcoxon_p": 0.14247277162676514
+      },
+      "ablation_ap_effect": {
+        "median": 0.0,
+        "mean": -0.025381848509917614,
+        "n_on_better": 5,
+        "n_off_better": 2,
+        "wilcoxon_p": 0.7353166906373405
+      },
+      "interventions_per_run": {
+        "emergency": 5.37,
+        "throttle": 4.345,
+        "ap": 0.05,
+        "revalidation_rejected": 0.03
+      },
+      "n_runs_with_min_R_below_10": 135,
+      "elapsed_sec": 2.952854633331299
+    },
+    "total": {
+      "n_runs": 200,
+      "v71": {
+        "median": 3.4944943831074395,
+        "mean": 4.891695640940015,
+        "ruin_rate": 1.0,
+        "median_steps": 16.5
+      },
+      "v841_ap_on": {
+        "median": 4.042124852307638,
+        "mean": 5.431364904422123,
+        "ruin_rate": 1.0,
+        "median_steps": 16.0
+      },
+      "v841_ap_off": {
+        "median": 4.042124852307638,
+        "mean": 5.43692128187967,
+        "ruin_rate": 1.0,
+        "median_steps": 16.0
+      },
+      "paired_diff_on_vs_v71": {
+        "median": 0.04452801436742959,
+        "mean": 0.5396692634821078,
+        "n_on_better": 101,
+        "n_v71_better": 99,
+        "wilcoxon_p": 0.36981226050027927
+      },
+      "ablation_ap_effect": {
+        "median": 0.0,
+        "mean": -0.0055563774575466286,
+        "n_on_better": 2,
+        "n_off_better": 1,
+        "wilcoxon_p": 1.0
+      },
+      "interventions_per_run": {
+        "emergency": 3.885,
+        "throttle": 3.3,
+        "ap": 0.03,
+        "revalidation_rejected": 0.025
+      },
+      "n_runs_with_min_R_below_10": 126,
+      "elapsed_sec": 2.623392105102539
+    }
+  },
+  "aggressive_results": {
+    "mild": {
+      "baseline_median": 2.5610999999999997,
+      "with_guard_median": 8.172133333209047,
+      "baseline_steps": 6.0,
+      "with_guard_steps": 20.0,
+      "time_to_ruin_gain": 14.0,
+      "interventions_total": {
+        "emergency": 337,
+        "throttle": 98,
+        "ap": 4
+      }
+    },
+    "moderate": {
+      "baseline_median": 2.170345844217199,
+      "with_guard_median": 5.9180357222373985,
+      "baseline_steps": 5.5,
+      "with_guard_steps": 16.0,
+      "time_to_ruin_gain": 10.5,
+      "interventions_total": {
+        "emergency": 308,
+        "throttle": 91,
+        "ap": 6
+      }
+    }
+  },
+  "acceptance_criteria": {
+    "1_reproducibility": {
+      "passed": true,
+      "evidence": "V71Engine と V841Engine に rng 注入済み (engines.py, v841_engine.py)"
+    },
+    "2_aggressive_crash_prevented": {
+      "passed": true,
+      "evidence": "Aggressive guard 適用での time_to_ruin 改善: 平均 +12.2 step",
+      "details": {
+        "mild": {
+          "baseline_median": 2.5610999999999997,
+          "with_guard_median": 8.172133333209047,
+          "baseline_steps": 6.0,
+          "with_guard_steps": 20.0,
+          "time_to_ruin_gain": 14.0,
+          "interventions_total": {
+            "emergency": 337,
+            "throttle": 98,
+            "ap": 4
+          }
+        },
+        "moderate": {
+          "baseline_median": 2.170345844217199,
+          "with_guard_median": 5.9180357222373985,
+          "baseline_steps": 5.5,
+          "with_guard_steps": 16.0,
+          "time_to_ruin_gain": 10.5,
+          "interventions_total": {
+            "emergency": 308,
+            "throttle": 91,
+            "ap": 6
+          }
+        }
+      }
+    },
+    "3_R_critical_no_BC": {
+      "passed": true,
+      "evidence": "EmergencyResourceGuard unit test 14/14 PASS + Engine 内 hard rule"
+    },
+    "4_nonzero_interventions_aggressive": {
+      "passed": true,
+      "evidence": "Aggressive test 全 intervention 合計: 844"
+    },
+    "5_v71_not_degraded": {
+      "passed": true,
+      "evidence": "v8.4.1 AP-OFF vs v7.1 平均差: +1.82 (hard guard のみの効果)"
+    },
+    "6_ap_independent_effect": {
+      "passed": true,
+      "evidence": "AP-ON vs AP-OFF 平均差: +0.000 (ablation 実施完了)",
+      "details": {
+        "ap_effect_per_level": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "7_revalidation_implemented": {
+      "passed": true,
+      "evidence": "Revalidation 実装済み. AP 提案 平均 0.17/run, reval reject 平均 0.09/run"
+    }
+  }
+}

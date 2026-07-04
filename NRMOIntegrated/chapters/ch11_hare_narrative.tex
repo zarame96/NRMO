@@ -1,0 +1,87 @@
+% chapters/ch11_hare_narrative.tex
+% Chapter 11: Hare-no-Hi Narrative Random Generator
+% Source: NRMO_v5_updated.pdf, Chapter 11 (lines 7270-7330 of v5_layout.txt)
+
+\chapter{Hare-no-Hi: Narrative Random Generator}
+\label{ch:hare-no-hi-narrative}
+
+\nrmobox{Rules and sacredness}{
+\textbf{Rules}: This is a festival narrative. It does not handle
+correctness. Do not decide / do not carry over / erase when done
+($=$ do not use as material for tomorrow's decisions).\\[0.3em]
+\textbf{Sacred}: ``Sacred'' is treated not as truth-making but as a
+demarcated festival space (ends / does not decide / does not carry
+over).
+}
+
+% =====================================================================
+\section{Settings}
+\label{sec:narrative-settings}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Parameter} & \textbf{Options} \\
+\midrule
+Stage
+& Random (city / sea / forest / space / dream-otherworld). \\
+Tone
+& Sparkling (bright festival) / Mystical (ritual-like) /
+Comedy (playful festival) / Noir (cool festival). \\
+Length
+& Short / Medium / Long. \\
+Keywords
+& Optional (mixed in naturally; converted to nearest element if
+unusable). \\
+\bottomrule
+\end{tabularx}
+\caption[Narrative generator settings]{Settings for the Hare-no-Hi
+narrative random generator.}
+\label{tab:narrative-settings}
+\end{table}
+
+% =====================================================================
+\section{Small Hare Ritual (Optional)}
+\label{sec:narrative-small-ritual}
+
+Say aloud before generating:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Today is Hare.
+This is a festival.
+I will not judge.
+I will not decide.
+When it ends, I return.
+\end{lstlisting}
+
+\noindent
+Saying this aloud makes it easier to enter ``narrative mode.''
+
+% =====================================================================
+\section{Usage Notes}
+\label{sec:narrative-usage}
+
+\begin{itemize}
+\item Selecting a stage biases location (stage expression) toward
+that category.
+\item Entering keywords mixes them into the narrative naturally.
+\item Generated narratives are festival artefacts: do not use as
+material for tomorrow's decisions.
+\item The narrative output space here represents the generated story
+placeholder.
+\end{itemize}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This generator operates exclusively under Hare-no-Hi OS
+(Chapter~\ref{ch:hare-no-hi}).
+\item Generated narratives are training-context artefacts and must
+follow the Carryback procedure
+(Section~\ref{sec:carryback-spec}) before any operational
+inheritance --- which, under the Hare-no-Hi rules, is in practice
+forbidden until the next day in normal NRMO mode.
+\end{itemize}

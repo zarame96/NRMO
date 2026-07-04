@@ -1,0 +1,89 @@
+% =====================================================================
+% Per-Part Version Manifest
+% Source: each Part's most recent reconstruction state at v7.2 build time
+% =====================================================================
+
+\chapter*{Per-Part Version Manifest}
+\addcontentsline{toc}{chapter}{Per-Part Version Manifest}
+
+\noindent
+The NRMO monograph has accreted over multiple development phases.
+Different Parts originate from different source documents and have
+been revised at different times. This page records the current state
+of each Part as of monograph build~$v7.2$.
+
+\vspace{0.5em}
+
+\begin{center}
+\small
+\begin{tabular}{p{0.10\textwidth} p{0.30\textwidth} p{0.10\textwidth} p{0.30\textwidth}}
+\toprule
+Part & Subject & Version & Origin / last reconstruction \\
+\midrule
+I   & NRMO Foundational Reference         & v4.0 + v5.5 fwdrefs & v4 source (NRMO\_v5\_updated.pdf, Ch.\,1), v5.5 forward-references only \\
+II  & NRMO Complete (v2.1) Spec            & v2.1                & Reconstructed in v5.5 Session~A--B \\
+III & Structural Reconstruction Notes      & v2.5                & v25\_codebase observations \\
+IV  & UDef (Universal Definition) Layer    & v4.0                & v4 monograph \\
+V   & Theoretical Foundations              & v4.0 + v5 revisions & v4 source + 2025 review additions \\
+VI  & R1Fix (Round-1 Fixes)                & v4.1                & v4 follow-up audit \\
+VII & Mathematical Formalisation (arXiv)   & v5.0                & arXiv preprint, integrated v5.0 \\
+VIII& vNext Civilisation Simulator         & v2.0                & NRMO\_vNext\_Design\_Specification\_v2.pdf \\
+IX  & StrongEngine $\Omega$ Full           & v2.0 + v52 code    & v52\_codebase aligned, archetype classifier originally deferred \\
+X   & Implementation Notes                 & v5.0                & v50 codebase notes \\
+XI  & Empirical \& Historical Validation   & v2.5                & 8-scenario historical validation \\
+XII & Methodological Notes                 & v2.5                & Honest-limits section, last revised v5.5 \\
+XIII& World Simulation Vision              & v5.0--v7.1         & Original vision (v5.0) + v5.2--v7.0 development log \\
+\midrule
+\multicolumn{4}{l}{\itshape Appendices and code} \\
+A--C       & Code listings, world params, civilisation roster & v5.5 & Static, v5.5 baseline \\
+\texttt{world\_sim\_v5\_0--v7.1} & Multi-civ agent simulation suite & v7.1 & Latest: + Collective Strong Engine (W--AB) \\
+\texttt{v52\_codebase}           & CivState single-civ research code & v5.2 & Frozen, source of v6.3+ bridge \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5em}
+
+\noindent
+\textbf{Version semantics.} The monograph version (cover page) is
+$v7.2$: the static text architecture descends from v5.5
+(thirteen Parts, four Appendices), and v7.2 is
+the current development frontier reflected in the Part~XIII development
+chapters and the accompanying \texttt{world\_sim} suite. A reader who
+only requires the static monograph content can read Parts~I--XII at
+the v5.5 reconstruction baseline; a reader interested in the simulation pipeline should
+focus on Part~XIII and \texttt{world\_sim\_v50/}.
+
+\noindent
+\textbf{NRMO naming convention} (introduced v6.4, see
+Section~\ref{sec:renaming-v64}):
+\begin{itemize}
+\item \texttt{NRMO\_Origin}: original veto-only formulation
+  (Parts~I--II), 4-rule fixed-threshold;
+\item \texttt{NRMO}: current strengthened operational form
+  (Parts~VIII, IX, XIII), 7-rule + Adaptive Tuning + $\Omega$ Full;
+\item \texttt{NRMO\_Collective}: v7.0/v7.1 sibling theory incorporating
+  collective governance. v7.0 = P--U fixed-rule layer.
+  v7.1 = + Collective Strong Engine (W--AB) for search-driven configuration.
+  Sibling to \texttt{NRMO}, not replacement.
+\item \texttt{NRMO\_vNext} (output label): retained as the strategy
+  identifier in simulator CSVs for backward compatibility.
+\item \texttt{Loom v3.1} (introduced v7.2, see Part~XIV): empirically
+  frozen \emph{Behavioral Core} achieving 9/9 cells in the Top-3 of
+  the canonical chaotic/drifting/noisy $\times$ mild/moderate/severe
+  benchmark. The current operational identity of the system is
+  $\text{Loom v3.1} + \text{Sociable Shadow Layer}$.
+\end{itemize}
+
+\bigskip
+
+\noindent
+\textbf{Build v7.2 additions:}
+Part~XIV is added in v7.2. It documents the empirical culmination of
+the v8.3 $\rightarrow$ Loom v3.1 research cycle, the formal
+\emph{Detection $\neq$ Intervention} theorem (validated by the
+v3.2 / v3.2.1 negative results), the absorption of v9\_minimal /
+v8.5.1 / ActiveCycle as internal Specialist Threads, and the
+Sociable Shadow Detection Layer (observation only, default ON,
+zero score impact verified by paired-diff test). Parts~I--XIII carry forward unchanged from their v7.1 content baseline
+(the integrated build is v7.2).

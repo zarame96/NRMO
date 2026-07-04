@@ -1,0 +1,363 @@
+% =================================================================
+% Part XIV: Loom Final Architecture & Cumulative Findings
+%   Frozen Behavioral Core + Sociable Shadow Layer
+%   The empirical culmination of v8.3 → Loom v3.1
+% =================================================================
+
+\part{Loom Final Architecture and Cumulative Findings}
+\label{part:loom_final}
+
+\chapter{Loom v3.1 as Behavioral Core}
+\label{ch:loom_v31_core}
+
+\section{Position of Loom v3.1}
+
+The empirical journey from v8.3 to Loom v3.1 culminated in a single
+operational conclusion:
+
+\begin{quote}
+\emph{Loom v3.1 is the current Behavioral Core of the NRMO/Loom system.
+It is not the maximum of any single world, but it is the most robust
+across all worlds tested.}
+\end{quote}
+
+Loom v3.1 achieved \textbf{9/9 cells} in the Top~3 classification
+across the canonical $3 \times 3$ benchmark (chaotic / drifting / noisy
+$\times$ mild / moderate / severe). It is the first engine in the
+NRMO research to do so without violating Sparse Activation
+(\texttt{max\_active\_threads = 3}) and without weakening the v8.4.1
+Safety Floor.
+
+The architecture is summarised as:
+
+\begin{equation}
+\text{Loom v3.1}
+  = \text{Safety Floor}_{\text{v8.4.1}}
+  \;+\; \text{Specialist Threads}
+  \;+\; \text{Sparse Activation}
+  \;+\; \text{Oracle Gap Feedback}.
+\end{equation}
+
+Specialist threads are not external engines competing with Loom; they
+are \emph{internalised} as named threads inside Loom v3.1. The
+Behavioral Core decides, per step, which small number of threads to
+fire.
+
+\section{The Four Foundational Roles}
+
+The Loom architecture stabilises around four irreducible roles:
+
+\begin{description}
+  \item[\textbf{v8.4.1 = Safety Floor.}]
+    EmergencyResourceGuard, ActionIntensityThrottle, Revalidation,
+    and CumulativeRiskTracker. \emph{Immutable.} Removing or relaxing
+    any of these reproduces the v8.3 aggressive-overdrive failure
+    mode. Safety Floor is never bypassed except inside the strictly
+    bounded ContextualMerger-bypass under Hard Drift mode, where it
+    is still applied as a final validation step.
+  \item[\textbf{v9\_minimal = Drift Specialist.}]
+    A minimal-intervention engine that dominates DriftingWorld by
+    \emph{not interfering with regime shift}. Inside Loom, this
+    behaviour is absorbed as the \texttt{DriftThread}, fired
+    sparingly when drift is detected.
+  \item[\textbf{v8.5.1 = Stabilization Specialist.}]
+    Strong in chaotic/noisy mild--moderate cells. Inside Loom, this
+    behaviour is absorbed as the \texttt{StabilizationThread}, using
+    Recovery + Defensive + Synthesis under ContextualMerger.
+  \item[\textbf{ActiveCycle = Severe/Volatile Specialist.}]
+    Provides cycle-aware adaptive behaviour for the high-volatility
+    regime. Inside Loom, this is the \texttt{SevereCycleThread}.
+\end{description}
+
+\section{Why Loom v3.1 is the Correct Frozen Baseline}
+
+A natural objection is: \emph{Why not promote v9\_minimal as the
+canonical engine, since it dominates DriftingWorld?}
+
+The answer is that v9\_minimal is \emph{not} globally optimal. Its
+strengths and weaknesses are:
+
+\begin{itemize}
+  \item \textbf{Strength.} Minimal correction allows it to follow
+    drift trajectories cleanly. It does not over-defend, does not
+    over-recover, and does not over-merge.
+  \item \textbf{Weakness.} Its Safety Floor is thin. In chaotic/noisy
+    regimes the Stabilization-style behaviour outperforms it. Its
+    lower-tail and ruin control require external validation.
+\end{itemize}
+
+NRMO's purpose is not to maximise score in a single world. NRMO's
+purpose is to maintain reachability of admissible futures while
+respecting the ruin boundary across all worlds. Loom v3.1 satisfies
+this constraint; v9\_minimal does not.
+
+Therefore:
+
+\begin{quote}
+\emph{v9\_minimal is the Drift Specialist to be absorbed.\\
+Loom v3.1 is the Behavioral Core.}
+\end{quote}
+
+\chapter{Sociable Shadow Layer}
+\label{ch:sociable_shadow}
+
+\section{The Theory Update: Detection $\neq$ Intervention}
+
+The single most important theoretical contribution of this
+research cycle is the following principle, validated empirically
+against the v3.2 / v3.2.1 negative results:
+
+\begin{theorem}[Detection--Intervention Separation]
+\label{thm:detection_neq_intervention}
+In a Loom-style control architecture with a Safety Floor and Sparse
+Activation, detection signals (cycle/orbit/failure-face/canonical
+state) may be acquired continuously without harm, but routing those
+signals into immediate per-step action interventions destabilises
+the controller and degrades score.
+\end{theorem}
+
+This is not a defect of the underlying sociable-numbers theory. The
+detection mechanisms themselves --- orbit canonicalisation, cycle
+recurrence scoring, drift-escape estimation, failure-face
+classification --- behave exactly as designed. The error in v3.2 and
+v3.2.1 was \emph{control-theoretic}, not detection-theoretic: a
+high-frequency detector was wired directly into a mode switch
+without hysteresis, dwell time, or confidence gating, producing
+over-control, mode hunting, and loss of Drift-mode purity.
+
+The corrected design assigns the sociable-numbers machinery to a
+\emph{shadow} layer.
+
+\section{Architecture of the Sociable Shadow Layer}
+
+The Sociable Shadow consists of four observational components,
+all default ON:
+
+\begin{description}
+  \item[\textbf{SociableObservationLayer.}]
+    Records every step as $(state, action, module, context, world,
+    reward, \Delta, \mathrm{guard}, \mathrm{throttle}, \mathrm{reval})$
+    with bucketed signatures.
+  \item[\textbf{SociableCanonicalizationLayer.}]
+    Assigns canonical IDs to state, failure, context, and orbit.
+    Same-orbit, same-failure, and same-context structures are
+    collapsed into canonical equivalence classes.
+  \item[\textbf{SociableCycleOrbitDetector.}]
+    Computes orbit-recurrence, cycle-closure, drift-escape,
+    directional-persistence, reversal-rate, autocorrelation, and
+    no-improvement-cycle scores. From these it derives
+    likelihood scores for drifting, chaotic, and noisy world types.
+  \item[\textbf{SociableFailureFaceDetector.}]
+    Classifies failures into a small enumerated set of faces
+    (\texttt{R\_CRITICAL}, \texttt{X\_HIGH}, \texttt{GUARD\_FORCED},
+    \texttt{THROTTLE\_FORCED}, \texttt{STABILIZATION\_OVERUSE},
+    \texttt{DRIFT\_MISS}, \texttt{RECOVERY\_DOMINANCE},
+    \texttt{AGGRESSIVE\_DRAWDOWN}, \texttt{OVER\_DEFENSE},
+    \texttt{NO\_IMPROVEMENT\_CYCLE}, \dots) and tracks their
+    distribution and entropy.
+\end{description}
+
+All four are written into the decision trace. None of them write back
+into Loom v3.1's action selection. Empirically, this gives a
+\emph{paired diff of exactly zero} between Loom v3.1 and Loom v3.1 +
+Shadow across all nine cells (Wilcoxon test: all-zero differences,
+$p$ undefined / trivial).
+
+\section{Default-ON vs Default-OFF Components}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Component} & \textbf{Default} & \textbf{Reason} \\
+\midrule
+SociableObservationLayer & ON & observation only \\
+SociableCanonicalizationLayer & ON & passive labelling \\
+SociableCycleOrbitDetector & ON & metric computation only \\
+SociableFailureFaceDetector & ON & classification only \\
+EffectiveRangeGuard & ON & coverage bookkeeping \\
+\midrule
+FF-driven thread suppression & OFF & changes action \\
+Hard/Soft Drift mode override & OFF & changes mode \\
+Cycle-driven action suppression & OFF & changes action \\
+FF-driven Merger bypass & OFF & changes selection \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent The OFF components remain available for future use, but
+require additional control structure (hysteresis, dwell time,
+confidence threshold, oracle-gap validation) before they can be
+re-enabled without reproducing the v3.2 regression.
+
+\chapter{The v3.2 / v3.2.1 Negative Results}
+\label{ch:v32_negative}
+
+\section{What Was Attempted}
+
+Loom v3.2 attempted to wire the Sociable Detection layers directly
+into Sparse Activation. Loom v3.2.1 reduced the Hard/Soft Drift
+thresholds and tightened SevereCycle conditions. Both versions
+verified that:
+
+\begin{itemize}
+  \item Drift mode activation rose dramatically (HardDrift: $1\,320$,
+    SoftDrift: $1\,483$ in drifting/mild per 100 runs).
+  \item Failure faces were classified correctly
+    (\texttt{r\_critical}, \texttt{guard\_forced}, \texttt{x\_high},
+    \texttt{drift\_miss}, \dots).
+  \item ContextualMerger bypass was triggered as designed.
+  \item All four detection layers operated to specification.
+\end{itemize}
+
+\section{What Went Wrong}
+
+Despite correct detection, scores degraded:
+
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Cell} & \textbf{v3.1} & \textbf{v3.2} & \textbf{v3.2.1} \\
+\midrule
+drifting/mild     & 19.34 & 11.64 & 10.75 \\
+drifting/moderate &  9.93 &  8.91 &  7.70 \\
+drifting/severe   &  6.40 &  5.96 &  6.09 \\
+\midrule
+Top-3 count       & 8--9/9 & 4/9   & 2/9 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The mechanism of degradation was:
+
+\begin{enumerate}
+  \item Detection signals fluctuated step by step.
+  \item Each fluctuation caused a mode switch (Drift $\leftrightarrow$
+    Stabilization $\leftrightarrow$ FF-intervention).
+  \item Frequent switching destroyed the purity of Drift mode, which
+    requires \emph{not interfering} with trend.
+  \item ContextualMerger bypass became too frequent, replacing
+    well-merged candidates with raw V71 base proposals that were no
+    longer the best choice in the current context.
+  \item The Behavioral Core lost coherence and underperformed even
+    its own pre-detection baseline.
+\end{enumerate}
+
+\section{The Lesson}
+
+\begin{quote}
+\emph{Increasing detection precision does not increase control
+performance. Feeding detection signals directly into control without
+hysteresis, dwell time, or confidence gating reproduces a classical
+hunting / over-control instability.}
+\end{quote}
+
+This is the principle stated formally in
+Theorem~\ref{thm:detection_neq_intervention}. v3.2 and v3.2.1 are
+preserved as the negative-result evidence supporting it.
+
+\chapter{Specialist Integration: Final Map}
+\label{ch:specialist_integration_final}
+
+\section{The Four-Role Diagram}
+
+\begin{center}
+\fbox{\parbox{0.85\textwidth}{
+\centering
+\textsc{Loom Final Architecture (current frozen state)} \\[1ex]
+\begin{tabular}{l@{\hspace{1.5em}}l}
+v8.4.1            & Safety Floor (immutable)                       \\
+v9\_minimal       & Drift Specialist (absorbed as DriftThread)     \\
+v8.5.1            & Stabilization Specialist (absorbed)            \\
+ActiveCycle       & Severe / Volatile Specialist (absorbed)        \\
+\midrule
+Loom v3.1         & \textbf{Behavioral Core (frozen)}              \\
+Sociable Shadow   & Detection / Trace Layer (observation only)     \\
+\end{tabular}
+}}
+\end{center}
+
+\section{Why This Map Is Stable}
+
+Each role is necessary, each role is non-overlapping, and each role
+has been individually validated by ablation:
+
+\begin{itemize}
+  \item Removing the Safety Floor reproduces v8.3.
+  \item Replacing the Behavioral Core with any single Specialist
+    forfeits one or more worlds.
+  \item Re-enabling Sociable Intervention reproduces v3.2 / v3.2.1.
+  \item Removing the Sociable Shadow removes the trace layer that
+    enables offline analysis, but does not affect runtime behaviour.
+\end{itemize}
+
+Therefore the configuration
+
+\begin{equation}
+\text{NRMO}_{\text{current}}
+  = \underbrace{\text{Loom v3.1}}_{\text{behaviour}}
+  \;\;+\;\;
+  \underbrace{\text{Sociable Shadow}}_{\text{observation}}
+\end{equation}
+
+is the empirically minimal stable configuration that simultaneously
+preserves the Safety Floor, the Specialist behaviours, Sparse
+Activation, and offline interpretability.
+
+\chapter{Cumulative Findings}
+\label{ch:cumulative_findings}
+
+The following ten findings are the durable empirical results of the
+v8.3 $\rightarrow$ Loom v3.1 + Shadow research cycle. They are
+intended to outlive any individual implementation.
+
+\begin{enumerate}
+  \item \textbf{No universal best engine exists.} No single engine
+    won every cell of the $3 \times 3$ benchmark. Empirical fact.
+  \item \textbf{Specialism dominates Generalism per world.} Each
+    world had a specialist that outperformed every generalist
+    in that world.
+  \item \textbf{v8.4.1 Safety Floor is immutable.} Every relaxation
+    attempt re-introduced v8.3-class failure modes.
+  \item \textbf{Synthesis Pathway is universally positive.} The
+    only sub-module that contributed non-negatively in every cell.
+  \item \textbf{The Hard Guard is EmergencyResourceGuard.} The other
+    components of v8.4.1's safety apparatus are supportive; the
+    Emergency Guard alone carries the protective load.
+  \item \textbf{Sparse Activation works.} Limiting
+    \texttt{max\_active\_threads} to 3 improves stability without
+    sacrificing capability.
+  \item \textbf{Drift Override + Enhanced Drift Thread is the
+    correct drifting strategy.} Detection alone is not enough;
+    minimal-intervention execution is required.
+  \item \textbf{Sociable Detection belongs in trace, not control.}
+    Verified by the v3.2 / v3.2.1 negative results.
+  \item \textbf{Excessive mode switching degrades score.} A control
+    architecture must have dwell time, not just precision.
+  \item \textbf{Detection $\neq$ Intervention.} The Loom theory
+    update. Observation may be continuous; intervention must be
+    gated.
+\end{enumerate}
+
+\chapter{One-Line Summary}
+\label{ch:one_line_summary}
+
+\begin{quote}\large
+\emph{Loom v3.1 is the current behavioral core.
+v9\_minimal is the Drift Specialist to be absorbed, not the final
+engine. v8.4.1 remains the immutable Safety Floor. Sociable Essence
+remains always-on as Shadow Detection, never as direct
+intervention.}
+\end{quote}
+
+\bigskip
+\noindent
+\textsc{Final architectural identity:}
+\begin{equation*}
+\boxed{\;
+  \text{NRMO}_{\text{current}}
+  \;=\;
+  \text{Loom v3.1 (frozen behavioral core)}
+  \;+\;
+  \text{Sociable Shadow Layer (observation only)}
+\;}
+\end{equation*}

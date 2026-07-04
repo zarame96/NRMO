@@ -1,0 +1,152 @@
+% =====================================================================
+\chapter*{Final Build Statement (v7.2)}
+\addcontentsline{toc}{chapter}{Final Build Statement (v7.2)}
+
+\noindent
+This volume represents the \textbf{Integrated System v7.2} of the NRMO
+research programme, designated as the architectural completion of the
+defensive side of NRMO. It is published as a self-contained reference
+covering the theory, implementation, and empirical validation of NRMO's
+governance--execution architecture across both individual and collective
+scales.
+
+\section*{What v7.2 contains}
+
+\begin{itemize}
+\item \textbf{NRMO\_Origin}: the foundational veto-only formulation
+  (4 fixed rules) preserved without modification (Part~I).
+\item \textbf{NRMO}: the strengthened operational form with 13 enhancements
+  A--M, Adaptive Tuning Layer, and $\Omega$ Full Strong Engine (Parts~VII--IX
+  and~XIII, v6.4 chapter).
+\item \textbf{NRMO\_Collective}: the sibling theory introducing collective
+  governance with 6 P--U mechanisms (v7.0 chapter) and the
+  Collective Strong Engine with 6 W--AB mechanisms plus 4-rule Collective
+  Core veto (v7.2 chapter). This restores architectural symmetry: at
+  every scale (individual / family / lineage / civilisation), both veto
+  and search components coexist.
+\item \textbf{World Simulation suite}: a 9-civilisation, 75-generation,
+  3000-year multi-agent simulator with cohort spotlighting, family
+  lineage chronicling, inter-civilisation interaction, memetic dynamics,
+  black-swan events, counterfactual reasoning, and calibration to
+  historical demography. The full v6.1 unified codebase implements
+  all three NRMO controllers.
+\item \textbf{v52 reference codebase}: the original single-civilisation
+  research implementation from which v6.3 onward was bridged.
+\end{itemize}
+
+\section*{What v7.2 deliberately does not contain}
+
+\subsection*{Vision (North Star concept)}
+
+A specification proposed during v7.2 development would have added a
+``Common Vision'' layer to both individual and collective Strong
+Engines, formalising the phrase
+``\textit{Walk and observe the world without forgetting; look up to the North Star.}''
+Implementation was rejected by the architectural reasoning recorded
+during the design discussion. The decisive insight:
+
+\begin{quote}
+\itshape
+NRMO must not possess Vision.\\
+Vision belongs to the user of NRMO, not to NRMO itself.\\
+NRMO is a decision aid framework, not a value system.
+\end{quote}
+
+This insight repositions NRMO definitively as a \emph{decision aid}
+(neutral to the user's Vision) rather than a \emph{value system}
+(prescribing direction). The Authority Hierarchy is therefore:
+
+\[
+\boxed{\text{Human Sovereign} \to \text{Vision (held by Human)} \to
+       \text{NRMO} \to \text{Engines}}
+\]
+
+The user retains Vision; NRMO operates beneath Vision as admissibility
+and ruin-rejection layer. This structural placement protects NRMO from
+ideological drift and preserves the Spec's prohibition against
+NRMO becoming ``doctrine, ideology, or replacement for human
+sovereignty''.
+
+\subsection*{Offensive theory (provisionally named NPMO)}
+
+A complementary theory for the offensive side
+(``Non-Passivity Maximizing Objective''), addressing active pursuit
+rather than ruin-rejection, is recognised as a necessary counterpart
+to NRMO but is reserved for future work. The intended architecture
+positions NRMO and NPMO as siblings under a unifying Holdings layer:
+
+\[
+\boxed{\text{Holdings (user-level integration)} \to
+       \text{NRMO (defensive) + NPMO (offensive)} \to \text{Engines}}
+\]
+
+NPMO's specification, implementation, and empirical validation are
+out of scope for v7.2 and will appear in a separate volume.
+
+\section*{Empirical position}
+
+Three-seed averaged comparison (scale=small, 9 civilisations,
+75 generations) summary, NRMO\_vNext strategy score:
+
+\begin{center}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+World & Baseline (v6.0) & NRMO (v6.4) & NRMO\_Coll. (v7.0) & NRMO\_Coll. (v7.1) & Faith\_Communal \\
+\midrule
+Japan              & 2.148 & \textbf{2.170} & 1.729 & 1.699 & 1.997 \\
+China              & 2.109 & \textbf{2.182} & 1.913 & 1.907 & 2.146 \\
+Europe             & 0.769 & 0.835 & 1.108 & \textbf{1.118} & 1.450 \\
+Islamic            & 1.544 & \textbf{1.616} & 1.395 & 1.372 & 1.431 \\
+Indic              & 2.017 & \textbf{2.074} & 1.532 & 1.555 & 1.770 \\
+Polynesian         & 0.943 & 1.012 & 1.156 & \textbf{1.207} & 1.585 \\
+IndigenousAmericas & 0.213 & 0.195 & 0.837 & \textbf{0.890} & 0.752 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+\item NRMO (v6.4) dominates in peaceful worlds.
+\item NRMO\_Collective (v7.0/v7.1) dominates in catastrophic worlds.
+\item In IndigenousAmericas, NRMO\_Collective exceeds Faith\_Communal
+  ($0.890 > 0.752$): the first empirical case where a non-religious
+  framework outperforms Faith-based collective survival.
+\item The trade-off between peacetime efficiency and crisis-time
+  survival is irreducible and operationally explicit.
+\end{itemize}
+
+\section*{Architectural invariants}
+
+Throughout all extensions A--M, P--U, W--AB, the following invariants
+hold without exception:
+
+\begin{enumerate}
+\item NRMO Core defines admissibility $A_t$; Strong Engines search
+  within $A_t$. Neither engine may redefine NRMO boundaries.
+\item Tuning Layer adjusts thresholds but never enters NRMO scoring.
+\item Collective layer (P--U, W--AB) operates downstream of NRMO and
+  $\Omega$ Full, never modifying veto logic.
+\item Governance--execution separation is scale-invariant: applied
+  identically at individual and collective levels.
+\item NRMO does not possess Vision; the user does.
+\end{enumerate}
+
+\section*{This volume's intended use}
+
+This volume is published as a self-contained reference for:
+\begin{itemize}
+\item Researchers studying decision architectures under absorbing
+  failure risk;
+\item Practitioners requiring veto + search separation in governance
+  systems;
+\item Future readers tracing the development history of NRMO theory.
+\end{itemize}
+
+It is \textbf{not} intended as:
+\begin{itemize}
+\item A philosophical doctrine to be adopted;
+\item An ideology or value system;
+\item A replacement for human judgement at any scale.
+\end{itemize}
+
+The reader is the sovereign. NRMO is the tool.

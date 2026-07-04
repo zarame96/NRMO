@@ -1,0 +1,122 @@
+# -*- coding: utf-8 -*-
+"""loom100.py — 最大100年の経営史を回し、年次IFRS三表(円)と世代/危機/立て直しを記録。"""
+import sys, os; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import numpy as np
+import firm_ifrs as F
+from firm_ifrs import M
+
+REGIME_JP={"boom":"好況","normal":"平常","recession":"不況","inflation":"インフレ"}
+
+def bias_label(b):
+    return "攻撃的" if b>0.33 else ("保守的" if b<-0.33 else "均衡")
+
+def run_century(seed, hostility=None, bias_mode="free", engine=None):
+    rng=np.random.default_rng(seed)
+    if hostility is None: hostility=float(rng.beta(2,3))
+    dyn=F.FirmDynamicsIFRS(predatory=True, hostility=hostility, bias_mode=bias_mode)
+    eng=engine or F.MaxForwardEngine(); s=F.IFRSFirmState()
+    if dyn._center is not None: s.ceo_bias=dyn._center
+    F.init_creed(s)   # 創業理念を生成
+    F.init_founder(s, rng)  # 創業者(初代)の技量・志向を引く(稀に爆発型)
+    annual=[]; eras=[]; crises=[]
+    yacc=_zero(); bs_open=_bs_snapshot(s)
+    cur_gen=s.generation; era={"gen":cur_gen,"bias":s.ceo_bias,"start_year":0,
+                               "regimes":set(),"max_war":0,"min_equity":s.equity,"max_equity":s.equity,
+                               "actions":{}, "crises":0, "events":[]}
+    in_crisis_prev=False; crisis_start=None; peak_equity=s.equity
+    prev_listed=False; prev_delisted=False; prev_opinion='none'; prev_newbiz=0; prev_div=0.0; prev_pivot=0
+    for q in range(400):
+        a=eng.decide(dyn,s,rng)
+        s=dyn.transition(s,a,rng)
+        yr=(q+1)/4
+        # アクション集計(代別)
+        era["actions"][a.intent]=era["actions"].get(a.intent,0)+1
+        era["regimes"].add(REGIME_JP.get(s.macro_regime,s.macro_regime))
+        era["max_war"]=max(era["max_war"], s.price_war_left)
+        era["min_equity"]=min(era["min_equity"], s.equity); era["max_equity"]=max(era["max_equity"], s.equity)
+        # 危機(立て直し)局面の検出
+        if s.in_crisis and not in_crisis_prev:
+            crisis_start=yr; era["crises"]+=1
+        if (not s.in_crisis) and in_crisis_prev and crisis_start is not None:
+            crises.append({"gen":s.generation,"start":crisis_start,"end":yr,"survived":True,
+                           "low_equity":round(s.equity/M)})
+            crisis_start=None
+        peak_equity=max(peak_equity,s.equity)
+        if s.listed and prev_listed is False:
+            era["events"].append(f"{yr:.0f}年 IPO上場({s.market.upper()}/{s.accounting.upper()})")
+        if s.delisted and prev_delisted is False:
+            era["events"].append(f"{yr:.0f}年 上場廃止")
+        if s.audit_opinion in ("adverse","disclaimer") and prev_opinion not in ("adverse","disclaimer"):
+            era["events"].append(f"{yr:.0f}年 監査意見『{s.audit_opinion}』")
+        if s.new_biz_count>prev_newbiz:
+            era["events"].append(f"{yr:.0f}年 新規事業成功(累計{s.new_biz_count})")
+        if s.dividends_cum>prev_div+1 and prev_div==0:
+            era["events"].append(f"{yr:.0f}年 配当開始")
+        if s.pivot_count>prev_pivot:
+            era["events"].append(f"{yr:.0f}年 業態転換(累計{s.pivot_count})")
+        prev_pivot=s.pivot_count
+        prev_newbiz=s.new_biz_count; prev_div=s.dividends_cum
+        prev_listed=s.listed; prev_delisted=s.delisted; prev_opinion=s.audit_opinion
+        in_crisis_prev=s.in_crisis
+        # 年次集計
+        _accum(yacc, s._flow)
+        if (q+1)%4==0:
+            annual.append(_year_stmt((q+1)//4, yacc, s))
+            yacc=_zero()
+        # 世代交代→eraを締める
+        if s.generation!=cur_gen:
+            era["end_year"]=yr; era["end_equity"]=round(s.equity/M); eras.append(era)
+            cur_gen=s.generation
+            era={"gen":cur_gen,"bias":s.ceo_bias,"start_year":yr,"regimes":set(),"max_war":0,
+                 "min_equity":s.equity,"max_equity":s.equity,"actions":{}, "crises":0, "events":[]}
+        if s.bankrupt:
+            if crisis_start is not None:
+                crises.append({"gen":s.generation,"start":crisis_start,"end":yr,"survived":False,
+                               "low_equity":round(s.equity/M)})
+            if (q+1)%4!=0: annual.append(_year_stmt((q+1)//4+1, yacc, s, partial=True))
+            break
+    era["end_year"]=(q+1)/4; era["end_equity"]=round(s.equity/M); eras.append(era)
+    return {"seed":seed,"hostility":hostility,"bias_mode":bias_mode,
+            "lifespan":(q+1)/4 if s.bankrupt else 100.0,"bankrupt":s.bankrupt,
+            "death_reason":s.death_reason,"generations":s.generation,
+            "final_equity":s.equity,"peak_equity":peak_equity,
+            "listed":s.listed,"delisted":s.delisted,"market":s.market,"accounting":s.accounting,"audit":s.audit_opinion,
+            "market_share":s.market_share,"n_competitors":len(s.comp_strengths),"new_biz_count":s.new_biz_count,
+            "dividends_cum":s.dividends_cum,"rnd_spend_cum":s.rnd_spend_cum,"shares":s.shares,
+            "creed":s.creed,"creed_align":s.creed_align,"share_price":s.share_price,"peak_price":s.peak_price,"dissolved_reason":s.dissolved_reason,"pivot_count":s.pivot_count,"final_channels":s.channels,"final_sites":s.sites,"final_insourcing":s.insourcing, "annual":annual,"eras":eras,"crises":crises,"final":s}
+
+def _zero():
+    return {k:0.0 for k in ["revenue","cogs","gross","opex","dep","op_income","interest","other","pretax","tax","ni","cfo","cfi","cff","capex","new_debt","repay","asset_sale","divest","impairment"]}
+def _accum(y,flow):
+    for k in y: y[k]+=flow.get(k,0.0)
+def _bs_snapshot(s):
+    return dict(cash=s.cash,ar=s.trade_receivables,inv=s.inventory,net_ppe=s.net_ppe,
+                cur_assets=s.current_assets,noncur_assets=s.noncurrent_assets,total_assets=s.total_assets,
+                tp=s.trade_payables,bc=s.borrowings_current,bnc=s.borrowings_noncurrent,
+                cur_liab=s.current_liabilities,noncur_liab=s.noncurrent_liabilities,total_liab=s.total_liabilities,
+                share=s.share_capital,retained=s.retained_earnings,equity=s.equity)
+def _year_stmt(year, pl, s, partial=False):
+    bs=_bs_snapshot(s)
+    chk=round(bs["total_assets"]-(bs["total_liab"]+bs["equity"]),0)
+    return {"year":year,"pl":dict(pl),"bs":bs,"check":chk,"partial":partial,
+            "going_concern_doubt":s.going_concern_doubt,"gen":s.generation,"bias":s.ceo_bias,
+            "regime":REGIME_JP.get(s.macro_regime,s.macro_regime),"tech_gap":round(s.tech_gap,2),
+            "market_share":round(s.market_share,3),"n_competitors":len(s.comp_strengths),
+            "market_size":round(s.market_size,0),"new_biz":s.new_biz_count,
+            "dividends_cum":s.dividends_cum,"bonds":s.bonds,"treasury":s.treasury,
+            "shares":round(s.shares,1),"listed":s.listed,"market":s.market,"accounting":s.accounting,
+            "audit":s.audit_opinion,"activist":round(s.activist_pressure,2),
+            "share_price":round(s.share_price,1),"sentiment":round(s.sentiment,2),"creed_align":round(s.creed_align,2),"shares_o":round(s.shares,1),
+            "channels":s.channels,"sites":s.sites,"insourcing":round(s.insourcing,2),"cs_level":round(s.cs_level,2),
+            "opex_efficiency":round(s.opex_efficiency,2),"pivot_count":s.pivot_count}
+
+if __name__=="__main__":
+    # 動作確認: 代表パス1本
+    r=run_century(7)
+    print(f"seed7: 寿命{r['lifespan']:.0f}年 第{r['generations']}代まで 破綻={r['bankrupt']}({r['death_reason']})")
+    print(f"年次三表 {len(r['annual'])}期, 貸借不一致={sum(1 for a in r['annual'] if abs(a['check'])>1)}件")
+    print(f"世代数={len(r['eras'])} 危機局面={len(r['crises'])}件")
+    print("代別サマリ:")
+    for e in r["eras"][:6]:
+        print(f"  第{e['gen']}代 {bias_label(e['bias'])}({e['bias']:+.2f}) {e['start_year']:.0f}→{e.get('end_year',0):.0f}年 "
+              f"純資産{e.get('end_equity',0)}M 危機{e['crises']}回 主手={max(e['actions'],key=e['actions'].get) if e['actions'] else '-'}")

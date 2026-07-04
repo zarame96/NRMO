@@ -1,0 +1,52 @@
+[
+  {
+    "step": 0,
+    "method": "init",
+    "flags_summary": "I8,I11,H2,G1,G2,G3,G7,G8,G9",
+    "n_active": 9,
+    "composite_score": -5.352480533673877,
+    "pareto_violations": 1,
+    "total_improvement": -0.462480533673878,
+    "accepted": true
+  },
+  {
+    "step": 1,
+    "method": "add_G6",
+    "flags_summary": "I8,I11,H2,G1,G2,G3,G6,G7,G8,G9",
+    "n_active": 10,
+    "composite_score": -2.831305541238041,
+    "pareto_violations": 1,
+    "total_improvement": 2.068694458761959,
+    "accepted": true
+  },
+  {
+    "step": 2,
+    "method": "add_H5",
+    "flags_summary": "I8,I11,H2,H5,G1,G2,G3,G6,G7,G8,G9",
+    "n_active": 11,
+    "composite_score": -2.2415400888270347,
+    "pareto_violations": 1,
+    "total_improvement": 2.668459911172965,
+    "accepted": true
+  },
+  {
+    "step": 0,
+    "method": "init",
+    "flags_summary": "I8,I11,H2,H5,G1,G2,G3,G6,G7,G8,G9",
+    "n_active": 11,
+    "composite_score": -7.033536314334487,
+    "pareto_violations": 1,
+    "total_improvement": -2.123536314334487,
+    "accepted": true
+  },
+  {
+    "step": 1,
+    "method": "remove_I11",
+    "flags_summary": "I8,H2,H5,G1,G2,G3,G6,G7,G8,G9",
+    "n_active": 10,
+    "composite_score": -4.510311706336462,
+    "pareto_violations": 1,
+    "total_improvement": 0.38968829366353797,
+    "accepted": true
+  }
+]

@@ -1,0 +1,369 @@
+% chapters/ch20_strong_engine.tex
+% Chapter 20: Strong Engine Architecture — Caged Beast Model
+% Source: NRMO_v5_updated.pdf, Chapter 20 (lines 9147-9322 of v5_layout.txt)
+
+\chapter{Strong Engine Architecture --- Caged Beast Model}
+\label{ch:strong-engine}
+
+\nrmobox{Document status}{
+\begin{tabular}{ll}
+\textbf{Status}: & Structural Requirement (20-World Consensus) \\
+\textbf{Source}: & 10 experts $\times$ approx.~300 years $\times$
+20 world lines \\
+\textbf{Classification}: & Core Architecture Extension
+\end{tabular}\\[0.4em]
+NRMO is a constitution to prevent breaking; a separate strong engine
+carries the force to advance the world. Both are separated; NRMO
+only vetoes breakdown.
+}
+
+% =====================================================================
+\section{v7 Realignment: Real-Side Primacy and Two-Layer Structure}
+\label{sec:strong-engine-v7-realignment}
+
+\nrmobox{v7 structural correction}{
+Earlier versions misplaced the Strong Engine $\Omega$ Full on the
+civ-sim side. The corrected architecture places it on the \textbf{real
+side} as the primary actor. The civ-sim side hosts a separate
+MaxForwardEngine that imitates the Strong Engine.
+}
+
+\paragraph{Real side --- Strong Engine $\Omega$ Full.}
+The Strong Engine performs all exploration, reasoning, and decision-making
+(unrestricted scope) over the \emph{true dynamics of the target domain}.
+Its default is \textbf{maximum forward movement}. NRMO removes only the
+components heading toward absorbing ruin; the magnitude of forward movement
+itself is never reduced. Stagnation and ``minimum viable'' choices are
+treated as a form of ruin (passive death) and excluded. The Loom layer
+resides on this real side as the ruin-boundary governance.
+
+\paragraph{civ-sim side --- MaxForwardEngine.}
+A separate MaxForwardEngine on the civilisation-simulation side imitates
+the Strong Engine. It tolerates aggressive death/ruin (for feedback),
+excludes extreme caution, and computes the attack-peak and defense-peak,
+seeking the best score. The best action found is returned to the real-side
+Strong Engine, which advances without breaking. The two sides exchange and
+accumulate information bidirectionally.
+
+\paragraph{World-dependence.}
+Maximum forward is the \emph{default} posture, not a universal optimum.
+The civ-sim layer explores each world's true optimum: aggression dominates
+in some worlds (inventory-cycle domains), sustainable growth in others
+(long-horizon civilisations), and extreme caution in yet others
+(V9-minimum-type worlds). The two-layer structure \emph{discovers}, rather
+than imposes, the optimum.
+
+\paragraph{Rollout discipline (root-cause fix).}
+The engine's rollout must use the target domain's true dynamics. Embedding
+a fixed civ-sim model inside the engine causes divergence and over-defensive
+collapse --- the root cause of prior ``poor numbers.'' A short evaluation
+horizon compounds this by failing to credit long-run compounding growth,
+biasing the choice toward over-defense. See the Realignment Master Spec for
+the full component mapping.
+
+% =====================================================================
+\section{Core Consensus}
+\label{sec:strong-engine-consensus}
+
+\subsection{Consensus 1: NRMO Alone Does Not Advance}
+
+\paragraph{Structural limitation.}
+NRMO is extremely strong at ``not breaking.'' However, the following
+require propulsive force (engine):
+
+\begin{itemize}
+\item Technological breakthroughs.
+\item Non-continuous market jumps.
+\item Social / relational phase transitions.
+\end{itemize}
+
+\paragraph{Formal proof: limitation of NRMO alone.}
+
+\begin{itemize}
+\item \textbf{Premise 1}: NRMO constraint $= P(\mathrm{Ruin} \mid a)
+\le \varepsilon$.
+\item \textbf{Premise 2}: $\text{threshold breakthrough} \subseteq
+\{a \mid P(\mathrm{Ruin} \mid a) > \varepsilon\}$.
+\item \textbf{Therefore}: NRMO alone cannot break through threshold
+structurally.
+\end{itemize}
+
+\begin{equation}
+\forall w \in \mathrm{Worlds}:\;
+\mathrm{NRMO\_only}(w) \;\Rightarrow\;
+\neg \mathrm{CanCrossThreshold}(w).
+\label{eq:nrmo-alone-limitation}
+\end{equation}
+
+\subsection{Consensus 2: A Strong Engine Is Essential}
+
+20 world-line observations:
+
+\begin{itemize}
+\item Only weak repetitive engine $\to$ survives but loses
+initiative.
+\item Lacking strong engine $\to$ eliminated in discontinuous
+environments.
+\end{itemize}
+
+\paragraph{Conclusion.}
+The theory that an engine is unnecessary is a denial of reality.
+
+% =====================================================================
+\section{Rejected Designs (Commonalities Across Failed Worlds)}
+\label{sec:strong-engine-failures}
+
+Three patterns that failed in all world lines:
+
+\subsection{Failure 1: Engine Placed Inside NRMO}
+
+Placing the strong engine under NRMO constraints makes
+non-continuous jumps impossible.
+
+\begin{equation}
+\mathrm{Engine} \subseteq \mathrm{NRMO}
+\;\Rightarrow\;
+\text{All actions subject to } P(\mathrm{Ruin}) \le \varepsilon.
+\end{equation}
+
+But strong engine requires $P(\mathrm{Ruin}) > \varepsilon$ for
+non-continuous jumps $\Rightarrow$ contradiction $\Rightarrow$
+failure.
+
+\subsection{Failure 2: NRMO Intervening in Engine Purpose / Strategy}
+
+When NRMO says what ``should be done,'' the constitution becomes a
+ruler.
+
+\subsection{Failure 3: Suppressing Propulsive Force Under ``Safety''}
+
+Ruin avoidance becomes an end in itself, prohibiting exploration
+altogether.
+
+\paragraph{Common consequence.}
+
+\begin{itemize}
+\item Religionisation (NRMO absolutised).
+\item Stagnation (disappearance of exploration).
+\item Self-exculpation (``safety'' as excuse).
+\item Disappearance of decision subject (outsourcing of
+responsibility).
+\end{itemize}
+
+% =====================================================================
+\section{Correct Structure (Design That Survived Across Worlds)}
+\label{sec:strong-engine-correct}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Layer} & \textbf{Role} & \textbf{Authority} \\
+\midrule
+
+NRMO (Constitution)
+& Veto of irreversible breakdown
+& Veto only (NO / HOLD / SAFE\_EXIT) \\
+
+Engine (Propulsion)
+& Non-continuous jump / threshold breakthrough
+& Exploration, experiment, challenge \\
+
+Prohibition
+& Engine: ignoring NRMO; NRMO: propulsion / optimisation / success
+definition
+& --- \\
+
+\bottomrule
+\end{tabularx}
+\caption[Caged beast structure]{Correct two-layer architecture
+surviving across all world lines.}
+\label{tab:caged-beast-structure}
+\end{table}
+
+\subsection{Definition of Strong Engine}
+
+\begin{itemize}
+\item \textbf{High-speed}: fast repetition rate.
+\item \textbf{Single-purpose orientation}: has clear goals.
+\item \textbf{Non-continuous jumps}: force to cross thresholds.
+\item \textbf{Failure-premise}: many failures built in.
+\item \textbf{World-bending}: has force to change the environment.
+\end{itemize}
+
+% =====================================================================
+\section{Formal Definition of Complete System}
+\label{sec:strong-engine-formal}
+
+\begin{equation}
+\mathrm{System} = (\mathrm{NRMO},\, \mathrm{Engine},\,
+\mathrm{Separation}).
+\end{equation}
+
+\begin{equation}
+\mathrm{Separation} := \begin{cases}
+\mathrm{Engine} \not\subseteq \mathrm{NRMO}, \\
+\mathrm{NRMO.authority} = \mathrm{veto\_only}, \\
+\mathrm{Engine} \to \mathrm{NRMO}: \text{cannot ignore}.
+\end{cases}
+\label{eq:separation-definition}
+\end{equation}
+
+\paragraph{Health metric.}
+
+\begin{equation}
+\mathrm{health}(\mathrm{System}) \propto
+\frac{1}{\mathrm{veto\_frequency}}.
+\label{eq:health-metric}
+\end{equation}
+
+% =====================================================================
+\section{Operation Flow (Integrated)}
+\label{sec:strong-engine-flow}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Engine: EXPLORE -> ATTEMPT -> FAIL/SUCCEED -> ITERATE
+       |
+       v (each action)
+NRMO:  CHECK P(Ruin | a) <= epsilon ?
+       |-- YES: PASS  (Engine continues)
+       |-- NO:  VETO  (HOLD / SAFE_EXIT)
+
+Engine.purpose   <-- NRMO has no access
+Engine.strategy  <-- NRMO has no access
+Engine.success   <-- NRMO has no access
+\end{lstlisting}
+
+% =====================================================================
+\section{Cross-Domain Successful Implementation Examples}
+\label{sec:strong-engine-examples}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Domain} & \textbf{NRMO role} & \textbf{Engine role} \\
+\midrule
+
+Startup
+& Cashflow runway management
+& Product-market fit search \\
+
+Investment
+& Risk-Off trigger / max drawdown cap
+& Alpha generation \\
+
+Relationship
+& Irreversibility boundary monitoring
+& Commitment / deepening \\
+
+Career
+& Reputation damage prevention
+& Skill acquisition / challenge \\
+
+\bottomrule
+\end{tabularx}
+\caption[Strong engine cross-domain examples]{Cross-domain successful
+implementation examples of the caged beast architecture.}
+\label{tab:strong-engine-examples}
+\end{table}
+
+% =====================================================================
+\section{Health Metrics}
+\label{sec:strong-engine-health}
+
+NRMO health is measured by \emph{decrease} in intervention
+frequency.
+
+\begin{itemize}
+\item \textbf{Healthy}: veto frequency decreasing
+(Engine learning NRMO constraints).
+\item \textbf{Warning}: veto frequency rising (Engine drift or NRMO
+over-sensitive).
+\item \textbf{Pathological}: veto frequency very high (NRMO becoming
+religion).
+\end{itemize}
+
+% =====================================================================
+\section{Implementation Checklist}
+\label{sec:strong-engine-checklist}
+
+\begin{itemize}
+\item[$\square$] Is NRMO a veto-only constitution?
+\item[$\square$] Is Engine outside NRMO?
+\item[$\square$] Does NRMO not define ``what should be done''?
+\item[$\square$] Does NRMO not define ``how to succeed''?
+\item[$\square$] Is NRMO exercising only veto authority?
+\item[$\square$] Is intervention frequency decreasing over time?
+\end{itemize}
+
+% =====================================================================
+\section{Final Declaration}
+\label{sec:strong-engine-final}
+
+\nrmobox{Caged Beast Model}{
+\centering
+\textit{NRMO without an Engine stays still and eventually fails.}\\
+\textit{An Engine without NRMO breaks and eventually fails.}\\[0.3em]
+\textit{The caged beast model is the only architecture that survived
+in all world lines.}
+}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Equations~\ref{eq:separation-definition} and
+\ref{eq:health-metric} are the formal core of the
+governance--execution separation invariant
+(Invariant~\ref{inv:gov-exec-sep}) made operational.
+\item Cross-domain examples find their engineering instantiation in
+$\Omega$ Full (Part~IX): the engine is the StrongEngine $\Omega$
+Full, the constitution is the NRMO Core veto layer, and the
+formal separation is enforced architecturally in the codebase
+(Part~X).
+\item The 20-world consensus result is the empirical foundation for
+the Part~XI validation of $\Omega$ Full v5.0 across the five
+world families.
+\end{itemize}
+
+% =====================================================================
+\section{v7 Phase E: DecisionCompass Two-Layer with Real Governance}
+\label{sec:strong-engine-v7-phase-e}
+
+\nrmobox{v7 Phase E (2026-05-30)}{
+DecisionCompass is realigned as a fully real-side personal-decision application:
+the engine is the Strong Engine $\Omega$ Full (with an internal MaxForward
+civ-sim), the constitutional boundary is the real \texttt{nrmo\_core} veto, and
+the dynamics are the real \texttt{civstate\_transition}. The user is shown only
+the ``non-ruin maximum forward'' recommendation.
+}
+
+The governance/execution separation is preserved structurally: governance builds
+the admissible set $A_t = \mathrm{NRMO}(X_t)$ using veto only (yes/no/hold), and
+the engine searches strictly within it, $a_t = \mathrm{Engine}(A_t)$. The engine
+never sees the veto thresholds and cannot override the admissible set.
+
+\subsection{Validation (reproducible)}
+\begin{itemize}
+  \item \textbf{Admissible set shrinks with risk.} Healthy states admit a
+        forward sub-spectrum; an overheated state admits fewer; an edge state
+        (high exposure, weak governance) admits none and returns \textsc{exit\_hold},
+        i.e.\ change direction (lower exposure) before advancing.
+  \item \textbf{Separation enforced.} The engine's chosen action always lies in
+        the admissible set; vetoed aggressive candidates are unreachable.
+  \item \textbf{Trajectory.} Over 200 personal-decision steps the system records
+        ruin 0\% while continuing to advance.
+\end{itemize}
+
+\nrmobox{Honest note}{
+In this personal domain the recommended forward level is conservative because
+higher growth raises exposure $X$ and lowers the prosperity measure
+$R+E+G+O+K-X$; among equally surviving admissible actions the lower-growth one
+wins by a small margin. This is world-dependent caution (it is still forward
+motion, not stagnation), and the aggressive options were removed by governance,
+not by the engine. The magnitude depends on the exposure weight, which matches
+the existing \texttt{CivilizationDynamics} convention.
+}

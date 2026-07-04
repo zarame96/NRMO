@@ -1,0 +1,740 @@
+% chapters/ch02h_passive_pattern_paper.tex
+% Embedded Passive Pattern peer-review paper
+
+\section{Passive Pattern --- Mechanistic Theory and Constrained
+Stochastic Control of Dialogue (Embedded Peer-Review Paper)}
+\label{sec:passive-pattern-paper}
+
+\nrmobox{Paper status}{
+\textbf{Title}: Passive Pattern --- Mechanistic Theory and
+Constrained Stochastic Control of Dialogue\\[0.3em]
+\textbf{Revision}: This revision adds a full ``why-it-works''
+theory: variance amplification under partial observability,
+feasible-action-set shrinkage, and irreversibility-driven tail risk.
+}
+
+\subsection{Contents}
+\label{sec:pp-contents}
+
+Abstract; 1.~Introduction; 2.~Claims and Scope; 3.~Related Work;
+4.~Setup --- Dialogue as Non-Ergodic Controlled Process;
+5.~Mechanistic Theory --- Why Passive Pattern Works;
+6.~Constrained Control Law; 7.~Theoretical Results;
+8.~Estimation of Load / Volatility (Operationalisation);
+9.~Experimental Design and Reporting Template;
+10.~Ethics, Autonomy, and Safety Guarantees; 11.~Discussion;
+12.~Limitations; 13.~Conclusion; Appendices.
+
+\subsection*{Abstract}
+
+We present \emph{Passive Pattern}, a mathematically defined
+framework for stability-first dialogue control under non-ergodic
+uncertainty. Dialogue is modelled as a partially observable
+controlled stochastic process with an absorbing collapse set. Unlike
+outcome-optimising interaction models, Passive Pattern optimises
+\emph{interactional continuity} by minimising:
+
+\begin{enumerate}
+\item cognitive / relational load,
+\item volatility (variance of interaction state), and
+\item irreversibility (commitment that cannot be safely undone),
+\end{enumerate}
+
+\noindent
+subject to hard autonomy constraints. This version contributes a
+mechanistic theory explaining why the protocol reduces collapse
+risk:
+
+\begin{enumerate}[label=(\alph*)]
+\item many dialogue breakdowns are variance-amplification phenomena
+under partial observability;
+\item load increases shrink the feasible action set, increasing
+sensitivity to error; and
+\item persuasive / commitment-heavy moves increase irreversibility,
+which accelerates tail-risk in absorbing systems.
+\end{enumerate}
+
+\noindent
+We derive a constrained control law, provide stability and safety
+results under mild assumptions, and specify an experimental design
+and reporting template suitable for peer review.
+
+\subsection{Introduction}
+\label{sec:pp-introduction}
+
+Human dialogue is fragile: a single escalation can permanently
+terminate cooperation. In such systems, maximising short-run
+progress can be dominated by the risk of catastrophic termination.
+This is a non-ergodic setting: outcomes are governed by time-path
+survival, not ensemble expectations.
+
+The core thesis of this paper is that a large class of real-world
+conversations should be treated as \emph{interactive risk-control
+problems} rather than persuasion or task-completion problems.
+Passive Pattern provides a control-theoretic formulation and a
+protocol implementing the resulting control law.
+
+\subsection{Claims and Scope}
+\label{sec:pp-claims-scope}
+
+\paragraph{Primary claims (strong form).}
+
+\begin{enumerate}
+\item \textbf{(Control formulation)} Dialogue stability can be
+formulated as constrained stochastic control with an absorbing
+collapse set.
+\item \textbf{(Mechanism)} Escalation is often driven by variance
+amplification under partial observability; silence / deferral / exit
+act as variance-damping operators.
+\item \textbf{(Feasibility)} Load increase shrinks the feasible
+action set, raising collapse sensitivity; reducing load expands
+controllability.
+\item \textbf{(Irreversibility)} Commitment-heavy or persuasive
+moves increase irreversibility, which accelerates tail risk in
+absorbing systems.
+\item \textbf{(Guarantees)} Under mild assumptions, Passive Pattern
+yields bounded expected volatility and an upper bound on collapse
+probability.
+\end{enumerate}
+
+\paragraph{Scope.}
+Cooperative or potentially cooperative dialogue where continuity
+matters (mentorship, negotiation, service recovery, relationships).
+
+\paragraph{Not assumed.}
+Shared goals, perfect rationality, or symmetric information.
+
+\subsection{Related Work}
+\label{sec:pp-related-work}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Area} & \textbf{Examples} & \textbf{Objective} & \textbf{How Passive Pattern differs} \\
+\midrule
+Persuasion / Argumentation
+& Argumentation systems, persuasion games
+& Change beliefs / choices
+& PP does not optimise belief change; it optimises stability with
+minimal irreversibility. \\
+
+Motivational Interviewing
+& Clinical counselling protocols
+& Resolve ambivalence, evoke change-talk
+& Therapeutic framing; PP is a general control framework allowing
+explicit exit / silence as optimal. \\
+
+Task-oriented Dialogue
+& Dialogue management, RL for task completion
+& Maximise task success
+& PP targets collapse avoidance under non-ergodicity; task success
+is secondary or optional. \\
+
+Conversation Analysis
+& Turn-taking / repair
+& Describe structure
+& PP prescribes actions from a constrained control law. \\
+\bottomrule
+\end{tabularx}
+\caption[Related work]{Comparison of Passive Pattern with adjacent
+fields. PP is unique in formulating dialogue as constrained
+stochastic control with an absorbing collapse set.}
+\label{tab:pp-related-work}
+\end{table}
+
+\subsection{Setup --- Dialogue as Non-Ergodic Controlled Process}
+\label{sec:pp-setup}
+
+\subsubsection{State, Actions, and Collapse}
+\label{sec:pp-state-actions-collapse}
+
+Let the latent interaction state be $s_t \in \mathcal{S}$ and the
+observable features be $o_t \in \mathcal{O}$. We model dialogue as
+a partially observable controlled stochastic process:
+
+\begin{equation}
+s_{t+1} \sim P(\cdot \mid s_t, a_t), \qquad
+o_t \sim \Phi(\cdot \mid s_t).
+\label{eq:pp-state-dynamics}
+\end{equation}
+
+We define an absorbing collapse set $\mathcal{F} \subset \mathcal{S}$
+such that:
+
+\begin{equation}
+\forall s \in \mathcal{F},\quad
+\Pr(s' \in \mathcal{F} \mid s, a) = 1.
+\label{eq:pp-absorbing}
+\end{equation}
+
+Collapse captures irreversible breakdown: hard disengagement,
+conflict escalation, trust rupture, or operational failure to
+continue. Let $\tau_F = \inf\{t : s_t \in \mathcal{F}\}$.
+
+\subsubsection{Sufficient Control State (Operational State)}
+\label{sec:pp-control-state}
+
+Passive Pattern uses an operational state vector $x_t = (L_t, V_t,
+E_t)$, where:
+
+\begin{itemize}
+\item $L_t$ = load (cognitive + emotional + relational, combined);
+\item $V_t$ = volatility (variance / instability of interaction
+trajectory);
+\item $E_t$ = engagement (probability of continued cooperative
+interaction).
+\end{itemize}
+
+\noindent
+These are estimators or summaries of the latent state $s_t$ and may
+be computed from $o_t$ and history.
+
+\subsubsection{Irreversibility}
+\label{sec:pp-irreversibility}
+
+We define an irreversibility functional $I(a_t, x_t) \ge 0$
+capturing the degree to which action $a_t$ commits the interaction
+to a narrow future path (e.g., forcing a decision, escalating
+stakes, introducing urgency, or requiring a yes/no answer). High
+irreversibility reduces the possibility of returning to neutral
+interaction states.
+
+\subsection{Mechanistic Theory --- Why Passive Pattern Works}
+\label{sec:pp-mechanistic-theory}
+
+This section provides the missing ``why'': the mechanism by which
+the protocol reduces collapse risk. We connect three interacting
+mechanisms: variance amplification, feasible-action-set shrinkage,
+and irreversibility-driven tail risk.
+
+\subsubsection{Variance Amplification under Partial Observability}
+\label{sec:pp-variance-amplification}
+
+In many conversations, the system is partially observable: we cannot
+directly measure the true latent state (intentions, boundary,
+fatigue, hidden constraints). Under partial observability,
+aggressive probing or high-pressure clarification can increase
+estimation error and state variance.
+
+We model volatility dynamics (in expectation) as:
+
+\begin{equation}
+\mathbb{E}[V_{t+1} \mid x_t, a_t] = \rho V_t + \Delta_V(a_t, x_t),
+\label{eq:pp-volatility-dynamics}
+\end{equation}
+
+with $\rho \in [0, 1)$ capturing natural dissipation and $\Delta_V$
+capturing variance injected by action. Actions like ``force
+decision'' or repeated probing often yield $\Delta_V > 0$; stabilising
+actions yield $\Delta_V \le 0$.
+
+\paragraph{Variance-damping operators.}
+Define the subset
+
+\begin{equation}
+\mathcal{A}^{\downarrow} = \{a : \Delta_V(a, x) \le 0
+\text{ for relevant } x\}.
+\label{eq:pp-variance-damping}
+\end{equation}
+
+Passive Pattern explicitly includes silence, deferral, and polite
+exit in $\mathcal{A}^{\downarrow}$. These operators reduce variance
+by removing injected pressure and allowing the latent state to
+relax.
+
+\subsubsection{Feasible-Action-Set Shrinkage (Why Load Matters)}
+\label{sec:pp-feasible-action-set}
+
+Load is not merely ``how someone feels''; it is a control-theoretic
+proxy for controllability. As load rises, the set of actions that
+keep the system within safe bounds shrinks. Let
+$\mathcal{A}_{\mathrm{safe}}(x)$ be the set of actions satisfying
+safety constraints at state $x$:
+
+\begin{equation}
+\mathcal{A}_{\mathrm{safe}}(x) = \{a \in \mathcal{A} : \Pr(\tau_F \le T \mid x, a) \le \varepsilon\}.
+\label{eq:pp-safe-action-set}
+\end{equation}
+
+We assume a monotonicity condition (supported by operational
+observation): higher load reduces safety margins:
+
+\begin{equation}
+L' \ge L \Rightarrow
+\mathcal{A}_{\mathrm{safe}}(L', V, E) \subseteq
+\mathcal{A}_{\mathrm{safe}}(L, V, E).
+\label{eq:pp-monotonicity}
+\end{equation}
+
+Thus, interventions that reduce $L$ increase the feasible safe
+control set, improving controllability and reducing collapse risk.
+
+\subsubsection{Irreversibility as Tail-Risk Accelerator}
+\label{sec:pp-irreversibility-tail-risk}
+
+In absorbing systems, the long-run objective is dominated by tail
+events. Irreversible actions reduce recovery pathways and amplify
+tail risk. Let $p_{\mathrm{fail}}(x, a)$ denote one-step contribution
+to collapse risk. We posit:
+
+\begin{equation}
+\frac{\partial p_{\mathrm{fail}}(x, a)}{\partial I(a, x)} \ge 0,
+\label{eq:pp-tail-risk}
+\end{equation}
+
+\noindent
+i.e., higher irreversibility increases collapse probability,
+especially when $E$ is low or $V$ is high.
+
+This yields a structural critique of persuasion / urgency tactics
+in non-ergodic interaction: even if they increase short-run
+``progress'' (e.g., forced decision), they increase irreversibility
+and therefore tail risk. Passive Pattern reduces irreversibility by
+preferring low-commitment actions and allowing safe withdrawal.
+
+\subsubsection{Why Silence / Deferral / Exit Improve Long-Horizon
+Outcomes}
+\label{sec:pp-silence-improves}
+
+Combining the above:
+
+\begin{itemize}
+\item Variance damping reduces $V_t$ (lower escalation probability).
+\item Load reduction expands $\mathcal{A}_{\mathrm{safe}}$ (more
+controllable region).
+\item Irreversibility minimisation reduces tail-risk acceleration.
+\end{itemize}
+
+\noindent
+Even if these moves reduce immediate ``progress,'' they improve the
+probability of continued interaction, enabling future progress
+without crossing collapse boundaries. In non-ergodic systems, this
+is rational: preserving the process dominates maximising any single
+step.
+
+\subsection{Constrained Control Law}
+\label{sec:pp-constrained-control-law}
+
+\subsubsection{Objective}
+\label{sec:pp-objective}
+
+We minimise a risk-sensitive cost with explicit irreversibility
+penalty:
+
+\begin{equation}
+J(\pi) = \mathbb{E}_\pi\!\left[\sum_{t=0}^T
+\bigl(\alpha L_t + \beta V_t + \gamma I(a_t, x_t)\bigr)\right].
+\label{eq:pp-objective}
+\end{equation}
+
+\subsubsection{Safety and Autonomy Constraints}
+\label{sec:pp-safety-autonomy}
+
+\paragraph{Safety (chance constraint).}
+
+\begin{equation}
+\Pr_\pi(\tau_F \le T) \le \varepsilon.
+\label{eq:pp-chance-constraint}
+\end{equation}
+
+\paragraph{Autonomy.}
+The autonomy constraint set $\mathcal{A}_{\mathrm{aut}}(x)$ excludes
+force, deception, urgency, and shaping acts:
+
+\begin{equation}
+a_t \in \mathcal{A}_{\mathrm{aut}}(x_t) \subset \mathcal{A}.
+\label{eq:pp-autonomy}
+\end{equation}
+
+\subsubsection{Control Policy (Canonical Implementation)}
+\label{sec:pp-control-policy}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Inputs:
+  estimates (L_t, V_t, E_t)
+  risk model p_fail(x, a)
+  thresholds (epsilon, L_hi, V_hi)
+
+Step 1: compute risk for safe actions:
+  R(a) = P(tau_F <= T | x_t, a)
+
+Step 2:
+  if min_a R(a) > epsilon:
+    choose EXIT (polite) or SILENCE
+      (if exit is socially harmful)
+  elif L_t >= L_hi or V_t >= V_hi:
+    choose a in A_down (variance-damping):
+      SILENCE or DEFER or REFLECT
+  else:
+    choose low-commitment INQUIRY or SUMMARY
+      minimizing alpha*L + beta*V + gamma*I
+
+Step 3:
+  update estimators
+  terminate calibration when stability condition holds
+\end{lstlisting}
+
+\subsubsection{Variable-Length Calibration (Shortest Route)}
+\label{sec:pp-variable-length}
+
+Calibration continues only until the minimum required uncertainty
+reduction is achieved. Define a confidence score $C_t$ on the
+estimated safe set and a stability score $S_t$. Stop calibration at
+time $t$ if $C_t \ge \overline{C}$ and $S_t \ge \overline{S}$.
+
+\subsection{Theoretical Results}
+\label{sec:pp-theoretical-results}
+
+We provide results under standard stochastic control assumptions:
+bounded costs, existence of safe actions in a neighbourhood of
+stable states, and correct specification of autonomy constraints.
+Proofs are provided as sketches in Appendix A and can be expanded
+into full measure-theoretic detail if required by venue.
+
+\subsubsection{Assumptions}
+\label{sec:pp-assumptions}
+
+\begin{description}
+\item[(A1)] \textbf{Absorbing collapse}: $\mathcal{F}$ is absorbing.
+\item[(A2)] \textbf{Variance damping actions exist}: For relevant
+$x$, $\mathcal{A}^{\downarrow}(x) \cap
+\mathcal{A}_{\mathrm{aut}}(x) \ne \emptyset$.
+\item[(A3)] \textbf{Monotone feasibility}: $L$ increases shrink
+$\mathcal{A}_{\mathrm{safe}}$ as in
+Section~\ref{sec:pp-feasible-action-set}.
+\item[(A4)] \textbf{Risk estimator conservative}: Estimated
+$\widehat{p}_{\mathrm{fail}}(x, a)$ upper-bounds true
+$p_{\mathrm{fail}}(x, a)$ with high probability.
+\end{description}
+
+\subsubsection{Lemma 1 (Variance Contraction under Damping)}
+\label{sec:pp-lemma-1}
+
+\begin{lemma}[Variance Contraction under Damping]
+\label{lem:pp-variance-contraction}
+If $a_t \in \mathcal{A}^{\downarrow}$, then for relevant $x_t$,
+
+\begin{equation}
+\mathbb{E}[V_{t+1} \mid x_t, a_t] \le \rho V_t,
+\quad \text{for some } \rho \in [0, 1),
+\end{equation}
+
+\noindent
+i.e., expected volatility contracts.
+\end{lemma}
+
+\subsubsection{Lemma 2 (Feasible-Set Expansion under Load
+Reduction)}
+\label{sec:pp-lemma-2}
+
+\begin{lemma}[Feasible-Set Expansion under Load Reduction]
+\label{lem:pp-feasible-expansion}
+If an action sequence reduces load from $L$ to $L' < L$ while not
+increasing $V$, then:
+
+\begin{equation}
+\mathcal{A}_{\mathrm{safe}}(L, V, E) \subseteq
+\mathcal{A}_{\mathrm{safe}}(L', V, E),
+\end{equation}
+
+\noindent
+expanding the safe controllability region.
+\end{lemma}
+
+\subsubsection{Theorem 1 (Safety: Chance Constraint Satisfaction)}
+\label{sec:pp-thm-1}
+
+\begin{theorem}[Safety: Chance Constraint Satisfaction]
+\label{thm:pp-safety}
+Under (A1)--(A4), the Passive Pattern policy that selects actions
+only from $\mathcal{A}_{\mathrm{safe}} \cap
+\mathcal{A}_{\mathrm{aut}}$ satisfies:
+
+\begin{equation}
+\Pr_\pi(\tau_F \le T) \le \varepsilon.
+\end{equation}
+\end{theorem}
+
+\subsubsection{Theorem 2 (Stability: Bounded Expected Volatility)}
+\label{sec:pp-thm-2}
+
+\begin{theorem}[Stability: Bounded Expected Volatility]
+\label{thm:pp-stability}
+Under (A1)--(A3) and bounded injected variance outside
+$\mathcal{A}^{\downarrow}$, the policy yields:
+
+\begin{equation}
+\sup_{t \le T} \mathbb{E}[V_t] \le V_0 +
+\frac{\sup_{x, a} \Delta_V^+(a, x)}{1 - \rho},
+\end{equation}
+
+\noindent
+where $\Delta_V^+ = \max(\Delta_V, 0)$.
+\end{theorem}
+
+\subsection{Estimation of Load / Volatility (Operationalisation)}
+\label{sec:pp-estimation}
+
+Passive Pattern requires estimators $\widehat{L}_t$,
+$\widehat{V}_t$, $\widehat{E}_t$ computed from observable signals
+and dialogue history. This section specifies concrete estimators;
+venues may treat them as engineering choices.
+
+\subsubsection{Load Estimator}
+\label{sec:pp-load-estimator}
+
+Define a feature vector $z_t$ (speech rate, hesitation markers,
+response latency, sentiment variance, boundary-language). A simple
+estimator is:
+
+\begin{equation}
+\widehat{L}_t = w_L^\top z_t,
+\label{eq:pp-load-estimator}
+\end{equation}
+
+\noindent
+with weights $w_L$ calibrated on labelled data or expert rules.
+
+\subsubsection{Volatility Estimator}
+\label{sec:pp-volatility-estimator}
+
+Let $y_t$ be an interaction quality score (e.g., cooperative tone,
+agreement markers). Define volatility as an exponential moving
+variance:
+
+\begin{equation}
+\widehat{V}_t = (1 - \lambda) \widehat{V}_{t-1} +
+\lambda (y_t - \overline{y}_t)^2.
+\label{eq:pp-volatility-estimator}
+\end{equation}
+
+\subsubsection{Engagement Estimator}
+\label{sec:pp-engagement-estimator}
+
+Engagement is modelled as a hazard process:
+
+\begin{equation}
+\widehat{E}_t = \sigma(w_E^\top z_t),
+\label{eq:pp-engagement-estimator}
+\end{equation}
+
+\noindent
+where $\sigma$ is the logistic function.
+
+\subsection{Experimental Design and Reporting Template}
+\label{sec:pp-experimental-design}
+
+To satisfy peer review, experiments must (i) define baselines, (ii)
+report collapse metrics, and (iii) show robustness across contexts.
+Because empirical datasets are venue-dependent, we provide a
+reporting template and recommended minimal experiments.
+
+\subsubsection{Baselines}
+\label{sec:pp-baselines}
+
+\begin{description}
+\item[Baseline A (Direct)] Direct questioning / direct proposal
+loops.
+\item[Baseline B (Clarification-heavy)] Repeated clarification and
+commitment checks.
+\item[Baseline C (Task-optimised)] Maximise task completion (if
+available).
+\end{description}
+
+\subsubsection{Metrics}
+\label{sec:pp-metrics}
+
+\begin{itemize}
+\item \textbf{Breakdown rate}: $\Pr(\tau_F \le T)$.
+\item \textbf{Time-to-breakdown}: $\mathbb{E}[\tau_F]$ (censored).
+\item \textbf{Volatility integral}: $\sum_t \widehat{V}_t$.
+\item \textbf{Irreversibility exposure}: $\sum_t I(a_t, x_t)$.
+\item \textbf{Autonomy violations}: count of excluded actions
+attempted (should be zero).
+\end{itemize}
+
+\subsubsection{Minimal Study (Human-in-the-loop)}
+\label{sec:pp-minimal-study}
+
+\begin{enumerate}
+\item Randomly assign interaction scripts to Passive Pattern vs
+baseline.
+\item Use identical goal prompts; allow exit at any time.
+\item Collect load ratings, disengagement, and conflict escalation
+markers.
+\end{enumerate}
+
+\paragraph{Note on numbers.}
+This document avoids fabricating empirical results. Tables should
+be populated with actual measurements from the target deployment or
+study.
+
+\subsection{Ethics, Autonomy, and Safety Guarantees}
+\label{sec:pp-ethics-autonomy}
+
+Passive Pattern enforces non-manipulation via hard constraints on
+the action set. This is stronger than a guideline: prohibited
+actions are not available to the optimiser.
+
+\paragraph{Autonomy constraint.}
+
+\begin{equation}
+\mathcal{A}_{\mathrm{aut}}(x) = \mathcal{A} \setminus
+\{\mathrm{force}, \mathrm{deceive}, \mathrm{urgency},
+\mathrm{shape}\}.
+\label{eq:pp-autonomy-set}
+\end{equation}
+
+\paragraph{Withdrawal as safe outcome.}
+Withdrawal is a legitimate terminal action and is treated as a safe,
+successful outcome for system continuity.
+
+\subsection{Discussion}
+\label{sec:pp-discussion}
+
+The mechanistic theory explains why Passive Pattern generalises: it
+is not a set of clever questions, but a control framework that
+dampens variance, expands controllability, and avoids
+irreversibility-driven tail risk. This makes it compatible with
+stability-first decision systems (e.g., NRMO+Z) and with
+conservative operational environments.
+
+\subsection{Limitations}
+\label{sec:pp-limitations}
+
+\begin{itemize}
+\item Estimators may be misspecified; conservative risk bounds are
+recommended (A4).
+\item In adversarial settings, exit / silence may be exploited;
+combine with NRMO governance.
+\item Task completion is not guaranteed; Passive Pattern prioritises
+continuity over completion.
+\end{itemize}
+
+\subsection{Conclusion}
+\label{sec:pp-conclusion}
+
+We provided a full mechanistic theory and a constrained stochastic
+control formulation for stability-first dialogue. Passive Pattern
+reduces collapse risk not by persuasion but by variance damping,
+feasible-action-set expansion, and irreversibility avoidance under
+non-ergodicity.
+
+\subsection*{Appendix A --- Proof Sketches}
+\label{sec:pp-app-A}
+
+\paragraph{Lemma 1 (Variance Contraction)} follows from defining
+$\mathcal{A}^{\downarrow}$ as the set of actions with non-positive
+variance injection $\Delta_V$ and using contraction $\rho < 1$.
+
+\paragraph{Theorem 1 (Safety)} follows by selecting only
+conservative-safe actions under an upper-bounding risk estimator
+(A4), ensuring the chance constraint holds.
+
+\paragraph{Theorem 2 (Stability)} follows from bounding the positive
+part of variance injection and summing the resulting geometric
+series with contraction factor $\rho$.
+
+\paragraph{Lemma 2 (Feasible-Set Expansion)} If an action sequence
+reduces load from $L$ to $L' < L$ while not increasing $V$, then:
+
+\begin{equation}
+\mathcal{A}_{\mathrm{safe}}(L, V, E) \subseteq
+\mathcal{A}_{\mathrm{safe}}(L', V, E),
+\end{equation}
+
+\noindent
+expanding the safe controllability region.
+
+\subsection*{Appendix B --- Reference Implementation (Pseudocode)}
+\label{sec:pp-app-B}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single,language=Python]
+class PassivePatternController:
+    def __init__(self, epsilon, L_hi, V_hi,
+                 phi, risk_model, autonomy_filter):
+        self.epsilon         = epsilon
+        self.L_hi            = L_hi
+        self.V_hi            = V_hi
+        self.phi             = phi
+        self.risk_model      = risk_model
+        self.autonomy_filter = autonomy_filter
+
+    def choose_action(self, x, candidate_actions):
+        A = [a for a in candidate_actions
+             if self.autonomy_filter(a, x)]
+        risks = {a: self.risk_model(x, a) for a in A}
+
+        if min(risks.values()) > self.epsilon:
+            return "EXIT"
+            # or "SILENCE" if social context penalises exit
+
+        if x.L >= self.L_hi or x.V >= self.V_hi:
+            return self._variance_damping(A, x)
+
+        return self._low_commitment(A, x)
+
+    def _variance_damping(self, A, x):
+        for a in ["SILENCE", "DEFER", "REFLECT"]:
+            if a in A:
+                return a
+        return "SUMMARY"
+
+    def _low_commitment(self, A, x):
+        for a in ["INQUIRY", "REFLECT", "SUMMARY"]:
+            if a in A:
+                return a
+        return "SILENCE"
+\end{lstlisting}
+
+\subsection*{Appendix C --- Integration with NRMO+Z}
+\label{sec:pp-app-C}
+
+Passive Pattern is an interpersonal control layer compatible with
+NRMO+Z: NRMO constrains action selection under non-ergodicity,
+while Passive Pattern constrains dialogue actions under non-ergodic
+relational risk. Both share the principles of:
+
+\begin{enumerate}
+\item absorbing failure avoidance,
+\item chance constraints, and
+\item reversibility preference.
+\end{enumerate}
+
+\paragraph{Version.}
+Passive Pattern v1.5 (Mechanistic Theory) --- operational.
+
+\subsection*{Appendix D --- Integration Constraint with NRMO /
+Parallel OODA}
+\label{sec:pp-app-D}
+
+When integrated into NRMO-based decision systems, Passive Pattern
+must be treated as a \emph{protective control layer}, not as a
+decision-making or optimisation module. Specifically:
+
+\begin{itemize}
+\item Passive Pattern may signal risk, suggest stabilisation, or
+request deferral, suspension, or exit.
+\item It must \textbf{not} generate preferences, rankings,
+strategies, or action plans.
+\item Outputs of Passive Pattern are limited to \emph{triggers and
+constraints}, not decisions.
+\end{itemize}
+
+\paragraph{Interfaces.}
+In NRMO architectures, Passive Pattern primarily interfaces with:
+
+\begin{itemize}
+\item Passive Pattern $\to$ Parallel OODA (Observe / Orient).
+\item Passive Pattern $\to$ Passive Pattern execution
+(silence, deferral, exit triggers).
+\end{itemize}
+
+\paragraph{Defensive constraint-based intervention.}
+In exceptional defensive conditions, Passive Pattern may impose
+constraint-based interventions on Decide or Act stages, such as
+halting, delaying, or narrowing available actions. \textbf{Passive
+Pattern must never lead, optimise, or persuasively shape decisions
+or actions.} Final decision authority always remains with NRMO.

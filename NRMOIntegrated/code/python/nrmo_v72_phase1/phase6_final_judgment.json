@@ -1,0 +1,83 @@
+{
+  "phase": 6,
+  "optimal_features": [
+    "I8",
+    "H2",
+    "H5",
+    "G1",
+    "G2",
+    "G3",
+    "G6",
+    "G7",
+    "G8",
+    "G9"
+  ],
+  "n_optimal": 10,
+  "dropped_features": [
+    "I9",
+    "I10",
+    "I11",
+    "I12",
+    "H1",
+    "H3",
+    "H4",
+    "H6",
+    "H7",
+    "G4",
+    "G5",
+    "G10"
+  ],
+  "n_dropped": 12,
+  "criteria_results": {
+    "C1_PARETO": {
+      "criterion": "PARETO_IMPROVEMENT",
+      "passed": false,
+      "details": {
+        "total_cells": 15,
+        "passing_cells": 11,
+        "pass_rate": 0.7333333333333333,
+        "threshold": "90% cells must pass"
+      }
+    },
+    "C2_STRICT": {
+      "criterion": "STRICT_IMPROVEMENT",
+      "passed": true,
+      "details": {
+        "strict_improvements": 10,
+        "total_cells": 15,
+        "threshold": "diff > 0.01"
+      }
+    },
+    "C3_CONVERGENT": {
+      "criterion": "CONVERGENT_EQUIVALENCE",
+      "passed": true,
+      "details": {
+        "plateau_violations": 0,
+        "ruin_violations": 0,
+        "total_worlds": 5,
+        "total_plateau_improvement": 4.970260822400901,
+        "threshold": "0 violations across all worlds"
+      }
+    },
+    "C4_BLUE_OCEAN": {
+      "criterion": "BLUE_OCEAN",
+      "passed": true,
+      "details": {
+        "new_dimensions": [
+          "D1_Calibration_Pass_Rate",
+          "D2_HOLD_Type_Distribution",
+          "D3_Confidence_Continuous_Score",
+          "D4_Authority_Hierarchy_Violation_Detection",
+          "D5_Counterfactual_Test_Pass_Rate",
+          "D6_Meta_Cognition_Activation_Rate"
+        ],
+        "n_dimensions": 6,
+        "v71_measurable": "None of these are measurable on v7.1",
+        "v72_measurable": "All 6 are measurable on v7.2",
+        "proof": "Constructive: new layer implements them"
+      }
+    }
+  },
+  "all_passed": false,
+  "judgment": "PARTIAL_PASS"
+}

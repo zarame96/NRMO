@@ -1,0 +1,488 @@
+% chapters/ch31_v21_integrated_flow.tex
+% Chapter 31: v2.1 Integrated Execution Flow + Invariant Registry + Mapping Ledger
+% + Architecture Diagrams + Structural Consistency Statement
+% Source: NRMO_v5_updated.pdf, Chapter 31 onwards (lines 9870-10300 of v5_layout.txt)
+
+\chapter{v2.1 Integrated Execution Flow ---
+Registries, Diagrams, Consistency Statement}
+\label{ch:v21-integrated-flow}
+
+% =====================================================================
+\section{Execution Order}
+\label{sec:v21-execution-order}
+
+\begin{enumerate}
+\item \texttt{ReflexLayer.evaluate()} $\to$ \texttt{HoldImmediate}?
+$\to$ exit.
+\item \texttt{ModeSelector.current\_mode()}.
+\item \texttt{NonErgodicMonitor.evaluate()} $\to$
+\texttt{SafeExit}? $\to$ exit.
+\item \texttt{MetaGovernanceLayer.pre\_check(dsi)}:
+\begin{itemize}
+\item CrossDomainRuin $\to$ \texttt{SafeExit}? $\to$ force
+Institutional, exit.
+\item DSI monitoring $\to$ \texttt{ForceInstitutional}? $\to$ demote
+mode.
+\end{itemize}
+\item \texttt{TimeHorizonLayer.evaluate()} $\to$ set
+\texttt{warn\_flag} (display only).
+\item \texttt{NRMOSystemV20.process()} \textbf{[FROZEN v2.0
+pipeline]}.
+\item Output: \{mode, time\_horizon\_warning, verdicts\}.
+\end{enumerate}
+
+% =====================================================================
+\section{Invariant Preservation Summary}
+\label{sec:v21-invariant-preservation}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lX}
+\toprule
+\textbf{Invariant} & \textbf{Description} \\
+\midrule
+INV-1 & v2.0 NRMOSystem preserved verbatim. \\
+INV-2 & OuterShell / HumidityBuffer / APCSO / NRMOCore intact. \\
+INV-3 & Order Abort $\to$ Kill $\to$ PreCommit $\to$ APCSO
+preserved. \\
+INV-4 & NRMO\_CORE veto-only. \\
+INV-5 & v2.1 layers are outer-only; do not modify v2.0. \\
+\bottomrule
+\end{tabularx}
+\caption[v2.1 invariant preservation]{High-level invariants
+preserved by v2.1.}
+\label{tab:v21-invariant-preservation}
+\end{table}
+
+% =====================================================================
+\section{Invariant Registry v2.0}
+\label{sec:v20-invariant-registry}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{ID} & \textbf{Statement} & \textbf{Status} \\
+\midrule
+
+INV-2.0-1 & NRMO Core: Non-ruin final veto. & FROZEN \\
+
+INV-2.0-2 & Shutdown atomicity: Shutdown is atomic;
+interruption / partial execution prohibited. & FROZEN \\
+
+INV-2.0-3 & Type ZERO suppression right: Type ZERO exercises
+suppression right in regulation phase (Phase 3) only.
+Read-only during evaluation. & FROZEN \\
+
+INV-2.0-4 & Evaluation order: Abort $\to$ Kill $\to$ PreCommit $\to$
+APCSO. & FROZEN \\
+
+INV-2.0-5 & DAG structure: Definition and Assertion Governance;
+directed acyclic consistency. & FROZEN \\
+
+INV-2.0-6 & Non-Personification: No personality assigned to modules.
+They are organs, not agents. & FROZEN \\
+
+INV-2.0-7 & $A_{\mathrm{allowed}}$ constraint: Permitted action set
+is externally supplied. NRMO Core does not generate or modify it.
+& FROZEN \\
+
+INV-2.0-8 & $\varepsilon$ externally supplied. & FROZEN \\
+
+INV-2.0-9 & Fast Memory retention window: 7 days default. & FROZEN \\
+
+INV-2.0-10 & Episode Detector: 4 criteria. & FROZEN \\
+
+\bottomrule
+\end{tabularx}
+\caption[v2.0 invariant registry]{Invariant Registry v2.0 ---
+foundational invariants frozen for v2.1.}
+\label{tab:v20-invariant-registry}
+\end{table}
+
+% =====================================================================
+\section{Invariant Registry v2.1 (Additions)}
+\label{sec:v21-invariant-registry}
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{ID} & \textbf{Statement} & \textbf{Status} \\
+\midrule
+
+INV-2.1-1 & Reflex Layer R1--R6: Anomaly + TimePressure $\ge 8$
+$\to$ HoldImmediate. & ADDED \\
+
+INV-2.1-2 & R2: HistoricalFail + Anomaly $\to$ HoldImmediate.
+& ADDED \\
+
+INV-2.1-3 & R3: EmotionalDistortion + TimePressure $\ge 6$ $\to$
+HoldImmediate. & ADDED \\
+
+INV-2.1-4 & CrossDomain Ruin: $\mathrm{systemic\_risk} \ge 0.75$
+$\to$ SAFE\_EXIT. & ADDED \\
+
+INV-2.1-5 & Non-Ergodic Monitor: cumulative irreversible risk
+tracked. & ADDED \\
+
+INV-2.1-6 & Time Horizon Layer: \texttt{warn\_flag} (display only).
+& ADDED \\
+
+INV-2.1-7 & Cumulative irreversible risk $\ge 0.80$ $\to$
+SAFE\_EXIT. & ADDED \\
+
+INV-2.1-8 & DSI $< 0.70$ $\to$ force Institutional mode. & ADDED \\
+
+INV-2.1-9 & Reflex Layer uses no formulas, no scoring, simple
+conditionals only. & ADDED \\
+
+INV-2.1-10 & Situation model uses continuous parameters, no static
+3000-case branching. & ADDED \\
+
+\bottomrule
+\end{tabularx}
+\caption[v2.1 invariant registry]{Invariant Registry v2.1 ---
+additions to the frozen v2.0 base.}
+\label{tab:v21-invariant-registry-table}
+\end{table}
+
+% =====================================================================
+\section{Chapter Mapping Ledger}
+\label{sec:chapter-mapping-ledger}
+
+\paragraph{Ledger policy.}
+Removal prohibited. Status $\in \{$Preserved, Added$\}$.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{v2.0 section} & \textbf{v2.1 location} & \textbf{Status} \\
+\midrule
+SYSTEM MANIFEST                & Part~I & Preserved \\
+CONTEXT HANDOFF                & Part~I & Preserved \\
+Foundational Reference         & Part~I & Preserved \\
+NRMO+Z+PP Integrated OS        & Part~I & Preserved \\
+NRMO Core                      & Part~I & Preserved \\
+IF Definition                  & Part~I & Preserved \\
+NRMO-2 Application Guide       & Part~I & Preserved \\
+Shutdown Specification         & Part~I & Preserved \\
+Secretary Modules              & Part~I & Preserved \\
+Type ZERO SOP                  & Part~I & Preserved \\
+Type ZERO Governance Layer     & Part~I & Preserved \\
+NRMO+Z+PP SOP (separation)     & Part~I & Preserved \\
+NRMO SOP                       & Part~I & Preserved \\
+DAG Layer                      & Part~I & Preserved \\
+Parallel OODA                  & Part~I & Preserved \\
+HST-N SOP                      & Part~I & Preserved \\
+HST-N                          & Part~I & Preserved \\
+OS                             & Part~I & Preserved \\
+$A_{\mathrm{allowed}}$ Extension & Part~I & Preserved \\
+$A_{\mathrm{allowed}}$         & Part~I & Preserved \\
+$A_{\mathrm{allowed}}$ (concrete) & Part~I & Preserved \\
+Passive Pattern v1.5 (Theory)  & Part~I & Preserved \\
+Passive Pattern v1.5 (Operational) & Part~I & Preserved \\
+Passive Pattern                & Part~I & Preserved \\
+TTM/PPS                        & Part~I & Preserved \\
+OS Update Pack v1.2.8          & Part~I & Preserved \\
+Strong Engine Architecture     & Part~I & Preserved \\
+Separation Principle           & Part~I & Preserved \\
+v2.0 Core Refinements          & Part~I & Preserved \\
+APCSO (Theory)                 & Part~I & Preserved \\
+APCSO (Operational)            & Part~I & Preserved \\
+APCSO                          & Part~I & Preserved \\
+High-Speed Adaptive Layer      & Part~I & Preserved \\
+Survival Architecture          & Part~I & Preserved \\
+Life SOP                       & Part~I & Preserved \\
+\midrule
+Reflex Layer                   & Part~II, Ch.\,1 & \textbf{Added} \\
+Mode Selector                  & Part~II, Ch.\,2 & \textbf{Added} \\
+Meta Governance Layer          & Part~II, Ch.\,3 & \textbf{Added} \\
+Time Horizon Layer             & Part~II, Ch.\,4 & \textbf{Added} \\
+Situation Parameter Model      & Part~II, Ch.\,5 & \textbf{Added} \\
+Non-Ergodic Cumulative Monitor & Part~II, Ch.\,6 & \textbf{Added} \\
+Success Definitions            & Part~II, Ch.\,7 & \textbf{Added} \\
+v2.1 Integrated Flow           & Part~II, Ch.\,8 & \textbf{Added} \\
+\bottomrule
+\end{tabularx}
+\caption[Chapter mapping ledger]{Chapter mapping ledger between v2.0
+FINAL and v2.1 Constitutional Edition. ``Removal prohibited'' is the
+ledger's preservation discipline.}
+\label{tab:chapter-mapping-ledger}
+\end{table}
+
+% =====================================================================
+\section{Invariant Global Index}
+\label{sec:invariant-global-index}
+
+\paragraph{Naming convention.}
+\texttt{INV-2.0-*} / \texttt{INV-2.1-*}.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{lXll}
+\toprule
+\textbf{ID} & \textbf{Statement} & \textbf{Origin} & \textbf{Status} \\
+\midrule
+
+INV-2.0-1  & $P(\mathrm{ruin}) \le \varepsilon$ (Non-Ruin
+Constraint) & v2.0 & FROZEN \\
+
+INV-2.0-2  & NRMO Core: veto-only. & v2.0 & FROZEN \\
+
+INV-2.0-3  & APCSO: exactly 3 choices, $\ge 1$ Hold/Exit. & v2.0
+& FROZEN \\
+
+INV-2.0-4  & Order: Abort $\to$ Kill $\to$ PreCommit $\to$ APCSO.
+& v2.0 & FROZEN \\
+
+INV-2.0-5  & OuterShell continuity counters. & v2.0 & FROZEN \\
+
+INV-2.0-6  & HumidityBuffer trigger conditions. & v2.0 & FROZEN \\
+
+INV-2.0-7  & Engine $\not\subseteq$ NRMO (Separation). & v2.0
+& FROZEN \\
+
+INV-2.0-8  & $\varepsilon$ externally supplied. & v2.0 & FROZEN \\
+
+INV-2.0-9  & Fast Memory: 7-day retention. & v2.0 & FROZEN \\
+
+INV-2.0-10 & Episode Detector: 4 criteria. & v2.0 & FROZEN \\
+
+INV-2.0-11 & APCSO timeout: 5s / 1000 iterations. & v2.0 & FROZEN \\
+
+INV-2.0-12 & Autonomy preservation. & v2.0 & FROZEN \\
+
+INV-2.1-1  & v2.1 = outer layers only. & v2.1 & ACTIVE \\
+
+INV-2.1-2  & HoldImmediate skips inner pipeline. & v2.1 & ACTIVE \\
+
+INV-2.1-3  & Demotion immediate, promotion cautious. & v2.1
+& ACTIVE \\
+
+INV-2.1-4  & CrossDomainRuin $\ge 0.75 \Rightarrow$ SAFE\_EXIT.
+& v2.1 & ACTIVE \\
+
+INV-2.1-5  & $\varepsilon$ changes: append-only. & v2.1 & ACTIVE \\
+
+INV-2.1-6  & \texttt{warn\_flag} not passed to NRMO\_CORE.
+& v2.1 & ACTIVE \\
+
+INV-2.1-7  & Cumulative risk $\ge 0.80 \Rightarrow$ SAFE\_EXIT.
+& v2.1 & ACTIVE \\
+
+INV-2.1-8  & DSI $< 0.70 \Rightarrow$ Institutional. & v2.1
+& ACTIVE \\
+
+INV-2.1-9  & Reflex Layer: no formulas. & v2.1 & ACTIVE \\
+
+INV-2.1-10 & Situation: continuous parameters. & v2.1 & ACTIVE \\
+
+\bottomrule
+\end{tabularx}
+\caption[Invariant global index]{Invariant Global Index spanning
+v2.0 (FROZEN) and v2.1 (ACTIVE).}
+\label{tab:invariant-global-index}
+\end{table}
+
+% =====================================================================
+\section{Narrative \& Visual Preservation Appendix}
+\label{sec:narrative-visual-preservation}
+
+\nrmobox{Narrative Integrity Clause}{
+All narrative explanation present in v2.0 FINAL has been preserved
+as constitutional commentary in Part~I of this document. Removal
+constitutes semantic degradation.
+}
+
+\nrmobox{Visual Integrity Clause}{
+All visual hierarchy and structural diagrams from v2.0 FINAL have
+been recreated using \LaTeX{} drawing environments (verbatim, TikZ,
+\texttt{tabular}, \texttt{tcolorbox}). Text-only substitution is
+insufficient.
+}
+
+\subsection{Preserved Narrative Elements}
+
+\begin{itemize}
+\item SYSTEM MANIFEST: definition, status, prohibitions.
+\item CONTEXT HANDOFF: premise, constraint.
+\item Primordial NRMO: Core Assertion, Non-Ergodicity Premise.
+\item DAG Worldview: Non-Personification Principle.
+\item Integrated OS Narrative: NRMO+Z+PP.
+\item TTM/PPS training: structure preserved.
+\item HST-N state: classification preserved.
+\item Passive Pattern: pattern preserved.
+\item Life SOP, Strong Engine Architecture: preserved.
+\end{itemize}
+
+\subsection{Preserved Visual Elements (\LaTeX{} Realisation)}
+
+\begin{itemize}
+\item Architecture (ASCII art $\to$ \texttt{verbatim}).
+\item Tables ($\to$ \texttt{tabular}).
+\item MANIFEST STATUS (footer $\to$ \texttt{tcolorbox}).
+\item HANDOFF Reference Implementation (codeblock $\to$
+\texttt{lstlisting}).
+\item HTML table $\to$ \texttt{tabular} / \texttt{longtable}.
+\item Structural box (\texttt{div.box} $\to$ \texttt{tcolorbox}).
+\item \texttt{pre} $\to$ \texttt{lstlisting} / verbatim.
+\item \texttt{blockquote} $\to$ \texttt{quote}.
+\item \texttt{p.note} $\to$ \texttt{small itshape}.
+\end{itemize}
+
+% =====================================================================
+\section{v2.0 Integrated Architecture}
+\label{sec:v20-architecture-diagram}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+                        HUMAN
+       (Responsibility / Final Judgment / epsilon-supply)
+                          |
+            +------------+------------+
+            |                         |
++-----------+-----------+   +---------+-------------+
+| Long-Term Layer       |   | Short-Term Layer      |
+| (REIN)                |<->| (High-Speed Adaptive) |
+| Timescale: open       |   | Timescale: hours~mo.  |
+|                       |   |                       |
+| OUTER_SHELL           |   | Kill-Switch           |
+| HUMIDITY_BUFFER       |   | Abort-First           |
+| APCSO (3 options)     |   | Pre-Commit            |
+|                       |   | Expiry                |
+|                       |   | Fast Memory           |
++-----------------------+   +-----------------------+
+            |                         |
+            +------------+------------+
+                          |
+            +-------------+-------------+
+            | UNIFIED NRMO CORE         |
+            | (Rejection Judgment)      |
+            | YES / NO / HOLD /         |
+            |       SAFE_EXIT           |
+            +-------------+-------------+
+                          |
+            +-------------+-------------+
+            | DECISION_SURVIVAL_ENGINE  |
+            | (Survival Judgment)       |
+            +-------------+-------------+
+                          |
+            +-------------+-------------+
+            | SLOW MEMORY               |
+            | (Persistent / Audit)      |
+            +---------------------------+
+\end{lstlisting}
+
+% =====================================================================
+\section{v2.1 Full Stack Architecture}
+\label{sec:v21-architecture-diagram}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+   Reflex Layer (R1-R6 immediate response)
+         |
+   Mode Selector (DSI)
+         |
+   Non-Ergodic Cumulative Monitor
+         |
+   Meta-Governance Layer
+         |
+   Time Horizon Layer
+         |
+   NRMO System v2.0 [FROZEN]
+         |
+   OuterShell -> HumidityBuffer -> HighSpeed
+   -> APCSO -> NRMOCore
+         |
+   Output: {mode, warn_flag, verdicts}
+         |
+   +-----+------+
+   |            |
+ Hold       Safe Exit
+ Immediate?
+
+HoldImmediate: skip all v2.1 outer layers
+v2.0 [FROZEN]: structurally preserved
+\end{lstlisting}
+
+% =====================================================================
+\section{Structural Consistency Statement}
+\label{sec:structural-consistency-statement}
+
+\nrmobox{Structural Consistency Statement}{
+This document preserves NRMO Complete System v2.0 FINAL verbatim.
+Version 2.1 introduces additive extensions only. No foundational,
+operational, narrative, or visual element of v2.0 has been removed
+or modified.\\[0.3em]
+\textbf{Structural integrity is guaranteed via}:
+\begin{itemize}
+\item Chapter Mapping Ledger
+(Section~\ref{sec:chapter-mapping-ledger}).
+\item Invariant Registries v2.0 / v2.1
+(Sections~\ref{sec:v20-invariant-registry},
+\ref{sec:v21-invariant-registry}).
+\item Difference Register v2.0 $\to$ v2.1 (this Part).
+\item Invariant Global Index
+(Section~\ref{sec:invariant-global-index}).
+\item $\varepsilon$-Supply Formalisation
+(Chapter~\ref{ch:epsilon-supply}).
+\item Narrative \& Visual Preservation Appendix
+(Section~\ref{sec:narrative-visual-preservation}).
+\item Architecture Diagrams
+(Sections~\ref{sec:v20-architecture-diagram},
+\ref{sec:v21-architecture-diagram}).
+\end{itemize}
+}
+
+\subsection{Completion Conditions}
+
+\begin{itemize}
+\item[$\checkmark$] v2.0 (45 sections) preserved.
+\item[$\checkmark$] Reflex / Mode / Meta / Time / Situation /
+NonErgodic / Success / Integrated added.
+\item[$\checkmark$] Invariant Registry complete.
+\item[$\checkmark$] $\varepsilon$ supply formalised.
+\item[$\checkmark$] Architecture diagrams reproduced.
+\end{itemize}
+
+\subsection{Prohibited Operations Confirmed Absent}
+
+\begin{itemize}
+\item[$\checkmark$] No removal.
+\item[$\checkmark$] No semantic substitution.
+\item[$\checkmark$] No design weakening.
+\item[$\checkmark$] No addition to v2.0 base.
+\item[$\checkmark$] No re-purposing.
+\item[$\checkmark$] No personality assignment.
+\item[$\checkmark$] No retrofit of v2.1 logic into v2.0.
+\item[$\checkmark$] No silent change of $\varepsilon$ semantics.
+\item[$\checkmark$] No bypass of governance.
+\item[$\checkmark$] No change of NRMO Core authority.
+\item[$\checkmark$] No removal of Hold / SafeExit.
+\item[$\checkmark$] No removal of human-in-the-loop.
+\item[$\checkmark$] No removal of audit log.
+\end{itemize}
+
+\nrmobox{Document closure}{
+\centering
+\textit{End of NRMO Complete System v2.1 Constitutional Edition.}
+}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This chapter completes the v2.1 Sovereign + Reflex Extension
+declared in Chapter~\ref{ch:v21-extension-preamble}.
+\item The Invariant Global Index is the canonical reference for all
+later parts: Part~VII formal theorems map to INV-2.0-1
+(non-ruin constraint) and INV-2.0-3 (APCSO 3-choice structure);
+Part~IX engineering invariants map to INV-2.0-7 (governance--
+execution separation) and INV-2.0-8 ($\varepsilon$ externally
+supplied).
+\end{itemize}

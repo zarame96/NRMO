@@ -1,0 +1,563 @@
+% chapters/ch33_theoretical_foundation_v4.tex
+% Chapter 33 (Part V): NRMO Theoretical Foundation v4
+% Source: NRMO_v5_updated.pdf, Chapter 32 v4 paper (lines 10336-10593 of v5_layout.txt)
+
+\chapter{NRMO Theoretical Foundation (v4)}
+\label{ch:theoretical-foundation-v4}
+
+
+\index{Theorem!Ruin Dilution}
+\index{Theorem!CMDP Separation}
+\index{CVaR}
+\index{NRMO!Theoretical Foundation}
+\nrmobox{Document identification}{
+\textbf{Title}: NRMO Part~III: Theoretical Foundation\\[0.3em]
+\textbf{Subtitle}: Non-Ruin Maximization Objective (NRMO)\\[0.3em]
+\textbf{Author}: Takashi Ikeya\\[0.3em]
+\textbf{Status}: Mathematically Corrected v4 | Integrated into
+Unified Specification | 2026
+}
+
+\paragraph{Note on relationship to Part~VII.}
+This chapter is the theoretical-foundation paper as integrated into
+the v4 monograph. Part~VII (Mathematical Formalisation) is the
+arXiv-format paper. Both contain the same four theorems (T1--T4)
+but with slightly different framing: this chapter integrates them
+into the monograph's narrative; Part~VII presents them in
+publication form with full proofs.
+
+% =====================================================================
+\section{Abstract}
+\label{sec:tf-v4-abstract}
+
+We prove four results for NRMO:
+
+\begin{itemize}
+\item \textbf{(T1) Ruin Dilution} --- ruin probability $q$ bounds
+unconditional time-average reward by $(1 - q) R_{\max}$.
+\item \textbf{(T2) CMDP Separation} via explicit two-state MDP with
+exact finite-horizon ruin formula.
+\item \textbf{(T3) Exponential threshold family} achieves variational
+supremum of $\Sigma(f)$ at rate $O(\Delta / \kappa)$.
+\item \textbf{(T4) Polynomial-time CVaR tractability} for log-concave
+distributions.
+\end{itemize}
+
+\noindent
+Three errors from prior drafts are corrected and documented. All
+theorem statements and proofs are self-consistent. Experiments
+across three domains show 57--65\% ruin reduction versus approximate
+baselines.
+
+% =====================================================================
+\section{Introduction}
+\label{sec:tf-v4-introduction}
+
+Peters (2019) shows that for multiplicative growth processes, any
+policy with positive ruin probability converges to ruin with
+probability one under repeated play. This motivates NRMO's core
+design: \emph{ruin avoidance as a hard constraint, not a soft
+penalty}.
+
+Standard CMDPs (Altman 1999) guarantee only \emph{expected}
+constraint satisfaction, permitting ruin in individual trajectories.
+NRMO enforces a \emph{trajectory-level} ruin-free constraint.
+
+\paragraph{Contributions.}
+
+\begin{itemize}
+\item \textbf{(C1)} Theorem~1: Ruin Dilution --- $U(\pi) \le (1 -
+q) R_{\max}$.
+\item \textbf{(C2)} Lemma~1: Constructive feasibility of
+$\mathrm{safe}(T, \varepsilon)$.
+\item \textbf{(C3)} Theorem~2: CMDP Separation via explicit
+two-state MDP.
+\item \textbf{(C4)} Theorem~3: Variational supremum of exponential
+threshold family [T3 corrected in v4].
+\item \textbf{(C5)} Theorem~4: Polynomial-time CVaR tractability.
+\item \textbf{(C6)} Empirical evaluation with explicitly approximated
+baselines.
+\end{itemize}
+
+% =====================================================================
+\section{Related Work}
+\label{sec:tf-v4-related}
+
+CMDPs (Altman 1999) and Lagrangian methods (Tessler et al.~2018)
+guarantee \emph{expected} constraint satisfaction. CPO (Achiam et
+al.~2017) provides trust-region updates with constraint guarantees
+at each iterate. These methods permit ruin in individual
+trajectories; NRMO enforces \emph{trajectory-level} safety.
+
+Risk-sensitive RL (Chow and Pavone 2014) minimises CVaR; Theorem~4
+formalises the connection. Non-ergodic economics (Peters 2019;
+Kelly 1956) motivates prioritising time-average over
+ensemble-average. Robust MDPs (Iyengar 2005; Nilim and El Ghaoui
+2005) handle uncertain kernels; NRMO's robust chance constraint uses
+this structure.
+
+% =====================================================================
+\section{Problem Formulation}
+\label{sec:tf-v4-formulation}
+
+Let $M = (S, A, P, r, S_F)$ be an MDP:
+
+\begin{itemize}
+\item $S$ finite.
+\item $r: S \times A \to [-R_{\max}, R_{\max}]$ bounded.
+\item $S_F \subset S$ absorbing failure states.
+\end{itemize}
+
+\begin{definition}[Failure absorption]
+\label{def:failure-absorption}
+$s_F \in S_F$ satisfies $P(s_F \mid s_F, a) = 1$, $r(s_F, a) = 0$
+for all $a$. First hitting time:
+$\tau_F := \inf\{t \ge 0 : s_t \in S_F\}$.
+\end{definition}
+
+\begin{definition}[Safe policy class]
+\label{def:safe-policy}
+$\mathrm{safe}(T, \varepsilon) := \{\pi : P_\pi(\tau_F \le T) \le
+\varepsilon\}$.
+\end{definition}
+
+\begin{definition}[Canonical objective, per Addendum U-DEF-01-A]
+\label{def:tf-v4-objective}
+\begin{equation}
+U(\pi) := \liminf_{T \to \infty} \frac{1}{T}
+\mathbb{E}_\pi\!\left[
+\sum_{t=0}^{T-1} r(s_t, a_t)
+\right] \qquad \text{(unconditional time-average).}
+\end{equation}
+\end{definition}
+
+% =====================================================================
+\section{Main Theoretical Results}
+\label{sec:tf-v4-main-results}
+
+\subsection{Theorem 1: Ruin Dilution}
+
+\begin{theorem}[Ruin Dilution]
+\label{thm:tf-v4-ruin-dilution}
+Let $\pi$ satisfy $P_\pi(\tau_F < \infty) = q \in [0, 1)$. Then:
+\begin{enumerate}
+\item[(i)] $U(\pi) \le (1 - q) \cdot R_{\max}$.
+\item[(ii)] Any $\pi'$ with $U(\pi') > (1 - q) R_{\max}$ strictly
+dominates $\pi$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\medskip\noindent\textbf{Part (i).}
+Decompose by $\tau_F < \infty$ (probability $q$) and
+$\tau_F = \infty$ (probability $1 - q$):
+\begin{equation}
+\mathbb{E}_\pi\!\left[\frac{1}{T} \sum r_t\right]
+=
+q \cdot \mathbb{E}\!\left[
+\frac{1}{T} \sum r_t \mid \tau_F < \infty
+\right]
++ (1 - q) \cdot \mathbb{E}\!\left[
+\frac{1}{T} \sum r_t \mid \tau_F = \infty
+\right].
+\end{equation}
+
+\textit{Ruin term}: On $\tau_F < \infty$, $r_t = 0$ for all $t \ge
+\tau_F$ (Definition~\ref{def:failure-absorption}), so
+$\mathbb{E}[(1/T) \sum r_t \mid \tau_F < \infty] \le R_{\max} \cdot
+\mathbb{E}[\tau_F / T \mid \tau_F < \infty] \to 0$ as $T \to \infty$
+($\mathbb{E}[\tau_F \mid \tau_F < \infty] < \infty$ since $S$ is
+finite).
+
+\textit{Survival term}: $\mathbb{E}[(1/T) \sum r_t \mid \tau_F =
+\infty] \le R_{\max}$.
+
+Combining: $U(\pi) = \liminf \le \limsup \le q \cdot 0 + (1 - q)
+\cdot R_{\max}$.
+
+\medskip\noindent\textbf{Part (ii).}
+Follows immediately from Part~(i): $U(\pi') > (1 - q) R_{\max} \ge
+U(\pi)$.
+\end{proof}
+
+\begin{remark}[Scope]
+Part~(ii) requires the existence of $\pi'$ with $U(\pi') > (1 - q)
+R_{\max}$. When safe actions yield low reward, this may not hold.
+The theorem quantifies the \emph{ceiling} on any positive-ruin
+policy.
+\end{remark}
+
+\subsection{Lemma 1: Feasibility of safe}
+
+\begin{lemma}[Feasibility of safe]
+\label{lem:tf-v4-feasibility}
+Assume:
+\begin{itemize}
+\item[(A1)] $S$ finite;
+\item[(A2)] $\exists \pi^{\mathrm{hold}}$ with
+$P_{\pi^{\mathrm{hold}}}(\tau_F \le T) = 0$ for all $T$;
+\item[(A3)] $\varepsilon > 0$.
+\end{itemize}
+Then $\mathrm{safe}(T, \varepsilon) \ne \emptyset$.
+
+Sufficient condition for (A2):
+$\exists s^* \in S \setminus S_F, a^*$ with $P(s^* \mid s^*, a^*) =
+1$.
+\end{lemma}
+
+\begin{proof}
+Under (A2), $P_{\pi^{\mathrm{hold}}}(\tau_F \le T) = 0 \le
+\varepsilon$, so $\pi^{\mathrm{hold}} \in \mathrm{safe}(T,
+\varepsilon)$. Sufficient condition: $\pi^{\mathrm{hold}}(s) = a^*$
+keeps all trajectories at $s^* \notin S_F$.
+\end{proof}
+
+\subsection{Theorem 2: CMDP Separation}
+
+\paragraph{Correction note.}
+Prior v2 construction ($s_0 \leftrightarrow s_1$ recurrent loop) was
+flawed: for any $\delta > 0$, long-run ruin probability $= 1$
+(standard absorbing chain result). Formula
+$q(\delta) = (1 - p) \delta / (1 - p \delta)$ computed only
+single-visit ruin probability, not eventual. Corrected: two-state
+MDP with independent per-step ruin events.
+
+\begin{theorem}[NRMO Strictly Separates from Lagrangian CMDP]
+\label{thm:tf-v4-cmdp-separation}
+There exists MDP $M^*$ and $b \in (0, 1)$ such that:
+\begin{enumerate}
+\item[(i)] the primal CMDP optimum $\pi^*$ satisfies
+$P_{\pi^*}(\tau_F \le T) = b > 0$ (constraint binds at optimum by
+KKT);
+\item[(ii)] $\mathrm{safe}(T, 0) \ne \emptyset$, so NRMO achieves
+zero ruin.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\medskip\noindent\textbf{Construction $M^*$.}
+$S = \{s_0, s_F\}$, $A = \{a_{\mathrm{safe}}, a_{\mathrm{risky}}\}$.
+$R = 5$, $p = 0.7$, $T = 10$, $b = 0.20$. From $s_0$:
+$a_{\mathrm{risky}} \to s_F$ w.p.~$1 - p = 0.3$, stay w.p.~$p = 0.7$,
+$r = R$. From $s_0$: $a_{\mathrm{safe}} \to$ stay, $r = 0$. $s_F$
+absorbing, $r = 0$.
+
+\medskip\noindent\textbf{Finite-horizon ruin formula.}
+Under mixed policy $\delta = P(a_{\mathrm{risky}} \mid s_0)$, each
+step $s_0 \to s_F$ occurs with probability $(1 - p) \delta$
+independently:
+\begin{equation}
+\Phi(\delta, T) = P(\tau_F \le T) = 1 - (1 - (1 - p) \delta)^T.
+\end{equation}
+
+\medskip\noindent\textbf{CMDP analysis.}
+Unconstrained optimum is $\delta = 1$:
+$\Phi(1, 10) = 1 - (0.7)^{10} = 0.972 > b = 0.20$. Constraint
+violated. Since $\mathbb{E}[\mathrm{return}]$ and $\Phi$ are both
+strictly increasing in $\delta$, complementary slackness forces
+$\Phi(\delta^*, T) = b$ exactly at the optimum. Solving:
+\begin{equation}
+\delta^* = \frac{1 - (1 - b)^{1/T}}{1 - p}
+= \frac{1 - (0.80)^{0.1}}{0.3} = 0.0744.
+\end{equation}
+Verify: $\Phi(0.0744, 10) = 1 - (0.9777)^{10} = 0.200 = b > 0$.
+$\lambda^* = (\mathrm{d}\mathbb{E} / \mathrm{d}\delta) /
+(\mathrm{d}\Phi / \mathrm{d}\delta) \rvert_{\delta = \delta^*} > 0$
+is the unique KKT multiplier.
+
+\medskip\noindent\textbf{NRMO.}
+$\varepsilon = 0$ forces $\delta = 0$; $\Phi(0, T) = 0$.
+Lemma~\ref{lem:tf-v4-feasibility} applies
+($a_{\mathrm{safe}} = $ hold action).
+\end{proof}
+
+\begin{remark}
+CMDP saturates the ruin budget $b$: it trades every unit of permitted
+ruin for reward. NRMO forfeits risky reward to achieve zero ruin.
+$U(\pi_{\mathrm{safe}}) = 0$ vs.~$U(\pi^*) = \delta^* R \cdot
+(\text{survival factor}) > 0$. This trade-off is domain-dependent
+and explicit.
+\end{remark}
+
+\subsection{Theorem 3: Variational Analysis (Corrected in v4)}
+
+\paragraph{Correction note.}
+Prior v2 proof applied Euler-Lagrange to
+$\Sigma(f) = \int f'(x)(1 - x)\,\mathrm{d}x$, incorrectly yielding a
+logarithmic interior maximiser. Prior v3 theorem statement said
+``equivalent to minimising $\int f(x)\,\mathrm{d}x$'' --- wrong sign.
+Correction: integration by parts gives $\Sigma(f) = -\varepsilon_{\mathrm{floor}}
++ \int f(x)\,\mathrm{d}x$, so maximising $\Sigma(f) \Leftrightarrow$
+maximising $\int f(x)\,\mathrm{d}x$. No smooth interior maximiser
+exists.
+
+\begin{theorem}[Exponential Family Achieves Variational Supremum,
+v4 corrected]
+\label{thm:tf-v4-variational}
+Let $\mathcal{F} = \{f : [0, 1] \to [\varepsilon_{\mathrm{floor}},
+\varepsilon_{\mathrm{global}}]:$ monotone non-decreasing,
+$f(0) = \varepsilon_{\mathrm{floor}}$,
+$f(1) = \varepsilon_{\mathrm{global}}$, $f \in C^1\}$. Define
+$\Sigma(f) = \int_0^1 f'(x)(1 - x)\,\mathrm{d}x$.
+\begin{enumerate}
+\item[(i)] By integration by parts:
+$\Sigma(f) = -\varepsilon_{\mathrm{floor}} +
+\int f(x)\,\mathrm{d}x$, so maximising $\Sigma(f)$ is equivalent to
+maximising $\int f(x)\,\mathrm{d}x$ over $\mathcal{F}$.
+\item[(ii)] $\sup_{f \in \mathcal{F}} \int f(x)\,\mathrm{d}x =
+\varepsilon_{\mathrm{global}}$, approached but not achieved by
+$f_\kappa(x) = \varepsilon_{\mathrm{floor}} + \Delta(1 - e^{-\kappa
+x}) / (1 - e^{-\kappa})$ as $\kappa \to \infty$.
+\item[(iii)] $\varepsilon_{\mathrm{global}} - \int f_\kappa =
+O(\Delta / \kappa)$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\medskip\noindent\textbf{Part (i): Integration by parts.}
+$\Sigma(f) = \int_0^1 f'(x)(1 - x)\,\mathrm{d}x$. Set $u = (1 - x)$,
+$\mathrm{d}v = f'(x)\,\mathrm{d}x$:
+\begin{align}
+\Sigma(f) &= [(1 - x) f(x)]_0^1 + \int_0^1 f(x)\,\mathrm{d}x \\
+&= (0 \cdot f(1) - 1 \cdot f(0)) + \int f(x)\,\mathrm{d}x \\
+&= -\varepsilon_{\mathrm{floor}} + \int f(x)\,\mathrm{d}x.
+\end{align}
+Since $-\varepsilon_{\mathrm{floor}}$ is constant: $\max \Sigma(f)
+\Leftrightarrow \max \int f(x)\,\mathrm{d}x$.
+
+\medskip\noindent\textbf{Part (ii): No smooth interior maximiser.}
+For monotone $f$ with $f(0) = \varepsilon_{\mathrm{floor}}$,
+$f(1) = \varepsilon_{\mathrm{global}}$, maximising
+$\int f(x)\,\mathrm{d}x$ means rising to
+$\varepsilon_{\mathrm{global}}$ as fast as possible from $x = 0$.
+The supremum is achieved by $f^*(x) = \varepsilon_{\mathrm{floor}}
+\cdot \mathbf{1}_{x = 0} + \varepsilon_{\mathrm{global}} \cdot
+\mathbf{1}_{x > 0}$ (step function), giving $\int f^* =
+\varepsilon_{\mathrm{global}}$. But $f \in C^1$, so no smooth
+maximiser exists. $f_\kappa$ approximates $f^*$: for any $x > 0$,
+$f_\kappa(x) \to \varepsilon_{\mathrm{global}}$ as $\kappa \to
+\infty$.
+
+\medskip\noindent\textbf{Part (iii): Convergence rate.}
+\begin{equation}
+\int_0^1 f_\kappa(x)\,\mathrm{d}x =
+\varepsilon_{\mathrm{floor}} + \frac{\Delta}{1 - e^{-\kappa}}
+\cdot \!\left[1 - \frac{1 - e^{-\kappa}}{\kappa}\right]
+= \varepsilon_{\mathrm{floor}} + \Delta\!\left[1 - \frac{1}{\kappa}
++ O(e^{-\kappa})\right].
+\end{equation}
+Therefore $\varepsilon_{\mathrm{global}} - \int f_\kappa = \Delta /
+\kappa + O(\Delta e^{-\kappa}) = O(\Delta / \kappa)$.
+\end{proof}
+
+\begin{remark}
+The exponential family is the canonical smooth approximation to the
+(unattainable) step-function supremum. Larger $\kappa$ is always
+variationally better; $\kappa = 3$ is a practical balance against
+numerical instability near $x = 0$. For $\kappa = 3$:
+$\int f_3 - \varepsilon_{\mathrm{floor}} \approx 0.667 \Delta$,
+leaving 33\% sensitivity gain unrealised relative to the limit.
+\end{remark}
+
+\subsection{Theorem 4: CVaR Tractability}
+
+\begin{theorem}[Polynomial-Time CVaR Bound]
+\label{thm:tf-v4-cvar}
+Let $Z = \mathbf{1}_{\tau_F \le T} \in \{0, 1\}$. For any $\alpha \in
+(0, 1)$:
+\begin{enumerate}
+\item[(i)] $\mathrm{CVaR}_\alpha(Z) \ge P(Z = 1)$.
+\item[(ii)] $\min_\pi \mathrm{CVaR}_\alpha(\mathrm{cost}_\pi)$
+subject to $\mathrm{CVaR} \le \varepsilon$ is solvable in
+$O(|S|^2 |A| T \cdot \log(1 / \varepsilon))$ when the loss
+distribution is log-concave.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\medskip\noindent\textbf{Part (i).}
+$Z \in \{0, 1\}$:
+\begin{itemize}
+\item Case A ($\alpha \ge 1 - P(Z = 1)$): $\mathrm{VaR}_\alpha(Z) =
+1$, $\mathrm{CVaR} = 1 \ge P(Z = 1)$.
+\item Case B ($\alpha < 1 - P(Z = 1)$): $\mathrm{VaR}_\alpha(Z) =
+0$, $\mathrm{CVaR}_\alpha(Z) = P(Z = 1) / (1 - \alpha) \ge
+P(Z = 1)$.
+\end{itemize}
+Both cases: $\mathrm{CVaR} \ge P(Z = 1)$.
+
+\medskip\noindent\textbf{Part (ii).}
+Rockafellar-Uryasev (2000):
+\begin{equation}
+\mathrm{CVaR}_\alpha(Z) = \min_v\!\left\{v + \frac{1}{1 - \alpha}
+\mathbb{E}[\max(Z - v, 0)]\right\}.
+\end{equation}
+In occupancy-measure LP (Altman 1999, Ch.~2),
+$\mathbb{E}_\pi[\max(Z - v, 0)]$ is linear in occupancy measures
+$\mu(s, a, t)$ for fixed $v$. LP has $|S| |A| T + 1$ variables;
+interior-point methods: $O(|S|^2 |A| T \cdot \log(1 / \varepsilon))$.
+The LP formulation is exact by construction (Altman 1999, Ch.~2);
+log-concavity is used only to confirm the loss distribution is
+unimodal.
+\end{proof}
+
+% =====================================================================
+\section{Algorithm: Phased Parallel Execution}
+\label{sec:tf-v4-algorithm}
+
+Phased Parallel Execution resolves the contradiction between full
+parallelism (Phase~1) and Type ZERO suppression authority (Phase~3
+only). DEADLOCK handler (Step~8) outputs $\mathrm{SAFE\_EXIT} =
+\pi^{\mathrm{hold}}$ from Lemma~\ref{lem:tf-v4-feasibility}.
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+Algorithm 1: NRMO Execution
+
+Input:  M, T, eps_global, eps_floor, kappa, B_t
+Output: a_t in A or SAFE_EXIT
+
+1: eps_t = eps_floor + (eps_global - eps_floor)
+            * (1 - exp(-kappa * B_t))
+2: PHASE 1 [parallel, read-only]:
+     each module m computes score_m(s_t)
+3: PHASE 2 [barrier]:
+     await; T_max cutoff; late scores set to 0
+4: PHASE 3 [serial]:
+     Priority Arbiter -> Tri-Option Generator -> {A, B, C}
+5: For o in {A, B, C}:
+     verify APSOC gates
+       (reversibility, Max Loss, exit trigger)
+6: Compute CVaR upper bound on P(tau_F <= T)
+     per option (Theorem 4)
+7: O_valid = {o : CVaR <= eps_t and APSOC passed}
+8: if O_valid == empty:
+     DEADLOCK -> return SAFE_EXIT (pi_hold)
+9: else:
+     return argmax_{o in O_valid} U(pi_o)
+\end{lstlisting}
+
+% =====================================================================
+\section{Experiments}
+\label{sec:tf-v4-experiments}
+
+\paragraph{Correction note.}
+CPO and RCPO are approximated as analytic greedy Lagrangian policies
+($\lambda_{\mathrm{CPO}} = 2.0$, $\lambda_{\mathrm{RCPO}} = 4.0$).
+Results are directional evidence only. Faithful library
+implementations deferred to future work.
+
+\begin{table}[ht]
+\centering
+\scriptsize
+\begin{tabularx}{\linewidth}{lXXXXXXXX}
+\toprule
+\textbf{Method} & \textbf{D1 Rwd} & \textbf{D1 Ruin$\downarrow$}
+& \textbf{D2 Ret} & \textbf{D2 Ruin$\downarrow$} & \textbf{D2 SR}
+& \textbf{D3 Profit} & \textbf{D3 Ruin$\downarrow$}
+& \textbf{D3 Svc} \\
+\midrule
+\textbf{NRMO} & \textbf{8.22} & \textbf{0.106} & $-9.0\%$
+& \textbf{0.193} & $-0.49$ & \textbf{17{,}548} & 0.000 & 0.997 \\
+CPO & 6.13 & 0.248 & $-11.3\%$ & 0.467 & $-0.60$ & 16{,}306 & 0.000
+& 0.998 \\
+RCPO & 8.06 & 0.118 & $-9.7\%$ & 0.250 & $-0.54$ & 17{,}176 & 0.000
+& 0.995 \\
+Lagrangian & 5.69 & 0.278 & $-13.8\%$ & 0.550 & $-0.77$
+& 16{,}469 & 0.000 & 0.976 \\
+\bottomrule
+\end{tabularx}
+\caption[Empirical results]{Results
+($n = 500 / 300 / 300$). $\downarrow$ = lower better. NRMO row
+highlighted. Baselines are analytic approximations.}
+\label{tab:tf-v4-empirical}
+\end{table}
+
+\paragraph{D1 Grid World.}
+NRMO ruin $0.106$ vs.~$0.278$ Lagrangian ($-62\%$),
+$0.118$ RCPO ($-10\%$). Hard ruin filter rejects options above
+$\varepsilon_t$ entirely.
+
+\paragraph{D2 Portfolio.}
+Buffer-adaptive allocation reduces ruin to $0.193$ vs.~$0.550$
+Lagrangian ($-65\%$). As $B_t \to 0$, $\varepsilon_t \to
+\varepsilon_{\mathrm{floor}}$ and risky allocation decreases.
+
+\paragraph{D3 Inventory.}
+All methods zero ruin; NRMO leads profit ($+7.6\%$ vs.~CPO) via
+emergency restock trigger.
+
+% =====================================================================
+\section{Discussion}
+\label{sec:tf-v4-discussion}
+
+\paragraph{T1 scope.}
+Does not assert NRMO achieves higher reward than CMDP in general.
+When safe actions earn zero reward, $U(\pi_{\mathrm{safe}}) = 0$
+while CMDP achieves $U > 0$.
+
+\paragraph{T2 scope.}
+Separation instance $M^*$ is minimal. Practically relevant when
+$T \cdot \delta^* (1 - p) = O(1)$.
+
+\paragraph{T3 scope.}
+No unique optimal $\kappa$; larger always better variationally,
+constrained by numerics.
+
+\paragraph{T4 note.}
+LP formulation is exact by construction (Altman 1999); log-concavity
+confirms unimodality only.
+
+\paragraph{Open questions.}
+
+\begin{enumerate}
+\item Continuous state spaces.
+\item POMDP extension.
+\item Online estimation.
+\item Safety Gym comparison.
+\end{enumerate}
+
+% =====================================================================
+\section{References}
+\label{sec:tf-v4-references}
+
+\begin{enumerate}
+\item Achiam et al.~(2017). Constrained Policy Optimization.
+\textit{ICML 2017}.
+\item Altman, E.~(1999). \textit{Constrained Markov Decision
+Processes}. Chapman \& Hall/CRC.
+\item Chow \& Pavone (2014). Risk-sensitive MDPs.
+\textit{IEEE CDC 2014}.
+\item Chow et al.~(2018). Lyapunov-based safe RL. \textit{NeurIPS
+2018}.
+\item Garcia \& Fernandez (2015). Survey on safe RL.
+\textit{JMLR} 16(1).
+\item Iyengar (2005). Robust dynamic programming.
+\textit{Math.~OR} 30(2).
+\item Kelly (1956). Information rate. \textit{Bell Sys.~Tech.~J.}
+35(4).
+\item Nilim \& El Ghaoui (2005). Robust MDPs. \textit{OR} 53(5).
+\item Peters (2019). Ergodicity problem. \textit{Nature Physics}
+15(12).
+\item Rockafellar \& Uryasev (2000). CVaR optimization.
+\textit{J.~Risk} 2(3).
+\item Tessler et al.~(2018). Reward constrained policy
+optimization. \textit{ICLR 2019}.
+\end{enumerate}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This chapter is the v4 corrected version of the theoretical
+foundation. Part~VII presents the same content in arXiv-paper
+form.
+\item Theorem~\ref{thm:tf-v4-ruin-dilution} is the strongest theorem
+linking $U$ and $q$; it is the technical backbone of the
+``ruin avoidance is primary'' principle (Section~\ref{sec:invariants-unchanged}).
+\item Algorithm~1 (Phased Parallel Execution) is the algorithmic
+template for the Phased / Parallel OODA architecture
+(Chapter~\ref{ch:parallel-ooda}).
+\item The empirical validation in Section~\ref{sec:tf-v4-experiments}
+is at the algorithmic level. Civilisation-scale empirical
+validation is in Part~XI.
+\end{itemize}

@@ -1,0 +1,220 @@
+{
+  "report_date": "2026-05-23",
+  "report_type": "v8.4.1 freeze + v8.4.2 MAPLayer trial",
+  "audit_reference": "NRMO_v8_4_1_to_v8_4_2_Claude_handoff.md",
+  
+  "v841": {
+    "status": "FROZEN",
+    "classification": "controlled minimal guard baseline",
+    "is_final_v8": false,
+    "is_proof_of_non_ruin": false,
+    
+    "architecture": {
+      "components": [
+        "V71Engine (with deterministic RNG)",
+        "EmergencyResourceGuard",
+        "ActionIntensityThrottle",
+        "ActivePatternProxy",
+        "Revalidation",
+        "CumulativeRiskTracker"
+      ]
+    },
+    
+    "conceptual_baselines": {
+      "v841_HG": "V71+rng + EG + Throttle + Reval + CumRisk (true minimal safety)",
+      "v841_AP": "v841_HG + ActivePatternProxy (future aggressive harness)"
+    },
+    
+    "audit_compliance": {
+      "1_deterministic_rng": true,
+      "2_emergency_resource_guard": true,
+      "3_action_intensity_throttle": true,
+      "4_r_critical_unit_tests": "14/14 PASS",
+      "5_r_critical_no_BC": true,
+      "6_ap_on_off_ablation": true,
+      "7_revalidation": true,
+      "8_cumulative_risk_integrated": true,
+      "9_aggressive_crash_mitigated": "+12.2 step average"
+    },
+    
+    "benchmark_results_n200": {
+      "seeds": "100-299 (未使用 seed range)",
+      "horizon": 200,
+      "ap_threshold_fixed": 0.35,
+      "results": {
+        "mild":     { "v71": 12.28, "v841": 16.38, "paired_diff": 3.95, "wilcoxon_p": 0.0001, "ap_pure_effect": 0.00, "significant": true },
+        "moderate": { "v71": 11.42, "v841": 14.95, "paired_diff": 3.48, "wilcoxon_p": 0.0001, "ap_pure_effect": 0.00, "significant": true },
+        "severe":   { "v71": 9.96,  "v841": 12.13, "paired_diff": 2.21, "wilcoxon_p": 0.0008, "ap_pure_effect": 0.00, "significant": true },
+        "extreme":  { "v71": 7.05,  "v841": 5.83,  "paired_diff": 0.67, "wilcoxon_p": 0.1425, "ap_pure_effect": 0.00, "significant": false },
+        "total":    { "v71": 3.49,  "v841": 4.04,  "paired_diff": 0.04, "wilcoxon_p": 0.3698, "ap_pure_effect": 0.00, "significant": false }
+      }
+    },
+    
+    "aggressive_synthetic_test": {
+      "mild":     { "baseline_score": 2.56, "baseline_steps": 6, "with_guard_score": 8.17, "with_guard_steps": 20, "ttr_gain": 14.0 },
+      "moderate": { "baseline_score": 2.17, "baseline_steps": 6, "with_guard_score": 5.92, "with_guard_steps": 16, "ttr_gain": 10.5 },
+      "total_interventions_60_runs": {
+        "emergency_resource_guard": 645,
+        "action_intensity_throttle": 189,
+        "active_pattern": 10
+      }
+    },
+    
+    "honest_findings": {
+      "main_improvement_source": "EmergencyResourceGuard + ActionIntensityThrottle (hard guard)",
+      "active_pattern_pure_effect": "approximately zero on v7.1 baseline",
+      "active_pattern_retention_reason": "safety harness for future aggressive engine reintroduction",
+      "extreme_total_status": "same performance band as v7.1, not significantly different"
+    },
+    
+    "remaining_limitations": [
+      "Ruin rate still 100% in long-run settings",
+      "Extreme and total chaos not yet significantly improved",
+      "ActivePattern pure effect ~ 0 on v7.1 baseline",
+      "v8.4.1 is not final architecture; it is frozen safety baseline"
+    ]
+  },
+  
+  "v842": {
+    "status": "MAPLAYER_NOT_RETAINED_IN_MAINLINE",
+    "trial_type": "v8.4.1 + MAPLayer only (strictly isolated)",
+    
+    "design": {
+      "maplayer_role": "adaptive guard threshold tightening based on observation_noise and near_ruin history",
+      "explicitly_prohibited": [
+        "PassivePattern addition",
+        "StrongEngineΩfull addition",
+        "Shinobi addition",
+        "candidate generation by MAPLayer",
+        "direct action selection by MAPLayer"
+      ]
+    },
+    
+    "benchmark_results_n200": {
+      "seeds": "300-499 (未使用 seed range)",
+      "horizon": 200,
+      "results": {
+        "severe":  { "v71": 10.38, "v841": 12.15, "v842_on": 12.15, "v842_off": 12.15, "maplayer_pure_effect": 0.00 },
+        "extreme": { "v71": 7.42,  "v841": 6.43,  "v842_on": 6.43,  "v842_off": 6.43,  "maplayer_pure_effect": 0.00 },
+        "total":   { "v71": 4.78,  "v841": 5.03,  "v842_on": 5.03,  "v842_off": 5.03,  "maplayer_pure_effect": -0.01 }
+      },
+      "adaptive_tightening_fires_per_run": {
+        "severe": 21.6,
+        "extreme": 16.9,
+        "total": 13.4
+      },
+      "near_ruin_events_observed_per_run": {
+        "severe": 8.9,
+        "extreme": 6.2,
+        "total": 3.9
+      }
+    },
+    
+    "acceptance_criteria_check": {
+      "1_no_degrade_mild_moderate_severe": { "passed": true, "evidence": "Δ=0 in all three" },
+      "2_improve_or_stabilize_extreme_total": { "passed": false, "evidence": "Δ=0, std delta=-0.01 (no measurable change)" },
+      "3_ml_ablation_measurable_benefit": { "passed": false, "evidence": "pure effect = 0.00 across all levels" },
+      "4_deterministic_rng_intact": { "passed": true },
+      "5_traces_explainable": { "passed": true },
+      "6_no_early_ruin_mechanism": { "passed": true },
+      "7_no_uncontrolled_amplification": { "passed": true },
+      "summary": "5/7 PASS, criteria 2 and 3 FAIL"
+    },
+    
+    "decision": "MAPLayer (in adaptive_tightening form) NOT retained in mainline",
+    "decision_reference": "handoff doc § 5: 'If MAPLayer does not improve extreme/total or variance, it should not be retained in the mainline.'",
+    
+    "root_cause": "Base guard config (r_emergency=10, r_critical=15, r_warning=25) is already sufficiently strict. Adaptive tightening does not change firing timing because same trajectory hits same thresholds in same order.",
+    
+    "future_maplayer_uses_not_implemented": [
+      "candidate predictor for AggressiveEngine (L2 trend → opportunity persistence)",
+      "observation-noise-aware Knightian (L3 episodic → veto classification)",
+      "stop-condition trigger source for AggressiveEngine candidates"
+    ]
+  },
+  
+  "aggressive_engine_definition_locked": {
+    "core_correction": "AggressiveEngine is NOT an independent engine. It is an internal auxiliary submodule of StrongEngineΩfull.",
+    
+    "authority_denied": [
+      "decide final actions",
+      "override NRMO vetoes",
+      "modify ruin boundaries",
+      "expand risk budgets",
+      "bypass EmergencyResourceGuard / Throttle / Calibration / Revalidation"
+    ],
+    
+    "required_output_schema": [
+      "module",
+      "mode",
+      "attack_candidate",
+      "safe_variant",
+      "minimum_reversible_variant",
+      "expected_upside",
+      "estimated_downside",
+      "reversibility",
+      "required_conditions",
+      "stop_conditions",
+      "reason"
+    ],
+    
+    "activation_conditions": {
+      "R_min": 40,
+      "E_min": 0.45,
+      "X_max": 0.60,
+      "O_signal_confidence_min": 0.65,
+      "no_recent_drawdown": true,
+      "no_true_veto": true,
+      "small_reversible_variant_available": true
+    },
+    
+    "suppression_conditions": {
+      "R_25": "C action prohibited",
+      "R_15": "B/C action prohibited",
+      "R_10": "inactive, recover/A prioritized",
+      "X_75": "C action prohibited",
+      "X_90": "true_veto, all stopped",
+      "drawdown_threshold": "next action max A",
+      "consecutive_large_2": "cooldown"
+    },
+    
+    "internal_modes": [
+      "Wolf Pursuit",
+      "Small Reversible Attack",
+      "Anti-Stagnation Attack",
+      "Momentum Exploitation"
+    ]
+  },
+  
+  "next_steps_locked": {
+    "priority_order": [
+      "1. ✅ Freeze and document v8.4.1",
+      "2. ✅ Add MAPLayer only as v8.4.2",
+      "3. ✅ Validate MAPLayer with ON/OFF ablation",
+      "4. → Decision: MAPLayer NOT retained in mainline (this trial form)",
+      "5. → Rebuild StrongEngineΩfull (Defensive/Recovery/Exploration/Mutation/Synthesis/Invention/AggressiveEngineSubmodule/CandidateMerger)",
+      "6. → Integrate AggressiveEngine as StrongEngineΩfull submodule only",
+      "7. → Test against frozen v8.4.1 baseline"
+    ]
+  },
+  
+  "files_produced": [
+    "core/engines.py (V71Engine with rng)",
+    "core/emergency_guards.py (EG + Throttle + 17/17 unit tests)",
+    "core/cumulative_risk_tracker.py",
+    "core/active_pattern_proxy.py (threshold=0.35)",
+    "core/veto_classification.py",
+    "core/v841_engine.py (FROZEN baseline)",
+    "core/map_layer.py",
+    "core/v842_engine.py (v8.4.2 = v8.4.1 + MAPLayer)",
+    "validation/v841_full_benchmark.py (n=200, audit 1-7)",
+    "validation/v842_full_benchmark.py (4-way comparison)",
+    "results/v841_full_results.json",
+    "results/v842_full_results.json",
+    "reports/v841_FROZEN.md",
+    "reports/v841_v842_documentation/v841_v842_report.md",
+    "reports/v841_v842_documentation/v841_v842_summary.json",
+    "reports/v841_v842_documentation/v841_v842_report.tex",
+    "reports/v841_v842_documentation/v841_v842_report.pdf"
+  ]
+}

@@ -1,0 +1,283 @@
+{
+  "phase": "5_v8",
+  "max_horizon": 500,
+  "checkpoints": [
+    100,
+    200,
+    300,
+    400,
+    500
+  ],
+  "n_runs": 30,
+  "worlds": [
+    "Normal",
+    "Vulnerable"
+  ],
+  "engines": [
+    "v7.1",
+    "v8"
+  ],
+  "results": {
+    "Normal": {
+      "v7.1": {
+        "time_to_ruin_stats": {
+          "n_total": 30,
+          "n_ruined": 30,
+          "n_survived": 0,
+          "ruin_rate": 1.0,
+          "survival_rate": 0.0,
+          "median_time_to_ruin_among_ruined": 52.0,
+          "p25_time_to_ruin": 24.5,
+          "p75_time_to_ruin": 66.5,
+          "median_time_all_runs_censored": 52.0
+        },
+        "checkpoint_survival_rate": {
+          "100": 0.0,
+          "200": 0.0,
+          "300": 0.0,
+          "400": 0.0,
+          "500": 0.0
+        },
+        "separated_checkpoint_stats": {
+          "100": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "200": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "300": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "400": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "500": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          }
+        },
+        "n_runs": 30,
+        "elapsed_sec": 0.22868776321411133
+      },
+      "v8": {
+        "time_to_ruin_stats": {
+          "n_total": 30,
+          "n_ruined": 30,
+          "n_survived": 0,
+          "ruin_rate": 1.0,
+          "survival_rate": 0.0,
+          "median_time_to_ruin_among_ruined": 13.0,
+          "p25_time_to_ruin": 12.0,
+          "p75_time_to_ruin": 13.0,
+          "median_time_all_runs_censored": 13.0
+        },
+        "checkpoint_survival_rate": {
+          "100": 0.0,
+          "200": 0.0,
+          "300": 0.0,
+          "400": 0.0,
+          "500": 0.0
+        },
+        "separated_checkpoint_stats": {
+          "100": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "200": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "300": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "400": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "500": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          }
+        },
+        "n_runs": 30,
+        "elapsed_sec": 4.420126676559448
+      }
+    },
+    "Vulnerable": {
+      "v7.1": {
+        "time_to_ruin_stats": {
+          "n_total": 30,
+          "n_ruined": 30,
+          "n_survived": 0,
+          "ruin_rate": 1.0,
+          "survival_rate": 0.0,
+          "median_time_to_ruin_among_ruined": 5.0,
+          "p25_time_to_ruin": 2.25,
+          "p75_time_to_ruin": 8.75,
+          "median_time_all_runs_censored": 5.0
+        },
+        "checkpoint_survival_rate": {
+          "100": 0.0,
+          "200": 0.0,
+          "300": 0.0,
+          "400": 0.0,
+          "500": 0.0
+        },
+        "separated_checkpoint_stats": {
+          "100": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "200": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "300": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "400": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "500": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          }
+        },
+        "n_runs": 30,
+        "elapsed_sec": 0.10465145111083984
+      },
+      "v8": {
+        "time_to_ruin_stats": {
+          "n_total": 30,
+          "n_ruined": 30,
+          "n_survived": 0,
+          "ruin_rate": 1.0,
+          "survival_rate": 0.0,
+          "median_time_to_ruin_among_ruined": 7.0,
+          "p25_time_to_ruin": 2.5,
+          "p75_time_to_ruin": 8.75,
+          "median_time_all_runs_censored": 7.0
+        },
+        "checkpoint_survival_rate": {
+          "100": 0.0,
+          "200": 0.0,
+          "300": 0.0,
+          "400": 0.0,
+          "500": 0.0
+        },
+        "separated_checkpoint_stats": {
+          "100": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "200": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "300": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "400": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          },
+          "500": {
+            "n_alive": 0,
+            "median": null,
+            "mean": null,
+            "std": null,
+            "p25": null,
+            "p75": null
+          }
+        },
+        "n_runs": 30,
+        "elapsed_sec": 3.29986834526062
+      }
+    }
+  },
+  "total_elapsed_sec": 8.053622007369995
+}

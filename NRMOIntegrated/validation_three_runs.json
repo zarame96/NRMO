@@ -1,0 +1,33 @@
+{
+  "all_pass": true,
+  "timeout_per_run_s": 300,
+  "runs": [
+    {
+      "run": 1,
+      "returncode": 0,
+      "elapsed": 8.84,
+      "final_marker": true,
+      "cleanup_before_count": 0,
+      "cleanup_after_count": 0,
+      "status": "PASS"
+    },
+    {
+      "run": 2,
+      "returncode": 0,
+      "elapsed": 8.75,
+      "final_marker": true,
+      "cleanup_before_count": 0,
+      "cleanup_after_count": 0,
+      "status": "PASS"
+    },
+    {
+      "run": 3,
+      "returncode": 0,
+      "elapsed": 8.74,
+      "final_marker": true,
+      "cleanup_before_count": 0,
+      "cleanup_after_count": 0,
+      "status": "PASS"
+    }
+  ]
+}

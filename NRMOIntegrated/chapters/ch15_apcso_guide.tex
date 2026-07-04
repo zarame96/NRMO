@@ -1,0 +1,90 @@
+% chapters/ch15_apcso_guide.tex
+% Chapter 15: APCSO Operational Guide
+% Source: NRMO_v5_updated.pdf, Chapter 15 (lines 8179-8424 of v5_layout.txt)
+% Content overlaps with Section 12.2 (APCSO formal theory) and 12.3 (applied guide)
+
+\chapter{APCSO Operational Guide --- Layered View}
+\label{ch:apcso-guide}
+
+\nrmobox{Document role}{
+This chapter presents the layered APCSO architecture as an
+operational reference. It is the third complementary view of APCSO,
+following the formal theory (Section~\ref{sec:apcso-formal}) and the
+applied guide (Section~\ref{sec:apcso-applied-guide}).
+}
+
+% =====================================================================
+\section{APCSO Positioning}
+\label{sec:apcso-positioning}
+
+\paragraph{APCSO is not.}
+APCSO is \textbf{not} an operation, OS, or replacement for any
+existing layer. Its purpose is solely to optimise the
+\emph{structure} of the choice set under irreversibility constraints.
+
+\paragraph{APCSO is.}
+APCSO is a layer that consults Passive Pattern (observation),
+evaluates options, and outputs an unordered three-element proposal
+set. It does not select; it does not execute; it does not rank.
+
+% =====================================================================
+\section{Layer Structure}
+\label{sec:apcso-layer-structure}
+
+\paragraph{Passive Pattern (observation layer).}
+Observation; evaluation / classification. Shutdown via HALT or HOLD.
+
+\paragraph{APCSO (judgement layer).}
+Generates the choice set under conditions: exactly three options;
+at least one hold or exit; ruin upper-bound $\le \varepsilon$ for
+all.
+
+\paragraph{Human / Governance (selection layer).}
+$\varepsilon$ supply, selection, and accountability. The human
+selects; the governance authority supplies the $\varepsilon$.
+
+% =====================================================================
+\section{Operating Conditions}
+\label{sec:apcso-operating-conditions}
+
+APCSO activates when:
+
+\begin{itemize}
+\item \textbf{Passive Pattern Gate clears} (state is SAFE).
+\item \textbf{Irreversibility risk is non-trivial} (one or more
+options approach the irreversible boundary).
+\item \textbf{Non-zero ruin risk exists} (else the Zero-Risk Fast
+Path applies; see Section~\ref{sec:zero-risk-fast-path}).
+\item \textbf{Binary framing or forced-choice pressure detected}
+(APCSO's purpose is to break this framing).
+\end{itemize}
+
+\noindent
+APCSO does not produce action.
+
+% =====================================================================
+\section{Cross-References}
+
+The complete APCSO theory and applied guide are in
+Chapter~\ref{ch:operational-refinements}:
+
+\begin{itemize}
+\item Formal theory: Section~\ref{sec:apcso-formal}.
+\item Applied guide and operational checklist:
+Section~\ref{sec:apcso-applied-guide}.
+\item Implementation mapping table:
+Table~\ref{tab:apcso-implementation}.
+\end{itemize}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item APCSO sits between Passive Pattern (Section~\ref{sec:passive-pattern-paper})
+and NRMO Core's admissibility evaluation
+(Section~\ref{sec:foundations-3-1-definition}).
+\item The proposal-set formal definition is Equation~\ref{eq:apcso-proposal-set}
+(Section~\ref{sec:apcso-formal}).
+\item Layer roles map to the governance--execution separation
+invariant (Invariant~\ref{inv:gov-exec-sep}).
+\end{itemize}

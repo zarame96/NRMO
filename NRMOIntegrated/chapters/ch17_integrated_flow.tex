@@ -1,0 +1,154 @@
+% chapters/ch17_integrated_flow.tex
+% Chapter 17: Integrated Operation Flow — Long-Term × Short-Term Layer
+% Source: NRMO_v5_updated.pdf, Chapter 17 (lines 8533-8663 of v5_layout.txt)
+
+\chapter{Integrated Operation Flow ---
+Long-Term Layer $\times$ Short-Term Layer}
+\label{ch:integrated-flow}
+
+\nrmobox{Document role}{
+This chapter defines the cooperative operation of the long-term
+layer (NRMO REIN) and the short-term layer (High-Speed Theory).
+}
+
+% =====================================================================
+\section{Overview Flow}
+\label{sec:integrated-flow-overview}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
++----------------------------------------+
+|         HUMAN (Final Judgment)         |
++----------------------------------------+
+                  ^
++----------------------------------------+
+| Long-term Layer (Daily / Life Scale)   |
+|                                        |
+| OUTER_SHELL (always-on)                |
++----------------------------------------+
+                  | (rupture detected)
++----------------------------------------+
+| HUMIDITY_BUFFER (conditional)          |
++----------------------------------------+
+                  | (irreversible risk)
++----------------------------------------+
+| Short-term Layer (HIGH-SPEED ADAPTIVE) |
+|   +- Kill-Switch                       |
+|   +- Abort-First                       |
+|   +- Pre-Commit                        |
+|   +- Expiry                            |
+|   +- Fast Memory                       |
++----------------------------------------+
+                  |
++----------------------------------------+
+| APCSO (3-option generation)            |
++----------------------------------------+
+                  |
++----------------------------------------+
+| UNIFIED NRMO CORE (veto judgment)      |
++----------------------------------------+
+                  |
++----------------------------------------+
+| DECISION_SURVIVAL_ENGINE               |
++----------------------------------------+
+                  |
++----------------------------------------+
+| SLOW MEMORY (persistent)               |
++----------------------------------------+
+\end{lstlisting}
+
+% =====================================================================
+\section{Daily Mode (Long-Term Layer Dominant)}
+\label{sec:integrated-flow-daily}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+while system_active:
+    outer_shell.observe()
+    if outer_shell.continuity_maintained():
+        continue
+    if outer_shell.rupture_detected():
+        if rupture.source == "affective":
+            humidity_buffer.hold_state()
+            continue
+        if rupture.source == "irreversible_risk":
+            goto HIGH_SPEED_MODE
+\end{lstlisting}
+
+% =====================================================================
+\section{Fast Mode (Short-Term Layer Activation)}
+\label{sec:integrated-flow-fast}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+HIGH_SPEED_MODE:
+    # Kill-Switch evaluation
+    for assumption in ASSUMPTIONS:
+        if assumption.kill_condition(state):
+            action_space = RESTRICTED
+            break
+
+    # Abort-First
+    if abort_signal_detected():
+        return ABORT_ACTION
+
+    # Pre-Commit check
+    if pre_commit_triggered(action):
+        lock_commitment(action, expiry=T)
+
+    # APCSO proposal generation
+    proposals = apcso.generate(state, epsilon)
+    # => exactly 3 proposals, >= 1 HOLD/EXIT
+
+    # NRMO Core veto
+    selected = human.select(proposals)
+    if nrmo_core.veto(selected):
+        return SAFE_EXIT
+
+    # Execute
+    return execute(selected)
+\end{lstlisting}
+
+% =====================================================================
+\section{Layer Transition Rules}
+\label{sec:integrated-flow-transitions}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Trigger} & \textbf{Transition} & \textbf{Condition to return} \\
+\midrule
+
+Daily continuity maintained
+& Stay in OUTER\_SHELL
+& --- \\
+
+Affective rupture
+& OUTER\_SHELL $\to$ HUMIDITY\_BUFFER
+& Affect stabilised \\
+
+Irreversible risk detected
+& Any $\to$ HIGH\_SPEED\_MODE
+& Risk resolved or HOLD \\
+
+Cumulative risk $\ge 0.80$
+& Any $\to$ SAFE\_EXIT
+& Only after Human Governor reset \\
+
+\bottomrule
+\end{tabularx}
+\caption[Integrated flow layer transitions]{Layer transition rules
+for the integrated long-term / short-term operation flow.}
+\label{tab:integrated-flow-transitions}
+\end{table}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item OUTER\_SHELL, HUMIDITY\_BUFFER, and DECISION\_SURVIVAL\_ENGINE
+specifications are detailed in Chapter~\ref{ch:limitations}.
+\item APCSO 3-option generation: Chapter~\ref{ch:operational-refinements},
+Section~\ref{sec:apcso-formal}.
+\item Slow / Fast memory split corresponds to the cognitive
+counterpart of the engine--governance separation in Part~IX.
+\end{itemize}

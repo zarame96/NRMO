@@ -1,0 +1,52 @@
+% chapters/ch02c_type_zero_modes.tex
+% Section 2.6: Type ZERO Mode Definitions
+
+\section{Type ZERO Mode Definitions}
+\label{sec:type-zero-modes-c2}
+
+The Type ZERO governance layer assigns an operational mode based on
+observed state. Modes are not constraints; they are gears for
+preserving future degrees of freedom. CORE / VENTURE expand degrees
+of freedom; MISSION / SHUTDOWN avoid irreversible boundaries.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Mode} & \textbf{Purpose} & \textbf{Default policy} & \textbf{Transition trigger} \\
+\midrule
+CORE
+& Normal operation (maximise degrees of freedom)
+& Exploration / action permitted. Monitor only irreversible
+boundary.
+& $\mathrm{IRREV} = I_1$ and $\mathrm{VOL} \ge V_1$ $\to$ MISSION \\
+
+VENTURE
+& Exploration / expansion (new info / new actions)
+& Test small, expand only within reversible range.
+& $\mathrm{LOAD} = L_2$ or $\mathrm{VOL} = V_2$ $\to$ return to CORE \\
+
+MISSION
+& Control at boundary approach
+& Organise action space; avoid irreversible-direction actions while
+maintaining degrees of freedom.
+& $\mathrm{IRREV} = I_0$ and $\mathrm{VOL} \le V_1$ $\to$ CORE \\
+
+SHUTDOWN
+& Stop (safe landing)
+& Temporary halt, deferral, rest, third-party confirmation, etc.
+& $\mathrm{IRREV} = I_1$ and $\mathrm{VOL} = V_2$ and
+$\mathrm{LOAD} = L_2$ $\to$ immediate \\
+\bottomrule
+\end{tabularx}
+\caption[Type ZERO Mode Definitions]{Type ZERO Mode Definitions
+(Table 2.1).}
+\label{tab:type-zero-modes}
+\end{table}
+
+\nrmobox{Mode principle}{
+Modes are not ``constraints'' --- they are \emph{gears} for
+preserving future degrees of freedom. CORE / VENTURE expand degrees
+of freedom; MISSION / SHUTDOWN avoid irreversible boundaries.
+}

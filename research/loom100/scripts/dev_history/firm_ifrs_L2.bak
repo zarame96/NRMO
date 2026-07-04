@@ -1,0 +1,508 @@
+# -*- coding: utf-8 -*-
+"""firm_ifrs.py — 最大100年・IFRS準拠・円建ての企業経営シミュレータ(NRMO駆動)。
+
+設計:
+- 本物の MaxForwardEngine(NRMO, v7_maxforward) を無改変で駆動する DomainDynamics。
+- 1 step = 四半期。最大400四半期(=100年)。破綻したらそこで終了(=最大100年)。
+- 判断軸は世代で揺れる(解釈Y): 経営者ごとに risk_bias(保守-1〜+1攻撃)。NRMOの破滅回避vetoは不変。
+- 経営者交代(8〜20年/危機引責)・承継ショック・立て直し(縮小/資産売却/債務再編/事業売却)。
+- マクロ長周期レジーム切替・技術陳腐化。
+- 会計: 複式簿記で 資産=負債+純資産 を毎四半期保証。年次でIFRS三表に集計。単位=円。
+"""
+from __future__ import annotations
+import os, sys
+from dataclasses import dataclass, field, replace
+from typing import List, Dict, Any, Sequence, Optional
+import numpy as np
+
+def _find_nrmo():
+    import glob
+    for base in ["/home/claude/v0423", "/home/claude"]:
+        hits = glob.glob(os.path.join(base, "**", "nrmo_v72_phase1", "v7_maxforward"), recursive=True)
+        if hits: return hits[0]
+    raise RuntimeError("NRMO v7_maxforward not found")
+NRMO = _find_nrmo()
+sys.path.insert(0, NRMO); sys.path.insert(0, os.path.join(NRMO,"..","core")); sys.path.insert(0, os.path.join(NRMO,"..",".."))
+from v7_engine import MaxForwardEngine, DomainDynamics
+from world_models import Action as LoomAction
+
+M = 1_000_000  # 円(百万円スケールの内部数値を円に)
+
+@dataclass
+class IFRSFirmState:
+    # === 貸借対照表(円) 流動/非流動 ===
+    cash: float = 120*M
+    trade_receivables: float = 80*M       # 売掛金(流動)
+    inventory: float = 60*M               # 棚卸資産(流動)
+    ppe_gross: float = 300*M              # 有形固定資産 取得原価(非流動)
+    accum_dep: float = 60*M               # 減価償却累計
+    trade_payables: float = 50*M          # 買掛金(流動負債)
+    borrowings_current: float = 40*M      # 短期借入(流動負債)
+    borrowings_noncurrent: float = 150*M  # 長期借入(非流動負債)
+    share_capital: float = 150*M          # 資本金(払込資本)
+    retained_earnings: float = 110*M      # 利益剰余金
+    treasury: float = 0.0                 # 自己株式(資本の控除)
+    bonds: float = 0.0                    # 普通社債(非流動負債)
+    bond_coupon: float = 0.0              # 社債の加重クーポン(年率)
+    conv_bonds: float = 0.0               # 転換社債(非流動負債)
+    conv_coupon: float = 0.0              # CBクーポン(年率, 普通社債より低い)
+    shares: float = 100.0                 # 発行済株式数(百万株)
+    initial_shares: float = 100.0         # 創業時株式数(希薄化の基準)
+    dividends_cum: float = 0.0            # 累計配当
+    dividend_last_q: int = -99            # 最後に配当した四半期
+    activist_pressure: float = 0.0        # アクティビストの圧 0-1
+    conv_strike: float = 0.0              # CB転換価格の基準(発行時の1株純資産)      # 利益剰余金 (期首検証: 資産500M=負債240M+資本260M)
+    # === オペレーション・ドライバ ===
+    base_demand: float = 10_000.0         # 四半期需要(個)
+    price: float = 10_000.0               # 単価(円)
+    unit_cost: float = 4_800.0            # 変動原価/個(円, 平時)
+    brand: float = 50.0                   # 0-100
+    capacity: float = 13_000.0            # 四半期能力(個)
+    # === 外部・構造 ===
+    interest_rate: float = 0.03           # 年率
+    rating: float = 70.0                  # 与信格付 0-100
+    macro: float = 1.0                    # 景気係数
+    macro_regime: str = "normal"          # boom/normal/recession/inflation
+    regime_left: int = 40                 # 現レジーム残り四半期(長周期)
+    tech_gap: float = 0.0                 # 技術陳腐化 0(最新)〜1(陳腐)
+    competitor: float = 0.30              # (旧)集約競合圧, 価格戦判定に併用
+    price_war_left: int = 0
+    # --- 市場・顧客・競合(層2) ---
+    market_size: float = 50_000.0         # 市場全体の四半期需要(個)
+    market_growth: float = 0.005          # 市場成長率(四半期)
+    market_regime_left: int = 40          # 市場成長サイクル残り(四半期)
+    comp_strengths: tuple = (1.0, 1.0, 0.85, 0.7)  # 競合各社の競争力(参入退出で増減)
+    customer_trend: float = 0.5           # 顧客嗜好 0=価格重視 .. 1=品質/ブランド重視
+    market_share: float = 0.20            # 自社シェア(記録)
+    # === ガバナンス(世代) ===
+    generation: int = 1                   # 第何代
+    ceo_bias: float = 0.0                 # -1保守〜+1攻撃
+    ceo_tenure_q: int = 0                 # 在任四半期
+    ceo_term_q: int = 48                  # 今代の任期(四半期, 8〜20年)
+    succession_shock_left: int = 0        # 承継混乱の残り四半期
+    # === 制度(会計基準・上場・監査) ===
+    accounting: str = "none"              # none(未選択/零細) / ifrs / jgaap
+    market: str = "private"               # private / tse(東証) / intl(国際)
+    listed: bool = False
+    foreign_ratio: float = 0.15           # 海外売上比率(国際市場の動機)
+    audit_opinion: str = "none"           # none / unqualified / qualified / adverse / disclaimer
+    gc_doubt_years: int = 0               # 継続企業の前提に疑義が継続した年数
+    insolvency_years: float = 0.0         # 債務超過の継続年数(東証=1年で上場廃止)
+    delisted: bool = False                # 上場廃止になったか
+    equity_rescues: int = 0               # 増資・救済の回数
+    # === 状態 ===
+    q: int = 0
+    bankrupt: bool = False
+    going_concern_doubt: bool = False
+    emergency_used: int = 0
+    in_crisis: bool = False               # 立て直し局面か
+    death_reason: str = ""                 # 破綻の死因
+
+    @property
+    def net_ppe(self): return self.ppe_gross - self.accum_dep
+    @property
+    def current_assets(self): return self.cash + self.trade_receivables + self.inventory
+    @property
+    def noncurrent_assets(self): return self.net_ppe
+    @property
+    def total_assets(self): return self.current_assets + self.noncurrent_assets
+    @property
+    def current_liabilities(self): return self.trade_payables + self.borrowings_current
+    @property
+    def noncurrent_liabilities(self): return self.borrowings_noncurrent + self.bonds + self.conv_bonds
+    @property
+    def total_liabilities(self): return self.current_liabilities + self.noncurrent_liabilities
+    @property
+    def debt(self): return self.borrowings_current + self.borrowings_noncurrent + self.bonds + self.conv_bonds
+    @property
+    def equity(self): return self.share_capital + self.retained_earnings - self.treasury
+    @property
+    def book_per_share(self): return self.equity / max(1.0, self.shares)
+    @property
+    def leverage(self): return self.debt / max(1.0, self.equity)
+    def clone(self): return replace(self)
+
+
+TAX=0.30; DEP_RATE=0.04; DSO=0.45; DPO=0.40; INV_FRAC=0.50
+REGIMES=["boom","normal","recession","inflation"]
+
+
+class FirmDynamicsIFRS(DomainDynamics):
+    """NRMOが回す『真の世界』。会計恒等式を保証。判断軸は世代で揺れるがveto核は不変。"""
+    def __init__(self, predatory: bool=True, hostility: float=0.5, bias_mode: str="free"):
+        self.predatory=predatory
+        self.hostility=float(max(0.0,min(1.0,hostility)))  # 業種の競争激しさ 0穏やか〜1過酷
+        self.bias_mode=bias_mode  # free(相関ドリフト)/conservative/balanced/aggressive
+        self._center={"conservative":-0.5,"balanced":0.0,"aggressive":0.5}.get(bias_mode,None)
+
+    # ---- engine API ----
+    def clone(self, s): return s.clone()
+    def is_ruin(self, s): return s.bankrupt
+    def is_terminal(self, s): return s.q >= 400          # 最大100年
+    def wealth(self, s):
+        # 創業株主帰属価値 = 純資産 × (創業株式数/現発行済株式数)。増資は株式数↑=希薄化で1株価値が薄まる
+        # → engine は『タダで増資』では富が増えず, 投下利回り>資本コストの時だけ調達を選ぶ
+        return s.equity * (s.initial_shares / max(1.0, s.shares)) + 0.2*s.brand*M
+
+    def default_action(self, s):
+        """ロールアウト継続に使う *有能な* 方策(naiveなinvest固定ではない)。
+        これにより engine は『調達した資本はちゃんと投下・運用される』前提で価値を見積れる
+        = 資本調達→投下→スケールの複利が先読みに乗る。"""
+        # 1) 破綻の縁: まず守る(資金確保/返済/与信)
+        if s.cash < 30*M: return LoomAction("recover","C")
+        if s.leverage > 2.2: return LoomAction("recover","B")
+        # 2) 陳腐化: 刷新で対応
+        if s.tech_gap > 0.5: return LoomAction("explore","C")
+        # 3) 好機×資本に余裕: 攻めて伸ばす
+        if s.macro >= 1.03 and s.leverage < 1.3 and s.cash > 60*M:
+            return LoomAction("invest","C")
+        # 4) 大きく成長軌道&未上場: 上場で大型資本を取り規模を上げる
+        if (not s.listed) and s.equity > 700*M and s.macro >= 0.95 and s.cash > 40*M:
+            return LoomAction("ipo","C")
+        # 5) 上場&投資機会あり: 増資して投下(資本コスト<投下利回りの想定)
+        if s.listed and s.macro >= 1.0 and s.leverage < 1.0 and s.tech_gap < 0.4:
+            return LoomAction("equity","B")
+        # 6) 平常: 標準的に前進
+        return LoomAction("invest","B")
+    def detect_favorable(self, s):
+        return s.macro>=1.05 and s.equity>200*M and s.leverage<1.5 and s.price_war_left==0 and s.tech_gap<0.4
+    def detect_edge(self, s):
+        return (s.cash<40*M) or (s.leverage>2.0) or (s.price_war_left>0) or (s.rating<40) or (s.tech_gap>0.6) or (s.equity<60*M)
+
+    def candidate_actions(self, s, wolf, edge):
+        b=s.ceo_bias
+        acts=[LoomAction("invest","B"), LoomAction("explore","B"),
+              LoomAction("equity","B")]                                          # 増資=希薄化を伴う(タダではない)
+        if b>=0.0: acts+=[LoomAction("invest","C"), LoomAction("explore","C")]
+        if b<=0.0: acts+=[LoomAction("invest","A"), LoomAction("explore","A")]
+        # 資金調達の選択肢(社債/CB)=増資の代替。節税効果のある負債 vs 希薄化のある資本
+        if s.rating>=45: acts+=[LoomAction("bond","B"), LoomAction("bond","C")]   # 普通社債
+        if s.rating>=40: acts+=[LoomAction("convbond","B")]                       # 転換社債
+        # 株主還元(上場・黒字・現金余力があれば): 配当 / 自社株買い
+        if s.listed and s.cash>50*M:
+            acts+=[LoomAction("dividend","B"), LoomAction("buyback","B")]
+        if s.activist_pressure>0.5:                                              # 株主圧下では還元が前面に
+            acts+=[LoomAction("dividend","C"), LoomAction("buyback","C")]
+        if (not s.listed) and s.equity>700*M and s.macro>=0.95 and (not s.in_crisis):
+            acts+=[LoomAction("ipo","C")]                                        # 上場(IPO)
+        if edge:  # 縁=立て直し候補(誰の代でも:NRMO核)
+            acts+=[LoomAction("defend","B"),LoomAction("defend","C"),
+                   LoomAction("recover","B"),LoomAction("recover","C"),
+                   LoomAction("finance","B"),LoomAction("finance","C"),
+                   LoomAction("equity","C"),                                     # 危機時のリキャップ(希薄化覚悟)
+                   LoomAction("divest","B")]
+        if wolf and b>=-0.2:
+            acts+=[LoomAction("invest","C"),LoomAction("explore","C")]
+        return acts
+
+    # ---- 市場・シェア(層2) ----
+    def _strengths(self, brand, price, tech_gap):
+        bw=max(0.2, brand/50.0)
+        price_str  = bw * (10000.0/max(4000.0, price))     # 安いほど価格訴求力↑
+        quality_str= bw * (1.4 - tech_gap)                 # 陳腐化が小さい=品質/革新訴求力↑
+        return max(0.05,price_str), max(0.05,quality_str)
+
+    # ---- 銀行 ----
+    def _bank_lends(self, s, amount, ebit):
+        interest=max(1.0, s.interest_rate/4*s.debt)
+        cov=ebit/interest if ebit is not None else 0.08*s.total_assets/interest
+        score=s.rating - 25*max(0.0,s.leverage-1.0) + (10 if cov>2 else (-20 if cov<1 else 0))
+        thr=35
+        if s.macro_regime=="recession": thr+=12
+        if amount>0.6*s.equity: thr+=10
+        return score>=thr
+
+    # ---- 1四半期遷移(複式) ----
+    def transition(self, s, a, rng):
+        if s.bankrupt: return s
+        ns=s.clone(); ns.q=s.q+1; mag={"A":0.5,"B":1.0,"C":1.5}.get(a.strength,1.0)
+
+        # ===== 経営者交代(世代) =====
+        ns.ceo_tenure_q=s.ceo_tenure_q+1
+        forced = (s.in_crisis and rng.random()<0.03)     # 危機での引責交代
+        if ns.ceo_tenure_q>=s.ceo_term_q or forced:
+            ns.generation=s.generation+1
+            # 後継の判断軸=前任に相関しつつ揺れる(完全ランダムではない)
+            if self._center is None:
+                ns.ceo_bias=float(np.clip(0.55*s.ceo_bias + 0.45*rng.normal(0,0.6), -1, 1))
+            else:
+                ns.ceo_bias=float(np.clip(self._center + rng.normal(0,0.25), -1, 1))
+            ns.ceo_tenure_q=0
+            ns.ceo_term_q=int(rng.integers(32,80))       # 8〜20年
+            # 承継ショック: 一時的な現金流出と判断品質低下
+            shock=rng.uniform(0.015,0.035)*max(1.0, s.base_demand*s.price)
+            ns._succession_cost=shock   # 当四半期の費用として計上(下のopexに加算)
+            ns.succession_shock_left=int(rng.integers(2,5))
+            bias_gap=abs(ns.ceo_bias - s.ceo_bias)
+            ns.brand=float(np.clip(s.brand - 2.5*bias_gap, 0, 100))  # 急な路線転換は痛む
+        if ns.succession_shock_left>0: ns.succession_shock_left-=1
+
+        # ===== マクロ長周期レジーム =====
+        ns.regime_left=s.regime_left-1
+        if ns.regime_left<=0:
+            ns.macro_regime=str(rng.choice(REGIMES, p=[0.22,0.46,0.18,0.14]))
+            ns.regime_left=int(rng.integers(28,100))     # 7〜25年続く
+        tgt={"boom":1.12,"normal":1.0,"recession":0.88,"inflation":0.96}[ns.macro_regime]
+        ns.macro=float(np.clip(0.85*s.macro+0.15*tgt+rng.normal(0,0.04),0.6,1.25))
+        infl_cost = 1.0 + (rng.uniform(0.01,0.03) if ns.macro_regime=="inflation" else 0.0)
+        ns.interest_rate=float(np.clip(s.interest_rate+rng.normal(0,0.003)+(0.005 if ns.macro_regime in("recession","inflation") else 0),0.005,0.15))
+
+        # ===== 技術陳腐化 =====
+        ns.tech_gap=float(np.clip(s.tech_gap+0.004 + (rng.uniform(0.15,0.35) if rng.random()<0.015 else 0.0),0,1))
+        # 供給/原価ショック
+        cost_shock=1.0+(rng.uniform(0.2,0.5) if rng.random()<0.06 else 0.0)
+
+        # ===== 競合(略奪価格戦) =====
+        success=(s.brand/100)*max(0.0,(s.price-s.unit_cost)/max(1.0,s.price))*(s.base_demand/10000)
+        war_p=(0.010+0.05*self.hostility)+((0.04+0.08*self.hostility)*success if self.predatory else 0.0)
+        if s.price_war_left>0: ns.price_war_left=s.price_war_left-1
+        elif rng.random()<war_p: ns.price_war_left=int(rng.integers(3,7))
+        ns.competitor=float(np.clip(s.competitor+(0.12 if ns.price_war_left>0 else -0.03)+rng.normal(0,0.03),0.05,0.95))
+
+        # ===== 市場規模(成長/縮小の長周期) =====
+        ns.market_regime_left=s.market_regime_left-1
+        if ns.market_regime_left<=0:
+            ns.market_growth=float(rng.choice([-0.010,-0.003,0.005,0.012,0.020], p=[0.12,0.18,0.30,0.25,0.15]))
+            ns.market_regime_left=int(rng.integers(24,80))
+        ns.market_size=float(np.clip(s.market_size*(1.0+ns.market_growth), 5_000, 5_000_000))
+        # ===== 顧客嗜好トレンド(価格重視⇄品質重視がゆっくり移る) =====
+        ns.customer_trend=float(np.clip(s.customer_trend+rng.normal(0,0.02)+(0.004 if ns.macro_regime=='boom' else -0.003),0.1,0.9))
+        # ===== 競合群: ドリフト・イノベーション・参入・退出 =====
+        comp=list(s.comp_strengths); comp_innov=False
+        nc=[]
+        for c in comp:
+            c2=c*0.99+rng.normal(0,0.02)
+            if rng.random()<0.012: c2+=rng.uniform(0.20,0.55); comp_innov=True   # 競合が革新商品
+            nc.append(max(0.15,c2))
+        comp=nc
+        our_margin=(s.price-s.unit_cost)/max(1.0,s.price)
+        if our_margin>0.45 and ns.market_growth>0 and len(comp)<8 and rng.random()<0.05:
+            comp.append(float(rng.uniform(0.5,0.9)))                              # 妙味ある市場に新規参入
+        if (ns.price_war_left>0 or our_margin<0.20) and len(comp)>2 and rng.random()<0.06:
+            comp=sorted(comp)[1:]                                                 # 過酷な市場で弱者退出
+        ns.comp_strengths=tuple(comp)
+        if comp_innov: ns.tech_gap=float(min(1.0, ns.tech_gap+0.03))              # 競合の革新で自社が相対的に陳腐化
+
+        # ===== アクション =====
+        capex=marketing=repay=asset_sale=loan_req=divest=0.0; price_mult=1.0; demand_boost=0.0
+        bond_issue=conv_issue=0.0; want_dividend=False; want_buyback=False
+        if a.intent=="invest":  capex=7*mag*M; demand_boost=0.7*mag; ns.tech_gap=max(0.0,ns.tech_gap-0.05*mag)
+        if a.intent=="explore": marketing=8*mag*M; ns.tech_gap=max(0.0,ns.tech_gap-0.08*mag)  # 刷新で陳腐化解消
+        if a.intent=="defend":  price_mult=1.0-0.05*mag
+        if a.intent=="recover": repay=12*mag*M; asset_sale=6*mag*M
+        if a.intent=="finance": loan_req=30*mag*M
+        if a.intent=="divest":  divest=20*mag*M                  # 事業売却=現金確保, 規模縮小
+        if a.intent=="bond":     bond_issue=40*mag*M                 # 普通社債(節税効果のある負債)
+        if a.intent=="convbond": conv_issue=40*mag*M                 # 転換社債(低クーポン, 将来希薄化)
+        if a.intent=="dividend": want_dividend=True                  # 配当(株主還元)
+        if a.intent=="buyback":  want_buyback=True                   # 自社株買い(1株価値↑)
+        new_equity=0.0; do_ipo=False
+        # 市場の資金供給は『監査適正 + 継続企業の前提に重大な疑義なし + 上場廃止でない』が条件
+        mkt_funding_ok = (s.audit_opinion in ("none","unqualified","qualified")) and (not s.delisted)
+        if a.intent=="equity" and mkt_funding_ok:                # 増資(公募/第三者割当)
+            base=60 if s.listed else 22                          # 上場企業は大きく調達, 未上場は限定的
+            new_equity=base*mag*M
+            if (not s.listed) and (s.equity<30*M or s.rating<35): # 未上場・苦境は調達難
+                new_equity*=0.3
+        # IPO 形式基準(東証/国際の最低ライン)+ 監査適正が前提。経営者が市場/会計基準を選ぶ
+        ipo_ok = ((not s.listed) and (not s.delisted) and s.equity>700*M
+                  and s.macro>=0.95 and not s.in_crisis and s.audit_opinion in ("none","unqualified"))
+        if a.intent=="ipo" and ipo_ok:
+            do_ipo=True; new_equity=max(400*M, 1.2*s.equity)     # IPO=大型調達
+            # 経営者の選択(状況×判断軸): 海外比率高い/攻撃的 → 国際×IFRS、国内/保守 → 東証×J-GAAP
+            intl_score = s.foreign_ratio + 0.3*max(0.0, s.ceo_bias)
+            ns.market = "intl" if intl_score>0.45 else "tse"
+            ns.accounting = "ifrs" if (ns.market=="intl" or s.ceo_bias>0.2 or s.foreign_ratio>0.3) else "jgaap"
+        # 社債・CBの発行は監査適正+一定の格付が前提(市場の信認)
+        spread = 0.01 + 0.04*max(0.0,(60-s.rating)/60.0) + 0.02*max(0.0, s.leverage-1.0)
+        if bond_issue>0 and not (mkt_funding_ok and s.rating>=45): bond_issue=0.0
+        if conv_issue>0 and not (mkt_funding_ok and s.rating>=40): conv_issue=0.0
+        bond_cpn = s.interest_rate + spread                          # 普通社債クーポン
+        conv_cpn = (s.interest_rate + spread)*0.4                    # CBは低クーポン(転換権の対価)
+        # 売却は保有有形固定資産(簿価)以内に制限
+        _avail_ppe=s.ppe_gross
+        if asset_sale+divest > _avail_ppe:
+            _scale=_avail_ppe/max(1.0, asset_sale+divest); asset_sale*=_scale; divest*=_scale
+
+        # 承継混乱中は実行が鈍る
+        exec_pen = 0.85 if ns.succession_shock_left>0 else 1.0
+        war_price=0.96 if ns.price_war_left>0 else 1.0
+        ns.price=float(np.clip(s.price*price_mult*war_price+(50 if a.intent in("explore","invest") else 0),5_000,20_000))
+        ns.unit_cost=float(np.clip(s.unit_cost*infl_cost*cost_shock,4_000,14_000))
+        ns.brand=float(np.clip(s.brand+0.6*(marketing/M)*exec_pen-(3 if ns.price_war_left>0 else 0)-0.5-8*ns.tech_gap*0.1,0,100))
+        ns.ppe_gross=s.ppe_gross+capex
+        ns.capacity=float(np.clip(0.9*s.capacity+0.1*(ns.net_ppe/M*1.1*1000/ (240*1.1) *13000/1000)+ (capex/M)*1.2*1000,2_000,200_000))
+        if divest>0: ns.capacity*=0.85    # 事業売却で生産規模縮小(需要は市場×シェアで決まる)
+
+        # ===== P/L(円): 需要 = 市場規模 × 自社シェア(セグメント別) =====
+        our_ps, our_qs = self._strengths(ns.brand, ns.price, ns.tech_gap)
+        comp_ps=sum(self._strengths(50.0, 10000.0, 0.2)[0]*c for c in ns.comp_strengths)  # 競合の価格軸合計
+        comp_qs=sum(self._strengths(50.0, 10000.0, 0.3)[1]*c for c in ns.comp_strengths)  # 競合の品質軸合計
+        price_share  = our_ps/(our_ps+comp_ps+1e-9)
+        quality_share= our_qs/(our_qs+comp_qs+1e-9)
+        wq=ns.customer_trend; wp=1.0-wq
+        share=float(np.clip(wp*price_share + wq*quality_share, 0.0, 1.0))
+        ns.market_share=share
+        demand=ns.market_size*share*ns.macro*(1.0+rng.normal(0,0.04))*exec_pen     # 市場×シェア×景気
+        demand=max(0.0,demand)
+        ns.base_demand=float(np.clip(0.7*s.base_demand+0.3*(ns.market_size*share), 500, 1_000_000))  # 平滑(各所参照用)
+        units=float(np.clip(min(demand, ns.capacity, s.inventory/max(1.0,s.unit_cost)+s.base_demand*1.1),0,1e7))
+        revenue=units*ns.price
+        cogs=units*ns.unit_cost
+        gross=revenue-cogs
+        opex=(21*M*1.005)+marketing+0.015*ns.net_ppe+getattr(ns,'_succession_cost',0.0)  # 販管費+承継コスト(維持費は純額連動)
+        dep=DEP_RATE*ns.ppe_gross
+        op_income=gross-opex-dep                                # 営業利益
+        # IFRS: 経常区分は設けない。営業外/特別は finance/divest を其々反映
+        bank_debt=s.borrowings_current+s.borrowings_noncurrent
+        interest=(s.interest_rate*bank_debt + s.bond_coupon*s.bonds + s.conv_coupon*s.conv_bonds)/4
+        other=0.0                                               # 売却損益なし(簿価処理で恒等式を厳密化)
+        pretax=op_income-interest+other
+        tax=max(0.0,pretax)*TAX
+        ni=pretax-tax
+
+        # ===== 運転資本 & C/F(間接法) =====
+        ar_end=revenue*DSO; inv_end=cogs*INV_FRAC; ap_end=cogs*DPO
+        d_ar=ar_end-s.trade_receivables; d_inv=inv_end-s.inventory; d_ap=ap_end-s.trade_payables
+        # 配当: 上場×黒字なら配当性向に応じて自動的に出す(上場企業は無配しにくい)。未上場は再投資優先で無配
+        dividend=0.0
+        if s.listed and ni>0:
+            payout=0.30 if want_dividend else 0.15           # 通常15%, 経営者が増配を選べば30%
+            if s.activist_pressure>0.5: payout=max(payout,0.40)  # 株主圧で増配
+            dividend=payout*ni
+        elif want_dividend and ni>0:                          # 未上場でも明示的選択時は配当可
+            dividend=0.20*ni
+        dividend=float(min(dividend, max(0.0, s.retained_earnings)))   # 配当は利益剰余金の範囲
+        # 自社株買い: 現金潤沢×割安なら(アクティビストも要求)。簿価以内・現金以内
+        buyback=0.0
+        if (want_buyback or s.activist_pressure>0.6) and s.cash>80*M and s.equity>0:
+            buyback=min(0.05*s.equity, 0.4*s.cash)
+        cfo=ni+dep-d_ar-d_inv+d_ap
+        cfi=-capex+asset_sale+divest
+        new_debt=0.0
+        if loan_req>0 and self._bank_lends(ns,loan_req,op_income): new_debt=loan_req
+        bond_redeem = s.bonds/40.0                                   # 普通社債は10年満期で逐次償還(現金流出)
+        # CB転換: 1株純資産が転換基準を上回る(イン・ザ・マネー)なら段階的に株式へ転換
+        conv_convert=0.0
+        if s.conv_bonds>0 and s.conv_strike>0 and s.book_per_share> s.conv_strike*1.0:
+            conv_convert=0.15*s.conv_bonds
+        # 返済は実際の負債残高以内に制限(現金減=負債減 を厳密一致させ恒等式を守る)
+        actual_repay=min(repay, s.borrowings_current+s.borrowings_noncurrent)
+        # 財務CF: 借入・増資・社債発行/償還・配当・自社株買い(CB転換は現金を伴わない)
+        cff=new_debt-actual_repay+new_equity+bond_issue-bond_redeem+conv_issue-dividend-buyback
+        cash_end=s.cash+cfo+cfi+cff
+
+        # 緊急資金: 1)銀行融資 → 2)増資(上場 or 調達余力) → どちらも無理なら流動性破綻
+        if cash_end<0:
+            need=-cash_end+5*M
+            bridge_ok = self._bank_lends(ns,need,op_income) or (ns.rating>=65 and ns.leverage<1.5)
+            if bridge_ok and ns.emergency_used<10:
+                new_debt+=need; cff+=need; cash_end+=need; ns.emergency_used+=1
+            elif (s.listed or (s.rating>=40 and s.equity>0)) and mkt_funding_ok and ns.equity_rescues<12:
+                # 増資で資本注入(上場企業は公募/未上場は限度あり)。監査否認・上場廃止なら市場は出さない。慢性赤字は12回で見放す
+                new_equity+=need; cff+=need; cash_end+=need; ns.equity_rescues=s.equity_rescues+1
+            else:
+                ns.bankrupt=True; ns.death_reason="資金繰り破綻(融資も増資も得られず)"
+
+        # ===== B/S 更新(複式) =====
+        ns.cash=cash_end; ns.trade_receivables=ar_end; ns.inventory=inv_end; ns.trade_payables=ap_end
+        ns.accum_dep=s.accum_dep+dep
+        # 売却(asset_sale+divest)を簿価で除却(cashはcfiで計上済み, 売却額は上でPPE簿価以内にキャップ済み)
+        if asset_sale+divest>0: ns.ppe_gross=max(0.0, ns.ppe_gross-(asset_sale+divest))
+        # 返済を 短期→長期 の順に実残高内で充当(クランプによる破れを排除)
+        rc=min(actual_repay, s.borrowings_current); rnc=actual_repay-rc
+        ns.borrowings_current=s.borrowings_current-rc
+        ns.borrowings_noncurrent=max(0.0, s.borrowings_noncurrent+new_debt-rnc)
+        # 増資/IPO: 資本金↑(現金は上のcffで計上済み=複式一致)。株式発行で希薄化(株式数↑)
+        ns.share_capital=s.share_capital+new_equity
+        issue_price=max(s.book_per_share, 0.5*M)                   # 1株純資産で発行(苦境ほど希薄化が重い)
+        new_shares_eq=min(new_equity/issue_price, 2.0*s.shares)    # 1期の希薄化は2倍までに制限(暴走防止)
+        # 社債・CB残高(複式: 現金は cff で計上済み)。クーポンを加重平均
+        ns.bonds=max(0.0, s.bonds+bond_issue-bond_redeem)
+        if s.bonds+bond_issue>0: ns.bond_coupon=(s.bonds*s.bond_coupon+bond_issue*bond_cpn)/max(1.0,s.bonds+bond_issue)
+        ns.conv_bonds=max(0.0, s.conv_bonds+conv_issue-conv_convert)
+        if s.conv_bonds+conv_issue>0: ns.conv_coupon=(s.conv_bonds*s.conv_coupon+conv_issue*conv_cpn)/max(1.0,s.conv_bonds+conv_issue)
+        if conv_issue>0 and s.conv_strike<=0: ns.conv_strike=s.book_per_share   # 転換基準=発行時の1株純資産
+        # CB転換: 負債↓・資本金↑(現金中立で恒等式一致), 株式数↑(希薄化)
+        ns.share_capital+=conv_convert
+        conv_price=max(s.conv_strike*1.2, 0.5*M); new_shares_cv=conv_convert/conv_price
+        # 自己株式(自社株買い): 資本の控除↑(現金は cff)。株式数↓
+        ns.treasury=max(0.0, s.treasury+buyback)
+        buyback_shares=buyback/max(s.book_per_share,0.5*M)
+        ns.shares=max(1.0, s.shares+new_shares_eq+new_shares_cv-buyback_shares)
+        if dividend>0: ns.dividend_last_q=ns.q
+        ns.dividends_cum=s.dividends_cum+dividend
+        if do_ipo: ns.listed=True
+        # 減損(非資金): 遊休/陳腐化した固定資産を簿価切り下げ。純額↓=利益剰余金↓で恒等式厳密一致。
+        impairment=0.0
+        idle_ratio=ns.capacity/max(1.0, units)
+        if (idle_ratio>1.8 or ns.tech_gap>0.5) and ns.net_ppe>50*M:
+            rate=min(0.10, 0.04*max(0.0, idle_ratio-1.6)+0.12*ns.tech_gap)
+            impairment=ns.net_ppe*rate
+            ns.ppe_gross=max(0.0, ns.ppe_gross-impairment)        # 純額をimpairment分だけ減らす(累計はそのまま)
+        ns.retained_earnings=s.retained_earnings+ni-impairment-dividend   # 当期純利益 − 減損 − 配当
+        cov=op_income/max(1.0,interest)
+        ns.rating=float(np.clip(0.85*s.rating+0.15*(60+12*np.tanh(cov-1)-18*max(0,ns.leverage-1)+(8 if ns.macro_regime=='boom' else(-10 if ns.macro_regime=='recession' else 0))),1,99))
+        # アクティビストの圧: 上場×現金過多×低ROE×低配当 → 増配/自社株買い/事業売却/経営交代を要求
+        roe=ni/max(1.0, s.equity); cash_heavy=ns.cash>0.4*max(1.0,ns.equity)
+        low_payout=(ns.q - s.dividend_last_q)>8
+        if ns.listed and cash_heavy and roe<0.03 and low_payout:
+            ns.activist_pressure=float(min(1.0, s.activist_pressure+0.12))
+        else:
+            ns.activist_pressure=float(max(0.0, s.activist_pressure-0.06))
+        if ns.activist_pressure>0.7:        # 圧を放置すると評価毀損(株価=ブランド)と経営交代圧
+            ns.brand=float(max(0.0, ns.brand-1.5))
+            if rng.random()<0.04: ns.ceo_term_q=min(ns.ceo_term_q, ns.ceo_tenure_q+4)  # 退任圧
+
+        # 立て直し局面 & 継続企業の前提(債務超過=即死ではない。流動性が尽き調達もできない時のみ破綻)
+        ns.in_crisis = self.detect_edge(ns)
+        ns.going_concern_doubt = (ns.equity < 0) or (ns.leverage>4.0) or (cov<1.0 and ns.cash<30*M)
+        ns._impairment=impairment
+
+        # ===== 制度レイヤ(外部監査・継続企業の前提・上場維持/廃止) =====
+        # 海外売上比率(国際市場の動機): 販促/刷新で緩やかに国際化
+        ns.foreign_ratio=float(np.clip(s.foreign_ratio + (0.004 if a.intent in("explore","invest") else -0.001) + rng.normal(0,0.005), 0.0, 0.9))
+        # 債務超過/疑義の継続年数(四半期=0.25年)
+        ns.insolvency_years = (s.insolvency_years+0.25) if ns.equity<0 else 0.0
+        ns.gc_doubt_years   = (s.gc_doubt_years+0.25) if ns.going_concern_doubt else 0.0
+        # 外部監査の意見(会計士): 健全=無限定適正 / 疑義=限定付 / 深刻=不適正・意見不表明
+        if ns.equity < -30*M or ns.insolvency_years>=1.5:
+            ns.audit_opinion = "adverse"        # 不適正/重大
+        elif ns.going_concern_doubt or ns.insolvency_years>=0.5:
+            ns.audit_opinion = "qualified"      # 限定付(GC疑義の注記)
+        elif ns.leverage>3.5 and cov<1.0:
+            ns.audit_opinion = "disclaimer"     # 意見不表明(重大な不確実性)
+        else:
+            ns.audit_opinion = "unqualified" if (ns.listed or ns.accounting!="none") else "none"
+        # 上場維持/廃止(制度): 上場=潰れない、ではない。制度で退場しうる
+        if ns.listed:
+            tse_fail  = (ns.market=="tse"  and ns.insolvency_years>=1.0)     # 東証:債務超過1年内不解消→廃止
+            intl_fail = (ns.market=="intl" and ns.insolvency_years>=2.0)     # 国際:実質債務超過の継続
+            opinion_fail = ns.audit_opinion in ("adverse","disclaimer") and ns.gc_doubt_years>=0.75
+            if tse_fail or intl_fail or opinion_fail:
+                ns.delisted=True; ns.listed=False; ns.market="private"        # 上場廃止=資本市場アクセス喪失
+                ns.audit_opinion="adverse"
+        ns._impairment=impairment
+
+        # 当四半期フロー記録(年次集計用)
+        ns._flow=dict(revenue=revenue,cogs=cogs,gross=gross,opex=opex,dep=dep,op_income=op_income,
+                      interest=interest,other=other,pretax=pretax,tax=tax,ni=ni,
+                      cfo=cfo,cfi=cfi,cff=cff,capex=capex,new_debt=new_debt,repay=repay,
+                      asset_sale=asset_sale,divest=divest,units=units,
+                      new_equity=new_equity,impairment=getattr(ns,'_impairment',0.0),listed=int(ns.listed),
+                      price_war=int(ns.price_war_left>0),succession=int(ns.generation>s.generation))
+        return ns
+
+
+if __name__=="__main__":
+    dyn=FirmDynamicsIFRS(predatory=True); eng=MaxForwardEngine()
+    rng=np.random.default_rng(1); s=IFRSFirmState()
+    print(f"期首B/S(円): 資産={s.total_assets/M:.0f}M 負債={s.total_liabilities/M:.0f}M 純資産={s.equity/M:.0f}M 検証={(s.total_assets-(s.total_liabilities+s.equity))/M:.3f}")
+    bad=0; gens=set()
+    for q in range(40):   # 10年スモーク
+        a=eng.decide(dyn,s,rng); s=dyn.transition(s,a,rng); gens.add(s.generation)
+        chk=s.total_assets-(s.total_liabilities+s.equity)
+        if abs(chk)>1.0: bad+=1
+        if s.bankrupt: print(f"  破綻 @{(q+1)/4:.1f}年 第{s.generation}代"); break
+    print(f"10年スモーク: 貸借不一致 {bad}/40 → {'OK' if bad==0 else 'NG'}")
+    print(f"  期末 純資産={s.equity/M:.0f}M 現金={s.cash/M:.0f}M 代={sorted(gens)} tech_gap={s.tech_gap:.2f} regime={s.macro_regime}")

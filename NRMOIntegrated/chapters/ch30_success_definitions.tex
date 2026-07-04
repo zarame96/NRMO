@@ -1,0 +1,88 @@
+% chapters/ch30_success_definitions.tex
+% Chapter 30: Success Definitions
+% Source: NRMO_v5_updated.pdf, Chapter 30 (lines 9822-9869 of v5_layout.txt)
+
+\chapter{Success Definitions}
+\label{ch:success-definitions}
+
+
+% =====================================================================
+\section*{v7 Realignment Note}
+\addcontentsline{toc}{section}{v7 Realignment Note}
+\nrmobox{v7 structural correction}{
+This chapter's mechanism resides on the \textbf{real side}: the StrongEngine
+$\Omega$ Full advances over each domain's true dynamics with a maximum-forward
+default, while a civ-sim MaxForwardEngine imitates it to explore extremes and
+return a best score. The rollout must use the target domain's true dynamics,
+with an evaluation horizon long enough to credit compounding growth ---
+otherwise the choice collapses into over-defense. Maximum forward is the
+\emph{default} posture, not a universal optimum (world-dependence: some worlds
+favour aggression, others sustainable growth, others extreme caution). See the
+Realignment Master Spec.
+}
+\nrmobox{Document role}{
+This chapter defines what counts as ``success'' in five exemplary
+domains. These are \emph{not} optimisation targets; they are
+post-hoc identification criteria used by the v2.1 Success Definitions
+component.
+}
+
+% =====================================================================
+\section{Romance Master}
+\label{sec:success-romance}
+
+\begin{itemize}
+\item $\mathrm{ReciprocityIndex} > 0.75$.
+\item $\mathrm{DependencyRisk} < 0.40$.
+\end{itemize}
+
+% =====================================================================
+\section{Investment Master}
+\label{sec:success-investment}
+
+\begin{itemize}
+\item 10-year bankruptcy count $= 0$.
+\item Maximum Drawdown $< 40\%$.
+\end{itemize}
+
+% =====================================================================
+\section{Startup Success}
+\label{sec:success-startup}
+
+\begin{itemize}
+\item BurnRate runaway $= 0$.
+\item Organisational split $= 0$.
+\end{itemize}
+
+% =====================================================================
+\section{Career Victory}
+\label{sec:success-career}
+
+\begin{itemize}
+\item $\mathrm{ReputationDurability} > 0.75$.
+\item $\mathrm{PoliticalRisk} < 0.30$.
+\end{itemize}
+
+% =====================================================================
+\section{Sovereign Success}
+\label{sec:success-sovereign}
+
+\begin{itemize}
+\item $\mathrm{CrossDomainRuin}$ not fired.
+\item $\mathrm{DSI} > 0.80$.
+\item Long-term irreversible events $= 0$.
+\item $\varepsilon$ change frequency is low.
+\end{itemize}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Success Definitions are post-hoc criteria; they do \emph{not}
+feed back into NRMO Core (preserves
+Invariant~\ref{inv:gov-exec-sep}).
+\item In Part~VIII, the simulator uses analogous success metrics
+(survival rate, optionality preservation) at civilisation scale.
+\item In Part~XI, empirical validation reports civilisation-scale
+versions of these metrics.
+\end{itemize}

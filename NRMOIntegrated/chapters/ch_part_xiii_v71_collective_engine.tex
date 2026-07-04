@@ -1,0 +1,191 @@
+% =====================================================================
+\section{v7.1: Collective StrongEngine — Architectural Symmetry Completion}
+\label{sec:collective-strong-engine-v71}
+
+\subsection{The structural defect discovered at v7.0}
+
+v7.0's introduction of \texttt{NRMO\_Collective} resolved the empirical
+Faith\_Communal gap in catastrophic worlds. However, on careful
+inspection of the v7.0 architecture, a fundamental asymmetry was
+revealed:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Domain & Veto layer & Strong Engine (search) \\
+\midrule
+Individual governance & NRMO Core (4 or 7 rules) & $\Omega$ Full (mutation, rollout, scoring) \\
+Collective governance (v7.0) & P--U rules (fixed) & \textbf{absent} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The v7.0 mechanisms P--U operate as a fixed-rule layer: pooling rates,
+coverage levels, target selection, all parametrically frozen. There
+is no active exploration of \emph{which} collective configuration is
+optimal for a given world-state. This violates the NRMO architectural
+principle that veto and search should be present at every scale.
+
+\subsection{The principle: fractal NRMO}
+
+NRMO's foundational claim, stated since v4 and v25 reformulations, is
+that the same governance--execution separation applies at every
+relevant scale:
+
+\begin{quote}
+``Individual, family, lineage, nation, civilisation, world — at every
+scale, NRMO defines admissibility and the Strong Engine searches
+within. The principle is scale-invariant.''
+\end{quote}
+
+v7.0 implemented this for the collective veto side (P--U as
+admissibility constraints on collective action) but not the search
+side. v7.1 completes the symmetry by introducing
+\texttt{CollectiveStrongEngine}: a search engine that operates on
+collective-governance configurations under collective veto.
+
+\subsection{Architectural placement}
+
+For each generation, per civilisation, the full pipeline becomes:
+
+\begin{enumerate}
+\item NRMO\_Core (individual veto) constructs
+  $A_t^{\text{individual}}$.
+\item $\Omega$ Full (individual Strong Engine) searches
+  $A_t^{\text{individual}}$, returns $a^\star_{\text{indiv}}$.
+\item Project $a^\star_{\text{indiv}}$ to agents
+  (Section~\ref{sec:vnext-plus-v63}).
+\item \emph{New:} Collective\_Core (collective veto) constructs
+  $A_t^{\text{collective}}$ (the set of admissible collective
+  configurations).
+\item \emph{New:} CollectiveStrongEngine searches
+  $A_t^{\text{collective}}$, returns $c^\star$ (collective
+  configuration).
+\item Apply $c^\star$ to P--U mechanisms (set pool rates, trigger
+  thresholds, target priorities, structural reallocations).
+\item P--U mechanisms execute their veto/rescue cascade using
+  $c^\star$ as parameters, instead of the fixed values of v7.0.
+\end{enumerate}
+
+The collective layer thus mirrors the individual layer with
+identical structure: veto then search, never reversed.
+
+\subsection{Six new mechanisms (W--AB)}
+
+\paragraph{W. Predictive trigger.}
+The Collective Engine forecasts next-generation shock probability
+from the current world parameters
+(\texttt{shock\_probability}, \texttt{tail\_probability},
+\texttt{environmental\_drag}, current $X$, current trajectory).
+The rescue budget is pre-emptively augmented when the forecast
+exceeds threshold. This converts the rescue cascade from
+\emph{reactive} to \emph{anticipatory}: high-risk gens receive
+expanded coverage \emph{before} the failure event, not after.
+
+\paragraph{X. Target selection optimisation (triage).}
+The v7.0 P mechanism rescued lineages by uniform random sampling.
+v7.1 implements explicit triage: each at-risk lineage receives a
+\emph{rescue priority score} composed of (i)~knowledge contribution
+(per-lineage mean education), (ii)~productivity contribution
+(per-lineage mean assets), (iii)~optionality contribution
+(per-lineage strategic diversity contribution to civ-wide Shannon
+entropy of strategies), (iv)~vulnerability complement (rescue those
+with lower self-recovery probability). The Collective Engine learns
+the weighting of these four factors via MC rollout: rescue
+configurations are evaluated by their effect on civ continuation
+$+$ diversity, and the best weighting emerges.
+
+\paragraph{Y. Pool reallocation.}
+Each generation the Collective Engine considers reallocating surplus
+between tiers: family $\to$ lineage, lineage $\to$ civ, civ
+$\to$ inter-civ. Reallocations are veto-checked (cannot drain a tier
+below safety floor) and selected by rollout: ``what happens to
+continuation rate if I move 20\% of family pool surplus to civ pool
+this gen?''. This makes the multi-tier structure responsive to
+real-time pressure.
+
+\paragraph{Z. Inter-civilisation insurance.}
+Civilisations with low rivalry can enter contractual mutual
+insurance: each contributes a fraction to a shared pool, drawn upon
+when one party faces catastrophic shock. The Collective Engine
+explores which contracts to enter, the contribution rate, and the
+trigger conditions. Mutual contracts increase total insurable
+capital at the cost of cross-civ dependency.
+
+\paragraph{AA. Insurance candidate exploration.}
+By mechanism analogue to $\Omega$ Full's mutation/synthesis/invention
+on individual actions, the Collective Engine generates candidate
+\emph{collective configurations}: new tier structures (3-tier $\to$
+4-tier with an individual-level reserve, $\to$ 5-tier with
+inter-civ), modified trigger conditions (event-based vs.
+slope-based), alternative target priority rules. These candidates
+are scored by rollout.
+
+\paragraph{AB. Collective drift control.}
+By mechanism analogue to v6.4's individual cumulative\_drift, the
+collective engine tracks ``rescue dependency'': accumulated rescues
+per generation, normalised by civilisation size. If rescue
+dependency grows unbounded, the civilisation is drifting toward an
+absorbing state where its individual lineages have ceased
+self-recovery and depend entirely on the pool. The Collective Veto
+constrains rescue rates to prevent this drift.
+
+\subsection{Collective Veto (Collective\_Core)}
+
+By NRMO principle, the collective layer also has a veto component
+distinct from the search component. The four veto rules:
+
+\begin{enumerate}
+\item \textbf{Pool depletion veto.}\ No collective configuration is
+admissible if it depletes any pool below the safety floor in
+projection (e.g.\,family pool below $0.10 \times$ historical mean).
+\item \textbf{Rescue rate ceiling.}\ No configuration is admissible
+if the projected per-gen rescue rate exceeds a ceiling
+($0.30$ of population). Above this rate, individual incentive
+collapses (the moral hazard threshold).
+\item \textbf{Asymmetric mutual contract veto.}\ Inter-civ insurance
+contracts (Z) are rejected if projected to be persistently
+asymmetric (one party always contributing, never drawing). This
+prevents predatory collective structures.
+\item \textbf{Drift threshold.}\ No configuration is admissible if
+the projected rescue\_dependency trajectory (AB) exceeds
+\texttt{rescue\_dependency\_ceiling}. This prevents the
+collective from absorbing all individual agency.
+\end{enumerate}
+
+These four veto rules instantiate the NRMO architectural principle
+at the collective scale: the search engine operates only within the
+admissible set.
+
+\subsection{Honest design constraints}
+
+\paragraph{Computational cost.}
+v7.1's Collective Engine performs MC rollout each generation for
+each civilisation. Cost scales as $C_{\text{candidates}} \times
+\text{rollout\_depth} \times \text{rollout\_repeats} \times
+N_{\text{civilisations}} \times N_{\text{generations}}$. With
+candidate count $\approx 12$, depth $6$, repeats $4$, this is
+$\approx 1{,}728$ collective transitions per civ per gen, on top
+of individual $\Omega$ Full. Small scale runs are projected to take
+50--80\% longer than v7.0.
+
+\paragraph{Score function design.}
+The collective rollout score combines continuation rate (avoid civ
+collapse) and Shannon strategy diversity (avoid monoculture):
+\[
+\mathit{score}_{\text{collective}} =
+\alpha \cdot \mathrm{continuation\_rate}_{\text{civ}} +
+\beta \cdot H_{\text{strategy}}(p) +
+\gamma \cdot \mathrm{cohesion}
+\]
+with weights $(\alpha, \beta, \gamma)$ that may differ by world
+archetype. The Shannon entropy term operationalises the user
+requirement ``lineage diversity must be preserved as an objective,
+not only avoided as a failure''.
+
+\paragraph{No simplification.}
+v7.1 is implemented with all components in place: predictive
+trigger, full triage with learned weights, dynamic reallocation,
+inter-civ contract negotiation, candidate exploration, drift
+control, four veto rules. Per the user directive, ``simple
+implementation prohibited.''

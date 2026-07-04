@@ -1,0 +1,2482 @@
+% appendices/A_code_listing.tex
+\chapter{Full Source Code Listing --- v2.5 Reference Implementation}
+\label{app:code}
+
+\nrmobox{Document scope}{
+\textbf{Source}: \texttt{nrmo\_full\_v2\_5\_final.zip}.
+Modules presented in dependency order. Total: 12 files,
+approximately 2300 lines of Python.
+}
+
+% Total Python line count across listed modules: 2317
+
+\section{\texttt{config/defaults.py}}
+\label{app:code:config-defaults-py}
+
+\paragraph{Purpose.} System-wide constants and parameter table.
+
+\paragraph{Length.} 120 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+NRMO Full Stack -- Configuration Defaults
+Stack: NRMO + Norn/Skuld + MAPLayer + Shinobi(12) + Omega Full
+"""
+
+# -- World physics ------------------------------------------
+INITIAL_STATE = [62, 66, 58, 54, 52, 18]  # R, E, G, O, K, X
+STATE_DIMS = 6
+STATE_LABELS = ["R", "E", "G", "O", "K", "X"]
+
+# -- Ruin conditions ----------------------------------------
+RUIN_THRESHOLDS = {"R": 8, "E": 8, "G": 8, "O": 6, "X_max": 92}
+PASSIVE_RUIN_O_THRESHOLD = 18
+PASSIVE_RUIN_O_STEPS = 14
+PASSIVE_RUIN_K_THRESHOLD = 20
+PASSIVE_RUIN_K_STEPS = 18
+PASSIVE_RUIN_COMPOUND_STEPS = 12
+
+# -- NRMO veto rules ----------------------------------------
+NRMO_GROWTH_CAP = 0.62
+NRMO_HIGH_EXPOSURE_THRESHOLD = 55
+NRMO_HIGH_EXPOSURE_GROWTH_CAP = 0.36
+NRMO_LOW_ENV_THRESHOLD = 28
+NRMO_LOW_ENV_GROWTH_CAP = 0.30
+NRMO_LOW_GOV_THRESHOLD = 24
+NRMO_LOW_GOV_MIN_DIST = 0.16
+NRMO_EXPLORATION_FLOOR = 0.20
+NRMO_GOV_REPAIR_FLOOR_THRESHOLD = 30
+NRMO_GOV_REPAIR_FLOOR = 0.20
+NRMO_ECO_GROWTH_CAP_THRESHOLD = 45
+NRMO_ECO_GROWTH_CAP = 0.38
+
+# -- Omega Full engine ------------------------------------------
+OMEGA_CANDIDATE_COUNT = 14
+OMEGA_ROLLOUT_DEPTH = 4
+OMEGA_ROLLOUT_REPEATS = 3
+OMEGA_LAMBDA_DRIFT = 1.0
+OMEGA_NORMAL_DRIFT_MULTIPLIER = 1.25
+OMEGA_FAILURE_MEMORY_SIZE = 64
+OMEGA_FAILURE_PENALTY = 0.15
+OMEGA_FRAGILITY_PRIOR = 0.5
+
+# Wolf Pursuit triggers
+WOLF_E_MIN = 50
+WOLF_G_MIN = 45
+WOLF_O_MIN = 45
+WOLF_K_MIN = 45
+WOLF_X_MAX = 42  # v5.1: Relaxed from 35 -- Wolf was triggering too rarely
+WOLF_DEPTH = 8
+WOLF_REPEATS = 5
+WOLF_EXTRA_CANDIDATES = 6
+
+# Edge Survival Guard triggers
+EDGE_FRAGILITY_THRESHOLD = 0.65
+EDGE_E_THRESHOLD = 40
+EDGE_G_THRESHOLD = 40
+
+# -- Shinobi fleet ------------------------------------------
+SHINOBI_PROBE_DEPTH = 2
+SHINOBI_PROBE_CANDIDATES = 4
+SHINOBI_PSEUDO_DEATH_DEPTH = 3
+SHINOBI_TOP_AIMS = 2  # reduced from 3 - less intervention
+
+# -- MAPLayer -----------------------------------------------
+MAP_SHORT_WINDOW = 10
+MAP_MID_WINDOW = 100
+MAP_LONG_WINDOW = 10000
+MAP_EMA_ALPHA = 0.15  # reduced from 0.3 - less reactive
+
+# World mixture estimation -- v2 (Apr 22, 2026): Thresholds re-calibrated to
+# actual observed danger_confidence values. Old values (soft=0.45..hard=0.90)
+# never triggered in smoke tests: Vulnerable averages 0.127, PlanetaryStress
+# 0.067, FastExpansionRace race_conf 0.113. The detector was effectively off
+# in production. New values are chosen to produce ~20-40% non-NEUTRAL in
+# hazardous worlds while keeping Normal/LateStagnation near 100% NEUTRAL.
+MAP_DANGER_THRESHOLDS = {
+    "soft":   0.10,   # PROBE -- mild caution
+    "medium": 0.20,   # BUFFER -- defensive posture
+    "hard":   0.35,   # RETREAT -- emergency
+    "race":   0.15,   # RACE -- competitive pressure flag
+}
+
+# -- Thompson Sampling --------------------------------------
+TS_INITIAL_ALPHA = 1.0
+TS_INITIAL_BETA = 1.0
+TS_RESET_SHOCK_THRESHOLD = 0.4
+TS_RESET_CONFIDENCE_DROP = 0.5
+
+# -- Norn task manager --------------------------------------
+NORN_MAX_TASKS = 100
+NORN_ALERT_LEVELS = ["NEUTRAL", "PROBE", "BUFFER", "RETREAT", "RACE"]
+
+# -- Simulation ---------------------------------------------
+DEFAULT_HORIZON = 200
+DEFAULT_RUNS = 20
+SCORE_WEIGHTS = {
+    "surv": 1.0,
+    "true_ruin": -0.70,
+    "passive_ruin": -0.40,
+    "optionality": 0.18,
+    "exposure": -0.10,
+}
+
+# -- Modes (binding) ----------------------------------------
+MODE_NEUTRAL = 0
+MODE_PROBE = 1
+MODE_BUFFER = 2
+MODE_RETREAT = 3
+MODE_RACE = 4
+MODE_NAMES = ["NEUTRAL", "PROBE", "BUFFER", "RETREAT", "RACE"]
+
+# Mode-conditioned Omega Full parameters
+MODE_PARAMS = {
+    MODE_NEUTRAL: {"rollout_depth": 4, "fan_out": 1.0, "growth_cap": 0.62, "fragility_penalty": 1.0, "lambda_drift": 1.0},
+    MODE_PROBE:   {"rollout_depth": 3, "fan_out": 0.7, "growth_cap": 0.50, "fragility_penalty": 1.3, "lambda_drift": 1.2},
+    MODE_BUFFER:  {"rollout_depth": 4, "fan_out": 0.4, "growth_cap": 0.28, "fragility_penalty": 1.5, "lambda_drift": 1.5},
+    MODE_RETREAT: {"rollout_depth": 6, "fan_out": 0.2, "growth_cap": 0.15, "fragility_penalty": 2.5, "lambda_drift": 2.0},
+    MODE_RACE:    {"rollout_depth": 8, "fan_out": 1.2, "growth_cap": 0.62, "fragility_penalty": 0.8, "lambda_drift": 0.4},
+}
+
+\end{lstlisting}
+
+\section{\texttt{core/state.py}}
+\label{app:code:core-state-py}
+
+\paragraph{Purpose.} State vector and transition function.
+
+\paragraph{Length.} 117 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+core/state.py -- State vector and world transition
+S = (R, E, G, O, K, X) in [0, 130]
+
+v2 (Apr 22, 2026): Transition coefficients aligned with v5.2 baseline
+(baseline_v52/nrmo_omega_full/core/state.py). Previous form diverged
+from monograph canonical dynamics; that divergence was invisible until
+v5.2 baseline became available for side-by-side comparison.
+"""
+import math
+from config.defaults import *
+
+
+def clip(val, lo=0, hi=130):
+    return max(lo, min(hi, val))
+
+
+def _exp_sample(mean, rng):
+    """Exponential(mean) via inverse CDF using uniform rng()."""
+    u = max(1e-9, rng())
+    return -mean * math.log(u)
+
+
+def _stdnormal(rng):
+    """Box-Muller standard normal from two uniforms."""
+    u1 = max(1e-9, rng())
+    u2 = rng()
+    return math.sqrt(-2 * math.log(u1)) * math.cos(2 * math.pi * u2)
+
+
+def transition(state, action, world_params, rng):
+    """
+    State transition function (v5.2-aligned).
+    action = [g, s, l, d] with sum=1, min=0.05
+    Returns new state.
+    """
+    R, E, G, O, K, X = state
+    g, sf, lr, di = action
+    wp = world_params
+
+    # Deterministic dynamics (v5.2 coefficients)
+    dR = g * (4.5 + 0.04 * K) - wp["environmental_drag"] * R * 0.18 \
+         - g * R * 0.006 * (1 + wp["rivalry_level"]) + 0.008 * (60 - R)
+    dE = sf * 4.2 + di * 1.4 - g * 2.3 * (1 + wp["rivalry_level"] * 0.5) + 0.006 * (65 - E)
+    dG = di * 4.8 + sf * 1.8 - wp["governance_drag"] * (1.2 + g * 1.5) \
+         - g * wp["rivalry_level"] * 0.5 + 0.005 * (55 - G)
+    dO = lr * 4.2 + 0.025 * K + di * 0.9 - (X / 130) * 1.6 \
+         - wp["stagnation_drag"] * 5.5 + 0.005 * (50 - O)
+    dK = lr * 4.5 * max(0.5, wp.get("substitutability", 0.5)) - wp["stagnation_drag"] * 2.2 \
+         + 0.012 * G * lr + 0.004 * (50 - K)
+    dX = g * 4.8 * (1 + wp["rivalry_level"]) - sf * 5.2 - di * 1.3 - 0.04 * X
+
+    # Shock event
+    shock = [0.0] * 6
+    if rng() < wp["shock_probability"]:
+        mag = _exp_sample(wp["shock_scale"], rng)
+        vals = [R, E, G, O, K]
+        weights = [math.exp(-v / 30) for v in vals]
+        total = sum(weights)
+        probs = [w / total for w in weights]
+        r = rng()
+        acc = 0.0
+        idx = 0
+        for i, p in enumerate(probs):
+            acc += p
+            if r <= acc:
+                idx = i
+                break
+        shock[idx] -= mag
+        shock[5] += mag * 0.35
+
+    # Tail event -- governance G buffers hit on R
+    if rng() < wp["tail_probability"]:
+        tail = _exp_sample(wp["tail_scale"], rng)
+        misspec = wp.get("tail_model_misspecification", 0.03)
+        tail *= max(0, 1 + misspec * _stdnormal(rng))
+        buf = 0.4 + 0.6 * (G / 130)
+        shock[0] -= tail * 0.45 / buf
+        shock[1] -= tail * 0.35
+        shock[2] -= tail * 0.25
+        shock[3] -= tail * 0.20
+        shock[5] += tail * 0.55
+
+    deltas = [dR, dE, dG, dO, dK, dX]
+    raw = [R, E, G, O, K, X]
+    new_state = [clip(raw[i] + deltas[i] + shock[i]) for i in range(6)]
+    return new_state
+
+
+def is_true_ruin(state):
+    R, E, G, O, K, X = state
+    return R < 8 or E < 8 or G < 8 or O < 6 or X > 92
+
+
+def ruin_cause(state):
+    R, E, G, O, K, X = state
+    if X > 92: return "exposure_cascade"
+    if E < 8:  return "environment_collapse"
+    if R < 8:  return "resource_collapse"
+    if G < 8:  return "governance_failure"
+    if O < 6:  return "optionality_exhaustion"
+    return "unknown"
+
+
+def survival_margin(state):
+    """Distance from ruin conditions -- proxy indicator (no governance values used)."""
+    R, E, G, O, K, X = state
+    margins = [R - 8, E - 8, G - 8, O - 6, 92 - X]
+    return min(margins)
+
+
+def normalize_action(weights):
+    """Normalize action weights to sum=1 with min=0.05."""
+    w = [max(0.05, x) for x in weights]
+    total = sum(w)
+    return [x / total for x in w]
+
+\end{lstlisting}
+
+\section{\texttt{core/worlds.py}}
+\label{app:code:core-worlds-py}
+
+\paragraph{Purpose.} Five world families with parameter ranges.
+
+\paragraph{Length.} 65 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+core/worlds.py -- Five world families
+v2 (Apr 22, 2026): Parameter ranges aligned with v5.2 baseline
+(baseline_v52/nrmo_omega_full/config/defaults.py WORLD_FAMILIES).
+Uses uniform sampling within ranges (not perturbation around a base).
+"""
+
+# (lo, hi) ranges -- uniform sample from each
+WORLD_RANGES = {
+    "Normal": {
+        "shock_probability": (0.08, 0.15), "shock_scale": (3, 7),
+        "tail_probability": (0.02, 0.04), "tail_scale": (12, 20),
+        "environmental_drag": (0.01, 0.03), "governance_drag": (0.01, 0.02),
+        "stagnation_drag": (0.005, 0.015), "rivalry_level": (0.05, 0.20),
+        "innovation_noise": (0.6, 1.2), "coordination_cost": (0.02, 0.06),
+        "substitutability": (0.4, 0.6), "tail_model_misspecification": (0, 0.08),
+    },
+    "Vulnerable": {
+        "shock_probability": (0.15, 0.28), "shock_scale": (5, 12),
+        "tail_probability": (0.04, 0.10), "tail_scale": (18, 35),
+        "environmental_drag": (0.03, 0.07), "governance_drag": (0.02, 0.05),
+        "stagnation_drag": (0.01, 0.03), "rivalry_level": (0.15, 0.40),
+        "innovation_noise": (0.8, 1.8), "coordination_cost": (0.04, 0.10),
+        "substitutability": (0.25, 0.50), "tail_model_misspecification": (0.05, 0.25),
+    },
+    "PlanetaryStress": {
+        "shock_probability": (0.12, 0.22), "shock_scale": (4, 10),
+        "tail_probability": (0.03, 0.08), "tail_scale": (15, 30),
+        "environmental_drag": (0.05, 0.12), "governance_drag": (0.03, 0.06),
+        "stagnation_drag": (0.008, 0.025), "rivalry_level": (0.10, 0.35),
+        "innovation_noise": (0.7, 1.5), "coordination_cost": (0.05, 0.12),
+        "substitutability": (0.30, 0.55), "tail_model_misspecification": (0.05, 0.20),
+    },
+    "LateStagnation": {
+        "shock_probability": (0.05, 0.12), "shock_scale": (2, 5),
+        "tail_probability": (0.01, 0.03), "tail_scale": (8, 16),
+        "environmental_drag": (0.02, 0.04), "governance_drag": (0.02, 0.05),
+        "stagnation_drag": (0.03, 0.08), "rivalry_level": (0.05, 0.15),
+        "innovation_noise": (0.3, 0.8), "coordination_cost": (0.03, 0.08),
+        "substitutability": (0.5, 0.8), "tail_model_misspecification": (0.02, 0.12),
+    },
+    "FastExpansionRace": {
+        "shock_probability": (0.10, 0.20), "shock_scale": (4, 9),
+        "tail_probability": (0.04, 0.09), "tail_scale": (14, 28),
+        "environmental_drag": (0.02, 0.05), "governance_drag": (0.01, 0.04),
+        "stagnation_drag": (0.003, 0.01), "rivalry_level": (0.25, 0.55),
+        "innovation_noise": (1.0, 2.2), "coordination_cost": (0.03, 0.07),
+        "substitutability": (0.35, 0.60), "tail_model_misspecification": (0.08, 0.25),
+    },
+}
+
+WORLD_NAMES = list(WORLD_RANGES.keys())
+
+
+def sample_world_params(world_name, rng, noise=None):
+    """
+    Sample world parameters by uniform draw within each range.
+    v2: ignores `noise` kwarg (present for backward-compat with old signature).
+    """
+    ranges = WORLD_RANGES[world_name]
+    out = {}
+    for key, (lo, hi) in ranges.items():
+        out[key] = lo + rng() * (hi - lo)
+    return out
+
+\end{lstlisting}
+
+\section{\texttt{governance/nrmo\_core.py}}
+\label{app:code:governance-nrmo-core-py}
+
+\paragraph{Purpose.} NRMO admissibility veto kernel.
+
+\paragraph{Length.} 129 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+governance/nrmo_core.py -- NRMO Kernel
+Constitutional boundary. Veto only. Never touches execution scoring.
+DOES NOT define ruin in execution layer.
+DOES NOT receive intermediate evaluation scores.
+DOES NOT know world name or signal values.
+"""
+from config.defaults import *
+
+
+class NRMOKernel:
+    """
+    The kernel. Every step, unconditional full audit.
+    No exceptions. No fast-path. No skip.
+    Robustness cannot be traded for speed.
+    """
+
+    def __init__(self, tuning=None):
+        self.tuning = tuning or {}
+
+    def construct_admissible_set(self, candidates, state):
+        """
+        Filter candidates through constitutional veto.
+        Returns admissible set -- execution searches within this only.
+        Formal: A_t = NRMO(X_t)
+        """
+        admissible = []
+        for c in candidates:
+            if self._veto(c, state):
+                admissible.append(c)
+        # If nothing passes, inject minimal-safe candidate
+        if not admissible:
+            admissible = [self._safe_fallback(state)]
+        return admissible
+
+    def _veto(self, action, state):
+        """
+        Returns True if action is ADMISSIBLE (passes veto).
+        Returns False if action is REJECTED.
+        """
+        R, E, G, O, K, X = state
+        g, s, l, d = action
+
+        # Get tunable thresholds
+        growth_cap = self.tuning.get("growth_cap", NRMO_GROWTH_CAP)
+        exploration_floor = self.tuning.get("exploration_floor", NRMO_EXPLORATION_FLOOR)
+        gov_repair_floor = self.tuning.get("gov_repair_floor", NRMO_GOV_REPAIR_FLOOR)
+        eco_growth_cap = self.tuning.get("eco_growth_cap", NRMO_ECO_GROWTH_CAP)
+
+        # Unconditional growth cap
+        if g > growth_cap:
+            return False
+
+        # High exposure -> growth restriction
+        if X > NRMO_HIGH_EXPOSURE_THRESHOLD and g > NRMO_HIGH_EXPOSURE_GROWTH_CAP:
+            return False
+
+        # Low environment -> growth restriction
+        if E < NRMO_LOW_ENV_THRESHOLD and g > NRMO_LOW_ENV_GROWTH_CAP:
+            return False
+
+        # Low governance -> minimum distribution required
+        if G < NRMO_LOW_GOV_THRESHOLD and d < NRMO_LOW_GOV_MIN_DIST:
+            return False
+
+        # Exploration floor
+        if l < exploration_floor:
+            return False
+
+        # Governance repair floor
+        if G < NRMO_GOV_REPAIR_FLOOR_THRESHOLD and d < gov_repair_floor:
+            return False
+
+        # Eco growth cap
+        if E < NRMO_ECO_GROWTH_CAP_THRESHOLD and g > eco_growth_cap:
+            return False
+
+        # Low environment -> minimum safeguard required (prevents E free-fall)
+        if E < 35 and s < 0.30:
+            return False
+        if E < 25 and s < 0.40:
+            return False
+        if E < 15 and s < 0.50:
+            return False
+
+        return True
+
+    def _safe_fallback(self, state):
+        """Minimal safe action when nothing passes veto."""
+        from core.state import normalize_action
+        return normalize_action([0.10, 0.35, 0.30, 0.25])
+
+    def passive_ruin_check(self, history):
+        """
+        Detect passive ruin from state history.
+        Returns (detected: bool, pattern: str)
+        Thresholds: conservative to avoid false positives in early steps.
+        """
+        if len(history) < PASSIVE_RUIN_O_STEPS:
+            return False, None
+
+        # Optionality stagnation: O < 18 for 14 consecutive steps
+        recent_o = history[-PASSIVE_RUIN_O_STEPS:]
+        if all(s[3] < PASSIVE_RUIN_O_THRESHOLD for s in recent_o):
+            return True, "passive_optionality_stagnation"
+
+        # Knowledge stagnation: K < 20 for 18 consecutive steps
+        if len(history) >= PASSIVE_RUIN_K_STEPS:
+            k_recent = history[-PASSIVE_RUIN_K_STEPS:]
+            if all(s[4] < PASSIVE_RUIN_K_THRESHOLD for s in k_recent):
+                return True, "passive_knowledge_stagnation"
+
+        # Compound decline: requires ALL of:
+        # - O is actually low (< 30) AND declining
+        # - G is actually low (< 30) AND declining
+        # - K is stagnating (< 25)
+        # Over 12 steps -- must be genuinely degraded, not just slightly down
+        if len(history) >= PASSIVE_RUIN_COMPOUND_STEPS:
+            compound = history[-PASSIVE_RUIN_COMPOUND_STEPS:]
+            O_low_and_declining = (compound[-1][3] < 30 and
+                                   compound[-1][3] < compound[0][3] - 5)
+            G_low_and_declining = (compound[-1][2] < 30 and
+                                   compound[-1][2] < compound[0][2] - 5)
+            K_stagnating = compound[-1][4] < 25
+            if O_low_and_declining and G_low_and_declining and K_stagnating:
+                return True, "passive_compound_decline"
+
+        return False, None
+
+\end{lstlisting}
+
+\section{\texttt{governance/tuning\_layer.py}}
+\label{app:code:governance-tuning-layer-py}
+
+\paragraph{Purpose.} Adaptive tuning + meta controller + hysteresis.
+
+\paragraph{Length.} 97 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+governance/tuning_layer.py -- Adaptive Tuning Layer
+State-responsive NRMO threshold adjustment.
+Does NOT modify ruin boundaries. Adjusts operational thresholds only.
+Based on design_spec.py Table 10: World-Dependent Tuning Profiles.
+"""
+from config.defaults import *
+
+
+class AdaptiveTuningLayer:
+    """
+    Adjusts NRMO operational thresholds based on current state.
+    Hysteresis prevents rapid oscillation.
+    Does NOT touch ruin boundaries (NRMO_RUIN_THRESHOLDS).
+    """
+
+    def __init__(self):
+        self._hysteresis_steps = 0
+        self._hysteresis_min = 6
+        self._tightened = False
+        self._current_tuning = self._default_tuning()
+
+    def _default_tuning(self):
+        return {
+            "growth_cap": NRMO_GROWTH_CAP,
+            "exploration_floor": NRMO_EXPLORATION_FLOOR,
+            "gov_repair_floor": NRMO_GOV_REPAIR_FLOOR,
+            "eco_growth_cap": NRMO_ECO_GROWTH_CAP,
+        }
+
+    def update(self, state, signal):
+        """
+        Update tuning based on current state and MAPLayer signal.
+        Returns current tuning dict for NRMOKernel.
+        """
+        R, E, G, O, K, X = state
+        mode = signal.get("mode", MODE_NEUTRAL)
+
+        # Hysteresis: don't relax if recently tightened
+        if self._hysteresis_steps > 0:
+            self._hysteresis_steps -= 1
+            return self._current_tuning
+
+        new_tuning = self._default_tuning()
+        tightened = False
+
+        # High exposure -> tighten growth
+        if X > 48:
+            new_tuning["growth_cap"] = min(new_tuning["growth_cap"], 0.36)
+            tightened = True
+
+        # Low optionality -> raise exploration floor
+        if O < 38:
+            new_tuning["exploration_floor"] = max(new_tuning["exploration_floor"], 0.25)
+            tightened = True
+
+        # Low governance -> tighten distribution floor
+        if G < 34:
+            new_tuning["growth_cap"] = min(new_tuning["growth_cap"], 0.32)
+            new_tuning["gov_repair_floor"] = max(new_tuning["gov_repair_floor"], 0.25)
+            tightened = True
+
+        # Low environment -> tighten eco growth cap (key for PlanetaryStress)
+        if E < 45:
+            new_tuning["eco_growth_cap"] = min(new_tuning["eco_growth_cap"], 0.28)
+            tightened = True
+        if E < 35:
+            new_tuning["eco_growth_cap"] = min(new_tuning["eco_growth_cap"], 0.20)
+            new_tuning["growth_cap"] = min(new_tuning["growth_cap"], 0.25)
+            tightened = True
+        if E < 25:
+            new_tuning["eco_growth_cap"] = min(new_tuning["eco_growth_cap"], 0.12)
+            new_tuning["growth_cap"] = min(new_tuning["growth_cap"], 0.15)
+            tightened = True
+
+        # Low knowledge -> raise exploration floor
+        if K < 34:
+            new_tuning["exploration_floor"] = max(new_tuning["exploration_floor"], 0.28)
+            tightened = True
+
+        # Mode-based adjustments
+        if mode == MODE_BUFFER:
+            new_tuning["growth_cap"] = min(new_tuning["growth_cap"], 0.30)
+        elif mode == MODE_RETREAT:
+            new_tuning["growth_cap"] = min(new_tuning["growth_cap"], 0.15)
+            new_tuning["eco_growth_cap"] = min(new_tuning["eco_growth_cap"], 0.12)
+        elif mode == MODE_RACE:
+            new_tuning["growth_cap"] = min(0.55, NRMO_GROWTH_CAP)
+
+        # Apply hysteresis on tightening
+        if tightened and not self._tightened:
+            self._hysteresis_steps = self._hysteresis_min
+
+        self._tightened = tightened
+        self._current_tuning = new_tuning
+        return new_tuning
+
+\end{lstlisting}
+
+\section{\texttt{engine/map\_layer.py}}
+\label{app:code:engine-map-layer-py}
+
+\paragraph{Purpose.} Mode classification (8 regimes).
+
+\paragraph{Length.} 364 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+engine/map_layer.py -- MAPLayer
+Shared information base for Shinobi fleet and Omega Full.
+Observes, infers, maps. Does NOT define ruin. Does NOT emit world names.
+Implements 3D V-Cache: layered history cache (short/mid/long term).
+"""
+import math
+from config.defaults import *
+
+
+class ThompsonSampler:
+    """Independent Thompson Sampling per signal family."""
+
+    def __init__(self):
+        self.defensive = [TS_INITIAL_ALPHA, TS_INITIAL_BETA]  # BUFFER/RETREAT
+        self.race = [TS_INITIAL_ALPHA, TS_INITIAL_BETA]       # RACE
+        self._prev_danger = 0.0
+        self._prev_race = 0.0
+
+    def sample_defensive(self, rng):
+        a, b = self.defensive
+        # Beta distribution sampling via gamma approximation
+        x = self._gamma_sample(a, rng)
+        y = self._gamma_sample(b, rng)
+        return x / (x + y) if (x + y) > 0 else 0.5
+
+    def sample_race(self, rng):
+        a, b = self.race
+        x = self._gamma_sample(a, rng)
+        y = self._gamma_sample(b, rng)
+        return x / (x + y) if (x + y) > 0 else 0.5
+
+    def update_defensive(self, survived):
+        if survived:
+            self.defensive[0] += 1
+        else:
+            self.defensive[1] += 1
+
+    def update_race(self, survived):
+        if survived:
+            self.race[0] += 1
+        else:
+            self.race[1] += 1
+
+    def reset_if_needed(self, danger_conf, race_conf):
+        """Reset on sudden pattern change."""
+        danger_drop = self._prev_danger - danger_conf
+        race_drop = self._prev_race - race_conf
+        if danger_drop > TS_RESET_CONFIDENCE_DROP:
+            self.defensive = [TS_INITIAL_ALPHA, TS_INITIAL_BETA]
+        if race_drop > TS_RESET_CONFIDENCE_DROP:
+            self.race = [TS_INITIAL_ALPHA, TS_INITIAL_BETA]
+        self._prev_danger = danger_conf
+        self._prev_race = race_conf
+
+    @staticmethod
+    def _gamma_sample(alpha, rng):
+        """Simple gamma sampling via Marsaglia method approximation."""
+        if alpha < 1:
+            alpha += 1
+        d = alpha - 1/3
+        c = 1 / math.sqrt(9 * d)
+        while True:
+            x = rng() * 6 - 3  # normal approx
+            v = (1 + c * x) ** 3
+            if v > 0 and math.log(rng() + 1e-10) < 0.5 * x * x + d - d * v + d * math.log(v + 1e-10):
+                return d * v
+            if rng() > 0.9:
+                return max(0.01, alpha * rng())
+
+
+class VCache3D:
+    """3D V-Cache: layered history cache inspired by AMD 3D V-Cache."""
+
+    def __init__(self):
+        self.short = []   # last MAP_SHORT_WINDOW steps, full resolution
+        self.mid = []     # last MAP_MID_WINDOW steps, compressed
+        self.long = []    # all history, pattern-compressed
+
+        self._mid_buffer = []
+        self._long_buffer = []
+
+    def push(self, state, world_signal):
+        """Add new observation to all cache layers."""
+        entry = {"state": state[:], "signal": world_signal}
+
+        # Short-term: full resolution
+        self.short.append(entry)
+        if len(self.short) > MAP_SHORT_WINDOW:
+            evicted = self.short.pop(0)
+            self._mid_buffer.append(evicted)
+
+        # Mid-term: average compression
+        if len(self._mid_buffer) >= 5:
+            compressed = self._compress(self._mid_buffer)
+            self.mid.append(compressed)
+            self._mid_buffer = []
+            if len(self.mid) > MAP_MID_WINDOW // 5:
+                old = self.mid.pop(0)
+                self._long_buffer.append(old)
+
+        # Long-term: pattern compression
+        if len(self._long_buffer) >= 20:
+            pattern = self._compress(self._long_buffer)
+            self.long.append(pattern)
+            self._long_buffer = []
+
+    def get_short(self):
+        return self.short
+
+    def get_mid(self):
+        return self.mid
+
+    def get_long(self):
+        return self.long
+
+    def get_all_states(self):
+        """Return all cached states for pattern analysis."""
+        states = []
+        for layer in [self.long, self.mid, self.short]:
+            for entry in layer:
+                states.append(entry["state"])
+        return states
+
+    @staticmethod
+    def _compress(entries):
+        """Average compression of multiple entries."""
+        if not entries:
+            return {"state": [0]*6, "signal": {}}
+        n = len(entries)
+        avg_state = [
+            sum(e["state"][i] for e in entries) / n
+            for i in range(6)
+        ]
+        return {"state": avg_state, "signal": entries[-1]["signal"]}
+
+
+class MAPLayer:
+    """
+    Shared information base for all engines.
+    Observes continuously, infers world mixture, emits abstract signals.
+    Never emits world names. Never defines ruin.
+    Implements 3D V-Cache for pattern memory.
+    """
+
+    def __init__(self):
+        self.cache = VCache3D()
+        self.thompson = ThompsonSampler()
+
+        self.danger_confidence = 0.0
+        self.race_confidence = 0.0
+        self.world_mixture = {w: 0.2 for w in ["Normal", "Vulnerable", "PlanetaryStress", "LateStagnation", "FastExpansionRace"]}
+
+        self._shock_events = []
+        self._recovery_failures = []
+        self._margin_history = []
+        self._x_history = []
+        self._rivalry_pressure = 0.0
+
+    def observe(self, state, prev_state=None):
+        """
+        Process new observation. Update all internal estimates.
+        Returns current signal dict.
+        """
+        from core.state import survival_margin
+
+        # Record margin
+        margin = survival_margin(state)
+        self._margin_history.append(margin)
+        if len(self._margin_history) > 20:
+            self._margin_history.pop(0)
+
+        # Record X trajectory
+        self._x_history.append(state[5])
+        if len(self._x_history) > 20:
+            self._x_history.pop(0)
+
+        # Detect shock (sudden state drop)
+        if prev_state is not None:
+            drops = [max(0, prev_state[i] - state[i]) for i in range(5)]
+            if max(drops) > 8:
+                self._shock_events.append(1)
+            else:
+                self._shock_events.append(0)
+            if len(self._shock_events) > 20:
+                self._shock_events.pop(0)
+
+            # Recovery failure detection
+            was_low = any(prev_state[i] < 25 for i in range(5))
+            still_low = any(state[i] < 25 for i in range(5))
+            if was_low and still_low:
+                self._recovery_failures.append(1)
+            else:
+                self._recovery_failures.append(0)
+            if len(self._recovery_failures) > 10:
+                self._recovery_failures.pop(0)
+
+        # Update confidence estimates
+        self._update_danger_confidence(state)
+        self._update_race_confidence(state)
+        self._update_world_mixture()
+
+        # v2.2 instant-shock path was attempted (Apr 22, 2026) to address
+        # PStress EMA lag. Two calibrations tried, both failed at 500-run:
+        #   (a) RETREAT@drop>18 -> overcorrected, passive_ruin jumped 1%->9%
+        #       in Vulnerable because single shocks locked Omega into growth_cap=0.15
+        #   (b) BUFFER@drop>14 -> no improvement over baseline
+        # Diagnosis: PStress deaths are not primarily from EMA lag on
+        # observable shocks. The tail events that kill are already in the
+        # observed drops; Omega Full just can't recover from the E/R depletion
+        # regardless of mode. Need structural fix in transition-model-level
+        # resilience, not detection speed. Keeping EMA-only path.
+
+        # Push to V-Cache
+        signal = self.get_signal()
+        self.cache.push(state, signal)
+
+        # Reset Thompson if pattern shifted
+        self.thompson.reset_if_needed(self.danger_confidence, self.race_confidence)
+
+        return signal
+
+    def _update_danger_confidence(self, state):
+        """Estimate Vulnerable-like danger from observations only."""
+        shock_freq = sum(self._shock_events) / max(1, len(self._shock_events))
+
+        if len(self._recovery_failures) > 0:
+            recovery_fail_rate = sum(self._recovery_failures) / len(self._recovery_failures)
+        else:
+            recovery_fail_rate = 0.0
+
+        if len(self._margin_history) > 0:
+            margin_proximity = 1.0 - min(1.0, min(self._margin_history) / 50.0)
+        else:
+            margin_proximity = 0.0
+
+        raw = (
+            0.35 * shock_freq +
+            0.35 * recovery_fail_rate +
+            0.30 * margin_proximity
+        )
+        # EMA update
+        self.danger_confidence = (
+            (1 - MAP_EMA_ALPHA) * self.danger_confidence +
+            MAP_EMA_ALPHA * raw
+        )
+
+    def _update_race_confidence(self, state):
+        """Estimate FastExpansionRace-like pressure from observations only.
+
+        v2.1 (Apr 22, 2026): Removed X-level from rivalry_proxy. Previous
+        formula `rivalry_proxy = X/92*0.5 + x_ascent*0.5` produced false
+        RACE signal in PlanetaryStress (high env_drag accumulates X without
+        competitive pressure), causing Omega Full to relax drift penalty and
+        drift into exposure_cascade. Race signature is dynamic (X rising
+        fast and K rising fast under pressure), not static high-X.
+        """
+        if len(self._x_history) >= 3:
+            x_growth = (self._x_history[-1] - self._x_history[0]) / len(self._x_history)
+            x_ascent = max(0, x_growth) / 5.0
+        else:
+            x_ascent = 0.0
+
+        # K short-term growth -- race worlds push learning alongside exposure
+        k_ascent = 0.0
+        if len(self._margin_history) >= 5 and len(self._x_history) >= 5:
+            # Approximate K ascent via state passed in: we only have X history,
+            # so use inverse-margin-trend as a coincident indicator of race
+            # pressure (margin shrinks when X rises without compensating gains)
+            pass  # x_ascent alone is fine for now; K track not cached here
+
+        # Race signature: sustained X ascent (competition-driven growth pressure)
+        # Rivalry pressure now comes only from dynamics, not current state level
+        rivalry_proxy = min(1.0, x_ascent)
+        self._rivalry_pressure = (
+            (1 - MAP_EMA_ALPHA) * self._rivalry_pressure +
+            MAP_EMA_ALPHA * rivalry_proxy
+        )
+
+        raw = (
+            0.50 * self._rivalry_pressure +
+            0.50 * x_ascent
+        )
+        self.race_confidence = (
+            (1 - MAP_EMA_ALPHA) * self.race_confidence +
+            MAP_EMA_ALPHA * raw
+        )
+
+    def _update_world_mixture(self):
+        """Estimate mixture proportions of world families."""
+        d = self.danger_confidence
+        r = self.race_confidence
+        n = max(0, 1.0 - d - r)
+
+        self.world_mixture["Vulnerable"] = d * 0.6
+        self.world_mixture["FastExpansionRace"] = r * 0.6
+        self.world_mixture["PlanetaryStress"] = d * 0.3
+        self.world_mixture["LateStagnation"] = (1 - r) * 0.2
+        self.world_mixture["Normal"] = max(0.05, n * 0.5)
+
+        # Normalize
+        total = sum(self.world_mixture.values())
+        for k in self.world_mixture:
+            self.world_mixture[k] /= total
+
+    def get_signal(self):
+        """
+        Return abstract signal dict for consumption by engines.
+        Never includes world name. Only abstract observational data.
+        """
+        mode = self._determine_mode()
+        return {
+            "mode": mode,
+            "danger_confidence": self.danger_confidence,
+            "race_confidence": self.race_confidence,
+            "world_mixture": dict(self.world_mixture),
+            "margin_trend": self._margin_trend(),
+            "x_ascent_rate": self._x_ascent_rate(),
+            "shock_frequency": sum(self._shock_events) / max(1, len(self._shock_events)),
+        }
+
+    def _determine_mode(self):
+        """Determine binding mode from confidence levels."""
+        d = self.danger_confidence
+        r = self.race_confidence
+
+        if d >= MAP_DANGER_THRESHOLDS["hard"]:
+            return MODE_RETREAT
+        if d >= MAP_DANGER_THRESHOLDS["medium"]:
+            return MODE_BUFFER
+        if d >= MAP_DANGER_THRESHOLDS["soft"]:
+            return MODE_PROBE
+        if r >= MAP_DANGER_THRESHOLDS["race"]:
+            return MODE_RACE
+        return MODE_NEUTRAL
+
+    def _margin_trend(self):
+        if len(self._margin_history) < 3:
+            return 0.0
+        recent = self._margin_history[-5:]
+        if len(recent) < 2:
+            return 0.0
+        return (recent[-1] - recent[0]) / len(recent)
+
+    def _x_ascent_rate(self):
+        if len(self._x_history) < 2:
+            return 0.0
+        return (self._x_history[-1] - self._x_history[0]) / len(self._x_history)
+
+    def thompson_adopt_defensive(self, rng):
+        """Thompson Sampling: should we adopt defensive signal?"""
+        return self.thompson.sample_defensive(rng) > 0.5
+
+    def thompson_adopt_race(self, rng):
+        """Thompson Sampling: should we adopt race signal?"""
+        return self.thompson.sample_race(rng) > 0.5
+
+    def update_thompson(self, mode_was_active, survived, signal_type="defensive"):
+        """Update Thompson Sampling after observing outcome."""
+        if signal_type == "defensive":
+            self.thompson.update_defensive(survived)
+        else:
+            self.thompson.update_race(survived)
+
+\end{lstlisting}
+
+\section{\texttt{engine/shinobi.py}}
+\label{app:code:engine-shinobi-py}
+
+\paragraph{Purpose.} Aiming-point pre-search fleet.
+
+\paragraph{Length.} 257 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+engine/shinobi.py -- Shinobi Fleet (12 units)
+Advance exploration + pseudo-death screening.
+Quantum superposition: multiple aiming points held until pseudo-rollout collapses them.
+Only live-confirmed aiming points passed to Omega Full.
+"Always return alive" invariant enforced.
+
+Fleet composition:
+- All 5 worlds x twin (A=offensive, B=defensive) = 10 units
+- Vulnerable x triplet C (balancer) = 1 unit
+- FastExpansionRace x triplet C (balancer) = 1 unit
+Total: 12 units
+"""
+import math
+from core.state import transition, is_true_ruin, normalize_action, survival_margin, clip
+from config.defaults import *
+
+
+# Candidate templates for advance exploration
+BASE_TEMPLATES = [
+    [0.28, 0.25, 0.25, 0.22],  # balanced
+    [0.50, 0.18, 0.17, 0.15],  # high_growth
+    [0.12, 0.46, 0.22, 0.20],  # safety_heavy
+    [0.12, 0.16, 0.50, 0.22],  # exploration_heavy
+    [0.08, 0.42, 0.18, 0.32],  # recovery
+    [0.08, 0.20, 0.18, 0.54],  # governance_repair
+    [0.44, 0.22, 0.18, 0.16],  # expansion_race
+    [0.18, 0.10, 0.48, 0.24],  # stagnation_recovery
+    [0.05, 0.50, 0.25, 0.20],  # minimal_action (RETREAT candidate)
+    [0.05, 0.05, 0.05, 0.85],  # hold (near-static)
+    [0.10, 0.40, 0.30, 0.20],  # recover_focused
+]
+
+
+class ShinobiUnit:
+    """Single Shinobi unit with role (offensive/defensive/balancer)."""
+
+    def __init__(self, world_affinity, role, unit_id):
+        self.world_affinity = world_affinity   # which world this unit specializes in
+        self.role = role                         # "A" (offensive), "B" (defensive), "C" (balancer)
+        self.unit_id = unit_id
+        self.alive = True
+        self._pseudo_death_history = []
+
+    def generate_candidates(self, state, signal, rng):
+        """Generate candidate aiming points based on role and signal."""
+        candidates = []
+        mode = signal.get("mode", MODE_NEUTRAL)
+
+        if self.role == "A":
+            # Offensive: favor growth and exploration
+            for t in BASE_TEMPLATES[:6]:
+                noisy = normalize_action([x + (rng() - 0.5) * 0.08 for x in t])
+                candidates.append(noisy)
+            # Extra aggressive candidates in RACE mode
+            if mode == MODE_RACE:
+                candidates.append(normalize_action([0.50, 0.20, 0.15, 0.15]))
+                candidates.append(normalize_action([0.45, 0.25, 0.15, 0.15]))
+
+        elif self.role == "B":
+            # Defensive: favor safety, recovery, governance
+            for t in BASE_TEMPLATES[4:9]:
+                noisy = normalize_action([x + (rng() - 0.5) * 0.06 for x in t])
+                candidates.append(noisy)
+            # Extra conservative in BUFFER/RETREAT
+            if mode in [MODE_BUFFER, MODE_RETREAT]:
+                candidates.append(normalize_action([0.05, 0.55, 0.20, 0.20]))
+                candidates.append(normalize_action([0.05, 0.05, 0.05, 0.85]))
+
+        elif self.role == "C":
+            # Balancer: middle ground between A and B
+            for t in BASE_TEMPLATES[::2]:
+                noisy = normalize_action([x + (rng() - 0.5) * 0.05 for x in t])
+                candidates.append(noisy)
+            if self.world_affinity == "Vulnerable":
+                # Minimum-action recovery paths
+                candidates.append(normalize_action([0.10, 0.40, 0.25, 0.25]))
+                candidates.append(normalize_action([0.08, 0.45, 0.22, 0.25]))
+            elif self.world_affinity == "FastExpansionRace":
+                # Controlled acceleration
+                candidates.append(normalize_action([0.38, 0.25, 0.20, 0.17]))
+                candidates.append(normalize_action([0.35, 0.28, 0.20, 0.17]))
+
+        return candidates
+
+    def pseudo_rollout(self, state, action, world_params, rng, depth):
+        """
+        Pseudo-death test: simulate action for `depth` steps.
+        Returns (alive: bool, final_state, margin_at_end)
+        This is the quantum observation that collapses the superposition.
+        "Always return alive" invariant: if margin critically low, return False immediately.
+        """
+        s = state[:]
+        for _ in range(depth):
+            # "Always return alive" check before each step
+            if survival_margin(s) < 5:
+                return False, s, survival_margin(s)
+            s = transition(s, action, world_params, rng)
+            if is_true_ruin(s):
+                self._pseudo_death_history.append(action)
+                return False, s, survival_margin(s)
+        return True, s, survival_margin(s)
+
+    def screen_candidates(self, state, candidates, world_params, rng, signal):
+        """
+        Quantum superposition -> wave function collapse.
+        Test each candidate via pseudo-rollout.
+        Return only live-confirmed aiming points.
+        """
+        mode = signal.get("mode", MODE_NEUTRAL)
+        depth = SHINOBI_PSEUDO_DEATH_DEPTH
+
+        # Deeper probe in danger modes
+        if mode in [MODE_BUFFER, MODE_RETREAT]:
+            depth = SHINOBI_PSEUDO_DEATH_DEPTH + 2
+
+        live_aims = []
+        for c in candidates:
+            alive, final_state, margin = self.pseudo_rollout(
+                state, c, world_params, rng, depth
+            )
+            if alive:
+                score = self._score_aim(final_state, margin, mode)
+                live_aims.append((c, score, margin))
+
+        # Sort by score
+        live_aims.sort(key=lambda x: x[1], reverse=True)
+        return live_aims
+
+    def _score_aim(self, state, margin, mode):
+        """Score a live aiming point."""
+        R, E, G, O, K, X = state
+        base = (
+            0.35 * margin / 50.0 +
+            0.20 * (O / 130) +
+            0.15 * (K / 130) +
+            0.15 * (G / 130) -
+            0.15 * (X / 130)
+        )
+        if mode == MODE_RACE:
+            base += 0.10 * (R / 130)
+        return base
+
+
+class ShinobiFleet:
+    """
+    12-unit Shinobi fleet.
+    Parallel operation: all units submit simultaneously.
+    Norn/Skuld manages task assignment.
+    Ping function: fleet liveness = communication path liveness.
+    """
+
+    def __init__(self):
+        self.units = self._build_fleet()
+        self._ping_count = 0
+
+    def _build_fleet(self):
+        units = []
+        uid = 0
+        worlds = ["Normal", "Vulnerable", "PlanetaryStress", "LateStagnation", "FastExpansionRace"]
+
+        # Twin for each world (A + B)
+        for world in worlds:
+            units.append(ShinobiUnit(world, "A", uid)); uid += 1
+            units.append(ShinobiUnit(world, "B", uid)); uid += 1
+
+        # Triplet C for Vulnerable and Race
+        units.append(ShinobiUnit("Vulnerable", "C", uid)); uid += 1
+        units.append(ShinobiUnit("FastExpansionRace", "C", uid)); uid += 1
+
+        return units  # 12 units total
+
+    def ping(self):
+        """Fleet is alive. Communication path verified."""
+        self._ping_count += 1
+        return True
+
+    def advance_explore(self, state, world_params, signal, rng, nrmo_admissible_fn):
+        """
+        All units explore in parallel.
+        Shinobi role: scout only. Provides aiming hints, not commands.
+        Omega Full retains final search authority.
+
+        v2 (Apr 22, 2026): NEUTRAL mode returns empty aims.
+        Shinobi's value is conditional on a detected threat pattern.
+        When MAPLayer reports no anomaly, pseudo-rollout at depth=3
+        cannot distinguish safe from tail-exposed candidates -- the
+        3-step view misses the actual failure horizon, and Omega Full
+        was being nudged toward false-positive "live" trajectories.
+        Ping/liveness continues via `ping()` (called from Norn/Skuld).
+        Tradeoff: PlanetaryStress drops some when MAPLayer fails to
+        flag it as dangerous (MAPLayer threshold-tuning is follow-up work).
+        """
+        mode = signal.get("mode", MODE_NEUTRAL)
+        if mode == MODE_NEUTRAL:
+            return []
+
+        all_live = []
+
+        # Reduced active units - only most relevant
+        active_units = self._select_active_units(signal)
+        # Cap at 4 units max to reduce interference
+        active_units = active_units[:4]
+
+        for unit in active_units:
+            candidates = unit.generate_candidates(state, signal, rng)
+
+            # NRMO constitutional filter
+            admissible = [c for c in candidates if nrmo_admissible_fn(c, state)]
+
+            if not admissible:
+                continue
+
+            # Pseudo-rollout screening
+            live = unit.screen_candidates(state, admissible, world_params, rng, signal)
+            all_live.extend(live)
+
+        if not all_live:
+            return []
+
+        all_live.sort(key=lambda x: x[1], reverse=True)
+        return all_live[:SHINOBI_TOP_AIMS]
+
+    def _select_active_units(self, signal):
+        """
+        Activate units based on world mixture.
+        Higher mixture weight -> unit more likely active.
+        Always activate balancers if danger/race confidence high.
+        """
+        mode = signal.get("mode", MODE_NEUTRAL)
+        mixture = signal.get("world_mixture", {})
+
+        active = []
+        for unit in self.units:
+            affinity_weight = mixture.get(unit.world_affinity, 0.2)
+
+            # Always activate in relevant modes
+            if mode in [MODE_BUFFER, MODE_RETREAT] and unit.world_affinity == "Vulnerable":
+                active.append(unit)
+            elif mode == MODE_RACE and unit.world_affinity == "FastExpansionRace":
+                active.append(unit)
+            elif affinity_weight > 0.15:
+                active.append(unit)
+
+        # Always keep at least 3 units active
+        if len(active) < 3:
+            active = self.units[:3]
+
+        return active
+
+    def get_dead_patterns(self):
+        """Return all accumulated pseudo-death patterns from fleet."""
+        patterns = []
+        for unit in self.units:
+            patterns.extend(unit._pseudo_death_history)
+        return patterns
+
+\end{lstlisting}
+
+\section{\texttt{engine/norn.py}}
+\label{app:code:engine-norn-py}
+
+\paragraph{Purpose.} Interpretive perspective for drift detection.
+
+\paragraph{Length.} 266 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+engine/norn.py -- Norn (primary) and Skuld (backup) task managers
+Norse mythology: Norns who weave fate -- past, present, future.
+Skuld: "that which should become" -- backup, restores what should be.
+
+Norn manages:
+- Task generation, tracking, prioritization, completion
+- Engine sound (system state externalization)
+- Music (dashboard state)
+- TV (external data feed via MAPLayer)
+- Radio (async alerts via Shinobi ping)
+
+Skuld mirrors all Norn state continuously.
+If Norn fails, Skuld takes over immediately.
+"""
+import time
+from config.defaults import *
+
+
+class Task:
+    """A unit of work managed by Norn/Skuld."""
+    TYPES = ["OBSERVE", "PROBE", "HUNT", "AUDIT", "RECOVER", "ALERT"]
+
+    def __init__(self, task_type, priority, data=None):
+        self.task_type = task_type
+        self.priority = priority
+        self.data = data or {}
+        self.created_at = time.time()
+        self.completed = False
+        self.result = None
+
+    def complete(self, result=None):
+        self.completed = True
+        self.result = result
+
+
+class EngineSound:
+    """
+    Engine sound: real-time system state externalization.
+    Abnormal task detection and alert firing.
+    Delivered via Shinobi ping distribution (no separate comms layer).
+    """
+
+    def __init__(self):
+        self.alerts = []
+        self.state_log = []
+
+    def record(self, step, mode, signal, nrmo_admissible_count):
+        entry = {
+            "step": step,
+            "mode": MODE_NAMES[mode],
+            "danger_conf": round(signal.get("danger_confidence", 0), 3),
+            "race_conf": round(signal.get("race_confidence", 0), 3),
+            "admissible_count": nrmo_admissible_count,
+        }
+        self.state_log.append(entry)
+
+        # Alert conditions
+        if mode == MODE_RETREAT:
+            self.alerts.append({"step": step, "level": "CRITICAL", "msg": "RETREAT mode active"})
+        elif mode == MODE_BUFFER:
+            self.alerts.append({"step": step, "level": "WARNING", "msg": "BUFFER mode active"})
+        elif nrmo_admissible_count <= 1:
+            self.alerts.append({"step": step, "level": "WARNING", "msg": "Near-zero admissible set"})
+
+    def get_recent_alerts(self, n=5):
+        return self.alerts[-n:]
+
+    def summary(self):
+        if not self.state_log:
+            return {}
+        modes = [e["mode"] for e in self.state_log]
+        return {
+            "total_steps": len(self.state_log),
+            "retreat_steps": modes.count("RETREAT"),
+            "buffer_steps": modes.count("BUFFER"),
+            "race_steps": modes.count("RACE"),
+            "total_alerts": len(self.alerts),
+        }
+
+
+class Norn:
+    """
+    Primary task manager. Weaves past, present, future.
+    Manages all 12 Shinobi units + Omega Full + MAPLayer coordination.
+    """
+
+    def __init__(self):
+        self.task_queue = []
+        self.completed_tasks = []
+        self.engine_sound = EngineSound()
+        self._step = 0
+        self._alive = True
+        self._state_snapshot = None
+
+        # Skuld mirror will be set externally
+        self.skuld = None
+
+    def tick(self, state, signal, nrmo_admissible_count):
+        """
+        Called every step. Records system state. Generates tasks. Fires alerts.
+        """
+        if not self._alive:
+            return
+
+        self._step += 1
+        mode = signal.get("mode", MODE_NEUTRAL)
+
+        # Engine sound
+        self.engine_sound.record(self._step, mode, signal, nrmo_admissible_count)
+
+        # Generate tasks for this step
+        self._generate_tasks(state, signal, mode)
+
+        # Take state snapshot for Skuld mirroring
+        self._state_snapshot = {
+            "step": self._step,
+            "mode": mode,
+            "signal": dict(signal),
+            "task_count": len(self.task_queue),
+            "alerts": len(self.engine_sound.alerts),
+        }
+
+        # Mirror to Skuld
+        if self.skuld:
+            self.skuld.mirror(self._state_snapshot)
+
+    def _generate_tasks(self, state, signal, mode):
+        """Generate tasks based on current mode and signal."""
+        # Clear completed tasks
+        self.task_queue = [t for t in self.task_queue if not t.completed]
+
+        # Always: OBSERVE
+        self.task_queue.append(Task("OBSERVE", priority=1))
+
+        # Always: AUDIT (NRMO)
+        self.task_queue.append(Task("AUDIT", priority=0))  # highest priority
+
+        # Mode-dependent tasks
+        if mode in [MODE_BUFFER, MODE_RETREAT]:
+            self.task_queue.append(Task("PROBE", priority=2, data={"units": "Vulnerable_twins"}))
+            if mode == MODE_RETREAT:
+                self.task_queue.append(Task("RECOVER", priority=1))
+        elif mode == MODE_RACE:
+            self.task_queue.append(Task("PROBE", priority=2, data={"units": "Race_twins"}))
+            self.task_queue.append(Task("HUNT", priority=1, data={"depth": "deep"}))
+        else:
+            self.task_queue.append(Task("PROBE", priority=3))
+            self.task_queue.append(Task("HUNT", priority=2))
+
+        # Alert task if critical
+        if mode == MODE_RETREAT:
+            self.task_queue.append(Task("ALERT", priority=0, data={"level": "CRITICAL"}))
+
+        # Keep queue manageable
+        if len(self.task_queue) > NORN_MAX_TASKS:
+            self.task_queue = sorted(self.task_queue, key=lambda t: t.priority)[:NORN_MAX_TASKS]
+
+    def get_active_mode(self):
+        """Return current binding mode."""
+        if self._state_snapshot:
+            return self._state_snapshot.get("mode", MODE_NEUTRAL)
+        return MODE_NEUTRAL
+
+    def get_engine_sound_summary(self):
+        return self.engine_sound.summary()
+
+    def get_alerts(self):
+        return self.engine_sound.get_recent_alerts()
+
+    def fail(self):
+        """Simulate Norn failure -- Skuld takes over."""
+        self._alive = False
+
+    def is_alive(self):
+        return self._alive
+
+
+class Skuld:
+    """
+    Backup task manager. "That which should become."
+    Continuously mirrors Norn state.
+    Takes over immediately if Norn fails.
+    Monitored by Shinobi ping (fleet liveness = Skuld health check).
+    """
+
+    def __init__(self):
+        self._mirror_state = None
+        self._active = False
+        self._step = 0
+        self.engine_sound = EngineSound()
+
+    def mirror(self, snapshot):
+        """Receive mirror state from Norn."""
+        self._mirror_state = dict(snapshot)
+
+    def activate(self):
+        """Take over from failed Norn."""
+        self._active = True
+        if self._mirror_state:
+            self._step = self._mirror_state.get("step", 0)
+
+    def is_active(self):
+        return self._active
+
+    def tick(self, state, signal, nrmo_admissible_count):
+        """
+        Skuld takes over Norn responsibilities when active.
+        Restores 'what should be' from last known state.
+        """
+        if not self._active:
+            return
+        self._step += 1
+        mode = signal.get("mode", MODE_NEUTRAL)
+        self.engine_sound.record(self._step, mode, signal, nrmo_admissible_count)
+
+    def get_engine_sound_summary(self):
+        return self.engine_sound.summary()
+
+    def ping_check(self, shinobi_fleet):
+        """
+        Skuld health check via Shinobi ping.
+        If fleet is alive, communication path is alive.
+        """
+        return shinobi_fleet.ping()
+
+
+class NornSkuldSystem:
+    """
+    Combined Norn + Skuld system with automatic failover.
+    This is what the simulator interacts with.
+    """
+
+    def __init__(self):
+        self.norn = Norn()
+        self.skuld = Skuld()
+        self.norn.skuld = self.skuld  # wire up mirroring
+
+    def tick(self, state, signal, nrmo_admissible_count, shinobi_fleet=None):
+        """Main tick -- delegates to Norn or Skuld."""
+        # Skuld health check via Shinobi ping
+        if shinobi_fleet:
+            self.skuld.ping_check(shinobi_fleet)
+
+        if self.norn.is_alive():
+            self.norn.tick(state, signal, nrmo_admissible_count)
+        else:
+            # Failover to Skuld
+            if not self.skuld.is_active():
+                self.skuld.activate()
+            self.skuld.tick(state, signal, nrmo_admissible_count)
+
+    def get_active_mode(self):
+        if self.norn.is_alive():
+            return self.norn.get_active_mode()
+        return self.skuld._mirror_state.get("mode", MODE_NEUTRAL) if self.skuld._mirror_state else MODE_NEUTRAL
+
+    def get_summary(self):
+        active = self.norn if self.norn.is_alive() else self.skuld
+        return active.get_engine_sound_summary()
+
+    def get_alerts(self):
+        if self.norn.is_alive():
+            return self.norn.get_alerts()
+        return self.skuld.engine_sound.get_recent_alerts()
+
+\end{lstlisting}
+
+\section{\texttt{engine/omega\_full.py}}
+\label{app:code:engine-omega-full-py}
+
+\paragraph{Purpose.} StrongEngine Omega Full deep search.
+
+\paragraph{Length.} 530 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+engine/omega_full.py -- StrongEngine Omega Full
+Full deep search within Shinobi-confirmed aiming points.
+Signal-conditioned mode binding. No governance leakage.
+Role revised: execution only, navigation by Shinobi.
+"""
+from core.state import transition, is_true_ruin, normalize_action, clip
+from config.defaults import *
+
+
+class IntermediateEvaluator:
+    """
+    Trajectory quality evaluation beyond binary survive/ruin.
+    Lives in execution layer. Does NOT use governance constants.
+    Uses only proxy indicators from observed state trends.
+    """
+
+    def score(self, trajectory_states, mode):
+        if len(trajectory_states) < 2:
+            return 0.0
+
+        s0 = trajectory_states[0]
+        sf = trajectory_states[-1]
+
+        from core.state import survival_margin
+        margin_start = survival_margin(s0)
+        margin_end = survival_margin(sf)
+        margin_score = (margin_end - margin_start) / max(1, abs(margin_start) + 10)
+        margin_score = max(-1, min(1, margin_score))
+
+        # D2: Exposure growth cost
+        x_growth = sf[5] - s0[5]
+        exposure_score = -max(0, x_growth) / 20.0
+
+        # D3: Recovery quality (O and K improvement)
+        ok_improvement = ((sf[3] - s0[3]) + (sf[4] - s0[4])) / 20.0
+        recovery_score = max(-1, min(1, ok_improvement))
+
+        # D5: Degradation cluster (multiple indicators dropping)
+        drops = sum(1 for i in range(5) if sf[i] < s0[i] - 3)
+        degradation_score = -0.1 * drops
+
+        # D6: Over-conservatism in RACE mode
+        conservatism_score = 0.0
+        if mode == MODE_RACE:
+            growth_taken = s0[0]  # proxy for action taken
+            if sf[0] < s0[0] - 2:
+                conservatism_score = -0.1
+
+        return (
+            0.35 * margin_score +
+            0.25 * exposure_score +
+            0.20 * recovery_score +
+            0.15 * degradation_score +
+            0.05 * conservatism_score
+        )
+
+
+class OmegaFull:
+    """
+    Execution engine. Full deep search within Shinobi aiming points.
+    Mode-conditioned parameter binding.
+    Does NOT define ruin. Does NOT access governance thresholds.
+    """
+
+    def __init__(self):
+        self.evaluator = IntermediateEvaluator()
+        self._failure_memory = []
+
+    def select_action(self, state, admissible_set, shinobi_aims, world_params, signal, rng):
+        """
+        Main entry point.
+        Formal: a_t = Omega(A_t) where a_t in A_t always holds.
+        shinobi_aims: list of (action, score, margin) from Shinobi fleet.
+        admissible_set: NRMO-filtered candidate set (constitutional boundary).
+        """
+        mode = signal.get("mode", MODE_NEUTRAL)
+        params = MODE_PARAMS[mode]
+
+        # Generate full candidate pool within Shinobi aiming directions
+        candidates = self._generate_candidates(
+            state, shinobi_aims, params, rng, world_params
+        )
+
+        # Final NRMO filter (constitutional boundary -- always applied)
+        candidates = [c for c in candidates if c in admissible_set or
+                      self._in_admissible(c, admissible_set)]
+
+        if not candidates:
+            candidates = admissible_set if admissible_set else [normalize_action([0.15, 0.35, 0.25, 0.25])]
+
+        # Evaluate all candidates
+        scored = []
+        for c in candidates:
+            sc = self._evaluate(c, state, world_params, params, signal, rng)
+            scored.append((c, sc))
+
+        if not scored:
+            return normalize_action([0.15, 0.35, 0.25, 0.25])
+
+        scored.sort(key=lambda x: x[1], reverse=True)
+
+        # v2.2 portfolio combination attempt reverted (Apr 22, 2026).
+        # 500-run validation: PStress 51->48, Vulnerable 24->20, overall
+        # 66.0->65.0. Portfolio hedge dilution hurt Vulnerable (K-starvation
+        # penalty was weakened by hedge averaging) without recovering PStress.
+        # Keeping single-best selection. See SESSION_HANDOFF-6.5 Sec.3 + this
+        # file's v2.2 attempt log for full reasoning.
+        return scored[0][0]
+
+    def _build_portfolio(self, scored, state, mode, world_params):
+        """
+        Portfolio composition: w1*main + w2*hedge + w3*probe.
+        Hedge is selected to be drift-safe (g <= g_sust) when possible.
+        v5.2-style -- adapted to MAPLayer mode names.
+        """
+        if not scored:
+            return normalize_action([0.15, 0.35, 0.25, 0.25])
+
+        main = scored[0][0]
+        if len(scored) < 2:
+            return main
+
+        # Decisive pass-through: if top candidate strictly dominates,
+        # don't dilute (v5.2 behavior). Only active when not in edge/fragile state.
+        gap = scored[0][1] - scored[1][1]
+        from core.state import survival_margin
+        margin = survival_margin(state)
+        in_edge = margin < 20 or mode in [MODE_BUFFER, MODE_RETREAT]
+        if gap > 0.05 and not in_edge:
+            return main
+
+        # Portfolio weights by MAPLayer mode (translated from v5.2 PORTFOLIO_WEIGHTS)
+        # NEUTRAL/PROBE -> Normal (main-dominant)
+        # BUFFER/RETREAT -> Recovery (hedge-heavy -- this is the PStress fix)
+        # RACE -> Race (main-dominant, small probe)
+        if mode == MODE_BUFFER:
+            w1, w2, w3 = 0.55, 0.40, 0.05
+        elif mode == MODE_RETREAT:
+            w1, w2, w3 = 0.45, 0.50, 0.05
+        elif mode == MODE_RACE:
+            w1, w2, w3 = 0.75, 0.20, 0.05
+        elif in_edge:  # NEUTRAL/PROBE but fragile -- edge floor
+            w1, w2, w3 = 0.50, 0.40, 0.10
+        else:
+            w1, w2, w3 = 0.70, 0.20, 0.10
+
+        # Hedge selection: prefer drift-safe (g <= g_sust) with synergy
+        g_sust = self._sustainable_growth(state, world_params)
+        best_hedge_i = 1
+        best_score = -1e9
+        main_arch = self._classify_archetype(main)
+        drift_safe_found = False
+
+        for i in range(1, min(len(scored), 6)):
+            cand = scored[i][0]
+            cand_g = cand[0]
+            cand_arch = self._classify_archetype(cand)
+            syn = self._synergy_bonus(main_arch, cand_arch)
+            combined = scored[i][1] + syn
+            is_safe = cand_g <= g_sust
+            if is_safe:
+                combined += 0.02  # drift-safety bonus
+            if combined > best_score:
+                best_score = combined
+                best_hedge_i = i
+                if is_safe:
+                    drift_safe_found = True
+
+        # If no drift-safe hedge found in top-6, force-find one with high safeguard
+        if not drift_safe_found:
+            for i in range(1, len(scored)):
+                c = scored[i][0]
+                if c[0] <= g_sust and (c[1] > 0.30 or c[3] > 0.25):
+                    best_hedge_i = i
+                    break
+
+        hedge = scored[best_hedge_i][0]
+
+        # Probe: exploration-biased candidate from further down the ranking
+        if len(scored) > 2:
+            probe_idx = min(len(scored) - 1, 3)
+            probe = scored[probe_idx][0]
+        else:
+            probe = main
+            w1 += w3
+            w3 = 0.0
+
+        combined_action = [
+            w1 * main[k] + w2 * hedge[k] + w3 * probe[k]
+            for k in range(4)
+        ]
+        return normalize_action(combined_action)
+
+    @staticmethod
+    def _classify_archetype(action):
+        """Classify action by dominant component. v5.2-style."""
+        g, sf, lr, di = action
+        if g > 0.38: return "growth"
+        if sf > 0.38: return "safety"
+        if sf > 0.30 and di > 0.25: return "recovery"
+        if lr > 0.38: return "exploration"
+        if di > 0.38: return "governance_repair"
+        if sf > 0.35 and g < 0.12: return "eco_preserve"
+        spread = max(abs(g - 0.25), abs(sf - 0.25), abs(lr - 0.25), abs(di - 0.25))
+        if spread < 0.08: return "balanced"
+        return "hybrid"
+
+    @staticmethod
+    def _synergy_bonus(a1_arch, a2_arch):
+        """Pairwise archetype complementarity (v5.2 SYNERGY_MATRIX)."""
+        SYNERGY = {
+            ("eco_preserve", "exploration"): 0.04,
+            ("balanced", "eco_preserve"): 0.03,
+            ("exploration", "safety"): 0.03,
+            ("governance_repair", "recovery"): 0.04,
+            ("balanced", "exploration"): 0.02,
+            ("governance_repair", "safety"): 0.03,
+        }
+        pair = tuple(sorted([a1_arch, a2_arch]))
+        return SYNERGY.get(pair, 0.0)
+
+    def _generate_candidates(self, state, shinobi_aims, params, rng, world_params=None):
+        """
+        Generate candidates. Shinobi aiming points are hints only.
+        Omega Full generates its own full candidate pool independently.
+        Shinobi hints expand the pool but do not replace it.
+        This restores Omega Full as the primary execution engine.
+        v5.1: Rivalry-adaptive candidates when competitive pressure is high.
+        """
+        candidates = []
+        fan_out = params["fan_out"]
+        rivalry = (world_params or {}).get("rivalry_level", 0.15)
+
+        # PRIMARY: Omega Full's own candidate generation (baseline v5.0 behavior)
+        from engine.shinobi import BASE_TEMPLATES
+        for t in BASE_TEMPLATES:
+            noisy = normalize_action([x + (rng() - 0.5) * 0.06 for x in t])
+            candidates.append(noisy)
+
+        # Mutation: local perturbation of base templates
+        for t in BASE_TEMPLATES[:6]:
+            for _ in range(2):
+                mutated = normalize_action([x + (rng() - 0.5) * 0.05 for x in t])
+                candidates.append(mutated)
+
+        # Synthesis: pairwise combinations
+        for i in range(0, min(6, len(BASE_TEMPLATES)), 2):
+            for j in range(i+1, min(7, len(BASE_TEMPLATES)), 2):
+                a1 = BASE_TEMPLATES[i]
+                a2 = BASE_TEMPLATES[j]
+                synth = normalize_action([
+                    (a1[k] + a2[k]) / 2 + (rng() - 0.5) * 0.03
+                    for k in range(4)
+                ])
+                candidates.append(synth)
+
+        # SECONDARY: Shinobi hints (additive, not replacing)
+        # Reduced weight: expand around aims but don't dominate
+        for aim, aim_score, aim_margin in shinobi_aims:
+            n_variants = max(1, int(2 * fan_out))  # reduced from 6
+            for _ in range(n_variants):
+                variant = normalize_action([x + (rng() - 0.5) * 0.04 for x in aim])
+                candidates.append(variant)
+
+        # Wolf Pursuit
+        R, E, G, O, K, X = state
+        if (E >= WOLF_E_MIN and G >= WOLF_G_MIN and O >= WOLF_O_MIN and
+                K >= WOLF_K_MIN and X <= WOLF_X_MAX):
+            for _ in range(WOLF_EXTRA_CANDIDATES):
+                wolf = normalize_action([
+                    0.40 + rng() * 0.10,
+                    0.15 + rng() * 0.08,
+                    0.20 + rng() * 0.05,
+                    0.15 + rng() * 0.05,
+                ])
+                candidates.append(wolf)
+
+        # Edge Survival Guard
+        from core.state import survival_margin
+        margin = survival_margin(state)
+        if margin < 20 or (E < EDGE_E_THRESHOLD and X > 40):
+            candidates.append(normalize_action([0.08, 0.45, 0.22, 0.25]))
+            candidates.append(normalize_action([0.10, 0.40, 0.25, 0.25]))
+
+        # Risk-adjusted reference (baseline anchor)
+        risk_g = max(0.08, 0.36 - 0.18 * (X/130))
+        risk_s = 0.26 + 0.16 * (X/130)
+        candidates.append(normalize_action([risk_g, risk_s, 0.20, max(0.05, 1-risk_g-risk_s-0.20)]))
+
+        # v5.1: Rivalry-adaptive candidates -- when rivalry is high,
+        # generate candidates that balance growth with stability.
+        # In competitive worlds, NOT growing is also dangerous.
+        if rivalry > 0.25:
+            for i in range(3):
+                rv_g = max(0.10, 0.30 - 0.06*rivalry + 0.04*i*rivalry)
+                rv_s = 0.26 + 0.08*(X/130) + 0.04*rivalry
+                rv_l = 0.20 + 0.04*max(0,(50-O)/50)
+                rv_d = 0.18 + 0.06*max(0,(45-G)/45)
+                candidates.append(normalize_action([
+                    rv_g + (rng()-0.5)*0.03,
+                    rv_s + (rng()-0.5)*0.03,
+                    rv_l + (rng()-0.5)*0.03,
+                    rv_d + (rng()-0.5)*0.03,
+                ]))
+
+        return candidates
+
+    def _evaluate(self, action, state, world_params, params, signal, rng):
+        """
+        Evaluate candidate action via Monte Carlo rollout.
+        Intermediate evaluation integrated.
+        Action-level bonus for safeguard investment when E is depleted.
+        """
+        depth = params["rollout_depth"]
+        repeats = OMEGA_ROLLOUT_REPEATS
+        mode = signal.get("mode", MODE_NEUTRAL)
+        lambda_drift = params["lambda_drift"]
+        fragility_penalty = params["fragility_penalty"]
+
+        g, s, l, d = action
+        R, E, G, O, K, X = state
+
+        # Action-level safeguard bonus: reward high s when E is low
+        # This is NOT governance -- it's execution-level environmental awareness
+        safeguard_bonus = 0.0
+        if E < 40:
+            safeguard_bonus = s * (40 - E) / 40 * 0.3
+        if E < 25:
+            safeguard_bonus = s * (25 - E) / 25 * 0.5
+
+        total_score = 0.0
+        survived_count = 0
+        trajectory_states = [state[:]]
+
+        for _ in range(repeats):
+            s = state[:]
+            episode_score = 0.0
+            alive = True
+
+            for step in range(depth):
+                s = transition(s, action, world_params, rng)
+                if is_true_ruin(s):
+                    alive = False
+                    episode_score -= 50
+                    break
+
+                # v5.1/v5.2: State-adaptive rollout default.
+                # v2.3 (Apr 22, 2026): Attempted to purify this to pure
+                # riskadjusted_reference(s) (X-only response), as v5.2 does.
+                # 500-run validation: FER +15 (57->72), but Vulnerable -8
+                # (24->16) -- Vulnerable dies from E/R/G depletion, not X,
+                # so X-only rollout response doesn't protect it. Keeping
+                # the multi-factor _adaptive_rollout_default which responds
+                # to X, rivalry, G, E jointly. The rollout purity hypothesis
+                # is incompatible with the Vulnerable gain from v2.1.
+                if step > 0:
+                    cont = self._adaptive_rollout_default(s, world_params)
+                    s = transition(s, cont, world_params, rng)
+                    if is_true_ruin(s):
+                        alive = False
+                        episode_score -= 50
+                        break
+
+                trajectory_states.append(s[:])
+
+            if alive:
+                survived_count += 1
+                R, E, G, O, K, X = s
+                g = action[0]
+
+                # Productivity score -- E and G gated (baseline v5.0)
+                productivity = g * min(E/55, 1) * min(G/45, 1)
+
+                # v2.1 (Apr 22, 2026): Mode-aware productivity weight.
+                # Defensive modes slightly down-weight productivity so that
+                # defensive candidates can compete with growth candidates
+                # on score. Calibration: small shifts only -- large shifts
+                # cause growth collapse in mixed-mode episodes (measured).
+                # v2.5 (Apr 25, 2026): PROBE penalty added (was 1.00).
+                # Source attribution test on C3 adapter showed Recovery
+                # mode patch (mapped from MAPLayer PROBE+BUFFER+RETREAT)
+                # was responsible for FER +12pt. PROBE alone is the most
+                # frequent defensive mode in FER (~32% of steps) so a
+                # PROBE-specific penalty captures most of the gain.
+                if mode == MODE_RETREAT:
+                    prod_w = 0.70
+                elif mode == MODE_BUFFER:
+                    prod_w = 0.85
+                elif mode == MODE_PROBE:
+                    prod_w = 0.92
+                elif mode == MODE_RACE:
+                    prod_w = 1.10
+                else:  # NEUTRAL
+                    prod_w = 1.00
+
+                # v2.1: K-starvation penalty in defensive modes only.
+                # Vulnerable deaths via passive_knowledge_stagnation came from
+                # over-defensive posture starving K growth. Applied only when
+                # mode is defensive AND K is actually near the passive-ruin
+                # threshold (K<24), so it doesn't bias healthy trajectories.
+                k_starve_penalty = 0.0
+                if mode in [MODE_BUFFER, MODE_RETREAT] and K < 24:
+                    k_starve_penalty = 0.20 * (24 - K) / 24
+
+                # Base score -- stronger E protection
+                e_penalty = max(0, (45 - E) / 45) * 0.5  # penalize E depletion
+                base = (
+                    productivity * prod_w +
+                    0.45 * (O/130) +
+                    0.20 * (K/130) +
+                    0.15 * (G/130) +
+                    0.15 * (E/130) -
+                    0.40 * (X/130) -
+                    e_penalty -
+                    k_starve_penalty
+                )
+
+                # Drift penalty (lambda_drift)
+                g_sust = self._sustainable_growth(s, world_params)
+                drift = self._estimate_drift(g, g_sust, s, world_params)
+                base -= lambda_drift * drift
+
+                # Fragility penalty
+                from core.state import survival_margin
+                margin = survival_margin(s)
+                if margin < 20:
+                    base -= fragility_penalty * (20 - margin) / 20
+
+                episode_score += base
+
+            total_score += episode_score
+
+        # Intermediate evaluation
+        intermediate = self.evaluator.score(trajectory_states, mode)
+        base_score = total_score / repeats
+        survived_ratio = survived_count / repeats
+
+        # v5.1: Softened scaling -- pure multiplicative was too punishing
+        # for deeper rollouts in hostile worlds. Now: 0.4 + 0.6*ratio
+        # so 50% survival -> 0.7x instead of 0.5x
+        survival_signal = 0.4 + 0.6 * survived_ratio
+
+        # Combine: softened survival x base + intermediate quality + safeguard bonus
+        final = base_score * survival_signal + 0.15 * intermediate + safeguard_bonus
+
+        return final
+
+    def _risk_adjusted_reference(self, state):
+        """
+        v5.2-style pure Risk-Adj reference action.
+        Used for rollout continuation. Reacts to X only --
+        clean X-responsive g reduction without multi-factor noise.
+        This is what v5.2 rolled out with at each step, and is
+        hypothesized to contribute to its PStress 65% survival.
+        """
+        R, E, G, O, K, X = state
+        g = max(0.08, min(0.48, 0.36 - 0.18 * (X / 130)))
+        sf = 0.26 + 0.16 * (X / 130)
+        lr = 0.20
+        di = max(0.05, 1 - g - sf - lr)
+        return normalize_action([g, sf, lr, di])
+
+    def _adaptive_rollout_default(self, state, world_params):
+        """
+        v5.1/v5.2: State/world-adaptive rollout continuation action.
+        Base is [0.24, 0.26, 0.26, 0.24] but adjusts based on:
+          - rivalry: reduce growth, increase safety (prevent X spiral)
+          - high X: more safety
+          - low G: more governance distribution
+        This is execution-layer environmental awareness, not governance coupling.
+        """
+        g, sf, lr, di = 0.24, 0.26, 0.26, 0.24
+        R, E, G, O, K, X = state
+        rivalry = (world_params or {}).get("rivalry_level", 0.15)
+
+        if rivalry > 0.20:
+            adj = min(0.08, (rivalry - 0.20) * 0.20)
+            g -= adj
+            sf += adj * 0.7
+            di += adj * 0.3
+        if X > 40:
+            x_adj = min(0.06, (X - 40) / 130 * 0.12)
+            sf += x_adj
+            g = max(0.08, g - x_adj * 0.6)
+        if G < 40:
+            g_adj = min(0.05, (40 - G) / 130 * 0.10)
+            di += g_adj
+            g = max(0.08, g - g_adj * 0.5)
+        # Low E also needs safety boost
+        if E < 40:
+            e_adj = min(0.06, (40 - E) / 130 * 0.15)
+            sf += e_adj
+            g = max(0.08, g - e_adj * 0.6)
+
+        return normalize_action([max(0.05, g), max(0.05, sf), max(0.05, lr), max(0.05, di)])
+
+    def _sustainable_growth(self, state, world_params):
+        R, E, G, O, K, X = state
+        env_drag = world_params.get("environmental_drag", 0.02)
+        g_sust = 0.28 + 0.08*(E/100) + 0.06*(G/100) - 0.10*(X/100) - 0.05*env_drag
+        return max(0.15, min(0.40, g_sust))
+
+    def _estimate_drift(self, g, g_sust, state, world_params):
+        R, E, G, O, K, X = state
+        env_drag = world_params.get("environmental_drag", 0.02)
+        tail_prob = world_params.get("tail_probability", 0.03)
+        rivalry = world_params.get("rivalry_level", 0.15)
+        excess = max(0, g - g_sust)
+        env_sensitivity = env_drag + 0.5 * tail_prob
+        exposure_factor = 1 + 0.5 * (X/100)
+        gov_buffer = 1 - 0.3 * (G/100)
+        drift = excess * env_sensitivity * exposure_factor * gov_buffer
+
+        # v5.1: Rivalry tolerance -- in competitive worlds, some growth
+        # excess is necessary to survive; reduce drift penalty slightly
+        if rivalry > 0.25:
+            drift *= max(0.6, 1.0 - rivalry * 0.5)
+
+        return drift
+
+    @staticmethod
+    def _in_admissible(candidate, admissible_set):
+        """Check if candidate is close enough to any admissible action."""
+        for a in admissible_set:
+            dist = sum(abs(candidate[i] - a[i]) for i in range(4))
+            if dist < 0.15:
+                return True
+        return False
+
+\end{lstlisting}
+
+\section{\texttt{simulation/simulator.py}}
+\label{app:code:simulation-simulator-py}
+
+\paragraph{Purpose.} Episode runner.
+
+\paragraph{Length.} 205 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+simulation/simulator.py -- Episode runner
+Full stack: NRMO + Norn/Skuld + MAPLayer + Shinobi(12) + Omega Full
+
+Architecture:
+NRMO (kernel -- unconditional full audit every step)
+    v
+Norn/Skuld (task manager)
+    +-- MAPLayer (observation / world inference / 3D V-Cache)
+    +-- Shinobi fleet (12 units -- advance explore + pseudo-death)
+    `-- Omega Full (full deep search within confirmed aiming points)
+    v
+NRMO permission zone -- integrated output
+"""
+from core.state import transition, is_true_ruin, ruin_cause, normalize_action, survival_margin
+from core.worlds import sample_world_params
+from governance.nrmo_core import NRMOKernel
+from governance.tuning_layer import AdaptiveTuningLayer
+from engine.map_layer import MAPLayer
+from engine.shinobi import ShinobiFleet
+from engine.norn import NornSkuldSystem
+from config.defaults import *
+
+# v2.4 (Apr 24, 2026): Option C -- optional v5.2 Omega Full adapter.
+# Set env var OMEGA_BACKEND=v52 to route action selection through unmodified
+# v5.2 OmegaFullEngine via adapter. Default remains v2.1's OmegaFull.
+import os as _os
+_OMEGA_BACKEND = _os.environ.get("OMEGA_BACKEND", "v21")
+if _OMEGA_BACKEND == "v52":
+    from engine.omega_v52_adapter import OmegaV52Adapter as OmegaFull
+else:
+    from engine.omega_full import OmegaFull
+
+
+def lcg_rng(seed):
+    """Simple deterministic RNG."""
+    state = seed
+    def rng():
+        nonlocal state
+        state = (state * 1664525 + 1013904223) & 0xFFFFFFFF
+        return state / 0xFFFFFFFF
+    return rng
+
+
+def run_episode(world_name, horizon, seed, lambda_drift=1.0):
+    """
+    Run one complete episode with the full stack.
+    Returns episode result dict.
+    """
+    rng = lcg_rng(seed)
+
+    # Initialize world
+    world_params = sample_world_params(world_name, rng)
+    state = INITIAL_STATE[:]
+    history = [state[:]]
+
+    # Initialize full stack
+    nrmo = NRMOKernel()
+    tuning_layer = AdaptiveTuningLayer()
+    map_layer = MAPLayer()
+    shinobi_fleet = ShinobiFleet()
+    omega = OmegaFull()
+    norn_skuld = NornSkuldSystem()
+
+    # Tracking
+    true_ruin = False
+    passive_ruin = False
+    passive_ruin_cause = None
+    lifespan = 0
+    prev_state = None
+
+    for t in range(horizon):
+        lifespan = t + 1
+
+        # -- 1. MAPLayer: continuous observation ------------------
+        signal = map_layer.observe(state, prev_state)
+        mode = signal.get("mode", MODE_NEUTRAL)
+
+        # -- 2. NRMO kernel: generate candidate pool ---------------
+        # Adaptive tuning update (state-responsive thresholds)
+        tuning = tuning_layer.update(state, signal)
+        nrmo.tuning = tuning
+
+        # Generate raw candidates for NRMO to filter
+        raw_candidates = _generate_raw_candidates(state, rng, mode)
+
+        # Constitutional filter -- unconditional every step
+        admissible = nrmo.construct_admissible_set(raw_candidates, state)
+
+        # -- 3. Norn/Skuld: task management -----------------------
+        norn_skuld.tick(state, signal, len(admissible), shinobi_fleet)
+
+        # -- 4. Shinobi fleet: advance exploration -----------------
+        # Provide NRMO admissibility function for Shinobi to use
+        def nrmo_admissible_fn(action, s):
+            return nrmo._veto(action, s)
+
+        shinobi_aims = shinobi_fleet.advance_explore(
+            state, world_params, signal, rng, nrmo_admissible_fn
+        )
+
+        # -- 5. Omega Full: full deep search within aiming points ------
+        chosen = omega.select_action(
+            state, admissible, shinobi_aims, world_params, signal, rng
+        )
+
+        # -- 6. Final NRMO constitutional check --------------------
+        # Formal: a_t in A_t must always hold
+        if not nrmo._veto(chosen, state):
+            chosen = admissible[0] if admissible else normalize_action([0.15, 0.35, 0.25, 0.25])
+
+        # -- 7. State transition ------------------------------------
+        prev_state = state[:]
+        state = transition(state, chosen, world_params, rng)
+        history.append(state[:])
+
+        # -- 8. True ruin check -------------------------------------
+        if is_true_ruin(state):
+            true_ruin = True
+            break
+
+        # -- 9. Passive ruin check ----------------------------------
+        pr, pr_cause = nrmo.passive_ruin_check(history)
+        if pr:
+            passive_ruin = True
+            passive_ruin_cause = pr_cause
+            break
+
+        # -- 10. Thompson Sampling update ---------------------------
+        # End of step: update bandit based on whether we survived
+        survived_step = not is_true_ruin(state)
+        if mode in [MODE_BUFFER, MODE_RETREAT]:
+            map_layer.update_thompson(True, survived_step, "defensive")
+        elif mode == MODE_RACE:
+            map_layer.update_thompson(True, survived_step, "race")
+
+    # Final state metrics
+    final = state
+    alive = not true_ruin and not passive_ruin
+
+    return {
+        "alive": alive,
+        "true_ruin": true_ruin,
+        "passive_ruin": passive_ruin,
+        "ruin_cause": ruin_cause(state) if true_ruin else passive_ruin_cause,
+        "lifespan": lifespan,
+        "final_state": final,
+        "final_R": final[0],
+        "final_E": final[1],
+        "final_G": final[2],
+        "final_O": final[3],
+        "final_K": final[4],
+        "final_X": final[5],
+        "survival_margin_final": survival_margin(final),
+        "norn_summary": norn_skuld.get_summary(),
+    }
+
+
+def _generate_raw_candidates(state, rng, mode):
+    """Generate raw candidates for NRMO to filter."""
+    from engine.shinobi import BASE_TEMPLATES
+    candidates = []
+
+    # Base templates
+    for t in BASE_TEMPLATES:
+        noisy = normalize_action([x + (rng() - 0.5) * 0.06 for x in t])
+        candidates.append(noisy)
+
+    # Mode-specific additions
+    if mode == MODE_RETREAT:
+        candidates.append(normalize_action([0.05, 0.55, 0.20, 0.20]))
+        candidates.append(normalize_action([0.05, 0.05, 0.05, 0.85]))
+    elif mode == MODE_RACE:
+        candidates.append(normalize_action([0.50, 0.20, 0.15, 0.15]))
+        candidates.append(normalize_action([0.45, 0.25, 0.15, 0.15]))
+
+    # Risk-adjusted reference
+    R, E, G, O, K, X = state
+    risk_g = max(0.08, 0.36 - 0.18 * (X/130))
+    risk_s = 0.26 + 0.16 * (X/130)
+    candidates.append(normalize_action([risk_g, risk_s, 0.20, max(0.05, 1-risk_g-risk_s-0.20)]))
+
+    return candidates
+
+
+def run_experiment(worlds, strategies, horizon, runs_per_cell):
+    """
+    Full factorial experiment.
+    strategies: list of strategy names (currently only "Omega_Full_Full_Stack")
+    Returns results dict.
+    """
+    results = {}
+
+    for world in worlds:
+        results[world] = {}
+        for strategy in strategies:
+            episodes = []
+            for run in range(runs_per_cell):
+                seed = 42 + run * 7919 + len(world) * 1013 + len(strategy) * 3571
+                ep = run_episode(world, horizon, seed)
+                episodes.append(ep)
+            results[world][strategy] = episodes
+
+    return results
+
+\end{lstlisting}
+
+\section{\texttt{metrics/metrics.py}}
+\label{app:code:metrics-metrics-py}
+
+\paragraph{Purpose.} Aggregation and composite scoring.
+
+\paragraph{Length.} 93 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+metrics/metrics.py -- Aggregation and composite scoring
+"""
+from config.defaults import *
+
+
+def aggregate(episodes):
+    """Aggregate episode results into summary metrics."""
+    n = len(episodes)
+    if n == 0:
+        return {}
+
+    surv = sum(1 for e in episodes if e["alive"]) / n
+    true_ruin = sum(1 for e in episodes if e["true_ruin"]) / n
+    passive_ruin = sum(1 for e in episodes if e["passive_ruin"]) / n
+    avg_life = sum(e["lifespan"] for e in episodes) / n
+    avg_O = sum(e["final_O"] for e in episodes) / n
+    avg_X = sum(e["final_X"] for e in episodes) / n
+    avg_margin = sum(e["survival_margin_final"] for e in episodes) / n
+
+    score = (
+        SCORE_WEIGHTS["surv"] * surv +
+        SCORE_WEIGHTS["true_ruin"] * true_ruin +
+        SCORE_WEIGHTS["passive_ruin"] * passive_ruin +
+        SCORE_WEIGHTS["optionality"] * (avg_O / 130) +
+        SCORE_WEIGHTS["exposure"] * (avg_X / 130)
+    )
+
+    # Ruin cause breakdown
+    causes = {}
+    for e in episodes:
+        if e["ruin_cause"]:
+            causes[e["ruin_cause"]] = causes.get(e["ruin_cause"], 0) + 1
+
+    return {
+        "n": n,
+        "surv": surv,
+        "true_ruin": true_ruin,
+        "passive_ruin": passive_ruin,
+        "avg_life": avg_life,
+        "avg_O": avg_O,
+        "avg_X": avg_X,
+        "avg_margin": avg_margin,
+        "score": score,
+        "ruin_causes": causes,
+    }
+
+
+def print_results(results, horizon):
+    """Print formatted results table."""
+    print(f"\n{'='*70}")
+    print(f"NRMO Full Stack Results -- H{horizon}")
+    print(f"Stack: NRMO + Norn/Skuld + MAPLayer + Shinobi(12) + Omega Full")
+    print(f"{'='*70}")
+
+    from core.worlds import WORLD_NAMES
+    worlds = WORLD_NAMES
+
+    print(f"\n{'World':<22} {'Score':>7} {'Surv%':>7} {'TRuin%':>8} {'PRuin%':>8} {'Life':>6} {'Margin':>8}")
+    print("-" * 70)
+
+    all_episodes = []
+    for world in worlds:
+        for strat in results.get(world, {}):
+            eps = results[world][strat]
+            m = aggregate(eps)
+            all_episodes.extend(eps)
+            print(
+                f"{world:<22} "
+                f"{m['score']:>7.3f} "
+                f"{m['surv']*100:>6.1f}% "
+                f"{m['true_ruin']*100:>7.1f}% "
+                f"{m['passive_ruin']*100:>7.1f}% "
+                f"{m['avg_life']:>6.0f} "
+                f"{m['avg_margin']:>7.1f}"
+            )
+
+    # Overall
+    if all_episodes:
+        overall = aggregate(all_episodes)
+        print("-" * 70)
+        print(
+            f"{'OVERALL':<22} "
+            f"{overall['score']:>7.3f} "
+            f"{overall['surv']*100:>6.1f}% "
+            f"{overall['true_ruin']*100:>7.1f}% "
+            f"{overall['passive_ruin']*100:>7.1f}% "
+            f"{overall['avg_life']:>6.0f} "
+            f"{overall['avg_margin']:>7.1f}"
+        )
+
+    print(f"\n{'='*70}\n")
+
+\end{lstlisting}
+
+\section{\texttt{main.py}}
+\label{app:code:main-py}
+
+\paragraph{Purpose.} Command-line entry point.
+
+\paragraph{Length.} 86 lines.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single,breaklines=true]
+"""
+main.py -- Entry point
+NRMO Full Stack: NRMO + Norn/Skuld + MAPLayer + Shinobi(12) + Omega Full
+
+Usage:
+  python main.py --mode smoke
+  python main.py --mode full
+  python main.py --horizon 1000 --runs 50
+"""
+import sys
+import os
+import argparse
+import time
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from core.worlds import WORLD_NAMES
+from simulation.simulator import run_episode, run_experiment
+from metrics.metrics import aggregate, print_results
+from config.defaults import *
+
+
+def main():
+    parser = argparse.ArgumentParser(description="NRMO Full Stack Simulator")
+    parser.add_argument("--mode", choices=["smoke", "full", "single"], default="smoke")
+    parser.add_argument("--horizon", type=int, default=200)
+    parser.add_argument("--runs", type=int, default=None)
+    parser.add_argument("--world", type=str, default=None)
+    parser.add_argument("--seed", type=int, default=42)
+    args = parser.parse_args()
+
+    if args.mode == "single":
+        world = args.world or "Normal"
+        print(f"\nSingle episode: world={world}, horizon={args.horizon}, seed={args.seed}")
+        result = run_episode(world, args.horizon, args.seed)
+        print(f"  Alive: {result['alive']}")
+        print(f"  True ruin: {result['true_ruin']}")
+        print(f"  Passive ruin: {result['passive_ruin']}")
+        print(f"  Lifespan: {result['lifespan']}")
+        print(f"  Final state: R={result['final_R']:.1f} E={result['final_E']:.1f} "
+              f"G={result['final_G']:.1f} O={result['final_O']:.1f} "
+              f"K={result['final_K']:.1f} X={result['final_X']:.1f}")
+        print(f"  Survival margin: {result['survival_margin_final']:.1f}")
+        print(f"  Norn summary: {result['norn_summary']}")
+        return
+
+    # Experiment mode
+    horizon = args.horizon
+    if args.mode == "smoke":
+        runs = args.runs or 20
+    else:
+        runs = args.runs or 100
+
+    worlds = [args.world] if args.world else WORLD_NAMES
+    strategies = ["Omega_Full_Stack"]
+
+    print(f"\nNRMO Full Stack -- {args.mode.upper()} mode")
+    print(f"Stack: NRMO Kernel + Norn/Skuld + MAPLayer + Shinobi(12) + Omega Full")
+    print(f"Worlds: {worlds}")
+    print(f"Horizon: {horizon} | Runs: {runs}/world")
+    print(f"Total episodes: {len(worlds) * runs}")
+    print()
+
+    start = time.time()
+    results = {}
+
+    for i, world in enumerate(worlds):
+        print(f"[{i+1}/{len(worlds)}] Running {world}...", end=" ", flush=True)
+        w_start = time.time()
+        episodes = []
+        for run in range(runs):
+            seed = 42 + run * 7919 + len(world) * 1013
+            ep = run_episode(world, horizon, seed)
+            episodes.append(ep)
+        results[world] = {"Omega_Full_Stack": episodes}
+        m = aggregate(episodes)
+        elapsed = time.time() - w_start
+        print(f"surv={m['surv']*100:.0f}% score={m['score']:.3f} ({elapsed:.1f}s)")
+
+    print_results(results, horizon)
+    print(f"Total time: {time.time() - start:.1f}s")
+
+
+if __name__ == "__main__":
+    main()
+
+\end{lstlisting}
+
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This appendix is the canonical source for the
+engineering implementation discussed in Part~X
+(Chapter~\ref{ch:engineering-impl}).
+\item The governance--execution separation invariant from
+Part~II (Chapter~\ref{ch:strong-engine}) is verifiable
+by inspecting \texttt{governance/nrmo\_core.py}
+(Section~\ref{app:code:governance-nrmo-core-py}) and
+\texttt{engine/omega\_full.py}
+(Section~\ref{app:code:engine-omega-full-py}).
+\item The state transition equations in
+\texttt{core/state.py} (Section~\ref{app:code:core-state-py})
+instantiate the dynamics described in
+Part~VIII Section~\ref{sec:vnext-transition-model}.
+\item The 5 world families in \texttt{core/worlds.py}
+(Section~\ref{app:code:core-worlds-py}) instantiate
+the world parameter table in
+Part~VIII Section~\ref{sec:vnext-world-families}.
+\end{itemize}

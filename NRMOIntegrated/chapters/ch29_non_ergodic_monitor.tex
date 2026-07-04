@@ -1,0 +1,43 @@
+% chapters/ch29_non_ergodic_monitor.tex
+% Chapter 29: NonErgodicCumulativeMonitor — Cumulative Irreversible Risk Monitor
+% Source: NRMO_v5_updated.pdf, Chapter 29 (lines 9807-9821 of v5_layout.txt)
+
+\chapter{NonErgodicCumulativeMonitor ---
+Cumulative Irreversible Risk Monitor}
+\label{ch:non-ergodic-monitor}
+
+% =====================================================================
+\section{State Variables}
+\label{sec:non-ergodic-state}
+
+\begin{itemize}
+\item \texttt{cumulative\_irreversible\_risk}: Cumulative
+irreversible risk ($0.0$--$1.0$).
+\item \texttt{irreversible\_event\_count}: Number of irreversible
+events.
+\end{itemize}
+
+% =====================================================================
+\section{Trigger}
+\label{sec:non-ergodic-trigger}
+
+\begin{equation}
+\mathrm{cumulative\_irreversible\_risk} \ge 0.80
+\;\Rightarrow\;
+\mathrm{SAFE\_EXIT}.
+\label{eq:non-ergodic-trigger}
+\end{equation}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Trigger registered as INV-2.1-7
+(Cumulative risk $\ge 0.80 \Rightarrow$ SAFE\_EXIT).
+\item Non-ergodicity awareness is the v2.1 operational instantiation
+of the time-path feasibility invariant
+(Section~\ref{sec:inv-time-path}).
+\item In Part~VII, this monitor's role corresponds to the
+chance-constraint enforcement in
+$\Pi_{\mathrm{safe}}(T, \varepsilon)$.
+\end{itemize}

@@ -1,0 +1,451 @@
+% chapters/ch04_hst_n.tex
+% Chapter 4: HST-N — Human State Topology for NRMO
+% Source: NRMO_v5_updated.pdf, Chapter 4 (lines 5640-5866 of v5_layout.txt)
+% This chapter's content overlaps with Section 2.9 (State Labels) by design;
+% Chapter 4 is the standalone HST-N reference, while Section 2.9 is the
+% Secretary-Console-side interface.
+
+\chapter{HST-N: Human State Topology for NRMO}
+\label{ch:hst-n}
+
+\nrmobox{Non-Operational Charter}{
+HST-N \textbf{does not generate actions}. It is a map for organising
+psychological-state classifications --- not a manual for persuasion
+or manipulation. Always used solely to supply input labels to the
+SOP. Never used standalone.
+}
+
+% =====================================================================
+\section{Role: Topography Map of Degrees of Freedom}
+\label{sec:hstn-role-topography}
+
+HST-N's role within the NRMO+Z+PP layered system is to provide
+\emph{visibility} into the operator's state space. The output is a
+topography of two surfaces:
+
+\begin{itemize}
+\item the \emph{irreversible boundary}, beyond which actions cannot
+be undone;
+\item the \emph{reversible region}, within which actions preserve
+future degrees of freedom.
+\end{itemize}
+
+\noindent
+This map is consumed by the SOP layer; HST-N never executes actions
+based on it.
+
+% =====================================================================
+\section{Observation Inputs}
+\label{sec:hstn-observation-inputs}
+
+HST-N classifies signals from three sources:
+
+\subsection{Subjective Observations}
+
+\begin{itemize}
+\item Mood self-report.
+\item Fatigue self-report.
+\item Sense of urgency, dread, or stuckness.
+\end{itemize}
+
+\subsection{Objective Observations}
+
+\begin{itemize}
+\item Sleep duration.
+\item Work hours.
+\item Recent commitments and capital state.
+\item Relational signals (frequency, content, pattern).
+\end{itemize}
+
+\subsection{Behavioural Observations}
+
+\begin{itemize}
+\item Deviation from baseline patterns.
+\item Boundary / blame-shifting (\textit{Blame Shifting}) at
+relationship interfaces.
+\item Out-of-band communication or unusual channel usage.
+\end{itemize}
+
+\subsection{SOP Output Vector}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Label} & \textbf{Domain} & \textbf{Action class} \\
+\midrule
+LOAD
+& Judgement-load strong; reversible
+& When high $\Rightarrow$ restrict to reversible (Category A/B). \\
+VOL
+& Volatility (stable / volatile / boundary)
+& When $V_2$ $\Rightarrow$ refrain from boundary actions. \\
+IRREV
+& Irreversibility boundary
+& Category $D$ requires procedure or SHUTDOWN. \\
+\bottomrule
+\end{tabularx}
+\caption[HST-N output vector]{HST-N output vector consumed by SOP.
+The labels do not encode SOP decisions; they are state
+classifications.}
+\label{tab:hstn-output-vector}
+\end{table}
+
+% =====================================================================
+\section{State Labels}
+\label{sec:hstn-state-labels}
+
+\subsection{LOAD (Cognitive / Emotional Load)}
+\label{sec:hstn-load}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Level} & \textbf{State} & \textbf{Common consequences} \\
+\midrule
+$L_0$
+& Rested, stable, sufficient buffer
+& Standard operation; full action space. \\
+
+$L_1$
+& Slight fatigue; reduced attention; confirmation friction
+& Reduce category C/D actions; favour confirmation. \\
+
+$L_2$
+& High load, judgement degraded
+& Restrict to A/B reversible; boundary watch. \\
+\bottomrule
+\end{tabularx}
+\caption[HST-N LOAD levels]{LOAD level definitions and their
+operational consequences.}
+\label{tab:hstn-load}
+\end{table}
+
+\subsection{VOL (Volatility)}
+\label{sec:hstn-vol}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Level} & \textbf{State} & \textbf{Common consequences} \\
+\midrule
+$V_0$
+& Stable; predictable
+& Standard operation. \\
+
+$V_1$
+& Volatile; partial unpredictability
+& Slow tempo; favour A/B. \\
+
+$V_2$
+& Highly volatile; emotional outburst risk; irreversible-action
+exposure
+& Refrain from boundary actions; SHUTDOWN candidate. \\
+\bottomrule
+\end{tabularx}
+\caption[HST-N VOL levels]{VOL level definitions. Higher VOL
+indicates higher likelihood of breakdown in the situation.}
+\label{tab:hstn-vol}
+\end{table}
+
+\subsection{IRREV (Irreversibility Proximity)}
+\label{sec:hstn-irrev}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Level} & \textbf{State} & \textbf{Design intent} \\
+\midrule
+$I_0$
+& Boundary distant; high reversibility
+& Expand reversible degrees of freedom. \\
+
+$I_1$
+& Relationship / capital / agency boundary near
+& Category $D$ requires procedure; consider SHUTDOWN. \\
+\bottomrule
+\end{tabularx}
+\caption[HST-N IRREV levels]{IRREV level definitions. Near-boundary
+states demand procedure-bound or halt-bound action selection.}
+\label{tab:hstn-irrev}
+\end{table}
+
+% =====================================================================
+\section{Irreversibility Types}
+\label{sec:hstn-irrev-types}
+
+The irreversible boundary is not one-dimensional. HST-N classifies
+four types of irreversibility, each with its own avoidance principle.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Type} & \textbf{What decreases} & \textbf{Common triggers} & \textbf{Avoidance principle} \\
+\midrule
+R-Trust
+& Reputation, relational credibility
+& Public statements, broken commitments, rumour
+& Slow tempo; reversible expressions; explicit confirmation. \\
+
+R-Resource
+& Capital (time, money, attention)
+& Over-commitment, ultimatum-driven binding, opportunity-cost
+neglect
+& Limit-based commitment; staged release; bounded loss caps. \\
+
+R-Relationship
+& Specific bilateral relationship integrity
+& Ultimatums, public airing, accusatory framing
+& Slow tempo; private confirmation; no broadcast. \\
+
+R-Agency
+& Personal autonomy and self-direction
+& Coercion, dependency formation, role override
+& Confirm own action; third-party check; explicit boundary. \\
+\bottomrule
+\end{tabularx}
+\caption[Irreversibility types]{Four types of irreversibility used
+by HST-N. Each type has its own avoidance principle, applied by
+SOP based on HST-N classification.}
+\label{tab:hstn-irrev-types}
+\end{table}
+
+\paragraph{Why four types matter.}
+A single ``irreversibility'' scalar conflates fundamentally different
+boundary classes. R-Trust and R-Relationship are highly socially
+embedded; R-Resource is finitely measurable; R-Agency is partially
+internal. The avoidance principles are domain-specific; the SOP
+selects from category $A_{\mathrm{allowed}}$ based on which type
+dominates.
+
+% =====================================================================
+\section{Constraints (Permitted / Prohibited)}
+\label{sec:hstn-constraints}
+
+\nrmobox{HST-N boundary constraints}{
+\begin{itemize}
+\item HST-N does not cross the boundary into evaluation
+(``situation is good / bad'').
+\item Strong observations are reported as classifications, never as
+recommendations.
+\item Output flow is one-way: HST-N $\to$ SOP. No direct action.
+\end{itemize}
+}
+
+% =====================================================================
+\section{HST-N SOP v1.1 --- State Monitoring \& Non-Intervention
+Audit}
+\label{sec:hstn-sop-v11}
+
+\subsection*{Document status}
+
+\begin{tabular}{ll}
+\textbf{Version}: & 1.1 (Silent Failure Hardening / Multi-Window
+Observations) \\
+\textbf{Scope}: & Monitoring Only \\
+\textbf{Execution}: & This SOP does not make decisions or execute
+actions.
+\end{tabular}
+
+\subsection{Role}
+\label{sec:hstn-v11-role}
+
+\begin{itemize}
+\item HST-N functions as the \emph{State Monitoring} layer.
+\item Purpose: classify subject state into Low / High thresholds.
+\item Capabilities: Observation, Classification, Logging.
+\item Prohibitions: Judgement, Proposal, Persuasion,
+Permitted-action issuance, SOP execution.
+\end{itemize}
+
+\subsection{State Definitions (Aligned with NRMO SOP)}
+\label{sec:hstn-v11-state-definitions}
+
+HST-N inherits state-transition definitions from the NRMO SOP
+(asset SOP v1.2.1). State transitions are tracked for audit
+purposes only:
+
+\begin{itemize}
+\item \textbf{Caution}: 4-month window (SOP-relevant).
+\item \textbf{Risk-Off (Ruin)}: 12-month window (SOP-relevant).
+\end{itemize}
+
+\subsection{Negative Assertion (Audit-Only Output)}
+\label{sec:hstn-v11-negative-assertion}
+
+HST-N publishes a quarterly ``negative assertion'' record. The
+pattern is structurally distinct from a positive assertion: it
+states only that under the current thresholds and observation
+windows, \emph{no anomaly has been detected}.
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+HST-N Negative Assertion (Quarterly)
+- No anomaly detected under current thresholds.
+- Observation windows: 4m / 12m (+ internal)
+- Data availability: OK / Partial / Hold
+\end{lstlisting}
+
+\noindent
+\textbf{Note}: this output is for audit only and does not influence
+decision-making at the SOP layer.
+
+\subsection{Observation Cycle (Non-Intervention)}
+\label{sec:hstn-v11-observation-cycle}
+
+The HST-N observation cycle is layered:
+
+\subsubsection{SOP-Relevant Windows}
+
+\begin{itemize}
+\item \textbf{4-month window}: state classification feeding SOP
+caution detection.
+\item \textbf{12-month window}: state classification feeding SOP
+risk-off detection.
+\end{itemize}
+
+\subsubsection{Audit-Only Windows}
+
+\begin{itemize}
+\item \textbf{1-month window}: short-term audit observation.
+\item \textbf{6-month window}: medium-term audit observation.
+\end{itemize}
+
+\noindent
+The audit-only windows do not feed the SOP directly. They exist for
+post-hoc analysis of monitoring effectiveness.
+
+\subsection{Red Flag Codes (Classification, Non-Intervention)}
+\label{sec:hstn-v11-red-flag}
+
+Red Flag codes are observational classifications, not actions. They
+are forwarded to Type ZERO and SOP for downstream handling.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{llX}
+\toprule
+\textbf{Code} & \textbf{Name} & \textbf{Description} \\
+\midrule
+RF0 & Low-Grade Noise
+& Mild signal (logged, no SOP action). \\
+RF1 & Volatility Spike
+& 4-month asset / benchmark volatility elevated. \\
+RF2 & Halt / Data Hold
+& Shutdown signal: data not reliably available. \\
+RF3 & Liquidity Gap
+& Bid-Ask gap, resource gap, response gap. \\
+RF4 & Correlation Break
+& Cross-domain signal de-coupling (observation only). \\
+\bottomrule
+\end{tabularx}
+\caption[HST-N Red Flag codes]{HST-N Red Flag classification codes.
+Codes are non-judgemental classifications passed to Type ZERO and
+SOP for interpretation.}
+\label{tab:hstn-v11-red-flag}
+\end{table}
+
+\paragraph{Log entry format.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+HST-N Red Flag Log
+- Code:      RF1
+- Window:    1m / 4m / 6m / 12m
+- Asset:     (Ticker or Category)
+- Timestamp: YYYY-MM-DD
+- Note:      short text (no interpretation)
+\end{lstlisting}
+
+\subsection{Red Flag Frequency Summary
+(Non-Intervention / Cumulative)}
+\label{sec:hstn-v11-frequency-summary}
+
+HST-N publishes a quarterly Red Flag frequency summary (audit only):
+
+\begin{itemize}
+\item \textbf{Per-code counts}: how many times each Red Flag code
+fired.
+\item \textbf{Distribution}: e.g., RF1 = 1, RF2 = 0, etc.
+\item \textbf{Audit channel}: forwarded for review, not action.
+\end{itemize}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+HST-N Frequency Summary (Quarterly)
+- RF0: 5
+- RF1: 1
+- RF2: 0
+- RF3: 0
+- RF4: 1
+\end{lstlisting}
+
+\subsection{Hold Mode (Data Reliability)}
+\label{sec:hstn-v11-hold-mode}
+
+When benchmark or asset data degrades, HST-N publishes a Hold
+record:
+
+\begin{itemize}
+\item \texttt{OK} --- data reliable, full observation cycle proceeds.
+\item \texttt{Partial} --- partial coverage, classification flagged
+partial.
+\item \texttt{Hold} --- data unreliable, classification suspended,
+SOP notified.
+\end{itemize}
+
+\noindent
+HST-N's ``Hold'' is a notification to SOP; SOP retains decision
+authority.
+
+\subsection{Update Conditions}
+\label{sec:hstn-v11-update-conditions}
+
+\begin{itemize}
+\item HST-N SOP is updated only when the upstream NRMO SOP
+changes.
+\item Discretionary updates are prohibited.
+\item All updates require explicit external re-approval.
+\end{itemize}
+
+\subsection{Prohibitions (Confirmation)}
+\label{sec:hstn-v11-prohibitions}
+
+\begin{itemize}
+\item State-transition execution: \textbf{prohibited}.
+\item Direct action / proposal: \textbf{prohibited}.
+\item TTM / PP execution: \textbf{prohibited}.
+\item Permitted-action issuance: \textbf{prohibited}.
+\end{itemize}
+
+\paragraph{Design principle.}
+\textit{HST-N observes; HST-N does not decide.}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item HST-N's output vector (LOAD / VOL / IRREV) is consumed by
+the Secretary Console (Chapter~\ref{ch:secretary-modules},
+specifically Section~\ref{sec:state-labels-c2}) as SOP input.
+\item The Red Flag codes RF0--RF4 connect to SOP defensive
+procedures defined in
+Section~\ref{sec:hstn-red-flag-c2}.
+\item The 4-month and 12-month windows correspond to the
+Investment SOP's Caution / Risk-Off triggers
+(Chapter~\ref{ch:investment-sop}).
+\item In the simulator (Part~VIII), HST-N's classification function
+is the cognitive analogue of the MAPLayer's mode classifier
+(Chapter~\ref{ch:vnext-state}).
+\item HST-N's Negative Assertion pattern is the structural
+counterpart of the autonomy-preserving choice-set output of APCSO
+(Section~\ref{sec:apcso-formal}): both produce non-prescriptive
+outputs that defer authority to the human decision layer.
+\end{itemize}

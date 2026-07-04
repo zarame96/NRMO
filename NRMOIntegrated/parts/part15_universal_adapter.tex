@@ -1,0 +1,206 @@
+% =================================================================
+% Part XV: Universal Adapter Framework
+%   NRMO/Loom を domain 非依存にする adapter 構造.
+%   Hybrid (高出力 × 破綻回避) + 4 domain 実証 + C++/Python/Frontend.
+% =================================================================
+
+\part{Universal Adapter Framework}
+\label{part:universal_adapter}
+
+\chapter{Domain Independence of NRMO}
+\label{ch:domain_independence}
+
+\section{From Civilisation to Any Domain}
+
+Parts I--XIV developed NRMO/Loom primarily against abstract benchmark
+worlds and the civilisation simulation. This part establishes a
+stronger claim: the core is \emph{domain-independent}. The same
+behavioral core (Loom v3.1), the same Safety Floor, the same Sociable
+Shadow, and the same Hybrid composition apply to any sequential
+decision problem that contains an absorbing failure state.
+
+The defining property of NRMO's applicability is not ``civilisation''
+but the structure
+\begin{equation}
+\max_{\pi}\ \mathbb{E}[U(\pi)]
+\quad\text{s.t.}\quad
+\Pr[s_t \in \mathcal{R}\ \text{for some } t] \le \varepsilon,
+\end{equation}
+where $\mathcal{R}$ is a set of absorbing ruin states. Financial
+portfolios (margin call), retail operations (insolvency), health
+trajectories (chronic illness), and careers (irreversible dead-ends)
+all share this structure.
+
+\section{The 6D State as a Cross-Domain Language}
+
+The single mechanism that makes this work is the shared
+six-dimensional state $S=(R,E,G,O,K,X)$. Every domain answers the same
+six questions:
+
+\begin{center}
+\begin{tabular}{cll}
+\toprule
+Axis & Generic meaning & Example (finance) \\
+\midrule
+$R$ & resource / liquidity (safe$\uparrow$) & portfolio value, cash \\
+$E$ & sustainability        & return stability (low vol) \\
+$G$ & governance / discipline & diversification \\
+$O$ & optionality           & cash ratio / rebalance room \\
+$K$ & knowledge             & trend confidence \\
+$X$ & exposure (danger$\uparrow$) & drawdown / volatility \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\chapter{The DomainAdapter Interface}
+\label{ch:domainadapter}
+
+\section{Required and Optional Methods}
+
+A new domain is connected by implementing a thin adapter. Four methods
+are required; one is optional (for Hybrid mode).
+
+\begin{description}[leftmargin=1.6em]
+  \item[\texttt{to\_loom\_state(ds)}] map domain state to $(R,E,G,O,K,X)$.
+  \item[\texttt{apply\_action(action, ds, rng)}] apply a Loom action and
+    return the next domain state.
+  \item[\texttt{is\_ruin(ds)}] test whether the state is an absorbing
+    failure.
+  \item[\texttt{compute\_reward(prev, next)}] scalar feedback.
+  \item[\texttt{propose\_high\_output(ds, rng)} \rm(optional)] a
+    high-output action proposal used by the Hybrid controller.
+\end{description}
+
+The controller, the Safety Floor, the sparse-activation logic, and the
+Sociable Shadow are all shared and never re-implemented per domain.
+
+\section{The Hybrid Controller}
+
+The composition that unifies high output and non-ruin is:
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=7mm,
+  box/.style={draw,rounded corners,minimum width=4.2cm,minimum height=8mm,font=\small,align=center},
+]
+\node[box,fill=blue!8]  (hi)   {High-output proposal (domain)};
+\node[box,fill=green!8,below=of hi]  (ctrl) {Loom Control (detect + risk)};
+\node[box,fill=red!8,below=of ctrl]  (sf)   {Safety Floor (recover-first)};
+\node[box,fill=yellow!12,below=of sf](act)  {domain action};
+\node[box,fill=gray!10,right=14mm of ctrl] (sh) {Sociable Shadow\\(trace only)};
+\draw[-{Latex}] (hi)--(ctrl);
+\draw[-{Latex}] (ctrl)--(sf);
+\draw[-{Latex}] (sf)--(act);
+\draw[-{Latex},dashed] (ctrl)--(sh);
+\end{tikzpicture}
+\end{center}
+
+In calm states the high-output proposal passes through unchanged; in
+dangerous states the Safety Floor substitutes a \emph{recover-first}
+action --- importantly, boosting governance/repair rather than merely
+cutting growth, since naive growth-cutting itself triggers a
+resource-floor collapse (an error observed and corrected during
+development).
+
+\chapter{Empirical Results across Four Domains}
+\label{ch:four_domains}
+
+Each domain uses the identical core; only the adapter differs. The
+``Hybrid effect'' column compares the Hybrid controller against the
+conservative Loom-only baseline.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Domain & Ruin condition & Hybrid effect (vs Loom-only) \\
+\midrule
+Civilisation   & resource / exposure collapse & cum.\ prod $\approx$98--100\% of high-output, ruin 0\% \\
+Finance        & drawdown $>40\%$             & max drawdown $18.6\%\!\to\!1.1\%$ \\
+Retail (store) & cash $<15$                   & survival $35\!\to\!85$--$108$ steps \\
+Health         & disease risk $>80$           & score $973\!\to\!1134$, ruin 0\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Cross-language validation.} The C++ store demo independently
+reproduces the trend (Hybrid revenue $1221.5$ vs Loom-only $231.0$),
+confirming the effect is a property of the control structure rather
+than of a particular language or RNG.
+
+\paragraph{Regularities.}
+(i) Loom-only is conservative in every domain. (ii) The Hybrid
+consistently dominates it. (iii) The adapter's dynamics model is a
+separate concern from the core --- a harsh domain model can still
+produce ruin, but that reflects domain modelling, not a controller
+failure.
+
+\chapter{Reference Implementations}
+\label{ch:reference_impl}
+
+\section{Python (core interface)}
+\begin{lstlisting}[language=Python]
+class DomainAdapter(ABC):
+    name: str
+    state_semantics: dict   # meaning of R,E,G,O,K,X
+    ruin_condition: str
+    @abstractmethod
+    def to_loom_state(self, ds): ...      # -> WorldState(R,E,G,O,K,X)
+    @abstractmethod
+    def apply_action(self, action, ds, rng): ...
+    @abstractmethod
+    def is_ruin(self, ds) -> bool: ...
+    @abstractmethod
+    def compute_reward(self, prev, nxt) -> float: ...
+    def propose_high_output(self, ds, rng):   # Hybrid (optional)
+        return Action("invest", "C")
+
+# connect a new domain in three lines:
+register_adapter("store", StoreOperationAdapter)
+ctrl = make_controller("store", seed=42, use_hybrid=True)
+result = ctrl.run_episode(StoreState(), horizon=150, rng=rng)
+\end{lstlisting}
+
+\section{C++ (header-only core)}
+\begin{lstlisting}[language=C++]
+template <typename DomainState>
+Action LoomController::decide(const DomainAdapter<DomainState>& adapter,
+                              const DomainState& ds) {
+    WorldState s = adapter.to_loom_state(ds);
+    double risk  = adapter.risk_proximity(ds);
+    LoomMode mode = select_mode(s, risk);
+    Action a = (use_hybrid_ && risk < EMERGENCY_RISK)
+             ? adapter.propose_high_output(ds, rng_)   // high output
+             : conservative_action(mode);              // Loom safe
+    return apply_safety_floor(a, s);                   // final gate
+}
+\end{lstlisting}
+
+\section{Browser Front-End}
+A single-file HTML console ports the core decision logic to JavaScript.
+With no programming, a user selects a domain, chooses Hybrid or
+Loom-only, sets horizon and seed, runs an episode, and inspects the
+6D state trajectory, the score trajectory, and the mode-usage
+histogram. It runs entirely offline.
+
+\chapter{Significance for NRMO}
+\label{ch:adapter_significance}
+
+The Universal Adapter Framework completes a conceptual arc. NRMO began
+as a theory of survival-first decision making; the Loom cycle produced
+a robust behavioral core; the Sociable work clarified that detection
+and intervention must be separated; the Hybrid showed that safety and
+output are composable rather than opposed. This part shows that the
+result is not tied to any one domain:
+
+\begin{equation*}
+\boxed{\;
+\text{NRMO}_{\text{current}}
+= \text{Hybrid}\big(\text{high-output engine},\ \text{Loom v3.1}\big)
++ \text{Sociable Shadow}
+\;+\;\text{DomainAdapter}
+\;}
+\end{equation*}
+
+Any problem with an absorbing failure state can join by answering six
+questions (the $R,E,G,O,K,X$ semantics) and four method signatures.
+``High output under a non-ruin guarantee'' is thereby made portable.

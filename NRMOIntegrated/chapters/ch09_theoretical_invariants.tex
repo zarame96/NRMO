@@ -1,0 +1,584 @@
+% chapters/ch09_theoretical_invariants.tex
+% Chapter 9: Theoretical Invariants
+% Source: NRMO_v5_updated.pdf, Chapter 9 (lines 6735-7090 of v5_layout.txt)
+
+\chapter{Theoretical Invariants}
+\label{ch:theoretical-invariants}
+
+This chapter restates the v2.0 theoretical invariants in their final
+form (UNCHANGED), establishes what remains theoretically guaranteed,
+and documents the v2.1 operational refinements (NEW) that build on
+them without weakening any invariant.
+
+% =====================================================================
+\section{Section 2: Theoretical Invariants (UNCHANGED)}
+\label{sec:invariants-unchanged}
+
+\subsection{Non-Ruin Constraint}
+\label{sec:inv-non-ruin}
+
+\begin{equation}
+P(s_t \in R \mid \pi, \varepsilon) \le \varepsilon
+\quad \text{for all } t,
+\label{eq:non-ruin-constraint}
+\end{equation}
+
+\noindent
+where:
+\begin{itemize}
+\item $R \subset S$: ruin states (absorbing, irreversible);
+\item $\varepsilon$: externally supplied tolerance parameter;
+\item $\pi$: policy (action selection mechanism);
+\item $s_t$: state at time $t$.
+\end{itemize}
+
+\paragraph{Invariant status.}
+This constraint is unchanged and remains the primary guarantee of
+the framework.
+
+\subsection{State Space}
+\label{sec:inv-state-space}
+
+\begin{equation}
+S = \{\mathrm{ACTIVE}, \mathrm{HOLD}, \mathrm{EXIT}, \mathrm{SAFE\_EXIT}\}.
+\end{equation}
+
+\paragraph{Transitions.}
+\begin{itemize}
+\item $\mathrm{ACTIVE} \to \mathrm{HOLD}$: human intervention required.
+\item $\mathrm{ACTIVE} \to \mathrm{EXIT}$: planned termination.
+\item $\mathrm{ACTIVE} \to \mathrm{SAFE\_EXIT}$: emergency
+termination.
+\item $\mathrm{HOLD} \to \mathrm{ACTIVE}$: human approval.
+\item $\mathrm{HOLD} \to \mathrm{SAFE\_EXIT}$: escalation.
+\end{itemize}
+
+\paragraph{Invariant status.}
+State space and transitions unchanged. Note: v2.1 operationally
+refines HOLD into subtypes
+(Section~\ref{sec:hold-refinement}), but this is an
+implementation-level distinction that does not alter the theoretical
+state space.
+
+\subsection{APCSO Output Structure}
+\label{sec:inv-apcso}
+
+\begin{itemize}
+\item Output: unordered set of exactly three choices
+$\{a_1, a_2, a_3\} \subset A$.
+\item Constraints:
+\begin{enumerate}
+\item No ranking or preference ordering.
+\item At least one option must be HOLD or EXIT.
+\item All options satisfy
+$P(\mathrm{Ruin} \mid a) \le \varepsilon$.
+\end{enumerate}
+\end{itemize}
+
+\paragraph{Invariant status.}
+Choice-set structure unchanged.
+
+\subsection{Autonomy Preservation}
+\label{sec:inv-autonomy}
+
+Principles (unchanged from v2.0):
+
+\begin{itemize}
+\item No single recommendation (prevents authority collapse).
+\item No ranking (preserves decision autonomy).
+\item Human-in-the-loop required for selection.
+\item System provides structure; human provides judgement.
+\end{itemize}
+
+\subsection{Time-Path Feasibility}
+\label{sec:inv-time-path}
+
+Non-ergodicity awareness (unchanged):
+
+\begin{itemize}
+\item Irreversible transitions are tracked.
+\item Path-dependent constraints enforced.
+\item Ruin states are absorbing (no recovery).
+\end{itemize}
+
+% =====================================================================
+\section{Section 3: Operational Refinements (NEW)}
+\label{sec:operational-refinements}
+
+The following refinements are introduced in v2.1. Each is shown to be
+\emph{theoretically compatible} with the invariants above.
+
+\subsection{Parameter Renewal Protocol}
+\label{sec:parameter-renewal}
+
+\paragraph{Theoretical position.}
+In the theoretical model, $\varepsilon$ is an externally supplied
+parameter at each time step. The theory permits time-dependent
+$\varepsilon(t)$ without modification.
+
+\paragraph{Operational problem.}
+In practice, $\varepsilon$ tends to ossify when no renewal process
+exists. Initial conservative values become entrenched, preventing
+adaptation to new circumstances.
+
+\paragraph{Refinement: $\varepsilon$-validity period.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+epsilon_config = {
+  'value': float,                  // Current epsilon value
+  'ratified_date': timestamp,      // Last approval date
+  'renewal_period': T_renewal,     // e.g., 20 years
+  'expiry_date': ratified_date + T_renewal,
+  'status': VALID | PENDING_RENEWAL | EXPIRED
+}
+
+# Renewal Protocol
+if current_time > epsilon_config.expiry_date:
+  if not renewal_completed:
+    epsilon_config.status = EXPIRED
+    system_state = HOLD
+    require_renewal_process()
+\end{lstlisting}
+
+\paragraph{Renewal requirements.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXl}
+\toprule
+\textbf{Phase} & \textbf{Required artefacts} & \textbf{Timeline} \\
+\midrule
+Phase 1 (Review)
+& Ruin Avoidance Log (RAL); Opportunity Cost Log (OCL); current
+$\varepsilon$ performance metrics
+& $T_{\mathrm{expiry}} - 6$ months \\
+Phase 2 (Deliberation)
+& Analysis of RAL vs OCL; proposal for $\varepsilon$ adjustment;
+multiple $\varepsilon$ candidates
+& $T_{\mathrm{expiry}} - 3$ months \\
+Phase 3 (Approval)
+& Explicit human re-approval; documentation of rationale; new
+$\varepsilon$ config instantiation
+& Before $T_{\mathrm{expiry}}$ \\
+\bottomrule
+\end{tabularx}
+\caption[$\varepsilon$ renewal protocol]{Three-phase renewal protocol
+for $\varepsilon$ revision. The protocol is mandatory: an expired
+$\varepsilon$ forces a HOLD state until renewal is completed.}
+\label{tab:epsilon-renewal}
+\end{table}
+
+\paragraph{Theoretical compatibility.}
+The renewal protocol is theoretically compatible because
+$\varepsilon(t)$ as a time-varying parameter is already permitted by
+the theoretical model. The renewal protocol is a governance
+mechanism for $\varepsilon$ supply; the non-ruin constraint
+$P(\mathrm{Ruin} \mid \pi, \varepsilon) \le \varepsilon$ remains
+enforced at all times. During EXPIRED status, the system defaults to
+HOLD (safe fallback).
+
+\subsection{HOLD State Refinement}
+\label{sec:hold-refinement}
+
+\paragraph{Theoretical position.}
+HOLD is defined as a state requiring human intervention. The
+theoretical model does not specify exit conditions or internal
+structure.
+
+\paragraph{Operational problem.}
+Without operationalised exit conditions, HOLD states can persist
+indefinitely, becoming a de facto rejection mechanism rather than
+a temporary pause.
+
+\paragraph{Refinement: HOLD subtypes.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+# Theoretical level (unchanged)
+State = {ACTIVE, HOLD, EXIT, SAFE_EXIT}
+
+# Operational level (refined)
+HOLD -> {
+  HOLD_WITH_OBSERVATION,    # Sensor enhancement mode
+  HOLD_WITH_SHADOW,         # Delegate to simulation
+  HOLD_WITH_EXPIRY          # Explicit timeout
+}
+
+# All HOLD subtypes enforce finite duration
+\end{lstlisting}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXl}
+\toprule
+\textbf{Subtype} & \textbf{Purpose} & \textbf{Exit condition} & \textbf{Max duration} \\
+\midrule
+HOLD\_WITH\_OBSERVATION
+& Information gathering
+& Sensor data collected
+& 30 days \\
+HOLD\_WITH\_SHADOW
+& Risk assessment
+& Shadow simulation complete $\to$ REVIEW
+& Shadow duration \\
+HOLD\_WITH\_EXPIRY
+& External condition wait
+& Timeout $\to$ AUTO\_EXIT or HUMAN\_DECISION
+& 90 days \\
+\bottomrule
+\end{tabularx}
+\caption[HOLD subtypes]{HOLD subtype definitions with exit conditions
+and maximum durations. The maximum-duration constraint prevents
+indefinite HOLD.}
+\label{tab:hold-subtypes}
+\end{table}
+
+\paragraph{Selection rules.}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+def select_hold_type(reason):
+    if information_gap_identified and observable_metric_exists:
+        return HOLD_WITH_OBSERVATION
+    elif risk_assessment_needed and simulation_feasible:
+        return HOLD_WITH_SHADOW
+    elif external_condition_pending:
+        return HOLD_WITH_EXPIRY
+    else:
+        # Indefinite HOLD not permitted
+        escalate_to_human_decision()
+\end{lstlisting}
+
+\paragraph{Prohibited patterns.}
+\begin{itemize}
+\item Unconditional HOLD (no exit condition specified).
+\item Infinite HOLD (no timeout).
+\item HOLD chaining (HOLD $\to$ HOLD without resolution).
+\item HOLD abuse (same issue HOLD'd 3+ times).
+\end{itemize}
+
+\paragraph{Theoretical compatibility.}
+HOLD remains a single abstract state in the theoretical model.
+Subtypes are implementation-level distinctions. The state-transition
+graph $S = \{\mathrm{ACTIVE}, \mathrm{HOLD}, \mathrm{EXIT},
+\mathrm{SAFE\_EXIT}\}$ is unchanged. Exit-condition enforcement is a
+deadlock-prevention mechanism (implementation concern), not a
+theoretical relaxation.
+
+\subsection{Zero-Risk Fast Path}
+\label{sec:zero-risk-fast-path}
+
+\paragraph{Theoretical position.}
+Actions satisfying $\mathrm{irreversibility} = 0$ and
+$\varepsilon\text{-consumption} = 0$ have $P(\mathrm{Ruin}) = 0$ by
+definition. Formal verification is theoretically unnecessary for
+such actions.
+
+\paragraph{Operational opportunity.}
+Zero-risk actions (e.g., art projects, local experiments, reversible
+cultural activities) can be routed through a computationally
+optimised path, as the constraint check is trivial.
+
+\paragraph{Refinement: fast-path routing.}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+def process_action(action):
+    # Fast path condition check
+    if (action.irreversibility == 0 and
+        action.epsilon_consumption == 0 and
+        action.scope == "local"):
+        # P(Ruin) = 0 trivially satisfied
+        # Skip formal verification (optimization)
+        route_to_human_decision(action, fast_path=True)
+    else:
+        # Standard NRMO verification path
+        verify_constraints(action)
+        if passed:
+            route_to_human_decision(action, fast_path=False)
+\end{lstlisting}
+
+\paragraph{Eligibility criteria.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Criterion} & \textbf{Requirement} & \textbf{Example (eligible / ineligible)} \\
+\midrule
+Irreversibility
+& $= 0$ (fully reversible)
+& Theatre performance / building construction \\
+$\varepsilon$-consumption
+& $= 0$ (zero ruin risk)
+& Poetry reading / financial product launch \\
+Scope
+& Local \& contained
+& Community festival / national policy change \\
+Termination
+& Explicit endpoint
+& 3-month experiment / permanent modification \\
+\bottomrule
+\end{tabularx}
+\caption[Fast-path eligibility]{Fast-path eligibility criteria. All
+four must hold; otherwise the action is routed through standard
+NRMO verification.}
+\label{tab:fast-path-eligibility}
+\end{table}
+
+\paragraph{Distinction from Shadow Optimization.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXX}
+\toprule
+\textbf{Mechanism} & \textbf{Risk level} & \textbf{Execution} & \textbf{Purpose} \\
+\midrule
+Shadow
+& $\varepsilon > 0$ possible
+& Simulated (isolated)
+& High-risk experimentation \\
+Fast Path
+& $\varepsilon = 0$ (guaranteed)
+& Real (fast-tracked)
+& Zero-risk creative action \\
+\bottomrule
+\end{tabularx}
+\caption[Fast Path vs Shadow]{Fast Path is distinct from Shadow
+Optimisation. Shadow handles non-zero risk via simulation; Fast Path
+handles zero risk by trivially passing the constraint check.}
+\label{tab:fast-path-vs-shadow}
+\end{table}
+
+\paragraph{Theoretical compatibility.}
+$P(\mathrm{Ruin}) = 0$ for $\varepsilon = 0$ and irreversibility
+$= 0$ is mathematically trivial. The fast path is a computational
+optimisation, not a constraint relaxation. The non-ruin constraint
+$P(\mathrm{Ruin}) \le \varepsilon$ is satisfied by $0 \le 0$.
+Fast-path actions still require human approval (autonomy preserved).
+
+\subsection{Abuse Pattern Detection}
+\label{sec:abuse-detection}
+
+\paragraph{Operational problem.}
+NRMO terminology can be misused for non-ruin-related blocking,
+e.g., ``This is NRMO-incompatible'' used to halt legitimate debates.
+
+\paragraph{Refinement: heuristic abuse-pattern detection.}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+abuse_patterns = {
+  'perpetual_hold': {
+    'detection': hold_duration > 90_days
+                  and exit_condition == null,
+    'severity': CRITICAL,
+    'action':   escalate_to_shadow_review
+  },
+  'safe_mode_normalization': {
+    'detection': safe_mode_ratio > 0.8 for 180_days,
+    'severity': HIGH,
+    'action':   trigger_epsilon_renewal
+  },
+  'vocabulary_misuse': {
+    'detection': nrmo_invoked_for_non_ruin_argument,
+    'severity': MEDIUM,
+    'action':   log_and_flag_for_review
+  },
+  'risk_free_rejection': {
+    'detection': (action.rejected
+                  and action.epsilon_consumption == 0
+                  and action.reversible == true),
+    'severity': HIGH,
+    'action':   require_explicit_justification
+  }
+}
+\end{lstlisting}
+
+\paragraph{Detection and response.}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Pattern} & \textbf{Automated action} & \textbf{Human notification} \\
+\midrule
+Perpetual HOLD
+& Force Shadow Review
+& Immediate \\
+SAFE\_MODE Normalisation
+& Trigger $\varepsilon$ renewal process
+& Within 7 days \\
+Vocabulary Misuse
+& Log \& monitor
+& Monthly report \\
+Risk-Free Rejection
+& Request justification
+& Immediate \\
+\bottomrule
+\end{tabularx}
+\caption[Abuse patterns detection and response]{Abuse-pattern
+heuristic detection rules and corresponding automated responses.}
+\label{tab:abuse-patterns}
+\end{table}
+
+\paragraph{Theoretical compatibility (limitations acknowledged).}
+\begin{itemize}
+\item Abuse detection relies on heuristics, not formal guarantees.
+\item Not part of the theoretical model (purely operational
+safeguard).
+\item Requires human judgement for final escalation decisions.
+\item False positives possible; operates as monitoring, not
+enforcement.
+\end{itemize}
+
+% =====================================================================
+\section{Section 4: Deployment Recommendations}
+\label{sec:deployment-recommendations}
+
+\subsection{Priority Implementation Order}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXXl}
+\toprule
+\textbf{Priority} & \textbf{Refinement} & \textbf{Rationale} & \textbf{Difficulty} \\
+\midrule
+Critical
+& HOLD State Refinement
+& Prevents indefinite stasis
+& Medium \\
+Critical
+& Abuse Pattern Detection
+& Prevents internal misuse
+& Medium \\
+Important
+& Parameter Renewal Protocol
+& Prevents $\varepsilon$ ossification (long-term)
+& Low \\
+Recommended
+& Zero-Risk Fast Path
+& Enables low-risk creativity
+& High \\
+\bottomrule
+\end{tabularx}
+\caption[Deployment priority]{Recommended deployment priority for
+the v2.1 operational refinements.}
+\label{tab:deployment-priority}
+\end{table}
+
+\subsection{Integration with Existing Systems}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\small,frame=single]
+# v2.0 -> v2.1 Migration Path
+
+# 1. Extend epsilon structure
+epsilon_v3 = {
+    **epsilon_v2,
+    'renewal_period': T_renewal,
+    'expiry_date':    compute_expiry(),
+    'ral': [],   # Ruin Avoidance Log
+    'ocl': []    # Opportunity Cost Log
+}
+
+# 2. Refine HOLD state
+if state == HOLD:
+    state = select_hold_subtype(context)
+    enforce_exit_condition(state)
+
+# 3. Add fast path router
+if is_zero_risk(action):
+    fast_path_route(action)
+else:
+    standard_nrmo_verification(action)
+
+# 4. Enable abuse monitoring
+abuse_monitor.start()
+\end{lstlisting}
+
+\subsection{Institutional Requirements}
+
+\paragraph{Required institutional capabilities.}
+
+\begin{itemize}
+\item \textbf{$\varepsilon$ Governance Body}: authority to approve
+$\varepsilon$ renewals.
+\item \textbf{Shadow Infrastructure}: for HOLD\_WITH\_SHADOW
+escalations.
+\item \textbf{Monitoring Team}: to review abuse-pattern alerts.
+\item \textbf{Audit Trail}: comprehensive logging of all decisions.
+\end{itemize}
+
+\subsection{Backward Compatibility}
+
+v2.1 is backward compatible with v2.0:
+
+\begin{itemize}
+\item All v2.0 theoretical guarantees preserved.
+\item Existing deployments can adopt refinements incrementally.
+\item No breaking changes to core interfaces.
+\item v2.0 behaviour recoverable by disabling operational
+refinements.
+\end{itemize}
+
+% =====================================================================
+\section{Section 5: Limitations and Future Work
+(ACKNOWLEDGED)}
+\label{sec:invariants-limitations}
+
+\subsection{$\varepsilon$ Supply Mechanism}
+
+\paragraph{Current state.}
+The theoretical model treats $\varepsilon$ as externally supplied.
+The renewal protocol specifies \emph{when} to update $\varepsilon$
+but not \emph{how} consensus is reached.
+
+\paragraph{Open questions.}
+\begin{itemize}
+\item Who has authority to approve $\varepsilon$ changes?
+\item How are conflicting stakeholder preferences resolved?
+\item What mechanisms ensure $\varepsilon$ reflects legitimate risk
+tolerance?
+\end{itemize}
+
+\paragraph{Future work.}
+Formalise democratic $\varepsilon$-governance protocols, potentially
+integrating with existing institutional decision-making frameworks.
+
+\subsection{HOLD Exit Conditions}
+
+\paragraph{Current state.}
+HOLD subtypes enforce finite duration, but ultimately rely on human
+decision to exit. The theoretical model does not specify what
+happens if humans never decide.
+
+\paragraph{Mitigation.}
+Operational timeouts force escalation, but this is an implementation
+choice, not a theoretical guarantee.
+
+\paragraph{Future work.}
+Explore formal models of human-in-the-loop decision latency and
+develop escalation protocols for pathological cases.
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item Equation~\ref{eq:non-ruin-constraint} (non-ruin constraint) is
+the v2.1 form of the survival-first axiom NRMO-0
+(Section~\ref{sec:foundations-3-1-definition}).
+\item APCSO output structure
+(Section~\ref{sec:inv-apcso}) is the formal core of the
+choice-set system in
+Section~\ref{sec:apcso-formal}.
+\item HOLD subtypes
+(Section~\ref{sec:hold-refinement}) correspond to the
+partial-observability handling in the simulator (Part~VIII):
+HOLD\_WITH\_OBSERVATION is the cognitive analogue of MAPLayer's
+NEUTRAL/PROBE modes.
+\item The $\varepsilon$ renewal protocol
+(Section~\ref{sec:parameter-renewal}) is the cognitive analogue of
+the Adaptive Tuning Layer's hysteresis mechanism (Part~VIII).
+\end{itemize}

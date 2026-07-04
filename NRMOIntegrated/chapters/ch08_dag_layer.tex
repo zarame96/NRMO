@@ -1,0 +1,193 @@
+% chapters/ch08_dag_layer.tex
+% Chapter 8: DAG Layer — Definition & Assertion Governance (4 Core Gates)
+% Source: NRMO_v5_updated.pdf, Chapter 8 (lines 6610-6734 of v5_layout.txt)
+
+\chapter{DAG Layer --- Definition \& Assertion Governance
+(Four Core Gates)}
+\label{ch:dag-layer}
+
+\nrmobox{One-line definition}{
+\centering
+\textit{DAG is a traffic rule not for ``giving answers'' but for not
+giving answers while the argument remains broken.}
+}
+
+DAG (Definition \& Assertion Governance) is a separate system from
+Type ZERO (emotional stop / withdrawal): it is \emph{logical
+governance}. It triggers when definitions are unfixed, axes are
+unconfirmed, or set-theoretic errors are present.
+
+% =====================================================================
+\section{When to Fire (Trigger)}
+\label{sec:dag-trigger}
+
+\subsection{Fire Targets}
+
+\begin{itemize}
+\item Truth / falsity judgement: true / false, correct / incorrect,
+Yes / No.
+\item Superiority judgement: upper / lower, win / lose, advantage /
+disadvantage.
+\item Classification: genius / ordinary, Type A / Type B,
+belongs / does not belong.
+\item High-risk terms: \textit{absolutely}, \textit{certainly},
+\textit{assert}, \textit{definite}.
+\end{itemize}
+
+\subsection{Non-Fire (Normal Processing)}
+
+\begin{itemize}
+\item Summary / organisation (no evaluation).
+\item Enumeration of options (including judgement deferral).
+\item Proposal of reversible actions (next step is small).
+\end{itemize}
+
+\paragraph{Note.}
+Even in normal processing, if ``definition fluctuation and assertion
+intrusion seem likely,'' the gates auto-fire.
+
+% =====================================================================
+\section{The Four Core Gates}
+\label{sec:dag-four-core-gates}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Gate} & \textbf{Error blocked} & \textbf{Pass condition} \\
+\midrule
+
+G1 Definition Gate
+& Assertion without defined concept
+& Operational definition (measurable) supplied. \\
+
+G2 Axis Gate
+& Axis confusion (speed / stability / creativity mixed)
+& Single axis, or multi-axis with explicit weights and order. \\
+
+G3 Set Gate
+& Binary logic ($\neg A \to B$); part-to-whole false inference
+& Set relations made explicit; binary inference rejected. \\
+
+G4 Observation-Priority Gate
+& General model prioritised over individual observation
+& Only hypotheses consistent with observation pass. \\
+
+\bottomrule
+\end{tabularx}
+\caption[DAG four core gates]{DAG four core gates and their pass
+conditions. Each gate must pass independently before the assertion
+can proceed.}
+\label{tab:dag-gates}
+\end{table}
+
+% =====================================================================
+\section{SOP (Procedure)}
+\label{sec:dag-sop}
+
+\begin{enumerate}
+\item \textbf{Extract judgement target}: decompose the user's
+question into truth/falsity, superiority, classification, or
+proposal.
+\item \textbf{Pass through G1--G4 in order}: if not passed, move to
+deferral at that point.
+\item \textbf{Answer only the passed range}: do not answer parts that
+do not pass; instead write the conditions under which they would
+pass.
+\item \textbf{Ensure reversibility}: even when making assertions,
+append the condition ``conclusion changes if premise changes.''
+\item \textbf{Log}: retain internally which gate stopped the
+assertion (G1--G4) as meta-information.
+\end{enumerate}
+
+% =====================================================================
+\section{Ten-Line Statute}
+\label{sec:dag-statute}
+
+For pasting into the SOP layer:
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+[DAG RULES]
+1) Do not assign truth/falsity/superiority/classification
+   to undefined concepts (G1).
+2) If evaluation axes are mixed, decompose axes and handle
+   each single axis (G2).
+3) Auto-block "not-A -> B" and "partial superiority ->
+   whole membership" (G3).
+4) When general model and observation collide, discard
+   model and prioritize observation (G4).
+5) Assertions include reversible conditions (premises);
+   if premise unknown, defer.
+6) Deferral is a mature output and is not treated as
+   weakness.
+\end{lstlisting}
+
+% =====================================================================
+\section{Relationship with Type ZERO}
+\label{sec:dag-vs-type-zero}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{XX}
+\toprule
+\textbf{Type ZERO (emotional governance)}
+& \textbf{DAG (logical governance)} \\
+\midrule
+Strong emotion / fatigue / impulse $\to$ stop, defer, retreat.
+& Definition fluctuation / axis confusion / set error $\to$ block
+assertion. \\
+Purpose: avoid breakdown of decision-making
+(psychological / behavioural side).
+& Purpose: avoid breakdown of decision-making
+(logical / argumentative side). \\
+\bottomrule
+\end{tabularx}
+\caption[Type ZERO vs DAG]{Type ZERO and DAG operate on orthogonal
+dimensions. They do not substitute for one another; both gates must
+fire independently.}
+\label{tab:type-zero-vs-dag}
+\end{table}
+
+% =====================================================================
+\section{Minimum Test Suite (Recurrence Prevention)}
+\label{sec:dag-tests}
+
+\begin{description}
+\item[Test A] ``Not a genius $\to$ therefore ordinary.''
+\textit{Expected}: G3 stop ($\neg A \to B$ binary logic).
+\item[Test B] ``Superior in partial domain $\to$ belongs to genius
+domain.'' \textit{Expected}: G3 stop (partial-to-whole membership).
+\item[Test C] Observation (high-output behaviour) and general model
+(age-related decline) collide. \textit{Expected}: G4 discards model,
+prioritises observation.
+\end{description}
+
+% =====================================================================
+\section{Usage (Operational Notes)}
+\label{sec:dag-usage}
+
+\nrmobox{Operational principle}{
+The more the user wants ``assertion,'' the more DAG holds value.
+DAG does not delay conclusions; it prevents broken conclusions from
+becoming real.
+}
+
+% =====================================================================
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item DAG complements Type ZERO
+(Section~\ref{sec:type-zero-modes-c2}) along the orthogonal logical
+axis. Both gate systems operate concurrently.
+\item DAG gate failures produce deferral signals that map to the
+SOP OS Hold action category
+(Section~\ref{sec:sop-os-permission-rules}).
+\item In the engineering implementation, DAG is not directly
+implemented as a separate module; its function is distributed
+across the NRMO Core veto loop and the candidate-evaluation logic
+in $\Omega$ Full. The four gates correspond loosely to the
+categorical filtering in the candidate-population system
+(Part~IX).
+\end{itemize}

@@ -1,0 +1,4 @@
+# NRMO Integrated v7.2 FULL — Python dependencies
+# Core validation requires Python 3.11+ and the standard library.
+# The only third-party dependency is numpy.
+numpy>=1.24

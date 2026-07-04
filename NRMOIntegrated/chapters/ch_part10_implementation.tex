@@ -1,0 +1,543 @@
+% chapters/ch_part10_implementation.tex
+% Part X: Engineering Implementation v2.5 — StrongEngine Omega Full
+
+\chapter{Engineering Implementation v2.5 ---
+StrongEngine $\Omega$ Full Codebase}
+\label{ch:engineering-impl}
+
+
+\index{Engineering Implementation!v2.5}
+\index{SEPARATION.md}
+\index{NRMOKernel}
+\index{OmegaFull}
+\nrmobox{Document scope and source}{
+\textbf{Source codebases}:
+\begin{itemize}
+\item \texttt{nrmo\_full\_v2\_5\_final.zip} (v2.5: 27 Python modules).
+\item \texttt{NRMO\_v5\_2\_FINAL.zip} (v5.2: 22 Python modules + SEPARATION.md + README.md).
+\end{itemize}
+\textbf{Architectural invariant}: governance--execution separation
+verified by audit (SEPARATION.md).
+}
+
+This chapter documents the engineering realisation of NRMO-vNext +
+StrongEngine $\Omega$ Full, presenting the codebase structure with
+full source listings of the central modules.
+
+\section{Repository Layout}
+\label{sec:impl-repo-layout}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+nrmo_full/
++-- main.py                       # Entry point
++-- config/defaults.py            # Centralised parameters
++-- core/
+|   +-- state.py                  # State vector, transitions, ruin
+|   +-- worlds.py                 # World family definitions
++-- governance/                   # GOVERNANCE LAYER
+|   +-- nrmo_core.py              # NRMO veto kernel
+|   +-- tuning_layer.py           # Adaptive tuning + hysteresis
++-- engine/                       # EXECUTION LAYER
+|   +-- omega_full.py             # StrongEngine Omega Full
+|   +-- shinobi.py                # Aiming-point search
+|   +-- norn.py                   # Interpretive perspective
+|   +-- map_layer.py              # Mode classifier
+|   +-- omega_v52_adapter.py      # v5.2 baseline interface
++-- simulation/simulator.py       # Episode runner
++-- metrics/metrics.py            # Aggregation, ruin analyser
++-- bypass_test.py                # Bypass-detection test
++-- compare_versions.py           # Version comparison
++-- diag_trace.py                 # Diagnostic tracing
++-- map_mode_scan.py              # Mode-scan utility
++-- run_chunk.py                  # Chunked runner
++-- run_per_world.py              # Per-world runner
++-- trace_deaths.py               # Ruin-trace analyser
+\end{lstlisting}
+
+\section{Governance--Execution Separation Audit
+(SEPARATION.md)}
+\label{sec:impl-separation-audit}
+
+\nrmobox{Separation contract}{
+NRMO is governance only. Engine is execution only.\\[0.3em]
+\textbf{This is not a suggestion. It is the architectural invariant.}
+}
+
+\subsection{Separation Map}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize,frame=single]
+GOVERNANCE                     EXECUTION
+--------------------------     --------------------------
+core/ruin.py                   engine/strong_engine.py
+  check_true_ruin()              generate_base_candidates()
+  update_passive_ruin()          baseline_rollout_score()
+  is_ruin_state()                baseline_select()
+
+governance/nrmo_core.py        engine/omega_full.py
+  nrmo_veto()                    Module 1: select_regime()
+  nrmo_vnext_veto()              Module 2: TACTICAL_TEMPLATES
+  construct_admissible_set()     Module 3: invent_candidates()
+                                 Module 4: compute_fragility()
+governance/tuning_layer.py       Module 5: FailureMemory
+  MetaController.update()        Module 6: attribute_ruin_branch()
+  adaptive_tuning()              Module 7: risk_adjusted_score()
+  HysteresisTracker              Module 8: build_portfolio()
+                                 OmegaFullEngine.select_action()
+\end{lstlisting}
+
+\subsection{Formal Contract}
+
+\begin{equation}
+A_t = \mathrm{NRMO}(X_t),
+\quad
+a_t = \mathrm{Engine}(A_t),
+\quad
+a_t \in A_t \text{ always}.
+\end{equation}
+
+\subsection{Verified by Audit}
+
+\begin{itemize}[leftmargin=*]
+\item[$\checkmark$] \texttt{invent\_candidates()} has no governance
+parameters.
+\item[$\checkmark$] \texttt{strategies.py} does not pass governance
+thresholds to engine.
+\item[$\checkmark$] Flow order: invention $\to$ governance filter
+$\to$ engine scoring.
+\item[$\checkmark$] \texttt{omega\_full.py} delegates ruin checks
+to \texttt{core.ruin.is\_ruin\_state()}.
+\item[$\checkmark$] \texttt{nrmo\_core.py} contains no scoring
+functions.
+\item[$\checkmark$] Mode determination is upstream of engine search.
+\end{itemize}
+
+\subsection{What Engine May NOT Do}
+
+\begin{itemize}
+\item Redefine ruin.
+\item Redraw the admissibility boundary.
+\item Override NRMO veto.
+\item Score first, filter later.
+\item Absorb governance logic into search logic.
+\item Contain \texttt{growth\_cap}, \texttt{exploration\_floor},
+or other governance parameters.
+\end{itemize}
+
+\subsection{What Governance May NOT Do}
+
+\begin{itemize}
+\item Rank candidates.
+\item Score candidates.
+\item Select final action.
+\item Optimise.
+\item Advise (governance issues YES / NO / HOLD only).
+\end{itemize}
+
+\section{Core Module: \texttt{core/state.py}}
+\label{sec:impl-core-state}
+
+State $S = (R, E, G, O, K, X) \in [0, 130]^6$. v5.2-aligned
+transition coefficients.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single]
+"""
+core/state.py — State vector and world transition
+"""
+import math
+from config.defaults import *
+
+
+def clip(val, lo=0, hi=130):
+    return max(lo, min(hi, val))
+
+
+def _exp_sample(mean, rng):
+    u = max(1e-9, rng())
+    return -mean * math.log(u)
+
+
+def _stdnormal(rng):
+    u1 = max(1e-9, rng())
+    u2 = rng()
+    return math.sqrt(-2 * math.log(u1)) * math.cos(2 * math.pi * u2)
+
+
+def transition(state, action, world_params, rng):
+    R, E, G, O, K, X = state
+    g, sf, lr, di = action
+    wp = world_params
+
+    # Deterministic dynamics (v5.2 coefficients)
+    dR = g * (4.5 + 0.04 * K) - wp["environmental_drag"] * R * 0.18 \
+         - g * R * 0.006 * (1 + wp["rivalry_level"]) + 0.008 * (60 - R)
+    dE = sf * 4.2 + di * 1.4 - g * 2.3 * (1 + wp["rivalry_level"] * 0.5) \
+         + 0.006 * (65 - E)
+    dG = di * 4.8 + sf * 1.8 - wp["governance_drag"] * (1.2 + g * 1.5) \
+         - g * wp["rivalry_level"] * 0.5 + 0.005 * (55 - G)
+    dO = lr * 4.2 + 0.025 * K + di * 0.9 - (X / 130) * 1.6 \
+         - wp["stagnation_drag"] * 5.5 + 0.005 * (50 - O)
+    dK = lr * 4.5 * max(0.5, wp.get("substitutability", 0.5)) \
+         - wp["stagnation_drag"] * 2.2 + 0.012 * G * lr + 0.004 * (50 - K)
+    dX = g * 4.8 * (1 + wp["rivalry_level"]) - sf * 5.2 - di * 1.3 \
+         - 0.04 * X
+
+    # Shock event: targets most fragile dimension
+    shock = [0.0] * 6
+    if rng() < wp["shock_probability"]:
+        mag = _exp_sample(wp["shock_scale"], rng)
+        vals = [R, E, G, O, K]
+        weights = [math.exp(-v / 30) for v in vals]
+        total = sum(weights)
+        probs = [w / total for w in weights]
+        r = rng()
+        acc, idx = 0.0, 0
+        for i, p in enumerate(probs):
+            acc += p
+            if r <= acc:
+                idx = i
+                break
+        shock[idx] -= mag
+        shock[5] += mag * 0.35
+
+    # Tail event — governance G buffers hit on R
+    if rng() < wp["tail_probability"]:
+        tail = _exp_sample(wp["tail_scale"], rng)
+        misspec = wp.get("tail_model_misspecification", 0.03)
+        tail *= max(0, 1 + misspec * _stdnormal(rng))
+        buf = 0.4 + 0.6 * (G / 130)
+        shock[0] -= tail * 0.45 / buf
+        shock[1] -= tail * 0.35
+        shock[2] -= tail * 0.25
+        shock[3] -= tail * 0.20
+        shock[5] += tail * 0.55
+
+    deltas = [dR, dE, dG, dO, dK, dX]
+    raw = [R, E, G, O, K, X]
+    new_state = [clip(raw[i] + deltas[i] + shock[i]) for i in range(6)]
+    return new_state
+
+
+def is_true_ruin(state):
+    R, E, G, O, K, X = state
+    return R < 8 or E < 8 or G < 8 or O < 6 or X > 92
+
+
+def ruin_cause(state):
+    R, E, G, O, K, X = state
+    if X > 92:  return "exposure_cascade"
+    if E < 8:   return "environment_collapse"
+    if R < 8:   return "resource_collapse"
+    if G < 8:   return "governance_failure"
+    if O < 6:   return "optionality_exhaustion"
+    return "unknown"
+
+
+def survival_margin(state):
+    R, E, G, O, K, X = state
+    margins = [R - 8, E - 8, G - 8, O - 6, 92 - X]
+    return min(margins)
+
+
+def normalize_action(weights):
+    w = [max(0.05, x) for x in weights]
+    total = sum(w)
+    return [x / total for x in w]
+\end{lstlisting}
+
+\section{Governance Module: \texttt{governance/nrmo\_core.py}}
+\label{sec:impl-governance-nrmo-core}
+
+Constitutional boundary. Veto only. Never touches execution scoring.
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single]
+"""governance/nrmo_core.py — NRMO Kernel
+Veto only. Does NOT define ruin in execution layer."""
+from config.defaults import *
+
+
+class NRMOKernel:
+    def __init__(self, tuning=None):
+        self.tuning = tuning or {}
+
+    def construct_admissible_set(self, candidates, state):
+        """Formal: A_t = NRMO(X_t)"""
+        admissible = []
+        for c in candidates:
+            if self._veto(c, state):
+                admissible.append(c)
+        if not admissible:
+            admissible = [self._safe_fallback(state)]
+        return admissible
+
+    def _veto(self, action, state):
+        R, E, G, O, K, X = state
+        g, s, l, d = action
+
+        growth_cap = self.tuning.get("growth_cap", NRMO_GROWTH_CAP)
+        exploration_floor = self.tuning.get("exploration_floor",
+                                            NRMO_EXPLORATION_FLOOR)
+        gov_repair_floor = self.tuning.get("gov_repair_floor",
+                                           NRMO_GOV_REPAIR_FLOOR)
+        eco_growth_cap = self.tuning.get("eco_growth_cap",
+                                         NRMO_ECO_GROWTH_CAP)
+
+        if g > growth_cap: return False
+
+        if X > NRMO_HIGH_EXPOSURE_THRESHOLD \
+                and g > NRMO_HIGH_EXPOSURE_GROWTH_CAP:
+            return False
+
+        if E < NRMO_LOW_ENV_THRESHOLD \
+                and g > NRMO_LOW_ENV_GROWTH_CAP:
+            return False
+
+        if G < NRMO_LOW_GOV_THRESHOLD \
+                and d < NRMO_LOW_GOV_MIN_DIST:
+            return False
+
+        if l < exploration_floor: return False
+
+        if G < NRMO_GOV_REPAIR_FLOOR_THRESHOLD \
+                and d < gov_repair_floor:
+            return False
+
+        if E < NRMO_ECO_GROWTH_CAP_THRESHOLD \
+                and g > eco_growth_cap:
+            return False
+
+        if E < 35 and s < 0.30: return False
+        if E < 25 and s < 0.40: return False
+        if E < 15 and s < 0.50: return False
+
+        return True
+
+    def _safe_fallback(self, state):
+        from core.state import normalize_action
+        return normalize_action([0.10, 0.35, 0.30, 0.25])
+
+    def passive_ruin_check(self, history):
+        if len(history) < PASSIVE_RUIN_O_STEPS:
+            return False, None
+
+        recent_o = history[-PASSIVE_RUIN_O_STEPS:]
+        if all(s[3] < PASSIVE_RUIN_O_THRESHOLD for s in recent_o):
+            return True, "passive_optionality_stagnation"
+
+        if len(history) >= PASSIVE_RUIN_K_STEPS:
+            k_recent = history[-PASSIVE_RUIN_K_STEPS:]
+            if all(s[4] < PASSIVE_RUIN_K_THRESHOLD for s in k_recent):
+                return True, "passive_knowledge_stagnation"
+
+        if len(history) >= PASSIVE_RUIN_COMPOUND_STEPS:
+            compound = history[-PASSIVE_RUIN_COMPOUND_STEPS:]
+            O_low = (compound[-1][3] < 30 and
+                     compound[-1][3] < compound[0][3] - 5)
+            G_low = (compound[-1][2] < 30 and
+                     compound[-1][2] < compound[0][2] - 5)
+            K_stag = compound[-1][4] < 25
+            if O_low and G_low and K_stag:
+                return True, "passive_compound_decline"
+
+        return False, None
+\end{lstlisting}
+
+\section{Engine Module: $\Omega$ Full Core}
+\label{sec:impl-omega-full}
+
+\begin{lstlisting}[language=Python,basicstyle=\ttfamily\scriptsize,frame=single]
+"""engine/omega_full.py — StrongEngine Omega Full
+Full deep search within Shinobi-confirmed aiming points.
+Signal-conditioned mode binding. No governance leakage."""
+from core.state import transition, is_true_ruin, normalize_action, clip
+from config.defaults import *
+
+
+class IntermediateEvaluator:
+    """Trajectory quality scoring. Lives in execution layer."""
+
+    def score(self, trajectory_states, mode):
+        if len(trajectory_states) < 2:
+            return 0.0
+        s0 = trajectory_states[0]
+        sf = trajectory_states[-1]
+        from core.state import survival_margin
+        margin_start = survival_margin(s0)
+        margin_end = survival_margin(sf)
+        margin_score = (margin_end - margin_start) \
+                       / max(1, abs(margin_start) + 10)
+        margin_score = max(-1, min(1, margin_score))
+        x_growth = sf[5] - s0[5]
+        exposure_score = -max(0, x_growth) / 20.0
+        ok_improvement = ((sf[3] - s0[3]) + (sf[4] - s0[4])) / 20.0
+        recovery_score = max(-1, min(1, ok_improvement))
+        drops = sum(1 for i in range(5) if sf[i] < s0[i] - 3)
+        degradation_score = -0.1 * drops
+        conservatism_score = 0.0
+        if mode == MODE_RACE:
+            if sf[0] < s0[0] - 2:
+                conservatism_score = -0.1
+        return (
+            0.35 * margin_score + 0.25 * exposure_score +
+            0.20 * recovery_score + 0.15 * degradation_score +
+            0.05 * conservatism_score
+        )
+
+
+class OmegaFull:
+    """Execution engine. Does NOT define ruin.
+    Does NOT access governance thresholds."""
+
+    def __init__(self):
+        self.evaluator = IntermediateEvaluator()
+        self._failure_memory = []
+
+    def select_action(self, state, admissible_set, shinobi_aims,
+                      world_params, signal, rng):
+        """Formal: a_t = Omega(A_t) where a_t in A_t always."""
+        mode = signal.get("mode", MODE_NEUTRAL)
+        params = MODE_PARAMS[mode]
+        candidates = self._generate_candidates(
+            state, shinobi_aims, params, rng, world_params
+        )
+        candidates = [c for c in candidates if c in admissible_set or
+                      self._in_admissible(c, admissible_set)]
+        if not candidates:
+            candidates = admissible_set if admissible_set \
+                         else [normalize_action([0.15,0.35,0.25,0.25])]
+        scored = []
+        for c in candidates:
+            sc = self._evaluate(c, state, world_params, params,
+                                signal, rng)
+            scored.append((c, sc))
+        if not scored:
+            return normalize_action([0.15, 0.35, 0.25, 0.25])
+        scored.sort(key=lambda t: t[1], reverse=True)
+        return scored[0][0]
+
+    # ... (further 400+ lines: candidate generation, MC rollout,
+    #      portfolio synergy, Wolf Pursuit mode, Edge Survival Guard,
+    #      drift control, fragility detection, failure memory,
+    #      branch ruin attribution, risk-adjusted scoring)
+\end{lstlisting}
+
+\section{Engine Auxiliary Modules}
+\label{sec:impl-engine-auxiliary}
+
+\subsection{Shinobi (Aiming-Point Search)}
+
+\texttt{engine/shinobi.py} (256 lines): pre-search through
+candidate-action space, identifying ``aiming points'' --- promising
+directions that the Omega Full deep search refines further.
+
+\subsection{Norn (Interpretive Perspective)}
+
+\texttt{engine/norn.py} (265 lines): preserves structural
+consistency; reads context, organises situational features, and
+surfaces drift signals.
+
+\subsection{MAPLayer (Mode Classifier)}
+
+\texttt{engine/map\_layer.py} (363 lines): classifies the world into
+one of 8 regimes. Drives \texttt{MODE\_PARAMS} parameter selection.
+
+\nrmobox{v2.5 critical tuning}{
+\centering
+The single-line change \texttt{prod\_w = 0.92} in PROBE mode raised
+overall score from 0.566 (v2.1) to 0.629 (v2.5).
+}
+
+\subsection{$\Omega$ v5.2 Adapter}
+
+\texttt{engine/omega\_v52\_adapter.py} (358 lines): bridges the v2.5
+internal API with the v5.2 baseline reference codebase.
+
+\section{v5.2 Reference --- 8 $\Omega$ Full Modules}
+\label{sec:impl-v52-reference}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXX}
+\toprule
+\textbf{\#} & \textbf{Module} & \textbf{Role} \\
+\midrule
+1 & Strategic Regime Layer & 8 regimes:
+balanced/recovery/expansion/exploration/eco/governance/stagnation/race. \\
+2 & Tactical Candidate Layer & 10 templates with regime-priority
+ordering. \\
+3 & Candidate Invention & 5 pathways: template/perturbation/blend/
+state-conditioned/world-conditioned. \\
+4 & Fragility Detection & 6-factor world fragility score. \\
+5 & Failure Memory & Past ruin pattern recording. \\
+6 & Branch Ruin Attribution & Dominant rollout failure pathway. \\
+7 & Risk-Adjusted Scoring & 10-factor formula with
+0.65/0.35 avg/downside blend. \\
+8 & Portfolio Planner & $A = w_1 \cdot \text{main} +
+w_2 \cdot \text{hedge} + w_3 \cdot \text{probe}$. \\
+\bottomrule
+\end{tabularx}
+\caption[Omega Full 8 modules]{$\Omega$ Full's 8 modules.}
+\label{tab:impl-omega-modules}
+\end{table}
+
+\section{Comparison Strategies (10)}
+\label{sec:impl-strategies}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{cXXXXX}
+\toprule
+\textbf{\#} & \textbf{Strategy} & \textbf{Veto} & \textbf{Engine} &
+\textbf{Tuning} & \textbf{Meta} \\
+\midrule
+1 & ExpectedValueMax & --- & --- & --- & --- \\
+2 & RiskAdjustedUtility & --- & --- & --- & --- \\
+3 & NRMO\_Original & Original & Greedy & --- & --- \\
+4 & NRMO\_vNext & vNext & Greedy & Profile & --- \\
+5 & UltraConservative & --- & --- & --- & --- \\
+6 & AlphaSearch & --- & Baseline SE & --- & --- \\
+7 & NRMO\_StrongEngine & Original & Baseline SE & --- & --- \\
+8 & NRMOvNext\_StrongEngine & vNext & Baseline SE & Profile & --- \\
+9 & Adaptive\_NRMOvNext\_SE & vNext & Baseline SE
+& Adaptive + Hysteresis & 5 modes \\
+10 & $\Omega$ Full (v2.5) & vNext & $\Omega$ Full
+& Adaptive + Hysteresis & 5 modes + Wolf/Edge/Drift \\
+\bottomrule
+\end{tabularx}
+\caption[Comparison strategies]{Comparison strategies in the v2.5
+codebase.}
+\label{tab:impl-strategies}
+\end{table}
+
+\section{Execution Commands}
+\label{sec:impl-execution}
+
+\begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
+# Smoke test: 5 worlds x 10 strategies x 30 runs = 1,500 episodes
+python -m cli.main --mode smoke
+
+# Full experiment: 5 worlds x 10 strategies x 500 runs = 25,000 episodes
+python -m cli.main --mode full
+
+# Custom engine parameters
+python -m cli.main --mode smoke --omega-rollouts 6 --base-rollouts 5
+\end{lstlisting}
+
+\paragraph{Dependencies.}
+Python 3.10+, numpy, pandas, matplotlib.
+
+\section*{Connections to Other Parts}
+
+\begin{itemize}
+\item This codebase implements the design specified in Part~VIII
+(vNext) and Part~IX ($\Omega$ Full).
+\item The governance--execution separation invariant
+(Section~\ref{sec:impl-separation-audit}) is the engineering
+realisation of Invariant~\ref{inv:gov-exec-sep}.
+\item The 6-dimensional state vector $(R, E, G, O, K, X)$ in
+\texttt{core/state.py} is the same as Section~\ref{sec:vnext-state}.
+\item The empirical results from this codebase are reported in
+Part~XI.
+\item The session-level engineering history is in Part~XII.
+\end{itemize}
