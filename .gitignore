@@ -1,0 +1,3 @@
+# 実行コード(エンジン実体)はDecisionCompass側で管理。ここは論文・文書のみ。
+NRMOIntegrated/code/
+NRMOIntegrated/world_sim_v50/
