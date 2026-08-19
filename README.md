@@ -16,3 +16,20 @@
 公開。未完成のまま、次に委ねる。
 
 License: MIT。
+
+---
+
+## English
+
+A personally developed decision theory framework. Its core idea: maximize forward progress within the constraint of avoiding ruin (an absorbing failure state). There are two kinds of ruin — the sudden kind, and the slow kind (passive death through stagnation).
+
+### Contents
+- `NRMOIntegrated/` — Theory documents (LaTeX/PDF), simulations, development history, constitution and specifications
+- `research/` — Validation and research materials
+
+The implementation (React/TypeScript PWA + Python engine) is maintained in a separate repository, `DecisionCompass`.
+
+### Status
+Public. Released unfinished, to be carried forward by whoever finds it.
+
+License: MIT.
