@@ -11,4 +11,6 @@
 実装（React/TypeScript PWA・Pythonエンジン）は別リポジトリ `DecisionCompass` で管理。
 
 ## 状態
-非公開・個人用。License: MIT。
+公開。未完成のまま、次に委ねる。
+
+License: MIT。
