@@ -1,5 +1,7 @@
 # NRMO — Non-Ruin Maximizing Objective
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22018104.svg)](https://doi.org/10.5281/zenodo.22018104)
+
 破滅を避け、前へ。停滞も死。
 
 個人開発の意思決定フレームワークの理論一式。破滅（吸収状態）を避ける制約の内側で前進を最大化する。破滅には二種類ある——散る破滅と、腐る破滅（受動的死）。
