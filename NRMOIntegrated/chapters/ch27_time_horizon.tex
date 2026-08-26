@@ -192,3 +192,56 @@ horizons, INV-2.1-6) is preserved verbatim in
 \texttt{archive/ch27\_time\_horizon\_v7\_1.tex} for historical
 continuity. This chapter does not erase that text; it supersedes it
 for v7.2 onward while keeping the prior design inspectable.
+
+
+% =====================================================================
+\section{Implementation Mapping (v7.2)}
+\label{sec:time-horizon-implementation-mapping}
+
+\nrmobox{Reused, not rebuilt}{
+The Monte Carlo rollout-survival logic already present in
+\texttt{engine/omega\_full.py::score\_candidate()} (the
+\texttt{survived\_ratio} computation) is structurally equivalent to
+the Viability Kernel membership approximation this chapter requires.
+Rather than reimplementing it, the rollout mechanism was
+\emph{extracted} into a governance-callable shared module.
+}
+
+\paragraph{New files (v7.2, additive only).}
+\begin{itemize}
+\item \texttt{core/viability.py} — \texttt{viability\_score()},
+\texttt{window\_open()}, \texttt{closes\_window()},
+\texttt{passive\_ruin\_window\_signal()}. Deliberately excludes
+engine-specific scoring (drift penalty, portfolio synergy, failure
+memory) to preserve the governance/execution boundary.
+\item \texttt{governance/nrmo\_core.py} — \texttt{nrmo\_v72\_veto()}
+and \texttt{construct\_admissible\_set\_v72()}, added alongside the
+existing \texttt{nrmo\_veto()} / \texttt{nrmo\_vnext\_veto()} /
+\texttt{construct\_admissible\_set()}, which remain unmodified and
+remain the default path. v7.2 is opt-in, not wired into any existing
+call site by this revision.
+\end{itemize}
+
+\paragraph{Legacy Passive Ruin detector retained as lagging indicator.}
+\texttt{core/ruin.py::update\_passive\_ruin()} (streak-based:
+consecutive-step thresholds on $O$, $K$, and compound decline)
+predates this chapter's choice-time redefinition of Passive Ruin
+(Section~\ref{sec:time-horizon-two-ruins}). It is \textbf{not}
+removed. It is retained as a lagging/backstop signal, complementing
+the new leading (choice-time, window-closure) signal — see
+\texttt{docs/v72\_implementation\_integration\_map.md} for the
+two-tier detection design.
+
+\paragraph{Verification path (reusing existing infrastructure).}
+Chapter 20's real-side/civ-sim two-layer structure (Strong Engine
+$\Omega$ Full vs.\ MaxForwardEngine) provides a validation pathway
+that did not need to be built from scratch: v7.2's Core extension is
+to be trialled on the civ-sim side (MaxForwardEngine) against the
+existing v7.1 (single-horizon, instant-threshold) veto before any
+consideration of real-side deployment. This mirrors the project's
+post-v8.x posture of staged, simulation-first validation.
+
+\paragraph{Status.} All v7.2 code is proposal-grade and
+\textbf{unvalidated} — no simulation runs have been performed against
+it at time of writing. See Open Items
+(Section~\ref{sec:time-horizon-open-items}).
