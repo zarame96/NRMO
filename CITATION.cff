@@ -1,22 +1,26 @@
 cff-version: 1.2.0
 message: "未完成のまま、次に委ねる。引用の際は以下を参照してください。"
-title: "NRMO — Non-Ruin Maximizing Objective: Integrated System v7.1"
+title: "NRMO — Non-Ruin Maximizing Objective: Integrated System v7.2"
 authors:
   - family-names: "Ikeya"
     given-names: "Takashi"
     alias: "zarame96"
-version: "7.1"
-date-released: "2026-08-20"
+version: "7.2"
+date-released: "2026-08-27"
 license: "MIT"
 repository-code: "https://github.com/zarame96/NRMO"
 abstract: >
   破滅を避け、前へ。停滞も死。個人開発の意思決定フレームワークの理論一式。
   破滅（吸収状態）を避ける制約の内側で前進を最大化する。破滅には二種類ある——
-  散る破滅と、腐る破滅（受動的死）。本リポジトリは完成品としてではなく、
-  未完成のまま次に委ねるものとして公開する。
+  散る破滅（True Ruin、絶対・単一）と、腐る破滅（Passive Ruin、回避可能な窓が
+  開いている間に、それを閉じる選択をしてしまうこと）。v7.2はTimeHorizonLayer
+  をCore内部に統合し、display-onlyだった多horizon評価を実際の判定に反映させる
+  改訂を行った。本リポジトリは完成品としてではなく、未完成のまま次に委ねる
+  ものとして公開する。
 keywords:
   - decision theory
   - risk management
   - non-ergodic systems
   - ruin avoidance
   - minimax
+  - time horizon
