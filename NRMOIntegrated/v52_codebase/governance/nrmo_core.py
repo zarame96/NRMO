@@ -90,3 +90,89 @@ def construct_admissible_set(
         if not vetoed:
             admissible.append(c)
     return admissible, flags
+
+# ═══════════════════════════════════════════════
+# v7.2 ADDITION — Horizon-Integrated veto
+# SOURCE: ch27_time_horizon.tex (v7.2), docs/proposal_ch27_time_horizon_v2.md
+# STATUS: PROPOSAL-GRADE, UNVALIDATED. Additive only — does not modify
+#         nrmo_veto() / nrmo_vnext_veto() / construct_admissible_set()
+#         above. Existing modes ('nrmo', 'vnext', 'none') are unchanged.
+# ═══════════════════════════════════════════════
+from core.viability import passive_ruin_window_signal
+
+DEFAULT_HORIZON_SET = [1, 12, 60, 240, 600]  # Immediate/OneYear/FiveYear/TwentyYear/FiftyYear
+# analogues (see ch27 v7.2 Table: cognitive horizon <-> simulation step mapping,
+# extended with an Immediate=1-step entry). Calibration TBD — see open items.
+
+
+def nrmo_v72_veto(
+    candidate_action,
+    s: "CivState",
+    wp: dict,
+    rng,
+    cfg,
+    nc: "NRMOCoreConfig",
+    tc: "TuningConfig" = None,
+    horizon_set=None,
+    viability_threshold: float = 0.5,
+    n_rollouts: int = 30,
+) -> dict:
+    """
+    v7.2 veto: True Ruin (absolute, unconditional) + Passive Ruin
+    (choice-time window-closure detection), combined per ch27 v7.2 §4.
+
+    Returns a dict (not a bare bool) so the caller retains the
+    diagnostic breakdown — this mirrors ch27's NRMO_CORE.veto()
+    pseudocode, adapted to this codebase's existing function-based
+    (not class-based) governance style.
+
+    Cheap check first: reuse the existing instant threshold veto
+    (nrmo_vnext_veto) before running the (expensive) rollout-based
+    Passive Ruin check. If the cheap check already rejects, skip
+    the rollout entirely.
+    """
+    tc = tc or TuningConfig()
+    horizon_set = horizon_set or DEFAULT_HORIZON_SET
+
+    if nrmo_vnext_veto(candidate_action, s, nc, tc):
+        return {"verdict": "REJECT_TRUE_RUIN_INSTANT", "binding_horizon": None}
+
+    signal, binding_h = passive_ruin_window_signal(
+        s, candidate_action, wp, rng, cfg, horizon_set,
+        threshold=viability_threshold, n_rollouts=n_rollouts,
+    )
+    if signal:
+        return {"verdict": "REJECT_PASSIVE_RUIN", "binding_horizon": binding_h}
+
+    return {"verdict": "ALLOW", "binding_horizon": None}
+
+
+def construct_admissible_set_v72(
+    candidates,
+    s: "CivState",
+    wp: dict,
+    rng,
+    cfg,
+    nc: "NRMOCoreConfig" = None,
+    tc: "TuningConfig" = None,
+    horizon_set=None,
+    viability_threshold: float = 0.5,
+    n_rollouts: int = 30,
+):
+    """
+    v7.2 variant of construct_admissible_set(). Additive — the
+    original function above is untouched and remains the default
+    ('nrmo' / 'vnext' / 'none' modes). Callers opt into this
+    explicitly; it is not wired into any existing pipeline call site
+    by this commit.
+    """
+    nc = nc or NRMOCoreConfig()
+    tc = tc or TuningConfig()
+    admissible, verdicts = [], []
+    for c in candidates:
+        v = nrmo_v72_veto(c, s, wp, rng, cfg, nc, tc,
+                          horizon_set, viability_threshold, n_rollouts)
+        verdicts.append(v)
+        if v["verdict"] == "ALLOW":
+            admissible.append(c)
+    return admissible, verdicts
