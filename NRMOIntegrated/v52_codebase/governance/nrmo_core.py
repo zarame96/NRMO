@@ -176,3 +176,44 @@ def construct_admissible_set_v72(
         if v["verdict"] == "ALLOW":
             admissible.append(c)
     return admissible, verdicts
+
+# ═══════════════════════════════════════════════
+# v7.2.1 ADDITION — Delta-based Passive Ruin veto
+# SOURCE: empirical finding, 2026-08-27 diagnostic session.
+# Absolute-threshold detection (nrmo_v72_veto, passive_ruin_window_signal)
+# was found to lose sensitivity at long horizons (mean-reversion in
+# transition() washes out the single-action signal against a fixed
+# 0.5 cutoff: observed firing rate 0/12, 0/12, 3/12, 0/12 across
+# 1/5/10/20-year horizons on a 12-candidate diagnostic sweep).
+# Delta-based detection (candidate-vs-do-nothing, same horizon)
+# improved this to 1/12, 1/12, 4/12, 2/12 on the same sweep — the
+# 20-year collapse to zero is resolved, though sensitivity is not
+# perfectly monotonic (small, noisy sample; see docs/ for the raw run).
+# Both veto variants are retained (additive) for comparison.
+# ═══════════════════════════════════════════════
+from core.viability import passive_ruin_delta_signal
+
+
+def nrmo_v72_1_veto(
+    candidate_action, s, wp, rng, cfg, nc, tc=None,
+    horizon_set=None, degradation_threshold: float = 0.15,
+    n_rollouts: int = 30,
+) -> dict:
+    """v7.2.1: same structure as nrmo_v72_veto, but uses the
+    delta-based (candidate-vs-do-nothing) Passive Ruin signal instead
+    of the absolute-threshold one. Preferred variant pending further
+    validation; nrmo_v72_veto retained for A/B comparison."""
+    tc = tc or TuningConfig()
+    horizon_set = horizon_set or DEFAULT_HORIZON_SET
+
+    if nrmo_vnext_veto(candidate_action, s, nc, tc):
+        return {"verdict": "REJECT_TRUE_RUIN_INSTANT", "binding_horizon": None, "delta": None}
+
+    signal, binding_h, delta = passive_ruin_delta_signal(
+        s, candidate_action, wp, rng, cfg, horizon_set,
+        degradation_threshold=degradation_threshold, n_rollouts=n_rollouts,
+    )
+    if signal:
+        return {"verdict": "REJECT_PASSIVE_RUIN", "binding_horizon": binding_h, "delta": delta}
+
+    return {"verdict": "ALLOW", "binding_horizon": None, "delta": None}
