@@ -143,3 +143,66 @@ def passive_ruin_window_signal(
     if triggered:
         return True, triggered[0]
     return False, None
+
+# ═══════════════════════════════════════════════
+# v7.2.1 ADDITION — Delta-based Passive Ruin detection
+# Fixes: absolute-threshold sensitivity decay at long horizons
+#        (mean-reversion in transition() washes out the single-action
+#        signal when both "before" and "after" rollouts are judged
+#        against a fixed 0.5 cutoff). See diagnostic finding:
+#        firing rate 0/12, 0/12, 3/12, 0/12 across 1/5/10/20-year
+#        horizons — non-monotonic, collapsing at 20yr.
+#
+# Fix: compare candidate-then-default trajectory AGAINST a
+# pure-default (do-nothing) counterfactual over the SAME total
+# horizon, rather than each against a fixed absolute threshold.
+# Both trajectories experience the same mean-reversion pull, so the
+# paired difference (diff-in-diff) preserves sensitivity to the
+# marginal effect of the candidate action even as horizon grows.
+# ═══════════════════════════════════════════════
+
+def viability_delta(state_before, candidate_action, wp, rng, cfg, horizon,
+                     n_rollouts=30, rollout_action_fn=None):
+    """
+    Returns (baseline_score - candidate_score).
+    Positive = candidate action leaves the state worse off, at this
+    horizon, than doing nothing at all would have.
+    Same total horizon length used for both arms (apples-to-apples),
+    avoiding the off-by-one horizon mismatch of the v7.2.0 approach.
+    """
+    baseline_score = viability_score(
+        state_before, wp, rng, horizon, cfg=cfg,
+        n_rollouts=n_rollouts, rollout_action_fn=rollout_action_fn,
+    )
+    state_after = transition(state_before.copy(), candidate_action, wp, rng, cfg)
+    candidate_score = viability_score(
+        state_after, wp, rng, max(horizon - 1, 1), cfg=cfg,
+        n_rollouts=n_rollouts, rollout_action_fn=rollout_action_fn,
+    )
+    return baseline_score - candidate_score
+
+
+def passive_ruin_delta_signal(
+    state_before, candidate_action, wp, rng, cfg, horizon_set,
+    degradation_threshold: float = 0.15, n_rollouts: int = 30,
+):
+    """
+    v7.2.1 Core-facing entry point (delta-based, supersedes the
+    absolute-threshold passive_ruin_window_signal for production use;
+    that function is retained for comparison/diagnostics, not removed).
+
+    Flags Passive Ruin when the candidate action degrades long-run
+    survival probability by more than `degradation_threshold`
+    relative to doing nothing, at ANY tested horizon. Minimax
+    convention preserved: smallest triggering horizon is binding.
+    """
+    triggered = []
+    for h in sorted(horizon_set):
+        delta = viability_delta(state_before, candidate_action, wp, rng,
+                                 cfg, h, n_rollouts=n_rollouts)
+        if delta > degradation_threshold:
+            triggered.append((h, delta))
+    if triggered:
+        h, d = triggered[0]
+        return True, h, d
+    return False, None, None
