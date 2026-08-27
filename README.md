@@ -15,6 +15,10 @@
 ## v7.2の変更点
 TimeHorizonLayerをNRMO CORE内部に統合。従来はdisplay-only(判定に無関与)だった多horizon評価を、実際の判定(veto)に反映させる改訂を行った。旧v7.1の設計は`NRMOIntegrated/archive/ch27_time_horizon_v7_1.tex`に保存。
 
+
+## v7.2.1の変更点
+Passive Ruin検知(v7.2)を実際にコードとして動かして検証したところ、長期horizon(20年)で検知感度が崩壊する問題を発見。差分方式(diff-in-diff)への変更で緩和した。詳細は`NRMOIntegrated/docs/v72_1_validation_record.md`。
+
 ## 状態
 公開。未完成のまま、次に委ねる。
 
@@ -34,6 +38,10 @@ The implementation (React/TypeScript PWA + Python engine) is maintained in a sep
 
 ### v7.2 changes
 TimeHorizonLayer is now integrated into NRMO CORE itself. The previously display-only, multi-horizon evaluation now participates directly in the veto decision. The prior v7.1 design is preserved at `NRMOIntegrated/archive/ch27_time_horizon_v7_1.tex`.
+
+
+### v7.2.1 changes
+Running the v7.2 Passive Ruin detector for the first time revealed a long-horizon (20-year) sensitivity collapse. Mitigated via a delta-based (diff-in-diff) redesign. See `NRMOIntegrated/docs/v72_1_validation_record.md`.
 
 ### Status
 Public. Released unfinished, to be carried forward by whoever finds it.
