@@ -16,11 +16,33 @@ from typing import List, Dict, Any, Sequence, Optional
 import numpy as np
 
 def _find_nrmo():
+    # 修整 (監査で発見): 探索パスが特定の開発サンドボックス
+    # ("/home/claude/v0423", "/home/claude") にハードコードされて
+    # おり、本番・別環境・別セッションでは見つからず RuntimeError に
+    # なっていた。integrator_bridge.py の locator と同じ優先順位に
+    # 揃える: (1) 環境変数 NRMO_PACKAGE_ROOT を最優先、(2) このファイル
+    # からの相対パス (研究リポジトリ内の同梱コード)、(3) 後方互換の
+    # ため旧来の開発サンドボックスパスも最後に試す。
     import glob
-    for base in ["/home/claude/v0423", "/home/claude"]:
+    env_root = os.environ.get("NRMO_PACKAGE_ROOT")
+    candidates = []
+    if env_root:
+        candidates.append(env_root)
+    here = os.path.dirname(os.path.abspath(__file__))
+    candidates.append(here)
+    candidates.append(os.path.abspath(os.path.join(here, "..", "..", "..")))
+    candidates.append(os.path.expanduser("~"))
+    candidates += ["/home/claude/v0423", "/home/claude"]  # 後方互換
+    for base in candidates:
+        if not base or not os.path.isdir(base):
+            continue
         hits = glob.glob(os.path.join(base, "**", "nrmo_v72_phase1", "v7_maxforward"), recursive=True)
-        if hits: return hits[0]
-    raise RuntimeError("NRMO v7_maxforward not found")
+        if hits:
+            return hits[0]
+    raise RuntimeError(
+        "NRMO v7_maxforward not found. Set the NRMO_PACKAGE_ROOT "
+        "environment variable to the directory containing "
+        "nrmo_v72_phase1/v7_maxforward, or place it as a sibling of this file.")
 NRMO = _find_nrmo()
 sys.path.insert(0, NRMO); sys.path.insert(0, os.path.join(NRMO,"..","core")); sys.path.insert(0, os.path.join(NRMO,"..",".."))
 from v7_engine import MaxForwardEngine, DomainDynamics
