@@ -1,0 +1,89 @@
+name: Build NRMO v7.2 PDF
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - fix/issue-13-regenerate-pdf
+    paths:
+      - .github/workflows/build-nrmo-pdf.yml
+      - NRMOIntegrated/**/*.tex
+      - NRMOIntegrated/references.bib
+      - NRMOIntegrated/Makefile
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install LaTeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-pictures \
+            texlive-science \
+            texlive-bibtex-extra \
+            poppler-utils
+
+      - name: Build publication PDFs from repository source
+        working-directory: NRMOIntegrated
+        run: |
+          set -euo pipefail
+          make clean
+          make all
+          test -s NRMO_Complete_v5_5.pdf
+          cp -f NRMO_Complete_v5_5.pdf NRMO_Integrated_System_v7_2.pdf
+          test -s NRMO_Integrated_System_v7_2.pdf
+          cmp NRMO_Complete_v5_5.pdf NRMO_Integrated_System_v7_2.pdf
+          pdfinfo NRMO_Integrated_System_v7_2.pdf | tee /tmp/nrmo-pdfinfo.txt
+          sha256sum NRMO_Complete_v5_5.pdf NRMO_Integrated_System_v7_2.pdf | tee /tmp/nrmo-pdf-sha256.txt
+
+      - name: Require regenerated binary to differ from committed stale PDF
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- \
+            NRMOIntegrated/NRMO_Complete_v5_5.pdf \
+            NRMOIntegrated/NRMO_Integrated_System_v7_2.pdf; then
+            echo "Generated PDF is byte-identical to the previously committed stale binary." >&2
+            exit 1
+          fi
+
+      - name: Commit regenerated PDFs to review branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            NRMOIntegrated/NRMO_Complete_v5_5.pdf \
+            NRMOIntegrated/NRMO_Integrated_System_v7_2.pdf
+          git commit -m "build(pdf): regenerate v7.2 integrated monograph"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Build summary
+        if: always()
+        run: |
+          {
+            echo "## NRMO v7.2 PDF regeneration"
+            echo
+            if [ -f /tmp/nrmo-pdfinfo.txt ]; then
+              echo '```text'
+              cat /tmp/nrmo-pdfinfo.txt
+              echo '```'
+            fi
+            if [ -f /tmp/nrmo-pdf-sha256.txt ]; then
+              echo '```text'
+              cat /tmp/nrmo-pdf-sha256.txt
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
