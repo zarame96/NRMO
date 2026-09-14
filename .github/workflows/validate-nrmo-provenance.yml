@@ -1,0 +1,23 @@
+name: Validate NRMO provenance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout NRMO
+        uses: actions/checkout@v4
+
+      - name: Validate repository/runtime provenance
+        run: python NRMOIntegrated/validate_nrmo_integrated_v72.py --check-provenance
+
+      - name: Assert runtime is not falsely vendored
+        run: |
+          test ! -d NRMOIntegrated/code
+          grep -q "zarame96/DecisionCompass" NRMOIntegrated/IMPLEMENTATION_SOURCE_OF_TRUTH.md
+          grep -q "ae00f9fd23760a6b4dd078723a1eed74ef7bffc9" NRMOIntegrated/IMPLEMENTATION_SOURCE_OF_TRUTH.md
