@@ -1,16 +1,28 @@
-name: Validate NRMO Integrated v7.2
+# ARCHIVAL / LOCAL TEMPLATE ONLY
+#
+# GitHub Actions discovers workflows only from the repository-root
+# `.github/workflows/` directory. This historical file is intentionally retained
+# for provenance but is NOT an active repository workflow.
+#
+# Current NRMO repository CI is defined at:
+#   /.github/workflows/validate-nrmo-provenance.yml
+#
+# Runtime FULL validation is delegated to an explicit DecisionCompass checkout via:
+#   python NRMOIntegrated/validate_nrmo_integrated_v72.py \
+#     --runtime-root <DecisionCompass checkout> \
+#     --expected-runtime-sha <exact commit>
+#
+# See NRMOIntegrated/IMPLEMENTATION_SOURCE_OF_TRUTH.md.
+
+name: ARCHIVAL TEMPLATE - Validate NRMO Integrated v7.2
+
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
+
 jobs:
-  validate:
+  archival-template:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Run validation
-        run: python validate_nrmo_integrated_v72.py
+      - run: |
+          echo "This nested workflow is archival only and is not discovered by GitHub Actions."
+          echo "Use the repository-root provenance workflow or delegated runtime validation."
