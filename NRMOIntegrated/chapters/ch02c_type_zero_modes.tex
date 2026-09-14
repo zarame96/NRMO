@@ -4,6 +4,19 @@
 \section{Type ZERO Mode Definitions}
 \label{sec:type-zero-modes-c2}
 
+\nrmobox{Historical provenance / supersession}{
+This section preserves the historical Type ZERO taxonomy
+\texttt{CORE / VENTURE / MISSION / SHUTDOWN} for traceability. It is
+\textbf{superseded as the current Operational Mode taxonomy} by the
+Normative Canon. Current Operational Modes are
+\texttt{NORMAL / VENTURE / MISSION / SAFE}. Historical \texttt{CORE}
+maps to \texttt{NORMAL}; historical defensive uses of \texttt{MISSION}
+map to \texttt{SAFE} and/or \texttt{MISSION-DEFENSE} according to actual
+behaviour; \texttt{SHUTDOWN} is retained only for true exceptional or
+terminal halt semantics. The table below is therefore a historical
+specification snapshot, not controlling current mode semantics.
+}
+
 The Type ZERO governance layer assigns an operational mode based on
 observed state. Modes are not constraints; they are gears for
 preserving future degrees of freedom. CORE / VENTURE expand degrees
@@ -40,13 +53,17 @@ SHUTDOWN
 $\mathrm{LOAD} = L_2$ $\to$ immediate \\
 \bottomrule
 \end{tabularx}
-\caption[Type ZERO Mode Definitions]{Type ZERO Mode Definitions
-(Table 2.1).}
+\caption[Historical Type ZERO Mode Definitions]{Historical Type ZERO
+Mode Definitions (Table 2.1). Preserved for provenance; superseded for
+current Operational Mode semantics by the Normative Canon.}
 \label{tab:type-zero-modes}
 \end{table}
 
-\nrmobox{Mode principle}{
-Modes are not ``constraints'' --- they are \emph{gears} for
-preserving future degrees of freedom. CORE / VENTURE expand degrees
-of freedom; MISSION / SHUTDOWN avoid irreversible boundaries.
+\nrmobox{Historical mode principle}{
+The following principle is preserved as historical wording: modes are
+not ``constraints'' --- they are \emph{gears} for preserving future
+degrees of freedom. CORE / VENTURE expand degrees of freedom; MISSION /
+SHUTDOWN avoid irreversible boundaries. Current implementations must
+apply the canonical mode mapping stated above rather than treating this
+historical four-mode set as controlling.
 }
