@@ -1,186 +1,249 @@
 #!/usr/bin/env python3
-"""
-validate_nrmo_integrated_v72.py — NRMO Integrated v7.2 FULL 正式検証入口 (package root)。
+"""NRMO Integrated v7.2 provenance-aware validation entry.
 
-設計 (10/10 引き継ぎ書 P0-1/P0-3 準拠):
-  - 各 step を subprocess + per-step timeout で隔離実行 (状態持ち越しなし)
-  - validation_results.json を生成
-  - 厳密表示: FAIL/TIMEOUT があれば FINAL: FAIL,
-              required SKIP があれば FINAL: FAIL,
-              optional SKIP のみなら PARTIAL PASS,
-              全 required PASS なら ALL REQUIRED VALIDATIONS PASS WITH NO SKIPS
-  - 追加パス設定なし・外部依存なし・5 分以内・終了コード 0/1
+The NRMO repository is the specification/provenance source of truth. The current
+executable runtime is maintained in zarame96/DecisionCompass and is intentionally
+excluded from this repository by .gitignore.
 
-正式入口は軽量・決定的・短時間。長期 rollout は run_long_validations.py に分離。
+Default behavior validates provenance only and MUST NOT report a runtime FULL PASS.
+Runtime validation requires an explicit DecisionCompass checkout via --runtime-root
+and verifies the checkout SHA before executing the delegated validation suite.
 """
 from __future__ import annotations
+
+import argparse
+import json
+import os
 from pathlib import Path
-import subprocess, sys, json, time, os, signal, tempfile
+import signal
+import subprocess
+import sys
+import tempfile
+import time
 
-ROOT = Path(__file__).resolve().parent
-PHASE1 = ROOT / "code" / "python" / "nrmo_v72_phase1"
-CORE = PHASE1 / "core"
+SPEC_ROOT = Path(__file__).resolve().parent
+NRMO_REPO_ROOT = SPEC_ROOT.parent
+PINNED_RUNTIME_REPOSITORY = "zarame96/DecisionCompass"
+PINNED_RUNTIME_SHA = "ae00f9fd23760a6b4dd078723a1eed74ef7bffc9"
+SOURCE_OF_TRUTH_FILE = SPEC_ROOT / "IMPLEMENTATION_SOURCE_OF_TRUTH.md"
+RESULTS_FILE = SPEC_ROOT / "validation_results.json"
 
-def _rel(c):
-    """cmd 引数が ROOT 配下の絶対パスなら相対表記にする (生成物のパスを clean に)。"""
-    s = str(c)
+
+def _parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        description="Validate NRMO provenance, or delegate FULL runtime validation to an explicit DecisionCompass checkout."
+    )
+    p.add_argument(
+        "--check-provenance",
+        action="store_true",
+        help="Validate the NRMO repository/source-of-truth declaration only (no runtime FULL PASS).",
+    )
+    p.add_argument(
+        "--runtime-root",
+        type=Path,
+        help="Path to a checked-out zarame96/DecisionCompass repository root.",
+    )
+    p.add_argument(
+        "--expected-runtime-sha",
+        default=PINNED_RUNTIME_SHA,
+        help="Exact DecisionCompass commit expected for this validation run.",
+    )
+    return p
+
+
+def _git_head(repo: Path) -> str:
     try:
-        rs = str(ROOT)
-        if s.startswith(rs + os.sep):
-            return os.path.relpath(s, rs)
+        cp = subprocess.run(
+            ["git", "-C", str(repo), "rev-parse", "HEAD"],
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=15,
+            check=False,
+        )
+    except Exception as exc:
+        raise RuntimeError(f"cannot inspect runtime git SHA: {exc}") from exc
+    if cp.returncode != 0:
+        raise RuntimeError(f"runtime root is not a readable git checkout: {cp.stderr.strip()}")
+    return cp.stdout.strip()
+
+
+def check_provenance() -> int:
+    errors = []
+    gitignore = NRMO_REPO_ROOT / ".gitignore"
+    if not SOURCE_OF_TRUTH_FILE.is_file():
+        errors.append("missing IMPLEMENTATION_SOURCE_OF_TRUTH.md")
+    if not gitignore.is_file():
+        errors.append("missing repository .gitignore")
+    else:
+        text = gitignore.read_text(encoding="utf-8", errors="replace")
+        if "NRMOIntegrated/code/" not in text:
+            errors.append(".gitignore does not exclude NRMOIntegrated/code/")
+        if "DecisionCompass" not in text:
+            errors.append(".gitignore does not state DecisionCompass runtime ownership")
+    if (SPEC_ROOT / "code").exists():
+        errors.append("NRMOIntegrated/code exists despite external-runtime source-of-truth policy")
+
+    manifest = SPEC_ROOT / "PACKAGE_MANIFEST.md"
+    if not manifest.is_file():
+        errors.append("missing PACKAGE_MANIFEST.md")
+    else:
+        text = manifest.read_text(encoding="utf-8", errors="replace")
+        if PINNED_RUNTIME_REPOSITORY not in text:
+            errors.append("PACKAGE_MANIFEST.md does not name the runtime source-of-truth repository")
+        if PINNED_RUNTIME_SHA not in text:
+            errors.append("PACKAGE_MANIFEST.md does not pin the audited runtime SHA")
+
+    record = {
+        "validation_scope": "nrmo_repository_provenance_only",
+        "runtime_validated": False,
+        "runtime_repository": PINNED_RUNTIME_REPOSITORY,
+        "pinned_runtime_sha": PINNED_RUNTIME_SHA,
+        "status": "FAIL" if errors else "PASS",
+        "errors": errors,
+    }
+    RESULTS_FILE.write_text(json.dumps(record, indent=2, ensure_ascii=False), encoding="utf-8")
+    if errors:
+        print("FINAL: FAIL — NRMO provenance check")
+        for err in errors:
+            print(f"- {err}")
+        return 1
+    print("FINAL: PROVENANCE PASS ONLY — RUNTIME NOT VALIDATED")
+    print(f"runtime source: {PINNED_RUNTIME_REPOSITORY}@{PINNED_RUNTIME_SHA}")
+    return 0
+
+
+def _rel(path: object, runtime_integrated: Path) -> str:
+    s = str(path)
+    try:
+        return os.path.relpath(s, str(runtime_integrated)) if s.startswith(str(runtime_integrated)) else s
     except Exception:
-        pass
-    return s
-
-# subprocess が import を解決できるよう PYTHONPATH を補強 (絶対パスは __file__ 由来のみ)
-ENV = dict(os.environ)
-ENV["PYTHONPATH"] = os.pathsep.join(
-    [str(CORE), str(PHASE1), str(PHASE1 / "v7_maxforward"), ENV.get("PYTHONPATH", "")])
-
-VALIDATION_STEPS = [
-    {"name": "OS/SOP validation",
-     "cmd": [sys.executable, str(PHASE1 / "run_os_validations.py")],
-     "timeout": 120, "required": True,
-     "pass_markers": ["ALL PASS WITH NO SKIPS"]},
-    {"name": "OS/SOP boundary+property",
-     "cmd": [sys.executable, str(PHASE1 / "validation" / "test_os_boundary_properties.py")],
-     "timeout": 120, "required": True, "pass_markers": ["ALL BOUNDARY/PROPERTY PASS"]},
-    {"name": "v8 integrity",
-     "cmd": [sys.executable, str(PHASE1 / "validation" / "test_v8_integrity.py")],
-     "timeout": 120, "required": True, "pass_markers": []},
-    {"name": "Omega subsystem alive",
-     "cmd": [sys.executable, str(PHASE1 / "v7_maxforward" / "validate_part_a_subprocess.py")],
-     "timeout": 180, "required": True, "pass_markers": ["ALL SUBSYSTEMS ALIVE"]},
-    {"name": "NRMO separation contract",
-     "cmd": [sys.executable, str(PHASE1 / "v7_maxforward" / "validate_part_b_subprocess.py")],
-     "timeout": 180, "required": True, "pass_markers": ["ALL PASS"]},
-    {"name": "domain harness (self-contained, light)",
-     "cmd": [sys.executable, str(PHASE1 / "validation" / "test_domain_harness.py")],
-     "timeout": 120, "required": True, "pass_markers": ["domain_harness OK"]},
-    {"name": "C++ syntax",
-     "cmd": ["bash", str(ROOT / "scripts" / "validate_cpp.sh")],
-     "timeout": 120, "required": True, "pass_markers": ["C++ syntax OK"]},
-    {"name": "no-pipe audit (active runners)",
-     "cmd": [sys.executable, str(ROOT / "tools" / "check_no_pipe_capture.py")],
-     "timeout": 60, "required": True,
-     "pass_markers": ["no PIPE/capture in active validation runners"]},
-]
+        return s
 
 
-def hard_exit(code):
-    """stdout/stderr を flush して os._exit で確実に終了する。
-    子プロセスや非daemonスレッド・スレッドプールが interpreter を生かし続けても
-    プロセスを return code 付きで即時終了させる (10/10 P0)。"""
-    try: sys.stdout.flush()
-    except Exception: pass
-    try: sys.stderr.flush()
-    except Exception: pass
-    os._exit(code)
-
-
-def _kill_group(proc):
-    """子を process group ごと kill (start_new_session=True 前提)。"""
+def _kill_group(proc: subprocess.Popen) -> None:
     try:
         os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
     except Exception:
-        try: proc.kill()
-        except Exception: pass
+        try:
+            proc.kill()
+        except Exception:
+            pass
 
 
-def run_step(step):
-    """各 validation step を実行する。
-    PIPE (capture) は使わない: step の子・孫プロセスが stdout/stderr の書き込み端を
-    保持すると communicate() が EOF 待ちで詰まるため、一時ログファイルへ redirect し、
-    直接の子の終了 (wait) のみを待つ。timeout / 正常終了どちらでも最後に process group
-    を掃除し、孫プロセスの残留を潰す。"""
+def _run_step(step: dict, cwd: Path, env: dict) -> dict:
     start = time.time()
     fd, log_path = tempfile.mkstemp(prefix="nrmo_step_", suffix=".log")
     os.close(fd)
-    pgid = None
     try:
         with open(log_path, "w", encoding="utf-8", errors="ignore") as out:
-            proc = subprocess.Popen(step["cmd"], cwd=str(ROOT), env=ENV, text=True,
-                                    stdout=out, stderr=subprocess.STDOUT,
-                                    start_new_session=True)
-            try:
-                pgid = os.getpgid(proc.pid)
-            except Exception:
-                pgid = proc.pid
+            proc = subprocess.Popen(
+                step["cmd"], cwd=str(cwd), env=env, text=True,
+                stdout=out, stderr=subprocess.STDOUT, start_new_session=True,
+            )
             try:
                 proc.wait(timeout=step["timeout"])
                 rc = proc.returncode
-                status_timeout = False
+                timed_out = False
             except subprocess.TimeoutExpired:
-                status_timeout = True
+                timed_out = True
+                _kill_group(proc)
                 try:
-                    os.killpg(pgid, signal.SIGKILL)
+                    proc.wait(timeout=5)
                 except Exception:
-                    try: proc.kill()
-                    except Exception: pass
-                try: proc.wait(timeout=5)
-                except Exception: pass
+                    pass
                 rc = -1
-
         text = Path(log_path).read_text(encoding="utf-8", errors="ignore")
-
-        # 正常終了でも孫プロセス残留対策として process group を掃除
-        if not status_timeout and pgid is not None:
-            try:
-                os.killpg(pgid, signal.SIGTERM)
-            except Exception:
-                pass
-
-        elapsed = time.time() - start
-        if status_timeout:
-            status = "TIMEOUT"
-        else:
-            markers_ok = all(m in text for m in step.get("pass_markers", []))
-            status = "PASS" if (rc == 0 and markers_ok) else "FAIL"
-        return {"name": step["name"], "cmd": [_rel(c) for c in step["cmd"]],
-                "required": step["required"], "returncode": rc,
-                "elapsed": round(elapsed, 2), "status": status,
-                "stdout": text[-5000:], "stderr": "TIMEOUT" if status_timeout else ""}
+        markers_ok = all(m in text for m in step.get("pass_markers", []))
+        status = "TIMEOUT" if timed_out else ("PASS" if rc == 0 and markers_ok else "FAIL")
+        return {
+            "name": step["name"],
+            "cmd": [_rel(c, cwd) for c in step["cmd"]],
+            "required": True,
+            "returncode": rc,
+            "elapsed": round(time.time() - start, 2),
+            "status": status,
+            "stdout": text[-5000:],
+        }
     finally:
-        try: os.unlink(log_path)
-        except Exception: pass
+        try:
+            os.unlink(log_path)
+        except Exception:
+            pass
 
 
-def main():
-    t0 = time.time()
-    results = [run_step(s) for s in VALIDATION_STEPS]
-    (ROOT / "validation_results.json").write_text(
-        json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
+def validate_runtime(runtime_repo: Path, expected_sha: str) -> int:
+    runtime_repo = runtime_repo.resolve()
+    actual_sha = _git_head(runtime_repo)
+    if actual_sha != expected_sha:
+        print("FINAL: FAIL — runtime SHA mismatch")
+        print(f"expected: {expected_sha}")
+        print(f"actual:   {actual_sha}")
+        return 1
 
-    print("NRMO Integrated v7.2 FULL Validation")
-    print("=" * 60)
+    runtime_integrated = runtime_repo / "NRMOIntegrated"
+    phase1 = runtime_integrated / "code" / "python" / "nrmo_v72_phase1"
+    core = phase1 / "core"
+    required_paths = [
+        phase1 / "run_os_validations.py",
+        phase1 / "validation" / "test_os_boundary_properties.py",
+        phase1 / "validation" / "test_v8_integrity.py",
+        phase1 / "v7_maxforward" / "validate_part_a_subprocess.py",
+        phase1 / "v7_maxforward" / "validate_part_b_subprocess.py",
+        phase1 / "validation" / "test_domain_harness.py",
+        runtime_integrated / "scripts" / "validate_cpp.sh",
+        runtime_integrated / "tools" / "check_no_pipe_capture.py",
+    ]
+    missing = [str(p) for p in required_paths if not p.is_file()]
+    if missing:
+        print("FINAL: FAIL — pinned runtime checkout is incomplete")
+        for p in missing:
+            print(f"- missing: {p}")
+        return 1
+
+    env = dict(os.environ)
+    env["PYTHONPATH"] = os.pathsep.join(
+        [str(core), str(phase1), str(phase1 / "v7_maxforward"), env.get("PYTHONPATH", "")]
+    )
+    steps = [
+        {"name": "OS/SOP validation", "cmd": [sys.executable, str(phase1 / "run_os_validations.py")], "timeout": 120, "pass_markers": ["ALL PASS WITH NO SKIPS"]},
+        {"name": "OS/SOP boundary+property", "cmd": [sys.executable, str(phase1 / "validation" / "test_os_boundary_properties.py")], "timeout": 120, "pass_markers": ["ALL BOUNDARY/PROPERTY PASS"]},
+        {"name": "v8 integrity", "cmd": [sys.executable, str(phase1 / "validation" / "test_v8_integrity.py")], "timeout": 120, "pass_markers": []},
+        {"name": "Omega subsystem alive", "cmd": [sys.executable, str(phase1 / "v7_maxforward" / "validate_part_a_subprocess.py")], "timeout": 180, "pass_markers": ["ALL SUBSYSTEMS ALIVE"]},
+        {"name": "NRMO separation contract", "cmd": [sys.executable, str(phase1 / "v7_maxforward" / "validate_part_b_subprocess.py")], "timeout": 180, "pass_markers": ["ALL PASS"]},
+        {"name": "domain harness", "cmd": [sys.executable, str(phase1 / "validation" / "test_domain_harness.py")], "timeout": 120, "pass_markers": ["domain_harness OK"]},
+        {"name": "C++ syntax", "cmd": ["bash", str(runtime_integrated / "scripts" / "validate_cpp.sh")], "timeout": 120, "pass_markers": ["C++ syntax OK"]},
+        {"name": "no-pipe audit", "cmd": [sys.executable, str(runtime_integrated / "tools" / "check_no_pipe_capture.py")], "timeout": 60, "pass_markers": ["no PIPE/capture in active validation runners"]},
+    ]
+
+    results = [_run_step(step, runtime_integrated, env) for step in steps]
+    report = {
+        "validation_scope": "delegated_runtime_full",
+        "runtime_repository": PINNED_RUNTIME_REPOSITORY,
+        "expected_runtime_sha": expected_sha,
+        "actual_runtime_sha": actual_sha,
+        "runtime_root": str(runtime_repo),
+        "results": results,
+    }
+    RESULTS_FILE.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    failed = [r for r in results if r["status"] != "PASS"]
     for r in results:
-        req = "required" if r["required"] else "optional"
-        print(f"{r['status']}: {r['name']} ({r['elapsed']:.2f}s, {req})")
-    print("-" * 60)
+        print(f"{r['status']}: {r['name']} ({r['elapsed']:.2f}s)")
+    if failed:
+        print("FINAL: FAIL — delegated runtime validation")
+        return 1
+    print("FINAL: ALL DELEGATED RUNTIME VALIDATIONS PASS WITH NO SKIPS")
+    print(f"validated runtime SHA: {actual_sha}")
+    return 0
 
-    has_fail = any(r["status"] == "FAIL" for r in results)
-    has_timeout = any(r["status"] == "TIMEOUT" for r in results)
-    req_skip = any(r["status"] == "SKIP" and r["required"] for r in results)
-    opt_skip = any(r["status"] == "SKIP" and not r["required"] for r in results)
 
-    if has_fail or has_timeout or req_skip:
-        print("FINAL: FAIL")
-        print(f"  total {time.time()-t0:.1f}s, results → validation_results.json")
-        hard_exit(1)
-    if opt_skip:
-        print("FINAL: PARTIAL PASS / OPTIONAL SKIPS PRESENT")
-        print(f"  total {time.time()-t0:.1f}s, results → validation_results.json")
-        hard_exit(0)
-    print("FINAL: ALL REQUIRED VALIDATIONS PASS WITH NO SKIPS")
-    print(f"  total {time.time()-t0:.1f}s, results → validation_results.json")
-    hard_exit(0)
+def main() -> int:
+    args = _parser().parse_args()
+    if args.runtime_root is not None:
+        return validate_runtime(args.runtime_root, args.expected_runtime_sha)
+    return check_provenance()
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except SystemExit as e:
-        hard_exit(int(e.code) if isinstance(e.code, int) else 0)
-    except Exception as exc:
-        print(f"FINAL: FAIL (entry exception: {exc})")
-        hard_exit(1)
+    raise SystemExit(main())
