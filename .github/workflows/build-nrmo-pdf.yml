@@ -1,0 +1,57 @@
+name: Build NRMO Integrated PDF
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - build/regenerate-v7-2-rev2-pdf
+    paths:
+      - 'NRMOIntegrated/**/*.tex'
+      - 'NRMOIntegrated/references.bib'
+      - 'NRMOIntegrated/Makefile'
+      - '.github/workflows/build-nrmo-pdf.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install TeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-science \
+            texlive-pictures \
+            texlive-fonts-recommended \
+            texlive-lang-japanese \
+            latexmk \
+            poppler-utils
+
+      - name: Build integrated monograph
+        working-directory: NRMOIntegrated
+        run: |
+          make clean
+          make all
+          cp NRMO_Complete_v5_5.pdf NRMO_Integrated_System_v7_2.pdf
+          pdfinfo NRMO_Integrated_System_v7_2.pdf | sed -n '1,20p'
+
+      - name: Commit regenerated PDFs when changed
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add NRMOIntegrated/NRMO_Complete_v5_5.pdf NRMOIntegrated/NRMO_Integrated_System_v7_2.pdf
+          if git diff --cached --quiet; then
+            echo 'PDFs already match current sources.'
+          else
+            git commit -m 'build(pdf): regenerate integrated v7.2 rev2 [skip ci]'
+            git push
+          fi
