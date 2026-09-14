@@ -19,6 +19,7 @@ Scope: implementation provenance and Norn naming boundary only
 - Added a PDF-visible provenance notice immediately before Appendix A code listings.
 - Explicitly separated current checked-in implementation evidence from historical/reference implementation snapshots.
 - Explicitly separated canonical Norn from historical Norn/Skuld task-manager implementation names.
+- Clarified the current `v52_codebase/README.md` so `Context / Norn Layer` is explicitly conceptual and does not imply a checked-in `engine/norn.py` module.
 - Established evidence priority for implementation-existence claims.
 
 ## Intentionally not changed
