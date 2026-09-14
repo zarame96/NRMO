@@ -42,6 +42,18 @@ permission determination across operational modes.}
 \subsection{Execution Procedure}
 \label{sec:action-space-execution}
 
+\nrmobox{Historical mode labels in this procedure}{
+The execution sequence below is preserved from the historical
+\texttt{CORE / VENTURE / MISSION / SHUTDOWN} specification. Those labels
+are \textbf{not the current Operational Mode taxonomy}. Under the
+Normative Canon, current modes are \texttt{NORMAL / VENTURE / MISSION /
+SAFE}; historical \texttt{CORE} maps to \texttt{NORMAL}, historical
+defensive \texttt{MISSION} maps to \texttt{SAFE} and/or
+\texttt{MISSION-DEFENSE} according to behaviour, and true terminal halt
+semantics remain \texttt{SHUTDOWN}. The preserved steps are documentary
+provenance and must be interpreted through that mapping.
+}
+
 \begin{enumerate}
 \item Determine state labels ($\mathrm{LOAD}$ / $\mathrm{VOL}$ /
 $\mathrm{IRREV}$).
