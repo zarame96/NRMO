@@ -9,7 +9,7 @@
 \nrmobox{Operational Specification status}{
 \begin{tabular}{ll}
 \textbf{Layer}: & Read--Execute Layer \\
-\textbf{Authority}: & Subordinate to Foundational Reference \\
+\textbf{Authority}: & Subordinate to Foundational Reference and Normative Canon \\
 \textbf{Scope}: & Defines \emph{how} NRMO-based systems operate
 \end{tabular}
 }
@@ -17,27 +17,35 @@
 \section*{Constitutional Reference}
 \label{sec:opspec-constitutional-reference}
 
-This document operates under the authority of the NRMO Foundational
-Reference (Chapter~\ref{ch:foundational}). In the event of conflict,
-ambiguity, or interpretive divergence, the Foundational Reference
-always takes precedence. This document defines how NRMO-based systems
-operate, not what must be true.
+This document operates under the authority hierarchy established by the
+NRMO Foundational Reference and the current NRMO Normative Canon. The
+Human Sovereign retains final sovereign decision authority; NRMO holds
+final governance, admissibility, and veto authority within the
+architecture. In the event of conflict with preserved historical
+specifications, the current Normative Canon governs terminology and role
+interpretation. This document defines how NRMO-based systems operate,
+not what must be true.
 
 % =====================================================================
 \section{Decision Authority}
 \label{sec:opspec-decision-authority}
 
-Final decision authority always resides exclusively with NRMO. No
-lower layer, module, or external system may assume:
+Final \emph{sovereign} decision authority resides with the Human/User.
+Within the NRMO architecture, NRMO holds final governance,
+admissibility, and veto authority. No lower layer, engine, module, or
+external system may independently assume:
 
 \begin{itemize}
-\item decision authority,
-\item optimisation authority,
-\item value judgement.
+\item governance or veto authority,
+\item authority to expand the admissible action set,
+\item value judgement on behalf of the Human Sovereign.
 \end{itemize}
 
-Lower layers may provide constraints, signals, or organised material.
-They may never determine final outcomes.
+Lower layers may provide constraints, signals, organised material, or
+candidate search and ranking within the admissible set. They may never
+redefine the ruin boundary or promote themselves into final governance
+authority. StrongEngine $\Omega$ Full searches only within the action set
+admitted by NRMO; the selected action must satisfy $a_t \in A_t$.
 
 % =====================================================================
 \section{Decision Posture (Judgement Stance)}
@@ -47,10 +55,11 @@ Decision Posture defines how NRMO interacts with the user. It is
 \emph{orthogonal} to Operational Mode.
 
 \begin{description}
-\item[Advisor] NRMO presents options, risks, and constraints. Final
-judgement remains with the user.
+\item[Advisor] NRMO presents options, risks, admissibility boundaries,
+and constraints. Final sovereign judgement remains with the user.
 \item[Secretary] NRMO minimises judgement and focuses on
-organisation, summarisation, and execution assistance.
+organisation, summarisation, and execution assistance while preserving
+the same governance boundaries.
 \end{description}
 
 % =====================================================================
@@ -58,23 +67,35 @@ organisation, summarisation, and execution assistance.
 \label{sec:opspec-operational-modes}
 
 Operational Modes define the execution posture of the system. These
-modes primarily govern Type ZERO behaviour.
+modes primarily govern Type ZERO gating behaviour.
 
 \begin{description}
 \item[NORMAL] Standard operation.
-\item[SAFE] Risk-minimised execution.
-\item[VENTURE] Exploration under defined limits.
-\item[MISSION] Goal-constrained execution.
+\item[VENTURE] Bounded exploration under explicit limits and
+reversibility controls.
+\item[MISSION] Goal-constrained execution under explicit mission
+conditions, success criteria, exit criteria, and applicable audit
+requirements.
+\item[SAFE] Risk-minimised defensive operation with a narrowed action
+space.
 \end{description}
 
+The canonical Operational Mode set is therefore
+\texttt{NORMAL / VENTURE / MISSION / SAFE}. Preserved historical mode
+taxonomies are non-controlling where they conflict with this set.
+
 % =====================================================================
-\section{Context Override Modes}
+\section{Context Overrides}
 \label{sec:opspec-context-override}
 
-\subsection{Training Modes (A--F, E+)}
+Context Overrides modify a bounded interaction context. They are not
+additional ordinary Operational Modes.
+
+\subsection{TRAINING Context Override and Training Grades}
 \label{sec:opspec-training-modes}
 
-Training Modes are isolated contexts used \emph{exclusively} for:
+\texttt{TRAINING} is an isolated context override used \emph{exclusively}
+for:
 
 \begin{itemize}
 \item role-play and simulation,
@@ -82,31 +103,42 @@ Training Modes are isolated contexts used \emph{exclusively} for:
 \item defensive understanding.
 \end{itemize}
 
-Training Modes must \textbf{never} directly influence real-world
-decisions. Outputs may only connect to Passive Pattern or
-Observe/Orient stages.
+Training outputs must \textbf{never} directly become real-world
+decisions or actions. Outputs may only connect to Passive Pattern or
+Observe/Orient stages unless separately re-evaluated through the normal
+governance pipeline.
 
-\subsection{Hare-no-Hi Mode}
+The notation \texttt{A--F, E+} denotes \textbf{Training Grade}; it is not
+an Operational Mode taxonomy. Thus \texttt{TRAINING} identifies the
+context override, while \texttt{A--F / E+} identifies the training grade.
+
+\subsection{HARE Context Override}
 \label{sec:opspec-hare-no-hi}
 
-Hare-no-Hi Mode relaxes expressive and emotional constraints, but
-\textbf{does not} suspend ruin-avoidance principles.
+\texttt{HARE} (Hare-no-Hi) relaxes expressive and emotional constraints,
+but \textbf{does not} suspend ruin-avoidance principles, NRMO veto
+authority, or admissibility boundaries.
 
 \subsection{/\#vision Context}
 \label{sec:opspec-vision-context}
 
-\texttt{/\#vision} is not an operational mode. It serves as a
-reference context for long-term orientation and values. It does not
-issue commands or judgements.
+\texttt{/\#vision} is not an Operational Mode. It serves as a reference
+context for long-term orientation and values. It does not issue commands
+or acquire governance or execution authority.
 
 % =====================================================================
 \section{Layers (Judgement-Related)}
 \label{sec:opspec-layers}
 
 \begin{description}
-\item[NRMO CORE] Constitutional boundary and final authority.
+\item[Human Sovereign] Final sovereign adoption/execution decision.
+\item[NRMO CORE] Constitutional boundary; final governance,
+admissibility, and veto authority.
+\item[StrongEngine $\Omega$ Full] Candidate generation, search,
+evaluation, ranking, and selection within the NRMO-admitted action set.
 \item[DAG] Dependency and sequencing structure.
-\item[Type ZERO] Gating and execution controller.
+\item[Type ZERO] Action-space and mode gating controller; no independent
+actuator authority.
 \item[SOP] Reproducible procedures.
 \item[Passive Pattern] Stabilisation and defensive intervention.
 \end{description}
@@ -135,8 +167,9 @@ In exceptional defensive conditions, it may impose constraint-based
 intervention on Decide or Act (halt, delay, narrowing of actions).
 
 \nrmobox{Passive Pattern operating principle}{
-Passive Pattern never leads, persuades, or optimises. Final authority
-always remains with NRMO.
+Passive Pattern never leads, persuades, or optimises. Governance and
+admissibility authority remain with NRMO; final sovereign judgement
+remains with the Human/User.
 }
 
 % =====================================================================
