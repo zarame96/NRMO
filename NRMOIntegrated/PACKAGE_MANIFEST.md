@@ -1,110 +1,126 @@
-# NRMO Integrated System v7.2 — 全同梱パッケージ
+# NRMO Integrated System v7.2 rev2 — Current Package Manifest
 
-統一版: **v7.2**（書面のシステム/モノグラフ版を v7.2 に統一。各 Part の出自版は
-version_manifest に provenance として保持）。
+Publication family: **NRMO Integrated System v7.2**  
+Current integrated source revision: **v7.2 rev2**  
+Normative authority: `NORMATIVE_CANON.md`  
+Runtime source-of-truth: `IMPLEMENTATION_SOURCE_OF_TRUTH.md`
 
-## 同梱物
-- **PDF**: `NRMO_Integrated_System_v7_2.pdf`（511頁・英語のみ・CJK 0・タイトル v7.2）
-- **LaTeX**: master `NRMO_Complete_v5_5.tex` + `chapters/ parts/ frontmatter/ appendices/ assets/`
-  （v7 Realignment 7章 + Phase D/E 節 + english-only 化 + 版統一 適用済）
-- **Python**: `code/python/`
-  - `nrmo_v72_phase1/`（本物の Ω Full / Shinobi / MAPLayer / Loom / Unified / v851 等）
-    - `core/loom_canonical.py`（★Loom 正典 pin）
-    - core_fixes 適用済（loom_core cumulative 配線+消費、falsifiability is_triggered、
-      最大前進 C 解禁）
-    - `v7_maxforward/`（二層構造・分離契約・本物駆動・各報告）
-  - `loom_*`, `nrmo_universal_adapter.py` 等のアダプタ
-- **C++**: `code/cpp/nrmo_core.hpp`, `example_store.cpp`（構文確認済 g++ -std=c++17）
-- **frontend**: `code/frontend/`
-- **旧コード基盤**: `v52_codebase/`（CivState 単一文明研究コード）, `world_sim_v50/`（多文明シム）
+## What this repository currently contains
 
-## Loom 正典 (loom_canonical.py)
-- 制御核 (production / Ω Full 最大前進): **`loom_core.LoomCore`**
-- standalone Loom エンジン運用識別: **`loom_v3_1_shadow.LoomV31Shadow`**
-  （Loom v3.1 凍結 Behavioral Core + Sociable Shadow。v3.2/v3.2.1 は negative result→archived）
+`zarame96/NRMO` is the specification / monograph / research-provenance repository.
 
-## 検証
-- `code/python/nrmo_v72_phase1/validation/test_v8_integrity.py` … 14/14 PASS
-- `v7_maxforward/run_all_validations.py` … 本物サブシステム10 + 分離契約8 = ALL PASS
-- `v7_maxforward/omega_full_integrated.py` … 本物 Wolf/Shinobi/MAPLayer/Norn-Skuld/Loom 駆動
+Current checked-in package content includes:
 
-## ビルド
+- publication sources: `NRMO_Complete_v5_5.tex`, `chapters/`, `parts/`, `frontmatter/`, `appendices/`, `assets/`;
+- generated/integrated publication artefacts preserved in the repository;
+- Normative Canon and Issue #6 repair/provenance records;
+- historical/reference implementation material such as `v52_codebase/` and archived source evidence;
+- research/validation records that are explicitly labelled by provenance.
+
+The legacy master filename `NRMO_Complete_v5_5.tex` is a retained build-root/source-lineage name. It does not define the publication version.
+
+## What this repository intentionally does not contain
+
+The current executable NRMO/StrongEngine runtime is **not bundled under `NRMOIntegrated/code/` in this repository**.
+
+The repository `.gitignore` intentionally excludes:
+
+```text
+NRMOIntegrated/code/
+NRMOIntegrated/world_sim_v50/
 ```
+
+and states that the executable engine implementation is managed on the DecisionCompass side.
+
+Therefore older package statements that describe `code/python/nrmo_v72_phase1/`, current C++/frontend runtime files, or its validation suite as locally bundled are superseded as current package-inventory claims.
+
+Those records remain useful as development history, but current runtime existence/behavior must be verified in the runtime source-of-truth repository.
+
+## Runtime source-of-truth
+
+Current executable implementation repository:
+
+- repository: `zarame96/DecisionCompass`
+- Phase E audited commit: `ae00f9fd23760a6b4dd078723a1eed74ef7bffc9`
+- runtime root at that commit: `NRMOIntegrated/code/python/nrmo_v72_phase1/`
+
+See `IMPLEMENTATION_SOURCE_OF_TRUTH.md` for the controlling provenance rule and the current Phase E conformance snapshot.
+
+The audited SHA is intentionally pinned. `main` is not a substitute for the recorded evidence after it moves.
+
+## Current specification / implementation relationship
+
+The repaired specification authority is:
+
+```text
+Human Sovereign
+  -> Vision held by Human
+  -> NRMO governance / admissibility / veto
+  -> Engines search/select inside admitted space
+  -> implementations
+```
+
+The implementation audit at the pinned DecisionCompass ref currently records:
+
+- PASS: Aallowed narrowing-only behavior;
+- PASS: NRMO hard filter before StrongEngine final selection;
+- PASS: selected action constrained to the admitted set;
+- PASS: Passive Ruin v7.2.1 narrows rather than enlarges the admitted set;
+- PASS: HOLD and terminal Shutdown control are distinct;
+- PASS: MISSION selection is goal/mission driven rather than legacy defensive-only MISSION;
+- OPEN: DecisionCompass #113 — TRAINING/HARE Context Override typing;
+- OPEN: DecisionCompass #114 — Type ZERO normative gating responsibility;
+- OPEN: DecisionCompass #115 — Norn/Skuld task-manager naming collision.
+
+These findings are tied to the pinned commit above and must be re-audited after implementation changes.
+
+## Validation
+
+### NRMO repository validation
+
+The NRMO repository can validate its own specification/provenance structure without pretending that ignored runtime files are present.
+
+Use:
+
+```bash
+python NRMOIntegrated/validate_nrmo_integrated_v72.py --check-provenance
+```
+
+This is **not** a runtime FULL PASS.
+
+### Runtime validation against DecisionCompass
+
+To run the delegated runtime validation, first check out the exact DecisionCompass commit being audited, then point the NRMO validator at the repository root:
+
+```bash
+git clone https://github.com/zarame96/DecisionCompass.git
+cd DecisionCompass
+git checkout ae00f9fd23760a6b4dd078723a1eed74ef7bffc9
+cd ../NRMO
+python NRMOIntegrated/validate_nrmo_integrated_v72.py \
+  --runtime-root ../DecisionCompass \
+  --expected-runtime-sha ae00f9fd23760a6b4dd078723a1eed74ef7bffc9
+```
+
+The validator must refuse to label a different SHA as the pinned Phase E snapshot unless the caller explicitly supplies that different expected SHA and records a new conformance snapshot.
+
+## Build
+
+The monograph build root remains:
+
+```bash
+cd NRMOIntegrated
 pdflatex -shell-escape -interaction=nonstopmode NRMO_Complete_v5_5.tex
-bibtex NRMO_Complete_v5_5 ; makeindex NRMO_Complete_v5_5.idx
-pdflatex ... ; pdflatex ...   # 計3パス
+bibtex NRMO_Complete_v5_5
+makeindex NRMO_Complete_v5_5.idx
+pdflatex -shell-escape -interaction=nonstopmode NRMO_Complete_v5_5.tex
+pdflatex -shell-escape -interaction=nonstopmode NRMO_Complete_v5_5.tex
 ```
 
-## 既知のベースライン事項（本作業由来でない）
-- LaTeX: 既存 source の未定義列型 `C`（Illegal pream-token, 42件）、source 既存の
-  undefined ref 6件（プレースホルダ）。
-- `v8_engine.py` の監視層 placeholder 3件（被置換の実験エンジン、現役 path 外）。
-- investment/romance domain harness は別 bundle（本パッケージ未収録）。
+Build success does not constitute runtime conformance proof.
 
----
+## Historical implementation claims
 
-## OS/SOP モジュール (v7.2 本フェーズ追加)
+Historical descriptions of Omega Full, Shinobi, MAPLayer, Loom, Norn/Skuld, C++/frontend adapters, domain harnesses, and older validation counts are preserved elsewhere for lineage. They must not be read as a current local-file inventory unless verified against the stated repository/ref.
 
-配置: `code/python/nrmo_v72_phase1/core/`
-- common_types, dag_layer, parallel_ooda, hst_n, aallowed, apcso, secretary_console,
-  shutdown_guard, ttm_pps, defensive_offense, investment_sop, hare_no_hi, life_sop,
-  mode_selector, nonergodic_monitor, time_horizon, situation_parameters,
-  meta_governance, nrmo_os_integrator
-
-テスト: `code/python/nrmo_v72_phase1/validation/test_*.py` × 16
-
-### 正式検証入口
-`code/python/nrmo_v72_phase1/validate_nrmo_integrated_v72.py`
-- v8 integrity 14/14 / Omega 10/10 + 分離 8/8 / OS/SOP 40/40 / C++ compile
-- 実 nrmo_core adapter は `NRMO_ROOT_PATH` 設定時のみ (任意)
-- SKIP があれば ALL PASS とは表示しない
-
-### 環境変数 (v7.2)
-- `NRMO_CORE_PATH` (旧 `NRMO_V6_CORE` 後方互換)
-- `NRMO_ROOT_PATH` (旧 `NRMO_V6_ROOT` 後方互換)
-
-### OS validation runner
-`code/python/nrmo_v72_phase1/run_os_validations.py` → 40/40 PASS WITH NO SKIPS
-
-### 注意
-製品版完成ではない。investment/romance domain harness は本フェーズで
-パッケージ内に自己完結実装 (proxy dynamics; 外部 bundle 依存を撤廃)。
-proxy を実 dynamics と称さない。simulation を proof と呼ばない。
-
-
-### Domain harness (自己完結, v7.2 本フェーズ)
-- `v7_maxforward/investment_stress_models.py` — 投資ストレス proxy シナリオ (MarketScenario / run_static_policy)
-- `v7_maxforward/romance_simulation_harness.py` — 関係性 proxy harness (REGIMES / init_state / step / outcome, 倫理 guard 内蔵)
-- `v7_maxforward/v7_adapters.py`, `v7_validate.py` — 外部 `/tmp/vbundle` パス挿入を撤廃し `__file__` 基準に自己完結化
-- `validation/test_domain_harness.py` — 外部 bundle 非依存を検証
-これらは **proxy domain dynamics** であり、真の市場/人間 dynamics ではない。
-
----
-
-## v7.2 10/10 hardening (2026-06-01)
-
-### 正式検証入口 (package root)
-- `validate_nrmo_integrated_v72.py` — per-step timeout + subprocess 隔離 + `validation_results.json` 生成 +
-  厳密表示 (FAIL/TIMEOUT/required-SKIP→FAIL; optional-SKIP→PARTIAL; 全required PASS→ALL REQUIRED ... NO SKIPS)。
-- `code/python/nrmo_v72_phase1/validate_nrmo_integrated_v72.py` は root 入口への redirector。
-
-### Part A/B subprocess 分離
-- `v7_maxforward/validate_part_a_subprocess.py` — 本物サブシステム生存 (ALL SUBSYSTEMS ALIVE)。
-- `v7_maxforward/validate_part_b_subprocess.py` — NRMO/Engine 分離契約 8 + 軽量 domain reproduce。
-
-### テスト深化 / 長期分離
-- `validation/test_os_boundary_properties.py` — boundary/property テスト (30)。
-- `run_long_validations.py` — 長期 rollout (steps≥150, seeds≥10, horizon≥20) を入口から分離 (任意)。
-
-### 製品品質
-- `requirements.txt` (numpy のみ), `.github/workflows/validate.yml` (CI),
-  `scripts/smoke_import_all.py`, `scripts/validate_cpp.sh`,
-  `tools/terminology_audit.py`, `tools/check_manifest_consistency.py`,
-  `tools/check_validation_status_consistency.py`, `RELEASE_CHECKLIST.md`。
-- `nrmo_os_integrator` は decision_trace を全層出力 (`write_trace`)。Shutdown は
-  NONE/SAFE_ROUTE/HOLD_ONLY/HARD_SILENCE の 3 段階で、HARD_SILENCE 時は空文字を返す。
-
-### 表現規約 (proxy 明記)
-- store/investment/romance harness は **proxy dynamics**。
-- Type ZERO / Passive Pattern は **operational proxy adapters** (完全な認知/人格エミュレーションではない)。
-- ローカル絶対パス (ユーザーホーム配下や一時ディレクトリ等) は active code から除去済 (archive を除き grep 0)。
+For current implementation claims, follow `IMPLEMENTATION_SOURCE_OF_TRUTH.md`. For current normative semantics, follow `NORMATIVE_CANON.md`.
