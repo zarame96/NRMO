@@ -387,8 +387,17 @@ HST-N Frequency Summary (Quarterly)
 - RF4: 1
 \end{lstlisting}
 
-\subsection{Hold Mode (Data Reliability)}
+\subsection{Hold State / Data-Reliability Signal
+(Historical Heading: Hold Mode)}
 \label{sec:hstn-v11-hold-mode}
+
+\nrmobox{Canonical typing}{
+The historical heading ``Hold Mode'' is retained only as provenance.
+HST-N \texttt{Hold} is a data-reliability state/signal and notification;
+it is \textbf{not} an Operational Mode. Canonical governance/lifecycle
+\texttt{HOLD} likewise denotes a state/result requiring resolution or
+human intervention, not a peer mode.
+}
 
 When benchmark or asset data degrades, HST-N publishes a Hold
 record:
@@ -402,8 +411,9 @@ SOP notified.
 \end{itemize}
 
 \noindent
-HST-N's ``Hold'' is a notification to SOP; SOP retains decision
-authority.
+HST-N's ``Hold'' is a notification to downstream governance, not an
+executive action. HST-N does not acquire decision, governance, or veto
+authority from this state.
 
 \subsection{Update Conditions}
 \label{sec:hstn-v11-update-conditions}
