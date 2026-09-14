@@ -38,6 +38,8 @@ State Transition
 
 **INVARIANT**: NRMO defines boundaries. Omega Full searches inside them. Never the reverse.
 
+**Norn provenance note**: `Context / Norn Layer` denotes the canonical interpretive governance perspective. It is a conceptual/architectural label, not a claim that a current `engine/norn.py` module exists in this checked-in codebase. The current `engine/` tree is the one shown below (`strong_engine.py` and `omega_full.py`, plus `__init__.py`). Historical `engine/norn.py` task-manager source listings belong to an earlier/reference snapshot and use an overloaded implementation name.
+
 ## Omega Full — 8 Modules (SOURCE: monograph)
 
 | # | Module | Role |

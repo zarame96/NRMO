@@ -1,0 +1,30 @@
+% chapters/ch_part10_implementation_provenance.tex
+% Phase C provenance notice for Part X implementation chapter
+
+\nrmobox{Implementation provenance --- controlling interpretation}{
+Part X preserves a \textbf{historical/reference implementation snapshot}
+sourced from earlier uploaded implementation archives. Concrete module
+paths and repository layouts in the following chapter are therefore not,
+by themselves, claims about the current checked-in repository tree.\\[0.5em]
+
+For current implementation existence claims, the checked-in repository at
+the relevant ref controls. At the Phase C audit point (2026-09-14),
+\texttt{NRMOIntegrated/v52\_codebase/engine/} contains
+\texttt{\_\_init\_\_.py}, \texttt{omega\_full.py}, and
+\texttt{strong\_engine.py}; it does not contain the historically listed
+\texttt{norn.py}, \texttt{shinobi.py}, \texttt{map\_layer.py}, or
+\texttt{omega\_v52\_adapter.py}.\\[0.5em]
+
+Normative architecture remains controlled by the NRMO Normative Canon.
+Historical source comments or layouts do not override that Canon.
+}
+
+\paragraph{Norn naming boundary.}
+Canonical \texttt{Norn} is the interpretive governance perspective that
+organises context, preserves structural consistency, and surfaces
+conceptual drift. Historical/reference implementation names such as
+\texttt{engine/norn.py}, \texttt{NornTaskManager}, Norn/Skuld task
+assignment, alerting, mirroring, restoration, or failover behaviour are
+naming-overloaded implementation artifacts. They do not redefine canonical
+Norn. Any implementation rename is handled separately from this provenance
+ruling.
