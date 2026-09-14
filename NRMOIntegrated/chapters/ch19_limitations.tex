@@ -55,7 +55,8 @@ Purpose: Ruin avoidance.
 \begin{itemize}
 \item \textbf{YES}: action permissible.
 \item \textbf{NO}: action prohibited.
-\item \textbf{HOLD}: shutdown (defer for human review).
+\item \textbf{HOLD}: governance/lifecycle state requiring deferral or
+human review; not an Operational Mode and not synonymous with SHUTDOWN.
 \item \textbf{SAFE\_EXIT}: emergency termination.
 \end{itemize}
 
@@ -186,7 +187,7 @@ loss. Expiry: 6--12 months. Notes: long-horizon allocation.
 +---------------------------------------+
                   |
 +---------------------------------------+
-| UNIFIED NRMO CORE (veto judgment)     |
+| UNIFIED NRMO CORE (veto/admissibility)|
 +---------------------------------------+
                   |
 +---------------------------------------+
@@ -313,10 +314,17 @@ FORBIDDEN:
 \section{DECISION\_SURVIVAL\_ENGINE}
 \label{sec:limit-decision-survival}
 
-Final judgement engine for irreversibility avoidance and survival.
+\paragraph{Historical description and canonical interpretation.}
+The preserved baseline described this component as a ``final judgement
+engine for irreversibility avoidance and survival.'' Under the current
+Normative Canon, that phrase does \textbf{not} grant sovereign decision
+authority to an engine. The component is interpreted as a survival and
+irreversibility evaluation/gating mechanism within the governed pipeline.
+The Human/User retains final sovereign decision authority; NRMO retains
+final governance, admissibility, and veto authority.
 
 \begin{lstlisting}[basicstyle=\ttfamily\small,frame=single]
-PURPOSE: decision_engine
+PURPOSE: decision_engine  # historical component label; no sovereign authority
 
 INVARIANTS:
   - survival_first
