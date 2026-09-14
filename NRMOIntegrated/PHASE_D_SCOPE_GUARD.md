@@ -20,4 +20,4 @@ Forbidden changes:
 - changing the Normative Canon to accommodate stale prose or current code;
 - performing DecisionCompass implementation changes in this phase.
 
-A remaining literal legacy term is acceptable only when its status is unambiguous under the Canon/preference/provenance rules.
+A remaining literal legacy term is acceptable only when its status is unambiguous under the Canon/precedence/provenance rules.
