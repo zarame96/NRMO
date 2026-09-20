@@ -1,0 +1,504 @@
+% =================================================================
+% Part XVI: NRMO v7.3 — Production Contract Integration
+%   Reconciles the v7.3 implementation-target requirements (as
+%   evidenced by DecisionCompass secondary sources, 2026-09) against
+%   the v7.2 / v7.2.1 / Normative Canon baseline. Does not amend the
+%   Normative Canon. See NRMOIntegrated/docs/V7_3_DIFFERENTIAL_TABLE.md
+%   for the full row-by-row reconciliation this Part summarises.
+% =================================================================
+
+\part{NRMO v7.3 --- Production Contract Integration}
+\label{part:v73_production_contract}
+
+\chapter{Provenance and Status of This Part}
+\label{ch:v73_provenance}
+
+\nrmobox{Provenance and authority status --- read before use}{
+\textbf{This Part is not a transcription of an original ``NRMO SYSTEM
+v7.3'' specification document.} DecisionCompass Issue \#120 records
+that such a document (\texttt{NRMO SYSTEM\_7.3.md} and
+\texttt{NRMO\_SYSTEM\_v7\_3\_PATCH.md}) was supplied 2026-09-15, but as
+of this build that original text could not be located in
+\texttt{zarame96/NRMO}, \texttt{zarame96/DecisionCompass} (any branch),
+or local session storage. \\[0.5em]
+What this Part \emph{is}: a reconciliation of (a) the NRMO v7.2
+Normative Canon, (b) the v7.2.1 Passive Ruin revision, and (c) the
+secondary implementation-target documents
+\texttt{docs/NRMO\_V7\_3\_IMPLEMENTATION\_SCOPE.md} and
+\texttt{docs/NRMO\_V7\_3\_GAP\_MATRIX.md} from the DecisionCompass
+branch \texttt{agent/nrmo-v7-3-canonical-parity}
+(HEAD \texttt{7ee15a964bce51aba22a997e9bba31a389514ac2} at time of
+writing). \\[0.5em]
+\textbf{Authority rule applied throughout this Part}: where a
+requirement below restates existing \texttt{NORMATIVE\_CANON.md} or
+v7.2/v7.2.1 content, it is presented as normative (it already was).
+Where a requirement has \emph{no} Canon/v7.2 precedent and derives
+solely from the secondary implementation-target document, it is
+explicitly marked \textbf{SOURCE-PENDING} --- offered as the current
+best-evidence working assumption, not as confirmed original-author
+intent, and subject to revision if the original v7.3 text is later
+located. \textbf{No content in this Part amends \texttt{NORMATIVE\_CANON.md}.}
+Any apparent tension with the Canon is resolved in the Canon's favor;
+see \S\ref{sec:v73-typezero-disambiguation} and
+\S\ref{sec:v73-ruin-disambiguation} for the two cases this build found.
+}
+
+\section{Relationship to DecisionCompass}
+\label{sec:v73-decisioncompass-relationship}
+
+Per the Founding Charter and \texttt{NORMATIVE\_CANON.md} \S11
+(Conformance Rule), the authority order is:
+
+\begin{center}
+\texttt{NRMO normative specification} $\to$
+\texttt{DecisionCompass implementation} $\to$
+\texttt{conformance verification}
+\end{center}
+
+This Part is written to precede and govern DecisionCompass's v7.3
+implementation, not to certify or adopt it. Where DecisionCompass's
+implementation-scope document is used as evidence of what v7.3
+requires, this Part treats that document the way any implementation
+proposal is treated under \texttt{NORMATIVE\_CANON.md} \S9 and \S11:
+informative, not self-authorizing. DecisionCompass's own conformance
+matrix (\texttt{docs/nrmo\_v7\_3\_conformance.json}) is
+implementation-only evidence (Table~\ref{tab:v73-classification-summary},
+row category \texttt{IMPLEMENTATION-ONLY}) and is out of scope for this
+Part beyond the cross-reference in
+\S\ref{sec:v73-decisioncompass-conformance-summary}.
+
+\chapter{Authority, Mode, and Lifecycle Model}
+\label{ch:v73-authority-mode}
+
+\section{Authority Hierarchy (restated, unchanged)}
+\label{sec:v73-authority}
+
+\begin{center}
+\texttt{Human Sovereign} $\to$ \texttt{Vision (human-owned)} $\to$
+\texttt{NRMO (governance/admissibility)} $\to$ \texttt{A\_allowed} $\to$
+\texttt{StrongEngine \(\Omega\) Full (search/rank only)} $\to$
+\texttt{recommendation} $\to$ \texttt{Human Sovereign (final)}
+\end{center}
+
+This is \texttt{NORMATIVE\_CANON.md} \S2 restated with the admissible
+set made explicit as an intermediate stage; it introduces no new
+authority claim. The strict invariant
+$a_t \in A_t$ (Canon \S2.3, \S8) is unchanged.
+
+\section{Four-Layer Mode/State Model}
+\label{sec:v73-four-layer}
+
+Four state axes must be represented and traced \emph{separately} and
+must never be flattened into a single enum:
+
+\begin{enumerate}
+\item \textbf{Operational Mode}: \texttt{NORMAL | SAFE | VENTURE |
+MISSION} --- Canon \S3.1, unchanged.
+\item \textbf{Context Override}: \texttt{TRAINING(A--F,E+) | HARE |
+NONE} --- Canon \S3.2--\S3.3, unchanged.
+\item \textbf{Type ZERO Internal Gating State} --- see
+\S\ref{sec:v73-typezero-disambiguation}; historical labels, disambiguated.
+\item \textbf{Lifecycle State}: \texttt{ACTIVE | HOLD | EXIT |
+SAFE\_EXIT} --- Canon \S3.4, unchanged.
+\end{enumerate}
+
+\noindent
+The $A_{\mathrm{allowed}}$ extension \texttt{MISSION-DEFENSE =
+active|inactive} (Canon \S3.6, Section~\ref{sec:mission-defense-c2}) is
+an extension flag on axis (1)'s MISSION profile, not a fifth axis.
+
+\subsection{Disambiguation: Type ZERO Internal Gating State vs Operational Mode}
+\label{sec:v73-typezero-disambiguation}
+
+\nrmobox{Resolved terminology-collision risk}{
+\textbf{Finding}: the v7.3 implementation-target document specifies a
+``Type ZERO Mode'' axis using the labels
+\texttt{CORE|VENTURE|MISSION|SHUTDOWN}. Section~\ref{sec:type-zero-modes-c2}
+already preserves exactly this 4-tuple as an explicit
+\emph{historical, superseded} table --- superseded specifically
+\emph{as the Operational Mode taxonomy} (\texttt{NORMATIVE\_CANON.md}
+\S5). Reusing identical labels (\texttt{MISSION}, \texttt{VENTURE}) for
+two different axes creates a serious readability and
+implementation-drift risk: a trace value \texttt{MISSION} would be
+ambiguous between ``Operational Mode = MISSION'' and ``Type ZERO
+internal gate = MISSION'' without qualification. \\[0.5em]
+\textbf{Resolution (Canon-priority reading, no Canon amendment)}:
+Canon \S5 supersedes this label set only as the Operational Mode
+taxonomy. It does not forbid Type ZERO from retaining an internal,
+non-actuator (Canon \S6) gating-state vocabulary that happens to reuse
+historical labels, \emph{provided it is never exposed or logged
+without an explicit \texttt{type\_zero\_gate} qualifier distinct from
+\texttt{operational\_mode}}. Any implementation or document that
+prints a bare \texttt{MISSION} without stating which axis it belongs
+to is non-conformant. This is a documentation/trace-schema obligation,
+not a theory change.
+}
+
+Required trace discipline going forward: every occurrence of this
+label set outside Section~\ref{sec:type-zero-modes-c2} itself must be
+qualified as \texttt{type\_zero\_gate.\{CORE|VENTURE|MISSION|SHUTDOWN\}}
+to prevent confusion with \texttt{operational\_mode.\{NORMAL|SAFE|VENTURE|MISSION\}}.
+
+\section{HOLD State Machine}
+\label{sec:v73-hold-state-machine}
+
+\nrmobox{Correction recorded during self-audit (LOOP 6)}{
+An earlier draft of this section classified the transition table below
+as \texttt{ADDED / SOURCE-PENDING}, i.e.\ as having no direct v7.2
+textual precedent. Re-reading Chapter~\ref{ch:theoretical-invariants}
+(\S\ref{sec:inv-state-space}) during self-audit found that this exact
+five-transition table already exists there, verbatim, as part of the
+v2.0 theoretical invariants (\textbf{UNCHANGED} status in that
+chapter's own terms). The classification below is corrected
+accordingly. This correction is recorded rather than silently applied,
+per the evidence-discipline requirement governing this Part.
+}
+
+\texttt{NORMATIVE\_CANON.md} \S3.4 establishes the lifecycle-state
+family; Chapter~\ref{ch:theoretical-invariants} \S\ref{sec:inv-state-space}
+already provides the transition table itself. The following table is
+therefore \textbf{UNCHANGED} (restated for local readability in the
+v7.3 context, not new content):
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXX}
+\toprule
+\textbf{Transition} & \textbf{Trigger} & \textbf{Authority required} \\
+\midrule
+\texttt{ACTIVE $\to$ HOLD} & Human intervention required (e.g.\ empty
+$A_{\mathrm{allowed}}$, materially insufficient information for a
+major/irreversible candidate) & NRMO governance signal; no human
+action needed to \emph{enter} HOLD \\
+\texttt{ACTIVE $\to$ EXIT} & Planned termination (mission
+success/exit criteria met) & Per the applicable MISSION exit criteria \\
+\texttt{ACTIVE $\to$ SAFE\_EXIT} & Emergency termination & NRMO
+governance signal (ruin-boundary or SHUTDOWN-equivalent trigger) \\
+\texttt{HOLD $\to$ ACTIVE} & Resume & \textbf{Explicit Human Sovereign
+approval only} (Canon \S2.1) \\
+\texttt{HOLD $\to$ SAFE\_EXIT} & Escalation (HOLD condition
+deteriorates or times out unresolved) & NRMO governance signal \\
+\bottomrule
+\end{tabularx}
+\caption[HOLD state machine]{HOLD lifecycle transitions. UNCHANGED:
+verbatim restatement of Chapter~\ref{ch:theoretical-invariants}
+\S\ref{sec:inv-state-space} (v2.0 theoretical invariant, preserved
+through v7.2), read together with Canon \S3.4.}
+\label{tab:v73-hold-transitions}
+\end{table}
+
+\noindent
+See also \S\ref{sec:hold-refinement} (\texttt{HOLD\_WITH\_OBSERVATION
+| HOLD\_WITH\_SHADOW | HOLD\_WITH\_EXPIRY}) for the pre-existing
+operational refinement of the single abstract \texttt{HOLD} state used
+above; that refinement is orthogonal to this table and is unchanged by
+it.
+
+\paragraph{Empty admissible set (\textbf{ADDED / SOURCE-PENDING}).} If
+$A_{\mathrm{allowed}}$ (equivalently
+$A_t$) is empty, the execution layer returns \texttt{HOLD} and
+generates \emph{no} execution candidate. This follows directly from
+Canon \S8 (execution may never expand $A_t$ on its own authority): if
+governance has narrowed $A_t$ to $\emptyset$, no admissible candidate
+can exist by construction, and any output claiming otherwise would
+violate $a_t \in A_t$.
+
+\chapter{Norn: Observation Responsibilities}
+\label{ch:v73-norn}
+
+\texttt{NORMATIVE\_CANON.md} \S7.1 already establishes canonical Norn
+as an interpretive governance perspective that is \emph{not} the
+sovereign, not a decision-maker, not StrongEngine, not an execution
+engine. The following itemized responsibility list is
+\textbf{ADDED / SOURCE-PENDING}: an elaboration consistent with \S7.1,
+not previously itemized at this granularity.
+
+\section{Required Observable Responsibilities}
+
+\begin{itemize}
+\item Branch record: proposed / admissible / selected / rejected
+alternatives.
+\item Procedure audit: whether the ordered evaluation of
+\S\ref{sec:v73-decision-procedure} was actually followed by the
+runtime, including detection of missing or reordered steps.
+\item Conceptual-drift observation, using the descriptive
+classification \texttt{DRIFT | SIGNAL | WITHIN\_OWN\_RANGE |
+INSUFFICIENT\_HISTORY} (descriptive only; \textbf{no Norn-owned
+decision threshold is permitted} --- ``audit has no scale'', directly
+entailed by Canon \S7.1 + \S8).
+\item Passive observation: stagnation, opportunity loss, adaptation
+delay.
+\item Post-decision, one-way observation that cannot alter the
+decision already made.
+\item Upstream observation immediately after normalized World
+Model/Observation, where the runtime makes this feasible.
+\end{itemize}
+
+\section{Explicit Prohibitions (restated from Canon, made explicit)}
+\label{sec:v73-norn-prohibitions}
+
+Canonical Norn \textbf{must not}: veto; execute; set thresholds;
+choose the route, Vision, or Mission; or return the final conclusion.
+Each of these is already entailed by Canon \S7.1 (``not the final
+decision maker'', ``not an execution engine'') read together with
+\S8 (governance/execution separation is exhaustive: Norn is neither
+governance nor execution). This section is \textbf{CLARIFIED}, not new
+authority.
+
+\chapter{Decision Procedure}
+\label{ch:v73-decision-procedure}
+
+\section{Ordered Evaluation}
+\label{sec:v73-decision-procedure}
+
+The following ordered procedure is \textbf{ADDED / SOURCE-PENDING} as
+a single composite sequence. Each individual stage already has
+independent Canon or chapter grounding (cited inline); the
+\emph{ordering itself} and its packaging as one traceable procedure
+has no prior single-document precedent and is therefore not asserted
+as pre-existing Canon text --- only as consistent with it.
+
+\begin{enumerate}
+\item Vision / Mission alignment (Canon \S2.1, \S2.4; MISSION
+definition, \S4/Canon).
+\item Ruin boundary check (Chapter~\ref{ch:theoretical-invariants};
+Chapter~\ref{ch:time-horizon-layer}; \S\ref{sec:v73-ruin-disambiguation}
+below).
+\item Reversibility check (R1-FIX Boundary Contract,
+\S\ref{sec:r1fix-boundary-contract}).
+\item $A_{\mathrm{allowed}}$ narrowing
+(Chapter~\ref{ch:a-allowed}, Chapter~\ref{ch:a-allowed-dictionary}).
+\item Information sufficiency check (major/irreversible lock-in is
+blocked under material information insufficiency ---
+\S\ref{sec:v73-a-allowed-refinement}).
+\item Execution candidate generation
+(\S\ref{sec:v73-strongengine-surface}).
+\item Observation indicator recording (Norn,
+\S\ref{ch:v73-norn}).
+\item Exit condition statement.
+\item Reevaluation condition/date statement.
+\item Return final authority to Human Sovereign (Canon \S2.1).
+\end{enumerate}
+
+\noindent
+Norn audits whether this order was followed; Norn cannot alter it
+(\S\ref{sec:v73-norn-prohibitions}).
+
+\chapter{Ruin Taxonomy}
+\label{ch:v73-ruin-taxonomy}
+
+\section{Disambiguation: Two Non-Identical Ruin Axes}
+\label{sec:v73-ruin-disambiguation}
+
+\nrmobox{Resolved terminology risk --- do not read as one 4-member enum}{
+\textbf{Finding}: the v7.3 implementation-target document lists ``Hard
+Ruin, Soft Ruin, Active Ruin, Passive Ruin'' as four items to keep
+distinct in trace fields. Read literally as one flat taxonomy, this
+conflates two chapters with \emph{different scope and different
+axis-meaning}:
+\begin{itemize}
+\item \textbf{Hard Ruin / Soft Ruin} (Chapter~\ref{ch:investment-sop},
+\S47--51): a \emph{severity} axis, defined specifically within the
+Investment SOP domain. Hard Ruin = unrecoverable (bankruptcy,
+permanent capital loss); Soft Ruin = recoverable-in-principle
+strategic failure (forced Risk-Off transition).
+\item \textbf{Active Ruin / Passive Ruin}
+(\S\ref{sec:omega-active-vs-passive}): a \emph{causal-origin} axis,
+defined domain-generally in the StrongEngine $\Omega$ Full chapter.
+Active Ruin = direct collapse from reckless action; Passive Ruin =
+erosion of optionality from avoidance/rigidity/adaptation failure.
+\end{itemize}
+These are not four siblings of one enum; they are two independent
+axes from two different chapters, one domain-scoped and one
+domain-general, that may co-occur (e.g.\ a Soft Ruin in the investment
+domain may have either an Active or a Passive causal origin).
+}
+
+\textbf{Resolution}: trace schemas that need both axes must record
+them as \texttt{ruin\_severity \(\in\) \{Hard, Soft\}} (Investment
+domain only, may be \texttt{N/A} elsewhere) and
+\texttt{ruin\_origin \(\in\) \{Active, Passive\}} (domain-general)
+as two separate fields, never as one four-valued field. This
+resolves the CONFLICT identified in the differential table
+(\texttt{docs/V7\_3\_DIFFERENTIAL\_TABLE.md}, row 6.1) to
+\textbf{CLARIFIED} without requiring any Canon change (Canon does not
+mention any of the four terms; the ambiguity was entirely
+chapter-to-chapter).
+
+\section{Passive Ruin: Avoidability-Window Definition (v7.2.1, adopted)}
+\label{sec:v73-passive-ruin-window}
+
+This is the single strongest-evidence item in this Part: the
+avoidability-window definition of Passive Ruin was already adopted in
+v7.2.1, \emph{before} any v7.3 implementation work began
+(\texttt{docs/v72\_1\_validation\_record.md},
+\texttt{docs/v72\_implementation\_integration\_map.md} \S2--3). It is
+formally carried into v7.3 as \textbf{CLARIFIED} (re-affirmed, not
+newly introduced):
+
+\begin{itemize}
+\item \textbf{Leading indicator} (primary): at the moment of choice,
+does the candidate action close an avoidability window that was open
+in the state immediately before the choice? (\texttt{window\_open()},
+\texttt{closes\_window()}, diff-in-diff against the do-nothing
+baseline --- \texttt{docs/v72\_implementation\_integration\_map.md}
+\S2--3.)
+\item \textbf{Lagging indicator} (retained, not deleted): the legacy
+streak-based signal (time spent in a degraded-state region) is kept
+as a secondary, after-the-fact diagnostic, exactly as
+v7.2.1 specified. It is not deleted per the ``preserve, do not erase''
+guardrail (\texttt{NORMATIVE\_CANON\_ADOPTION.md} \S Guardrails).
+\end{itemize}
+
+\noindent
+\textbf{Passive Ruin must not be redefined as mere inactivity.} An
+implementation that flags Passive Ruin purely from an inactivity
+streak, without an observed avoidability-window closure, is
+non-conformant with this definition (this restates
+\texttt{docs/v72\_1\_validation\_record.md} \S3--4, not a new rule).
+
+\chapter{$A_{\mathrm{allowed}}$ and StrongEngine Refinement}
+\label{ch:v73-aallowed-strongengine}
+
+\section{Admissibility Refinement}
+\label{sec:v73-a-allowed-refinement}
+
+Building on Chapter~\ref{ch:a-allowed} and
+Chapter~\ref{ch:a-allowed-dictionary} (\textbf{UNCHANGED} baseline), an
+action is inadmissible (excluded from $A_{\mathrm{allowed}}$) when it:
+
+\begin{enumerate}
+\item creates direct irreversible loss beyond the applicable
+reversibility floor (R1-FIX Boundary Contract,
+\S\ref{sec:r1fix-boundary-contract});
+\item locks in a major/high-commitment decision under material
+information insufficiency;
+\item removes a required withdrawal or review capability; or
+\item violates a sovereignty constraint (i.e.\ would remove or bypass
+the Human Sovereign's ability to accept, reject, defer, or terminate
+--- Canon \S2.1).
+\end{enumerate}
+
+This is \textbf{CLARIFIED}: each clause is independently grounded in
+existing chapters; their joint statement as an admissibility checklist
+is new packaging, not new substance.
+
+\section{StrongEngine Candidate Surface}
+\label{sec:v73-strongengine-surface}
+
+Within $A_{\mathrm{allowed}}$, Chapter~\ref{ch:strong-engine} and
+Chapter~\ref{ch:omega-full-integrated} already establish that StrongEngine
+$\Omega$ Full searches and ranks candidates without redefining the
+ruin boundary. The following candidate-category checklist is
+\textbf{ADDED / SOURCE-PENDING} (a specific, non-exhaustive minimum
+surface, not previously enumerated at this granularity):
+safe/conservative; standard; assertive/forward; information-acquisition
+probe; bounded sequence/checkpoint plan; costed HOLD (where
+$A_{\mathrm{allowed}}$ admits it); exit/recovery (where required).
+
+\noindent
+\textbf{Invariant (UNCHANGED)}: no advisory or presentation layer may
+substitute an inadmissible action for the StrongEngine's selection.
+This is the strict invariant $a_t \in A_t$ (Canon \S2.3, \S8) restated,
+not a new rule.
+
+\chapter{Trace and DecisionRecord Schema}
+\label{ch:v73-trace-schema}
+
+\texttt{NORMATIVE\_CANON.md} \S10 requires that publication version,
+baseline version, component version, and implementation-snapshot
+version remain distinguishable, but does not itself enumerate a
+decision-trace schema. The following field list is
+\textbf{ADDED / SOURCE-PENDING}, offered as the minimum information
+needed to audit a single decision against every requirement in this
+Part:
+
+\begin{itemize}
+\item authority/spec version (e.g.\ \texttt{NRMO v7.3} tag) and
+component versions;
+\item operational mode / context override / Type ZERO internal gate
+(qualified per \S\ref{sec:v73-typezero-disambiguation}) / lifecycle
+state / MISSION-DEFENSE flag;
+\item Vision/Mission reference, where supplied by the Human Sovereign;
+\item ruin results: \texttt{ruin\_severity} and \texttt{ruin\_origin}
+as two separate fields (\S\ref{sec:v73-ruin-disambiguation});
+\item reversibility classification;
+\item admissible and vetoed candidates, with reasons;
+\item selected action and StrongEngine score metadata;
+\item observation indicators (Norn);
+\item exit conditions;
+\item reevaluation conditions/date;
+\item Norn branch / procedure / drift observations
+(\S\ref{ch:v73-norn});
+\item Human Sovereign's recorded acceptance, modification, or
+rejection, where captured.
+\end{itemize}
+
+\chapter{Summary Classification and DecisionCompass Cross-Reference}
+\label{ch:v73-summary}
+
+\section{Classification Summary}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\linewidth}{lXr}
+\toprule
+\textbf{Classification} & \textbf{Meaning} & \textbf{Rows (differential table)} \\
+\midrule
+UNCHANGED & Restates existing Canon/v7.2 with no delta & 14 \\
+CLARIFIED & Adds precision consistent with Canon/v7.2 & 7 \\
+ADDED (SOURCE-PENDING) & New, uncontradicted by Canon/v7.2 & 7 \\
+SUPERSEDED & v7.3 explicitly replaces prior content & 0 \\
+CONFLICT (resolved) & Apparent contradiction, resolved without Canon change & 1 \\
+IMPLEMENTATION-ONLY & DecisionCompass runtime/CI concern & 2 \\
+HISTORICAL & Refers to already-non-normative material & 1 \\
+\bottomrule
+\end{tabularx}
+\caption[v7.3 differential classification summary]{Summary of the
+full row-by-row reconciliation in
+\texttt{NRMOIntegrated/docs/V7\_3\_DIFFERENTIAL\_TABLE.md}. No row
+required a \texttt{NORMATIVE\_CANON.md} change. Row 3.1 (HOLD
+transition table) was reclassified from ADDED/SOURCE-PENDING to
+UNCHANGED during LOOP 6 self-audit after locating verbatim precedent
+in Chapter~\ref{ch:theoretical-invariants} \S\ref{sec:inv-state-space};
+see that section's note for the correction record.}
+\label{tab:v73-classification-summary}
+\end{table}
+
+\section{DecisionCompass Conformance Cross-Reference}
+\label{sec:v73-decisioncompass-conformance-summary}
+
+As of DecisionCompass branch \texttt{agent/nrmo-v7-3-canonical-parity}
+(HEAD \texttt{7ee15a964bce51aba22a997e9bba31a389514ac2}), the
+implementation's own conformance matrix
+(\texttt{docs/nrmo\_v7\_3\_conformance.json}) records all tracked
+requirements as \texttt{UNIT\_VERIFIED}, \texttt{SCENARIO\_VERIFIED},
+or \texttt{CI\_VERIFIED}, with one item
+(\texttt{physical-device}) recorded as
+\texttt{NOT\_RUN\_NO\_CONNECTED\_DEVICE} (conditional on hardware
+availability, not a specification gap). This cross-reference is
+informational: it describes the implementation's self-reported state
+at a pinned commit and does \textbf{not} certify conformance on behalf
+of NRMO, and does not make the implementation the source of this
+Part's content (\texttt{NORMATIVE\_CANON.md} \S11).
+
+\section{Non-Goals of This Part}
+
+Restating the implementation-target document's own non-goals, which
+are themselves consistent with \texttt{NORMATIVE\_CANON.md} \S9 and
+\S11 (\textbf{UNCHANGED}):
+
+\begin{itemize}
+\item Experimental prior work is not adopted merely because it exists.
+\item This Part does not require any particular service-extraction or
+deployment architecture.
+\item Historical implementation-specific task routers (e.g.\ Shinobi)
+must not be conflated with canonical Norn (Canon \S7.2).
+\item \textbf{NRMO theory is not rewritten for implementation
+convenience} --- where this build found tension between an
+implementation-target document and the Canon, the Canon prevailed
+(\S\ref{sec:v73-typezero-disambiguation},
+\S\ref{sec:v73-ruin-disambiguation}), and no Canon text was altered.
+\end{itemize}
