@@ -222,3 +222,114 @@ concepts to begin with — Canon does not mention any of the four terms).
    that are pre-existing in v7.2, confirmed by diffing against a fresh
    3-pass v7.2 baseline build). Zero Part-XVI-introduced unresolved
    references remain.
+
+## External audit record (post-restore session, independent of the LOOP 1–6 self-audit above)
+
+Performed against the restored commits `df171b4`/`449c1c7`/`992bfe8` in a
+separate session, with fresh `git clone`-level scrutiny and an independently
+installed LaTeX toolchain. Findings:
+
+1. **3-commit content audit**: confirmed no commit modifies
+   `NRMO_Complete_v5_5.tex`, `NORMATIVE_CANON.md`, or any file under
+   `chapters/` (`git diff --stat` between pre-v7.3 `main` and this branch
+   over those paths is empty). Confirmed Part XVI's Canon §-citations
+   (§2.1, §2.3, §3.1–3.7, §5, §7.1, §7.2, §8, §9, §10, §11) accurately
+   reflect the actual `NORMATIVE_CANON.md` text. Confirmed the row-3.1
+   HOLD-transition "verbatim precedent" claim against
+   `ch09_theoretical_invariants.tex` §`sec:inv-state-space` — precedent is
+   real, not overstated. Confirmed the row-8.1 MISSION-DEFENSE
+   "near-verbatim match" claim against `ch02g_mission_defense.tex` —
+   accurate. Confirmed the row-6.2 Passive Ruin avoidability-window claim
+   against `docs/v72_implementation_integration_map.md` §2–3 (the
+   `window_open()`/`closes_window()`/leading-lagging-indicator design is
+   real, not overstated; it is not in `v72_1_validation_record.md` alone —
+   that file documents a separate but related diff-in-diff detection-
+   sensitivity fix). No fabricated or misrepresented citation found.
+2. **SOURCE-PENDING re-verification**: independently grepped the full
+   `NRMOIntegrated/` corpus (chapters, parts, docs, Canon) for precedent of
+   all 6 ADDED/SOURCE-PENDING rows (3.2, 4.2, 4.4, 5.1, 10.1, 11.1). No
+   precedent found for any; SOURCE-PENDING status correctly retained on
+   textual-search grounds, not merely because a DecisionCompass
+   implementation exists.
+3. **New provenance finding**: the original `NRMO SYSTEM_7.3.md` /
+   `NRMO_SYSTEM_v7_3_PATCH.md` files remain **NOT LOCATED** after a full
+   pass over: this repo's entire git history/reflog/stash/dangling-object
+   set (`git fsck --unreachable --dangling`: empty), the working
+   filesystem, session scratch space, the restore bundle/patch files
+   themselves, and `zarame96/DecisionCompass` (all branches reachable from
+   a depth-1000 fetch of `agent/nrmo-v7-3-canonical-parity`, HEAD
+   `7ee15a964bce51aba22a997e9bba31a389514ac2`). **Formal finding:
+   ORIGINAL SOURCE NOT AVAILABLE**, per the LOOP-C search protocol.
+   However, **DecisionCompass Issue #120** (`zarame96/DecisionCompass#120`,
+   authored directly by the repository owner/Human Sovereign, 2026-09-15,
+   `author_association: OWNER`) contains near-verbatim restatements of
+   nearly every ADDED/SOURCE-PENDING item in this table and in Part XVI —
+   including the exact §14 ten-step order, the exact Norn responsibility
+   list (branch record / procedure audit / conceptual-drift observation /
+   passive observation / downstream one-way / upstream read-only), the
+   exact drift-class vocabulary (`DRIFT/SIGNAL/WITHIN_OWN_RANGE/
+   INSUFFICIENT_HISTORY`), and the empty-`A_allowed`⇒HOLD rule. This is
+   **not** the missing original spec text (Issue #120 does not claim to be
+   a transcription of it, and may be the owner's own implementation
+   synthesis rather than a copy), so it does not lift any SOURCE-PENDING
+   tag by itself. It does materially strengthen the evidentiary basis for
+   those rows from "AI-authored secondary implementation-scope document"
+   to "directly owner-authored requirements text, predating and seeding
+   DecisionCompass's own scope docs." Recommendation: cite Issue #120
+   alongside `docs/NRMO_V7_3_IMPLEMENTATION_SCOPE.md` in the evidence
+   hierarchy on any future revision of this table; SOURCE-PENDING tags are
+   left unchanged here per the "implementation existence alone does not
+   lift SOURCE-PENDING" rule and because Issue #120 is not confirmed to be
+   the original spec text itself.
+4. **PDF rebuild verification**: rebuilt `NRMO_Integrated_System_v7_3.pdf`
+   from source (fresh `pdflatex` ×3 + `makeindex`) in this session's
+   environment. Page count matches exactly (531). File size matches
+   exactly (2,297,926 bytes.) Content is not byte-identical to the
+   committed PDF (differs from offset 2,255,258; this is expected —
+   PDF `/ID`/timestamp metadata varies by build environment even for
+   otherwise-identical content). **One discrepancy from the commit's
+   self-verification claim**: a fresh v7.2-baseline rebuild in this same
+   environment shows 7 undefined-reference warnings (3 citations + 4
+   cross-refs), but the v7.3 rebuild shows 8 (3 citations + 5 cross-refs)
+   — one extra: `Reference 'sec:foundations-mech-b-constraint' on page
+   114 undefined`. Root-caused to a pre-existing label/ref prefix
+   mismatch in `ch07_investment_sop.tex:217` (`\ref{sec:foundations-mech-
+   b-constraint}`) vs. the actual label in `ch01c_foundations_paper.tex:106`
+   (`\label{eq:foundations-mech-b-constraint}`) — an `eq:`/`sec:` prefix
+   typo. Both files are byte-identical between the v7.2 and v7.3 builds
+   (confirmed via `git diff`), so **this is a pre-existing latent defect,
+   not something Part XVI introduced**; it appears to surface
+   inconsistently depending on page/section-count-driven multi-pass label
+   resolution. The commit message's claim that the warning sets are
+   "byte-identical" between the two baselines is therefore not exactly
+   reproduced (off by one warning) in an independent rebuild — a minor,
+   non-normative inaccuracy in that self-verification claim, logged here
+   rather than silently corrected in the original commit message.
+5. **Consistency-guard coverage gap closed**: `check_v73_consistency.py`
+   covered 11 of the governance-violation classes required by the restart
+   instructions but was missing checks for (a) Norn holding threshold-
+   setting authority (only veto/execute were checked), (b) any actor other
+   than Human Sovereign being described as holding final authority, (c)
+   Vision being described as NRMO-owned/generated, (d) Type ZERO gating
+   labels and Operational Mode being flattened into one enum, and (e)
+   Hard/Soft-Ruin and Active/Passive-Ruin being flattened into one
+   4-valued enum. All five added as new regex guards; verified 4/4 on
+   injection (guard (a) reuses the existing Norn-prohibition pattern
+   family and was exercised together with the veto/execute checks
+   previously). Clean pass confirmed on the actual Part XVI text both
+   before and after the addition; injected text fully reverted and
+   confirmed via empty `git diff` after each test.
+6. **DecisionCompass conformance spot-check**: fetched
+   `agent/nrmo-v7-3-canonical-parity` directly (HEAD confirmed
+   `7ee15a964bce51aba22a997e9bba31a389514ac2`, matching this table's
+   citation) and read `docs/nrmo_v7_3_conformance.json` directly rather
+   than relying on Part XVI's summary of it — the summary is accurate (12
+   of 13 tracked requirements `UNIT_VERIFIED`/`SCENARIO_VERIFIED`/
+   `CI_VERIFIED`, 1 `NOT_RUN_NO_CONNECTED_DEVICE`). Spot-read two evidence
+   files directly (`tests/unit/test_nrmo_v73_mode_state_contract.py`,
+   `tests/unit/test_audit.py`) and confirmed they contain real,
+   substantive assertions matching their claimed requirement IDs (e.g.
+   `test_lifecycle_hold_resume_requires_explicit_human_sovereign_approval`,
+   `test_norn_observe_does_not_mutate_result`), not placeholder/vacuous
+   tests. Per Canon §11, this remains implementation evidence only and
+   does not make DecisionCompass a source of NRMO theory.
