@@ -396,65 +396,192 @@ probe; bounded sequence/checkpoint plan; costed HOLD (where
 $A_{\mathrm{allowed}}$ admits it); exit/recovery (where required).
 ```
 
-### Proposed replacement text (NOT applied)
+**Precise statement of what is actually proposed to change**: the old
+text already calls itself "non-exhaustive" — its problem is not that it
+is *closed*. Its problem is that it fixes a **specific seven-category
+enumerated minimum surface**: those seven categories are named as the
+required baseline every conformant implementation must be able to
+produce, which over-constrains implementations/future StrongEngine
+variants that have no occasion to use one of the seven, or that
+organize candidate generation along different lines entirely.
+
+### Revision 1 (2026-09-21, superseded by Revision 2 below)
+
+The first draft of this addendum proposed replacing the enumerated list
+with "StrongEngine Ω Full must ensure sufficient candidate diversity...
+This may include, as appropriate: [seven similar categories]." Human
+Sovereign feedback (2026-09-21) identified two defects: (a) it
+mischaracterized the old text's problem as "closedness" rather than as
+"fixing seven categories as a minimum surface," and (b) "sufficient
+candidate diversity" has no stated criterion — it does not say what
+"sufficient" means or when the requirement is violated. Superseded by
+Revision 2; kept here, not deleted, per this document's own
+non-erasure discipline (§7, §9).
+
+### Revision 2 (2026-09-21) — current proposal, NOT applied
 
 ```
 Within $A_{\mathrm{allowed}}$, Chapter~\ref{ch:strong-engine} and
 Chapter~\ref{ch:omega-full-integrated} already establish that StrongEngine
 $\Omega$ Full searches and ranks candidates without redefining the
-ruin boundary. \textbf{StrongEngine $\Omega$ Full must ensure
-sufficient candidate diversity within $A_{\mathrm{allowed}}$}
+ruin boundary. \textbf{StrongEngine $\Omega$ Full must not collapse
+candidate generation to a single risk posture when materially distinct
+admissible alternatives exist within $A_{\mathrm{allowed}}$}
 (\textsc{proposed --- not yet adopted}; see this section for status).
-This may include, as appropriate: conservative/preservation-oriented
-proposals; forward/advancing proposals; information-acquisition
-proposals; staged/sequenced-execution proposals; \texttt{HOLD}; and
-withdrawal/recovery proposals. \textbf{These are illustrative examples
-only; they are not an exhaustive or closed taxonomy.}
+
+It must expose materially distinct admissible strategy families as
+applicable. These may include: preservation-oriented alternatives;
+advancement-oriented alternatives; information-acquisition
+alternatives; staged/checkpointed execution; \texttt{HOLD}/deferral
+recommendations where an admissible lifecycle transition exists; and
+withdrawal/recovery alternatives.
+
+\textbf{These categories are illustrative and non-exhaustive. They do
+not constitute a closed taxonomy or a mandatory minimum category set.}
+No category is required where it is inapplicable, unavailable, or
+inadmissible under $A_{\mathrm{allowed}}$.
+
+StrongEngine $\Omega$ Full may introduce additional candidate families
+where useful, provided every candidate remains inside
+$A_{\mathrm{allowed}}$ and no execution/advisory layer expands the
+admissible set on its own authority.
 ```
 
 The `\noindent \textbf{Invariant (UNCHANGED)}...` paragraph immediately
 following (already-Canon `a_t ∈ A_t` restatement) is unaffected either
 way and is not part of this diff.
 
-### Diff summary
+### Diff summary (current committed text vs. Revision 2)
 
-| | Current (still in effect) | Proposed (not adopted) |
+| | Current (still in effect) | Revision 2 (not adopted) |
 |---|---|---|
-| Structure | Closed 7-item enumerated checklist | Open-ended requirement + illustrative, explicitly non-exhaustive examples |
-| Status tag | `ADDED / SOURCE-PENDING` | Would be its own new adoption cycle if pursued — proposed here as `PROPOSED — NOT YET ADOPTED`, not pre-assigned an adoption date |
-| Binds StrongEngine to a fixed taxonomy? | Yes (7 named categories) | No — categories listed are explicitly "illustrative... not exhaustive or closed" |
-| Underlying diversity principle | Implicit (via the specific list) | Explicit (stated directly, independent of any example list) |
+| Structure | Enumerated seven-category minimum surface | Behavioral prohibition (no single-risk-posture collapse under distinct admissible alternatives) + illustrative, explicitly non-mandatory examples |
+| What triggers the requirement | Always (all seven named as baseline) | Only when materially distinct admissible alternatives actually exist within `A_allowed` — no requirement is created where they don't |
+| Status tag | `ADDED / SOURCE-PENDING` | `PROPOSED — NOT YET ADOPTED`, not pre-assigned an adoption date |
+| Fixes a specific category set as a minimum? | Yes (seven named categories) | No — "They do not constitute a closed taxonomy or a mandatory minimum category set" is stated directly |
+| Compliance criterion | Implicit (would a given implementation's category set match/cover the seven?) | Explicit and behavioral: does the implementation ever offer only one risk posture despite distinct admissible alternatives existing? |
+| HOLD treatment | "costed HOLD (where `A_allowed` admits it)" — one candidate category among seven | "`HOLD`/deferral recommendations where an admissible lifecycle transition exists" — explicitly conditioned on lifecycle-transition admissibility, not offered as a bare action category |
 
-### Canon-consistency verification
+### Audit of Revision 2
 
-Tested by temporary injection into a working copy of Part XVI, run
-through `NRMOIntegrated/tools/check_v73_consistency.py` (14-guard
-version), then fully reverted (confirmed via `git diff --stat` showing
-zero net change to the tracked file):
+**1. Canon consistency.** No conflict found. Canon does not mention
+StrongEngine candidate categories at all (§2.3 only states StrongEngine
+searches/ranks/selects "within the admissible domain supplied by
+governance" and "must never redefine the ruin boundary or expand `A_t`
+on its own authority") — Revision 2 restates both clauses verbatim in
+its closing sentence and adds nothing Canon prohibits.
+
+**2. HOLD / Lifecycle State consistency.** Improves on the currently
+committed text, not merely equal to it. The committed text lists
+"costed HOLD" as one candidate category among seven — read carelessly,
+this could suggest HOLD is an ordinary StrongEngine output competing
+with "standard" or "assertive" candidates. Revision 2 instead says
+`HOLD`/deferral recommendations apply "where an admissible lifecycle
+transition exists" — i.e. StrongEngine may *flag* that a HOLD
+transition would be appropriate, but does not itself gain authority to
+*enter* HOLD; entry remains governed by the already-`ADOPTED` Item 1
+rule (empty `A_allowed` ⇒ `HOLD`, execution layer's decision) and by
+Canon §3.4 (HOLD is a lifecycle state/governance result, not an
+Operational Mode, not an ordinary action). No text asserts HOLD *is* an
+Operational Mode or a peer action category; `check_v73_consistency.py`
+guard checks #1 and #2 (HOLD/MISSION-DEFENSE-as-Operational-Mode) were
+re-run against this text and did not fire (see point 5).
+
+**3. StrongEngine authority boundary.** Unaffected/reinforced. The
+closing sentence — "provided every candidate remains inside
+`A_allowed` and no execution/advisory layer expands the admissible set
+on its own authority" — is the same Canon §2.3/§8 boundary already
+stated as `UNCHANGED` elsewhere in Part XVI (§`sec:v73-strongengine-
+surface`'s existing Invariant paragraph, untouched by this diff). "May
+introduce additional candidate families where useful" grants search-
+space breadth, not admissibility-boundary authority; that distinction
+is exactly what Canon §2.3 separates.
+
+**4. `A_allowed` invariant.** Present and unnegated: the prohibition
+clause is scoped "within `A_{allowed}`," the illustrative list is
+scoped "where... admissible... under `A_{allowed}`," and the closing
+sentence restates `a_t ∈ A_t` directly. `check_v73_consistency.py`
+guard #9 (`a_t ∈ A_t` invariant must be present, never negated) was
+re-run (point 5) and passed.
+
+**5. Existing consistency guards.** Re-tested by temporary injection of
+Revision 2 into a working copy of Part XVI, run through
+`NRMOIntegrated/tools/check_v73_consistency.py` (14-guard version),
+then fully reverted (confirmed via `git diff --stat` showing zero net
+change to the tracked file):
 
 ```
 [V7.3 CONSISTENCY GUARD]
 OK: no known governance-violation patterns found in Part XVI
 ```
 
-No guard fired. The proposed text does not touch any of the other
-governance-violation classes (HOLD/MISSION-DEFENSE-as-mode, Norn
-authority, SHUTDOWN=SAFE, TRAINING/HARE, Passive Ruin, `a_t ∈ A_t`,
-Canon-amendment claims, v7.4 leakage, final-authority inversion,
-Vision ownership, Type-ZERO/Mode flattening, Ruin-axis flattening) — it
-only concerns the StrongEngine candidate-surface enumeration, which none
-of the 14 guards constrain by taxonomy content, only by the invariant
-that no advisory layer may select outside `A_allowed` (unaffected by
-either version of this text).
+No guard fired — same clean result as Revision 1, now re-confirmed
+against the corrected text.
 
-### If this revision is later adopted
+**6. DecisionCompass conformance impact.** `docs/nrmo_v7_3_conformance.json`
+has **no dedicated requirement ID for row 10.1 under either revision**
+(the tracked IDs are `authority-order`, `mode-state-separation`,
+`lifecycle-human-gate`, `mission-defense-extension`, `procedure-events`,
+`norn-read-only-audit`, `ruin-separation`, `passive-ruin-option-window`,
+`decision-record`, plus cross-runtime/build/device rows — none map to
+"StrongEngine candidate surface"). This is a pre-existing gap, not
+created or worsened by Revision 2. DecisionCompass Issue #120's
+"existing baseline" list (`costed HOLD`, `minimum-forward`,
+`option decay`, `information gain`) is compatible with Revision 2's
+illustrative categories (withdrawal/recovery, HOLD/deferral,
+advancement-oriented, information-acquisition respectively) without
+requiring the implementation to expose exactly seven named categories —
+if anything, Revision 2 is *less* implementation-prescriptive than the
+currently committed text, so adopting it would not regress any current
+DecisionCompass conformance status and would not require new
+implementation work to stay conformant.
 
-It would follow the same pattern as items 1–4/6: a new dated tag
-`ADOPTED (v7.3, New Explicit Adoption — Human Sovereign, <date>)`,
-recorded in a follow-up to `V7_3_ADOPTION_RECORD.md`, with
-`V7_3_DIFFERENTIAL_TABLE.md` row 10.1 updated accordingly. Until then,
-row 10.1 remains `ADDED / SOURCE-PENDING — DEFERRED` and Part XVI's
-existing closed-list text remains exactly as committed.
+### Negative-guard feasibility (considered, not added)
+
+Examined whether "a Normative statement permitting candidate generation
+to collapse to a single risk posture despite materially distinct
+admissible alternatives" can be mechanically detected the way the
+existing 14 guards detect their violation classes.
+
+**Finding: partially feasible, but not added in this pass.** The
+existing guards work by pattern-matching *prose assertions* in Part XVI
+(e.g. "Norn may veto," "HOLD is an Operational Mode") — they detect
+what the *text says*, not what an *implementation does*. "Collapses
+candidate generation to a single risk posture" is a runtime/behavioral
+property of StrongEngine's implementation, not a textual assertion a
+regex can observe from source code or test output content in general.
+A text-level guard can only catch the narrow case where Part XVI's own
+prose *affirmatively licenses* the collapse (symmetric to how existing
+guard #7 checks for the presence of "Passive Ruin must not be redefined
+as mere inactivity" and guard #3 checks for "Norn must not veto"). A
+guard of that shape — checking that Revision 2's own prohibition
+sentence is present, and flagging any nearby affirmative permission such
+as "a single candidate is sufficient" or "diversity is not required" —
+would be a reasonable, narrow, presence/negation-style addition
+consistent with the existing guard style. **It is not added to
+`check_v73_consistency.py` in this pass**, because Item 5/Revision 2 is
+not adopted and the guard would have no adopted target text to check
+against; adding it now would guard content that does not yet exist in
+the committed Part XVI. If Revision 2 is adopted, adding this guard as
+part of that adoption commit is recommended. Verifying the *runtime*
+version of this property (does DecisionCompass's actual StrongEngine
+implementation ever collapse to one risk posture when others are
+admissible) is a DecisionCompass-side test-coverage question, not
+something `check_v73_consistency.py` (a Part XVI text guard) can or
+should attempt.
+
+### Status
+
+Revision 2 is the current proposal for Item 5. **Not adopted.** Row
+10.1 remains `ADDED / SOURCE-PENDING — DEFERRED` in
+`V7_3_DIFFERENTIAL_TABLE.md`; Part XVI's existing seven-category text
+remains exactly as committed; the v7.3 PDF is not rebuilt. If adopted in
+a future decision, it would follow the same pattern as items 1–4/6: a
+new dated tag `ADOPTED (v7.3, New Explicit Adoption — Human Sovereign,
+<date>)`, recorded in a follow-up to `V7_3_ADOPTION_RECORD.md`, with
+`V7_3_DIFFERENTIAL_TABLE.md` row 10.1 and Part XVI both updated, and
+(per the feasibility finding above) the new negative guard added to
+`check_v73_consistency.py` in the same commit.
 
 ---
 
