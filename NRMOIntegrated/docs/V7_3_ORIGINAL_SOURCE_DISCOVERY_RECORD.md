@@ -11,8 +11,12 @@ publication/PROVISIONAL status; merge to `main`; delete or alter
 
 ## 1. Discovery
 
-**Date discovered (this session):** 2026-09-20 (uploaded to this Claude
-Code session as file attachments; read and hash-verified 2026-09-20).
+**Date discovered:** 2026-09-21 JST (2026-09-20 UTC) — uploaded to this
+Claude Code session as file attachments and hash-verified the same day.
+Recorded in JST to match this project's existing adoption-record
+convention (`V7_3_ADOPTION_RECORD.md`, `V7_3_ADOPTION_PROPOSAL.md` §11
+Revision 2, both dated 2026-09-21 JST); the session's own clock runs UTC,
+hence the dual notation here.
 
 **Files:**
 
@@ -144,62 +148,102 @@ reclassification below.
 | 2 | 4.2 | Norn observable-responsibility list | **ORIGINAL-CONFIRMED** | §4.10 "主務" 1–4 (分岐記録/手続き監査/ドリフト検知/Passive観測) + "二面の配置" (upstream/downstream, one-way). Near-verbatim structural and content match. |
 | 3 | 4.4 | Norn drift-classification vocabulary | **ORIGINAL-CONFIRMED** | §4.10 "変化の扱い" table: `DRIFT / SIGNAL / WITHIN_OWN_RANGE / INSUFFICIENT_HISTORY` — exact label match. |
 | 4 | 5.1 | §14 ordered ten-step decision procedure | **ORIGINAL-CONFIRMED** | §14 Decision Logic, steps 1–10, identical order and content to what was adopted — including the section number (`§14`) itself matching. |
-| 5 | 10.1 | StrongEngine candidate-surface diversity | **ORIGINAL-PARTIAL / LAYER-DIFFERENT** (analysis below, §7) | §6 "Strong Engine候補" / §7 "PP_Deliver Format" specify a fixed 3-alternative (A/B/C: safe/standard/aggressive) **output-presentation** format — not framed as a StrongEngine-internal candidate-generation taxonomy. |
-| 6 | 11.1 | DecisionRecord / trace schema | **ORIGINAL-PARTIAL** | Every individual field maps to a §6 Standard Output Format section (mode/state, ruin boundary, reversibility, `A_allowed`, candidates, recommendation, execution steps, exit conditions, reevaluation), but the original presents these as a **chat response format**, not as a persistent audit/trace schema. The field content is confirmed; the "DecisionRecord" persistence framing is this session's elaboration, not explicit in the original. |
+| 5a | 10.1 | StrongEngine candidates, presentation layer | **ORIGINAL-CONFIRMED** (narrowly — see §7) | §6 "Strong Engine候補" / §7 "PP_Deliver Format": a default A/B/C (safe / standard / aggressive-forward) response format. Confirmed as an **output-presentation default**, not as a statement about internal candidate-generation architecture. |
+| 5b | 10.1 | StrongEngine internal candidate-diversity principle | **POST-HOC / UNRESOLVED EXTENSION** | Revision 2's "must not collapse to a single risk posture" is **not stated, in any form, anywhere in either original file.** It is this session's own post-hoc extension, proposed as a separate, deeper-layer principle. Relationship to 5a is unresolved (§7) — not adopted. |
+| 6 | 11.1 | DecisionRecord / trace schema | **ORIGINAL-PARTIAL + POST-HOC TRACE EXTENSION** | Split required (§7a) — some fields confirmed in original §6, others are this session's post-hoc additions with no original precedent at all. |
 
-## 7. Item 5 layer analysis (not yet resolved — presented for review, per instruction)
+## 7. Item 5 — two-layer split (5a / 5b), per Human Sovereign correction
 
-Two things must not be conflated, per Human Sovereign instruction:
-(a) the original's §6/§7 **output-presentation requirement** (what the
-GEM shows the user in a chat response), and (b) **StrongEngine Ω Full's
-internal candidate-generation architecture** (the theory-layer subject
-`V7_3_DIFFERENTIAL_TABLE.md` row 10.1 and Part XVI's "StrongEngine
-Candidate Surface" section actually address, citing `ch20_strong_
-engine.tex` / `ch_part9_omega_full.tex`).
+Two things must not be conflated: (a) the original's §6/§7
+**output-presentation content** (what the GEM shows the user in a chat
+response), and (b) **StrongEngine Ω Full's internal candidate-generation
+architecture** (the theory-layer subject `V7_3_DIFFERENTIAL_TABLE.md`
+row 10.1 and Part XVI's "StrongEngine Candidate Surface" section
+actually address, citing `ch20_strong_engine.tex` /
+`ch_part9_omega_full.tex`).
 
-**What the original actually says, precisely:**
+**What the original says, verbatim — nothing more, nothing less:**
 
 > ## 6. Strong Engine候補 — 以下の3案で出す。A案：安全寄り、B案：標準、
 > C案：攻め。ただし、すべて NRMO の許容行動集合内に収める。
 
-This appears under the heading **"6. Standard Output Format"** (通常は
-以下の形式で回答する — "normally respond in the following format"), and
-is echoed in **"7. PP_Deliver Format"** ("3 alternatives: A / B / C") as
-an alternate response template. Both are response-formatting sections of
-a conversational GEM specification — neither appears under "2. Top-Level
-Hierarchy" or "4. Module Separation," where the document defines
-StrongEngine's actual authority and internal role. The original text
-nowhere states that StrongEngine Ω Full's internal search/candidate
-generation is itself limited to exactly three named postures.
+This appears under **"6. Standard Output Format"**, itself introduced as
+通常は以下の形式で回答する ("**normally** respond in the following
+format" — §6's own heading concedes this is a default, not stated as an
+unconditional absolute), and is echoed in **"7. PP_Deliver Format"**
+("3 alternatives: A / B / C") as an alternate response template.
 
-**Two readings, both textually defensible, neither confirmed:**
+### 5a. `ORIGINAL-CONFIRMED` — presentation-layer default A/B/C format
 
-1. **Compatible reading**: the original's "always show ≥3 differentiated
-   alternatives, never fewer, never all-safe" is one *concrete
-   application*, at the output layer, of a more general underlying
-   principle — "do not collapse to a single risk posture when distinct
-   admissible alternatives exist." Under this reading, Revision 2 (an
-   internal-generation principle) and the original's 3-alternative
-   output rule could coexist: StrongEngine could generate a broader
-   internal candidate set while the response layer still surfaces (at
-   minimum) the 3 named postures the original requires.
-2. **Tension reading**: if the original's fixed "A/B/C, exactly 3" is
-   read as the complete, closed definition of how many/which candidate
-   categories are required, it is actually a *more* fixed taxonomy than
-   even the originally-drafted (and deferred) 7-category text, and it
-   would sit in real tension with Revision 2's explicit "not a closed
-   taxonomy... not a mandatory minimum category set" language — which
-   would then be describing something the original does not say.
+The original confirms, narrowly and exactly: a **default** response
+format presenting three named alternatives — A: safe-leaning
+(安全寄り), B: standard (標準), C: aggressive/forward (攻め) — all
+constrained within `A_allowed`. That is the full extent of what is
+confirmed. **This record previously stated the requirement in stronger
+terms ("always show ≥3 differentiated alternatives," "never fewer,"
+"never all-safe") — those phrasings do not appear verbatim in the
+original and have been removed as overreach.** §6's own wording ("通常
+は" / "normally") does not support reading this as an absolute,
+unconditional requirement either; it is the original's stated *default*,
+no stronger claim is made here.
 
-**This record does not resolve which reading is correct.** Revision 2
-remains **not adopted**. Any future adoption of an Item 5 replacement
-must be reconciled against the actual original §6/§7 text — either by
-confirming the original's 3-alternative *output* requirement is
-preserved as its own, separate, `ORIGINAL-CONFIRMED` item, with any
-internal-diversity principle (if pursued) held distinctly and
-transparently as an admitted post-hoc/non-original extension applying
-to a different architectural layer — not presented as if it restates or
-replaces the original's output-format rule.
+The original text nowhere states that StrongEngine Ω Full's *internal*
+search/candidate generation is itself limited to, or defined by, exactly
+three named postures — §6/§7 are response-formatting sections, and
+appear separately from "2. Top-Level Hierarchy" / "4. Module Separation"
+where the document defines StrongEngine's actual internal role.
+
+### 5b. `POST-HOC / UNRESOLVED EXTENSION` — internal candidate-diversity principle
+
+Revision 2's principle ("StrongEngine Ω Full must not collapse candidate
+generation to a single risk posture when materially distinct admissible
+alternatives exist") **does not appear, in any form, anywhere in either
+original file.** It was authored entirely by this session, before the
+originals were located, as a proposed internal-architecture principle.
+It is not confirmed, not contradicted, and **not adopted** by the
+original text — it simply is not addressed by it at all.
+
+### Relationship between 5a and 5b — genuinely unresolved, not decided here
+
+Whether 5b is a reasonable elaboration compatible with 5a (StrongEngine
+could search a broader internal candidate space while the response layer
+still defaults to presenting the 3 named postures from 5a), or whether it
+is redundant with, or in tension with, 5a's specific fixed format, is
+**not resolved by this record**. Revision 2 remains **not adopted**. Any
+future decision on Item 5 should treat 5a and 5b as two separate
+questions — one already `ORIGINAL-CONFIRMED` at the presentation layer,
+one still an open, admittedly post-hoc, non-original proposal at the
+internal-architecture layer — rather than one merged item.
+
+## 7a. Item 6 — `ORIGINAL-PARTIAL + POST-HOC TRACE EXTENSION`, fields split
+
+**Confirmed in original §6 (Standard Output Format), directly:**
+mode/state display (Operational Mode / Context Override / Type ZERO
+Mode / lifecycle state / MISSION-DEFENSE flag); ruin boundary (Hard/
+Soft/Active/Passive Ruin, irreversibility); reversibility classification
+(戻せる/戻しにくい/戻せない); `A_allowed` (今やってよい/保留/禁止);
+candidates (§6's A/B/C, §5a above); a recommendation
+(recommend/hold/reject); execution steps (今日やること/次に確認する
+こと/記録すべきこと); exit conditions and reevaluation date/conditions.
+
+**Not present in either original file — this session's post-hoc trace
+extension, with no original precedent:** an explicit
+authority/spec-version field (`nrmo_spec_version` itself *is* in the
+original's DecisionCompass-side evidence, but the broader
+"component versions" framing is not in either original file); vetoed
+candidates *with reasons* as a persisted field (the original's §6 shows
+only the selected recommendation, not a persisted admissible/vetoed-
+with-reasons ledger); StrongEngine "score metadata" (no scoring/ranking
+metadata concept appears in either original); and Human Sovereign's
+recorded accept/modify/reject as a persisted, auditable field (the
+original describes a live chat response, not a persistence/audit
+record of the user's subsequent decision).
+
+**Conclusion:** Item 6 is confirmed at the *content-field* level for
+everything §6 already covers, but the *persistence/audit trace schema*
+framing — and several of its specific fields — has no original
+precedent and must be labeled a post-hoc extension, not restated as if
+original.
 
 ## 8. Disposition of prior records
 
