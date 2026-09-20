@@ -10,6 +10,54 @@ Takashi Ikeya), recorded in chat directly to this session.
 
 ---
 
+## ⚠️ SUPERSEDED / REINTERPRETED AFTER ORIGINAL SOURCE DISCOVERY (2026-09-21, later same day)
+
+**This entire document below this notice is preserved exactly as
+written and decided. Nothing below is deleted, rewritten, or retracted.**
+This notice records how to *read* it now, not a change to what it says.
+
+Later on 2026-09-21, the original `NRMO SYSTEM_7.3.md` /
+`NRMO_SYSTEM_v7_3_PATCH.md` — which this record and
+`V7_3_ADOPTION_PROPOSAL.md` both describe as `ORIGINAL SOURCE NOT
+AVAILABLE` — were located, supplied directly by the Human Sovereign, and
+authenticity-verified. Full detail:
+`NRMOIntegrated/docs/V7_3_ORIGINAL_SOURCE_DISCOVERY_RECORD.md`.
+
+Effect on the six items decided below:
+
+- **Items 1, 2, 3, 4 (rows 3.2, 4.2, 4.4, 5.1)**: the located original
+  confirms each at or near verbatim.
+  `NRMOIntegrated/docs/V7_3_DIFFERENTIAL_TABLE.md` now classifies these
+  `ORIGINAL-CONFIRMED` rather than reading them only through this
+  record's "New Explicit Adoption" framing.
+- **Item 6 (row 11.1)**: **not reverted to SOURCE-PENDING.** The
+  original confirms the response-content fields (now differential-table
+  row 11.1a, `ORIGINAL-CONFIRMED`); several persistence/trace-schema
+  fields this record adopted (component-version provenance,
+  vetoed-candidates-with-reasons, StrongEngine score metadata, persisted
+  Human Sovereign accept/modify/reject) have no original precedent at
+  all (now row 11.1b, `HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION`) — this
+  record's explicit 2026-09-21 adoption of them **remains the operative
+  decision** for those fields specifically, independent of original-text
+  status.
+- **Item 5 (row 10.1, §4 below)**: the original confirms only a
+  presentation-layer default (3 named alternatives, A/B/C) — narrower
+  than, and a different architectural layer from, both the deferred
+  seven-category text and the Revision 2 addendum this record and
+  `V7_3_ADOPTION_PROPOSAL.md` §11 describe. **Neither the seven-category
+  text nor Revision 2 is adopted by the original's discovery.** Both
+  remain exactly as this record left them: the seven-category text
+  DEFERRED/never-adopted, Revision 2 proposed/not-adopted.
+
+**This record's decisions were made in good faith under incomplete
+evidence and are preserved as historically valid** — not superseded
+because they were wrong, but recontextualized because stronger evidence
+(the original itself) subsequently became available. See
+`V7_3_ORIGINAL_SOURCE_DISCOVERY_RECORD.md` for the complete
+reclassification and reasoning.
+
+---
+
 ## 1. What this record is
 
 This is the completed §10 decision block of

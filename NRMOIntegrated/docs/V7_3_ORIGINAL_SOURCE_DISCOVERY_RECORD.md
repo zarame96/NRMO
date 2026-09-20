@@ -245,18 +245,32 @@ framing — and several of its specific fields — has no original
 precedent and must be labeled a post-hoc extension, not restated as if
 original.
 
-## 8. Disposition of prior records
+## 8. Disposition of prior records (updated — see follow-up LOOP note below)
 
-- `V7_3_ADOPTION_RECORD.md` — **preserved unmodified**, as the historical
-  record of the 2026-09-21 evidence-based adoption decisions made before
-  the original was known to this session. Not deleted, not edited.
-- `V7_3_ADOPTION_PROPOSAL.md` — **preserved unmodified**, same reasoning.
+- `V7_3_ADOPTION_RECORD.md` — **existing decision content preserved
+  unedited**; a `SUPERSEDED / REINTERPRETED AFTER ORIGINAL SOURCE
+  DISCOVERY` notice was subsequently added (LOOP B) immediately after
+  the header, pointing here. Nothing in the original decision text was
+  deleted or rewritten.
+- `V7_3_ADOPTION_PROPOSAL.md` — same treatment, same reasoning.
 - `V7_3_DIFFERENTIAL_TABLE.md`, `parts/part16_v73_production_contract.tex`
-  — **not yet modified by this record.** Both still reflect the
-  pre-discovery ("ORIGINAL SOURCE NOT AVAILABLE" / post-hoc adoption)
-  state as of push `bbcef61`. Updating them to reflect §6 above is
-  follow-up work, not performed in this pass.
-- `NRMO_Integrated_System_v7_3.pdf` — not rebuilt.
+  — **updated** (LOOP A / LOOP C, same overall pass): rows 3.2, 4.2, 4.4,
+  5.1, 10.1a, 11.1a reclassified `ORIGINAL-CONFIRMED`; row 10.1 split
+  into 10.1a/10.1b; row 11.1 split into 11.1a/11.1b
+  (`HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION`); Part XVI's provenance box,
+  per-item tags, StrongEngine Candidate Surface section, and Trace
+  Schema chapter updated to match. Prior "ORIGINAL SOURCE NOT AVAILABLE"
+  / post-hoc-adoption framing in both files is preserved inline as
+  explicitly marked historical/superseded text, not deleted.
+- `frontmatter/v73_provisional_notice.tex`,
+  `NRMO_Integrated_System_v7_3.tex` — **updated** (LOOP D stale-provenance
+  audit): both contained active, reader-facing claims that the original
+  "could not be located" / "not located" (including the PDF title-page
+  `\date{}` line) — corrected to reflect the 2026-09-21 discovery.
+  `PROVISIONAL` status wording itself is unchanged in both.
+- `NRMO_Integrated_System_v7_3.pdf` — not yet rebuilt as of this specific
+  record's original text (LOOP G, later in the same overall pass, once
+  source-text updates are finalized).
 - `NORMATIVE_CANON.md` — unaffected throughout; not read as requiring
   any change by anything found in the original v7.3 text.
 

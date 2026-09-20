@@ -13,49 +13,52 @@
 \chapter{Provenance and Status of This Part}
 \label{ch:v73_provenance}
 
-\nrmobox{Provenance and authority status --- read before use}{
-\textbf{This Part is not a transcription of an original ``NRMO SYSTEM
-v7.3'' specification document.} DecisionCompass Issue \#120 records
-that such a document (\texttt{NRMO SYSTEM\_7.3.md} and
-\texttt{NRMO\_SYSTEM\_v7\_3\_PATCH.md}) was supplied 2026-09-15, but as
-of this build that original text could not be located in
-\texttt{zarame96/NRMO}, \texttt{zarame96/DecisionCompass} (any branch),
-or local session storage. \\[0.5em]
-What this Part \emph{is}: a reconciliation of (a) the NRMO v7.2
-Normative Canon, (b) the v7.2.1 Passive Ruin revision, and (c) the
-secondary implementation-target documents
-\texttt{docs/NRMO\_V7\_3\_IMPLEMENTATION\_SCOPE.md} and
-\texttt{docs/NRMO\_V7\_3\_GAP\_MATRIX.md} from the DecisionCompass
-branch \texttt{agent/nrmo-v7-3-canonical-parity}
-(HEAD \texttt{7ee15a964bce51aba22a997e9bba31a389514ac2} at time of
-writing). \\[0.5em]
-\textbf{Authority rule applied throughout this Part}: where a
-requirement below restates existing \texttt{NORMATIVE\_CANON.md} or
-v7.2/v7.2.1 content, it is presented as normative (it already was).
-Where a requirement has \emph{no} Canon/v7.2 precedent and derives
-solely from the secondary implementation-target document, it was
-originally marked \textbf{SOURCE-PENDING} --- offered as a working
-assumption, not as confirmed original-author intent. \textbf{No content
-in this Part amends \texttt{NORMATIVE\_CANON.md}.}
-Any apparent tension with the Canon is resolved in the Canon's favor;
-see \S\ref{sec:v73-typezero-disambiguation} and
+\nrmobox{Provenance and authority status --- read before use (updated 2026-09-21)}{
+\textbf{The original ``NRMO SYSTEM v7.3'' specification text has been
+located and is stored in this repository.} DecisionCompass Issue
+\#120 records that such a document (\texttt{NRMO SYSTEM\_7.3.md} and
+\texttt{NRMO\_SYSTEM\_v7\_3\_PATCH.md}) was supplied 2026-09-15; both
+files were subsequently supplied directly by the Human Sovereign,
+authenticity-verified, and stored byte-for-byte unmodified at
+\texttt{NRMOIntegrated/source/v7.3/original/} (SHA-256 recorded in
+\texttt{SOURCE\_MANIFEST.md} in that directory). Full discovery record
+and authenticity assessment:
+\texttt{docs/V7\_3\_ORIGINAL\_SOURCE\_DISCOVERY\_RECORD.md}. \\[0.5em]
+\textbf{This Part is not, and does not claim to be, a verbatim
+transcription of that original}; it is a reconciliation, restructured
+and cross-referenced against \texttt{NORMATIVE\_CANON.md} and the v7.2
+monograph's chapter structure. Where this Part's content is confirmed
+against the located original, it is marked \textbf{ORIGINAL-CONFIRMED}
+with a citation to the specific original section. Where content has no
+original-text precedent but was explicitly adopted by the Human
+Sovereign as new v7.3 content on 2026-09-21, it is marked
+\textbf{HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION} (currently: part of
+the DecisionRecord trace schema only, \S\ref{ch:v73-trace-schema}).
+One item (StrongEngine internal candidate-generation diversity,
+\S\ref{sec:v73-strongengine-surface}) remains an unadopted, admittedly
+post-hoc proposal with no original-text precedent at all, clearly
+separated from the original-confirmed presentation-layer content in
+the same section. \textbf{No content in this Part amends
+\texttt{NORMATIVE\_CANON.md}.} Any apparent tension with the Canon is
+resolved in the Canon's favor; see
+\S\ref{sec:v73-typezero-disambiguation} and
 \S\ref{sec:v73-ruin-disambiguation} for the two cases this build found.
 \\[0.5em]
-\textbf{2026-09-21 update}: following the closure of original-source
-search (Human Sovereign instruction), 5 of the 6 SOURCE-PENDING items
-were explicitly \textbf{ADOPTED} by Human Sovereign decision as
-\emph{new, 2026 content grounded in surviving evidence} --- see
-\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}. \textbf{This is not a claim
-that the original ``NRMO SYSTEM v7.3'' text has been located,
-recovered, or reconstructed}; that text remains
-\textbf{ORIGINAL SOURCE NOT AVAILABLE}, and each item marked
-\textbf{ADOPTED} below is tagged with its adoption date and remains
-distinguishable from Canon/v7.2-precedented text, per Canon \S10. One
-item (\S\ref{sec:v73-strongengine-surface}, StrongEngine candidate-
-surface categories) remains \textbf{SOURCE-PENDING and DEFERRED}; an
-open-ended revision is proposed but not yet adopted. This build's
-overall \textbf{PROVISIONAL} status (this notice, the frontmatter
-notice, and the title page) is unchanged by this partial adoption.
+\textbf{Decision history (preserved, not erased)}: before the original
+was located, 5 of 6 then-SOURCE-PENDING items were independently
+reconstructed from surviving secondary evidence and explicitly
+\textbf{ADOPTED} by Human Sovereign decision on 2026-09-21 (see
+\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, preserved unmodified as
+historical record). The original, located later the same day, confirmed
+that reconstruction at or near verbatim for 5 of those items --- a
+notable but coincidental convergence, not a claim that the
+reconstruction effort somehow produced or was equivalent to the
+original. \\[0.5em]
+This build's overall \textbf{PROVISIONAL} status (this notice, the
+frontmatter notice, and the title page) is \textbf{unchanged} by the
+original's discovery or by this Part's update to reflect it --- removing
+PROVISIONAL status is a separate Human Sovereign decision, not made
+here.
 }
 
 \section{Relationship to DecisionCompass}
@@ -210,18 +213,25 @@ operational refinement of the single abstract \texttt{HOLD} state used
 above; that refinement is orthogonal to this table and is unchanged by
 it.
 
-\paragraph{Empty admissible set (\textbf{ADOPTED --- v7.3, New Explicit
-Adoption, Human Sovereign, 2026-09-21}).} If
+\paragraph{Empty admissible set (\textbf{ORIGINAL-CONFIRMED}).} If
 $A_{\mathrm{allowed}}$ (equivalently
 $A_t$) is empty, the execution layer returns \texttt{HOLD} and
 generates \emph{no} execution candidate. This follows directly from
 Canon \S8 (execution may never expand $A_t$ on its own authority): if
 governance has narrowed $A_t$ to $\emptyset$, no admissible candidate
 can exist by construction, and any output claiming otherwise would
-violate $a_t \in A_t$. Adopted by explicit Human Sovereign decision,
-2026-09-21 (see \texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 1); this
-is new-explicit v7.3 content, not a claim that the unlocated original
-``NRMO SYSTEM v7.3'' text stated this rule.
+violate $a_t \in A_t$. Confirmed at near-verbatim precedent in the
+located original, \S8.4 (original-language text preserved unmodified in
+that file; not reproduced here to avoid embedding untypeset CJK text in
+this Part) --- see
+\texttt{NRMOIntegrated/source/v7.3/original/NRMO SYSTEM\_7.3.md} and
+\texttt{docs/V7\_3\_ORIGINAL\_SOURCE\_DISCOVERY\_RECORD.md} \S6 item 1
+for the quoted original text.
+Independently reconstructed and adopted by explicit Human Sovereign
+decision, 2026-09-21, before the original was located (see
+\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 1) --- that adoption
+decision is preserved as historically valid and is not superseded by
+this confirmation.
 
 \chapter{Norn: Observation Responsibilities}
 \label{ch:v73-norn}
@@ -230,11 +240,15 @@ is new-explicit v7.3 content, not a claim that the unlocated original
 as an interpretive governance perspective that is \emph{not} the
 sovereign, not a decision-maker, not StrongEngine, not an execution
 engine. The following itemized responsibility list is
-\textbf{ADOPTED (v7.3, New Explicit Adoption --- Human Sovereign,
-2026-09-21)}: an elaboration consistent with \S7.1, not previously
-itemized at this granularity in Canon/v7.2 text. See
-\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 2; this is new-explicit
-content, not restored original text.
+\textbf{ORIGINAL-CONFIRMED}: near-verbatim match to the located
+original's \S4.10 ``Core Responsibilities'' 1--4 (branch record /
+procedure audit / drift detection / passive observation --- original-
+language labels preserved unmodified in the source file, not
+reproduced here) and its two-sided upstream/downstream placement
+description. Independently reconstructed and adopted by explicit Human
+Sovereign decision, 2026-09-21, before the original was located (see
+\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 2) --- preserved as
+historically valid, not superseded by this confirmation.
 
 \section{Required Observable Responsibilities}
 
@@ -246,11 +260,14 @@ alternatives.
 runtime, including detection of missing or reordered steps.
 \item Conceptual-drift observation, using the descriptive
 classification \texttt{DRIFT | SIGNAL | WITHIN\_OWN\_RANGE |
-INSUFFICIENT\_HISTORY} (\textbf{ADOPTED --- v7.3, New Explicit
-Adoption, Human Sovereign, 2026-09-21; see
-\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 3}; descriptive only;
-\textbf{no Norn-owned decision threshold is permitted} --- ``audit has
-no scale'', directly entailed by Canon \S7.1 + \S8).
+INSUFFICIENT\_HISTORY} (\textbf{ORIGINAL-CONFIRMED} --- exact label
+match to the located original's \S4.10 ``Handling of Change'' table
+(original-language heading preserved unmodified in the source file);
+see
+\texttt{docs/V7\_3\_ORIGINAL\_SOURCE\_DISCOVERY\_RECORD.md} \S6 item 3;
+descriptive only; \textbf{no Norn-owned decision threshold is
+permitted} --- ``audit has no scale'', directly entailed by Canon
+\S7.1 + \S8).
 \item Passive observation: stagnation, opportunity loss, adaptation
 delay.
 \item Post-decision, one-way observation that cannot alter the
@@ -276,14 +293,15 @@ authority.
 \section{Ordered Evaluation}
 \label{sec:v73-decision-procedure}
 
-The following ordered procedure is \textbf{ADOPTED (v7.3, New Explicit
-Adoption --- Human Sovereign, 2026-09-21)} as a single composite
-sequence; see \texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 4. Each
-individual stage already has independent Canon or chapter grounding
-(cited inline); the \emph{ordering itself} and its packaging as one
-traceable procedure had no prior single-document Canon/v7.2 precedent
-and is not asserted as pre-existing Canon text --- only as consistent
-with it, and now adopted as new-explicit v7.3 content.
+The following ordered procedure is \textbf{ORIGINAL-CONFIRMED}: it
+matches the located original's \S14 ``Decision Logic,'' steps 1--10, in
+identical order and content --- \textbf{including the section number
+\S14 itself}. Independently reconstructed and adopted by explicit Human
+Sovereign decision, 2026-09-21, before the original was located (see
+\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 4) --- preserved as
+historically valid, not superseded by this confirmation. Each
+individual stage also has independent Canon or chapter grounding (cited
+inline).
 
 \begin{enumerate}
 \item Vision / Mission alignment (Canon \S2.1, \S2.4; MISSION
@@ -416,18 +434,49 @@ is new packaging, not new substance.
 Within $A_{\mathrm{allowed}}$, Chapter~\ref{ch:strong-engine} and
 Chapter~\ref{ch:omega-full-integrated} already establish that StrongEngine
 $\Omega$ Full searches and ranks candidates without redefining the
-ruin boundary. The following candidate-category checklist is
-\textbf{ADDED / SOURCE-PENDING} (a specific, non-exhaustive minimum
-surface, not previously enumerated at this granularity):
-safe/conservative; standard; assertive/forward; information-acquisition
-probe; bounded sequence/checkpoint plan; costed HOLD (where
-$A_{\mathrm{allowed}}$ admits it); exit/recovery (where required).
+ruin boundary. Two distinct claims must not be conflated here --- one
+confirmed by the located original, one not (see
+\texttt{docs/V7\_3\_ORIGINAL\_SOURCE\_DISCOVERY\_RECORD.md} \S7 for the
+full layer analysis).
+
+\paragraph{Presentation layer (\textbf{ORIGINAL-CONFIRMED}, narrowly).}
+The located original's \S6 (``StrongEngine Candidates,'' under
+``Standard Output Format'') and \S7 (``PP\_Deliver Format,''
+original-language section headings preserved unmodified in the source
+file) specify a \emph{default} response presenting three named
+alternatives: A --- safe-leaning; B --- standard; C ---
+aggressive/forward; all constrained within $A_{\mathrm{allowed}}$. This
+is confirmed exactly as an output-presentation default (\S6's own
+heading translates to ``normally respond in the following format,''
+i.e.\ a default, not stated as an unconditional absolute). The original
+does not separately address StrongEngine's internal candidate-
+generation architecture.
+
+\paragraph{Internal candidate generation (\textbf{POST-HOC / UNRESOLVED
+EXTENSION --- NOT ADOPTED}).} A closed seven-category minimum surface
+(safe/conservative; standard; assertive/forward; information-
+acquisition probe; bounded sequence/checkpoint plan; costed HOLD;
+exit/recovery) was proposed 2026-09-20 and \textbf{deferred, never
+adopted}, 2026-09-21 (\texttt{docs/V7\_3\_ADOPTION\_RECORD.md} \S4). A
+revised, open-ended principle (\emph{StrongEngine $\Omega$ Full must
+not collapse candidate generation to a single risk posture when
+materially distinct admissible alternatives exist within
+$A_{\mathrm{allowed}}$}) was subsequently drafted
+(\texttt{docs/V7\_3\_ADOPTION\_PROPOSAL.md} \S11, Revision 2) but
+\textbf{remains unadopted}. \textbf{Neither text appears anywhere in
+either located original file.} Whether an internal-generation diversity
+principle is a reasonable elaboration of, redundant with, or in tension
+with the presentation-layer default above is an open question, not
+resolved by this Part. No candidate-category text is asserted as
+normative v7.3 content by this section beyond the presentation-layer
+default confirmed above.
 
 \noindent
 \textbf{Invariant (UNCHANGED)}: no advisory or presentation layer may
 substitute an inadmissible action for the StrongEngine's selection.
 This is the strict invariant $a_t \in A_t$ (Canon \S2.3, \S8) restated,
-not a new rule.
+not a new rule, and applies regardless of how the open question above
+is eventually resolved.
 
 \chapter{Trace and DecisionRecord Schema}
 \label{ch:v73-trace-schema}
@@ -435,15 +484,16 @@ not a new rule.
 \texttt{NORMATIVE\_CANON.md} \S10 requires that publication version,
 baseline version, component version, and implementation-snapshot
 version remain distinguishable, but does not itself enumerate a
-decision-trace schema. The following field list is
-\textbf{ADOPTED (v7.3, New Explicit Adoption --- Human Sovereign,
-2026-09-21)}, offered as the minimum information needed to audit a
-single decision against every requirement in this Part; see
-\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 6:
+decision-trace schema. This section's fields split into two
+provenance tiers, per
+\texttt{docs/V7\_3\_ORIGINAL\_SOURCE\_DISCOVERY\_RECORD.md} \S7a; they
+must not be presented as one undifferentiated ``confirmed'' list.
+
+\paragraph{Response-content fields (\textbf{ORIGINAL-CONFIRMED}).} Each
+of the following is directly present in the located original's \S6
+Standard Output Format:
 
 \begin{itemize}
-\item authority/spec version (e.g.\ \texttt{NRMO v7.3} tag) and
-component versions;
 \item operational mode / context override / Type ZERO internal gate
 (qualified per \S\ref{sec:v73-typezero-disambiguation}) / lifecycle
 state / MISSION-DEFENSE flag;
@@ -451,15 +501,37 @@ state / MISSION-DEFENSE flag;
 \item ruin results: \texttt{ruin\_severity} and \texttt{ruin\_origin}
 as two separate fields (\S\ref{sec:v73-ruin-disambiguation});
 \item reversibility classification;
-\item admissible and vetoed candidates, with reasons;
-\item selected action and StrongEngine score metadata;
-\item observation indicators (Norn);
+\item admissible candidates (\S\ref{sec:v73-strongengine-surface});
+\item selected action / recommendation;
 \item exit conditions;
-\item reevaluation conditions/date;
-\item Norn branch / procedure / drift observations
-(\S\ref{ch:v73-norn});
+\item reevaluation conditions/date.
+\end{itemize}
+
+\paragraph{Persistence/audit trace fields (\textbf{HUMAN-SOVEREIGN-
+ADOPTED TRACE EXTENSION}).} \textbf{Confirmed absent from both located
+original files.} Adopted by explicit Human Sovereign decision,
+2026-09-21, before the original was located (see
+\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, item 6) --- this adoption
+decision is the operative authority for these fields specifically, and
+remains so independent of original-text status; it is not reverted to
+SOURCE-PENDING merely because the original does not contain it:
+
+\begin{itemize}
+\item authority/spec version (e.g.\ \texttt{NRMO v7.3} tag) and
+component versions;
+\item vetoed candidates, \emph{with reasons}, as a persisted field
+(the original shows only the response-time recommendation, not a
+persisted admissible/vetoed-with-reasons ledger);
+\item StrongEngine score metadata;
+\item observation indicators, and Norn branch / procedure / drift
+observations (\S\ref{ch:v73-norn}), as persisted trace fields --- the
+underlying Norn responsibilities themselves are
+\textbf{ORIGINAL-CONFIRMED} (\S\ref{ch:v73-norn}); their inclusion as
+itemized fields in a persisted schema is this extension's own framing;
 \item Human Sovereign's recorded acceptance, modification, or
-rejection, where captured.
+rejection, as a \emph{persisted, auditable} field (the original
+describes a live chat response, not a persistence/audit record of the
+user's subsequent decision).
 \end{itemize}
 
 \chapter{Summary Classification and DecisionCompass Cross-Reference}
@@ -474,26 +546,29 @@ rejection, where captured.
 \toprule
 \textbf{Classification} & \textbf{Meaning} & \textbf{Rows (differential table)} \\
 \midrule
-UNCHANGED & Restates existing Canon/v7.2 with no delta & 14 \\
-CLARIFIED & Adds precision consistent with Canon/v7.2 & 7 \\
-ADOPTED (v7.3, New Explicit Adoption --- Human Sovereign, 2026-09-21) & New content, explicitly adopted on surviving evidence; not a claim of Canon/v7.2 precedent or of restored original text & 5 \\
-ADDED (SOURCE-PENDING, DEFERRED) & New, uncontradicted by Canon/v7.2; adoption decision pending (row 10.1 only) & 1 \\
-SUPERSEDED & v7.3 explicitly replaces prior content & 0 \\
-CONFLICT (resolved) & Apparent contradiction, resolved without Canon change & 1 \\
+UNCHANGED & Restates existing Canon/v7.2, no delta & 17 \\
+CLARIFIED & Adds precision, no new claim (1 needs disambiguation) & 5 \\
+ORIGINAL-CONFIRMED & Verbatim/near-verbatim in located original & 6 \\
+ADOPTED TRACE EXT.\textsuperscript{a} & No original precedent; explicitly adopted & 1 \\
+UNRESOLVED EXT.\textsuperscript{b} & Pre-discovery proposal, not adopted & 1 \\
+SUPERSEDED & Explicitly replaces prior content & 0 \\
+CONFLICT (resolved) & Resolved without Canon change & 1 \\
 IMPLEMENTATION-ONLY & DecisionCompass runtime/CI concern & 2 \\
-HISTORICAL & Refers to already-non-normative material & 1 \\
+HISTORICAL & Already-non-normative material & 1 \\
+\midrule
+\textbf{Total} & & \textbf{34} \\
 \bottomrule
 \end{tabularx}
-\caption[v7.3 differential classification summary]{Summary of the
-full row-by-row reconciliation in
-\texttt{NRMOIntegrated/docs/V7\_3\_DIFFERENTIAL\_TABLE.md}, updated per
-the 2026-09-21 Human Sovereign adoption decision recorded in
-\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}. No row required a
-\texttt{NORMATIVE\_CANON.md} change. Row 3.1 (HOLD
-transition table) was reclassified from ADDED/SOURCE-PENDING to
-UNCHANGED during LOOP 6 self-audit after locating verbatim precedent
-in Chapter~\ref{ch:theoretical-invariants} \S\ref{sec:inv-state-space};
-see that section's note for the correction record.}
+\caption[v7.3 differential classification summary]{Summary of
+\texttt{NRMOIntegrated/docs/V7\_3\_DIFFERENTIAL\_TABLE.md}, updated
+2026-09-21 per Human Sovereign adoption
+(\texttt{docs/V7\_3\_ADOPTION\_RECORD.md}) and, same day, the
+original-source discovery
+(\texttt{docs/V7\_3\_ORIGINAL\_SOURCE\_DISCOVERY\_RECORD.md}); both
+preserved unmodified as history. No row required a
+\texttt{NORMATIVE\_CANON.md} change. \textsuperscript{a}
+\texttt{HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION}.
+\textsuperscript{b} \texttt{POST-HOC / UNRESOLVED EXTENSION}.}
 \label{tab:v73-classification-summary}
 \end{table}
 

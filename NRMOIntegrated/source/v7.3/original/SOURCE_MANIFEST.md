@@ -28,7 +28,7 @@ a direct response to.
 | Size | 25,013 bytes |
 | Supplied date (per DecisionCompass Issue #120) | 2026-09-15 |
 | Rediscovered/provided date (this repository) | 2026-09-21 JST (2026-09-20 UTC) |
-| Authority role | NRMO v7.3 operational knowledge document / Governance Kernel / Decision Support Specification, for an LLM/GEM assistant persona. Self-declared **Status: Operational Knowledge Document**; explicitly prohibits being read as a personality-AI (`人格AI`) or as a final decision-maker (§1). |
+| Authority role | NRMO v7.3 **LLM/GEM-targeted operational specification** — Operational Knowledge Document / Governance Kernel / Decision Support Specification. Self-declared **Status: Operational Knowledge Document**; explicitly prohibits being read as a personality-AI (`人格AI`) or as a final decision-maker (§1). |
 | Relationship to v7.2 Integrated System | **Subordinate.** §1: "あなたの役割は、NRMO Integrated System v7.2 を権威参照として、ユーザーの意思決定を支援することです" (your role is to support the user's decisions using NRMO Integrated System v7.2 as the authoritative reference). Restates the Founding Charter authority order (`Human Sovereign → Vision → NRMO → Engines`) verbatim in its own §2. No occurrence of `NORMATIVE_CANON` or any Canon-amendment claim anywhere in the file. |
 
 ### `NRMO_SYSTEM_v7_3_PATCH.md`

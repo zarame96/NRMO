@@ -15,6 +15,38 @@ Sovereign's request, following LOOP A–F audit approval.
 
 ---
 
+## ⚠️ SUPERSEDED / REINTERPRETED AFTER ORIGINAL SOURCE DISCOVERY (2026-09-21)
+
+**Everything below this notice is preserved exactly as written.
+Nothing is deleted or rewritten.**
+
+The premise of this entire proposal — that the original
+`NRMO SYSTEM_7.3.md` / `NRMO_SYSTEM_v7_3_PATCH.md` is `ORIGINAL SOURCE
+NOT AVAILABLE` — was superseded on 2026-09-21, the same day the §10/§11
+decisions below were made, when the Human Sovereign supplied both
+original files directly and they were authenticity-verified. See
+`NRMOIntegrated/docs/V7_3_ORIGINAL_SOURCE_DISCOVERY_RECORD.md` for the
+full assessment, and `V7_3_ADOPTION_RECORD.md`'s own superseding notice
+for the effect on each of the six items.
+
+In brief: items 1, 2, 3, 4 (§5 of this proposal) are now
+`ORIGINAL-CONFIRMED` by the located text, not merely evidence-based
+reconstruction. Item 6 is `ORIGINAL-PARTIAL` (its response-content
+fields are confirmed) `+ HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION` (its
+persistence/audit-schema fields have no original precedent and remain
+adopted on this proposal's/record's own authority). Item 5's §11
+Revision 2 is **still not adopted**, and the original text does not
+adopt it either — the original confirms only a narrower,
+presentation-layer, 3-alternative default (differential-table row
+10.1a), a different claim and a different architectural layer from
+Revision 2's internal candidate-generation-diversity principle (now row
+10.1b, `POST-HOC / UNRESOLVED EXTENSION`).
+
+This proposal's own reasoning, evidence hierarchy, and decision record
+remain valid as history and are not retracted.
+
+---
+
 ## 1. Fact of source loss
 
 The original **"NRMO SYSTEM v7.3"** specification text — the two files
