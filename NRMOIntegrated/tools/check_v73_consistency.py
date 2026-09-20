@@ -68,6 +68,12 @@ def main():
         failures.append("Norn described as permitted to veto")
     if re.search(r"Norn\s+executes?\b", body, re.I):
         failures.append("Norn described as executing")
+    if re.search(
+        r"Norn\s+(may|can|is permitted to)\s+(set|own|control|choose)\s+"
+        r"(a\s+)?(decision\s+)?threshold",
+        body, re.I,
+    ):
+        failures.append("Norn described as holding threshold authority")
 
     # 4. SHUTDOWN must never be silently equated with SAFE.
     if re.search(r"SHUTDOWN\s+is\s+(the\s+same\s+as|equivalent\s+to)\s+SAFE\b", body, re.I):
@@ -116,6 +122,63 @@ def main():
     # 10. No v7.4 content should be present in this v7.3 Part.
     if re.search(r"\bv7\.4\b", body):
         failures.append("v7.4 reference found in v7.3 Part (scope violation)")
+
+    # 11. Only the Human Sovereign may hold final authority (Canon §2.1).
+    #     Flag any other actor affirmatively described as "final authority"
+    #     / "final decision" / "final adoption" / "final execution".
+    for m in re.finditer(
+        r"\b(NRMO|StrongEngine(?:\s+\\?\$?\\?[Oo]mega\$?\s*Full)?|Norn|"
+        r"Type ZERO)\b[^.]{0,60}\bfinal\s+(authority|decision|adoption|"
+        r"execution)\b",
+        body, re.I,
+    ):
+        failures.append(
+            f"non-Human-Sovereign actor described as holding final "
+            f"authority (near: ...{body[max(0, m.start()-20):m.end()+10]!r}...)"
+        )
+
+    # 12. Vision must remain human-owned; it may not be NRMO-owned/generated.
+    if re.search(
+        r"\bNRMO\b[^.]{0,40}(owns?|generates?|creates?)\s+(the\s+)?Vision\b",
+        body, re.I,
+    ):
+        failures.append("Vision described as NRMO-owned/generated")
+    if re.search(r"\bVision\s+is\s+NRMO[\s-]owned\b", body, re.I):
+        failures.append("Vision described as NRMO-owned")
+
+    # 13. Type ZERO Internal Gating State and Operational Mode must never be
+    #     flattened into one enum/set (see typezero-disambiguation section).
+    if re.search(
+        r"\{?\s*CORE\s*[|,]\s*VENTURE\s*[|,]\s*MISSION\s*[|,]\s*SHUTDOWN\s*\}?"
+        r"[^.]{0,40}\b(is|as)\s+(the\s+)?Operational\s+Mode\b",
+        body, re.I,
+    ):
+        failures.append(
+            "Type ZERO gating labels presented as the Operational Mode enum"
+        )
+    if re.search(
+        r"\{?\s*NORMAL\s*[|,]\s*SAFE\s*[|,]\s*VENTURE\s*[|,]\s*MISSION\s*[|,]"
+        r"\s*(CORE|SHUTDOWN)\b",
+        body, re.I,
+    ):
+        failures.append(
+            "Operational Mode and Type ZERO gating labels merged into one set"
+        )
+
+    # 14. Hard/Soft Ruin (severity axis) and Active/Passive Ruin
+    #     (causal-origin axis) must never be presented as one 4-valued enum.
+    if re.search(
+        r"\{?\s*Hard\s*[|,]\s*Soft\s*[|,]\s*Active\s*[|,]\s*Passive\s*\}?"
+        r"\s+Ruin\b",
+        body, re.I,
+    ) or re.search(
+        r"\bRuin\s*\\?in\\?\s*\{?\s*Hard\s*,\s*Soft\s*,\s*Active\s*,\s*"
+        r"Passive\s*\}?",
+        body, re.I,
+    ):
+        failures.append(
+            "Hard/Soft and Active/Passive Ruin merged into one 4-value enum"
+        )
 
     print("[V7.3 CONSISTENCY GUARD]")
     if failures:
