@@ -357,7 +357,109 @@ _______________________________________________________________________
 
 ---
 
+## §10 status: DECIDED — see `V7_3_ADOPTION_RECORD.md`
+
+The Human Sovereign completed this decision in chat on 2026-09-21:
+Items 1, 2, 3, 4, 6 → **ADOPT**; Item 5 → **DEFER** (reason: the closed
+seven-category taxonomy is insufficiently evidenced and risks
+unnecessarily constraining StrongEngine Ω Full's future candidate-
+generation capacity; the underlying diversity *principle* is accepted).
+The formal, permanent record of this decision — including the exact
+adopted text and the corresponding changes made to
+`V7_3_DIFFERENTIAL_TABLE.md` and `parts/part16_v73_production_contract.tex`
+— is `NRMOIntegrated/docs/V7_3_ADOPTION_RECORD.md`. This §10 block above
+is retained here unfilled, as the original proposal instrument; it is
+superseded for decision-tracking purposes by that record, not edited in
+place, so the proposal-to-decision history stays legible.
+
+## §11 — Revised Item 5 proposal (open-ended), NOT YET ADOPTED
+
+Per Human Sovereign instruction (2026-09-21), Item 5's closed
+seven-category taxonomy is replaced in this revised proposal by an
+open-ended diversity requirement. **This section is a proposal only.
+It has not been adopted. No file has been changed to reflect it.**
+
+### Current Part XVI text (unchanged, still in effect)
+
+`parts/part16_v73_production_contract.tex`, §StrongEngine Candidate
+Surface (`sec:v73-strongengine-surface`):
+
+```
+Within $A_{\mathrm{allowed}}$, Chapter~\ref{ch:strong-engine} and
+Chapter~\ref{ch:omega-full-integrated} already establish that StrongEngine
+$\Omega$ Full searches and ranks candidates without redefining the
+ruin boundary. The following candidate-category checklist is
+\textbf{ADDED / SOURCE-PENDING} (a specific, non-exhaustive minimum
+surface, not previously enumerated at this granularity):
+safe/conservative; standard; assertive/forward; information-acquisition
+probe; bounded sequence/checkpoint plan; costed HOLD (where
+$A_{\mathrm{allowed}}$ admits it); exit/recovery (where required).
+```
+
+### Proposed replacement text (NOT applied)
+
+```
+Within $A_{\mathrm{allowed}}$, Chapter~\ref{ch:strong-engine} and
+Chapter~\ref{ch:omega-full-integrated} already establish that StrongEngine
+$\Omega$ Full searches and ranks candidates without redefining the
+ruin boundary. \textbf{StrongEngine $\Omega$ Full must ensure
+sufficient candidate diversity within $A_{\mathrm{allowed}}$}
+(\textsc{proposed --- not yet adopted}; see this section for status).
+This may include, as appropriate: conservative/preservation-oriented
+proposals; forward/advancing proposals; information-acquisition
+proposals; staged/sequenced-execution proposals; \texttt{HOLD}; and
+withdrawal/recovery proposals. \textbf{These are illustrative examples
+only; they are not an exhaustive or closed taxonomy.}
+```
+
+The `\noindent \textbf{Invariant (UNCHANGED)}...` paragraph immediately
+following (already-Canon `a_t ∈ A_t` restatement) is unaffected either
+way and is not part of this diff.
+
+### Diff summary
+
+| | Current (still in effect) | Proposed (not adopted) |
+|---|---|---|
+| Structure | Closed 7-item enumerated checklist | Open-ended requirement + illustrative, explicitly non-exhaustive examples |
+| Status tag | `ADDED / SOURCE-PENDING` | Would be its own new adoption cycle if pursued — proposed here as `PROPOSED — NOT YET ADOPTED`, not pre-assigned an adoption date |
+| Binds StrongEngine to a fixed taxonomy? | Yes (7 named categories) | No — categories listed are explicitly "illustrative... not exhaustive or closed" |
+| Underlying diversity principle | Implicit (via the specific list) | Explicit (stated directly, independent of any example list) |
+
+### Canon-consistency verification
+
+Tested by temporary injection into a working copy of Part XVI, run
+through `NRMOIntegrated/tools/check_v73_consistency.py` (14-guard
+version), then fully reverted (confirmed via `git diff --stat` showing
+zero net change to the tracked file):
+
+```
+[V7.3 CONSISTENCY GUARD]
+OK: no known governance-violation patterns found in Part XVI
+```
+
+No guard fired. The proposed text does not touch any of the other
+governance-violation classes (HOLD/MISSION-DEFENSE-as-mode, Norn
+authority, SHUTDOWN=SAFE, TRAINING/HARE, Passive Ruin, `a_t ∈ A_t`,
+Canon-amendment claims, v7.4 leakage, final-authority inversion,
+Vision ownership, Type-ZERO/Mode flattening, Ruin-axis flattening) — it
+only concerns the StrongEngine candidate-surface enumeration, which none
+of the 14 guards constrain by taxonomy content, only by the invariant
+that no advisory layer may select outside `A_allowed` (unaffected by
+either version of this text).
+
+### If this revision is later adopted
+
+It would follow the same pattern as items 1–4/6: a new dated tag
+`ADOPTED (v7.3, New Explicit Adoption — Human Sovereign, <date>)`,
+recorded in a follow-up to `V7_3_ADOPTION_RECORD.md`, with
+`V7_3_DIFFERENTIAL_TABLE.md` row 10.1 updated accordingly. Until then,
+row 10.1 remains `ADDED / SOURCE-PENDING — DEFERRED` and Part XVI's
+existing closed-list text remains exactly as committed.
+
+---
+
 *This document was prepared under the NRMO Founding Charter's authority
 order (`Human Sovereign → Vision → NRMO → Engines → Implementations`). It
-proposes; it does not decide. No entity other than the Human Sovereign may
-complete §10.*
+proposes; it does not decide. §10 has been decided (see
+`V7_3_ADOPTION_RECORD.md`); §11 remains an open proposal awaiting its own
+decision.*

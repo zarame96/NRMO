@@ -92,22 +92,22 @@ Decision (per evidence-hierarchy priority: Canon > historical spec > implementat
 | # | v7.3 requirement | Canon/v7.2 baseline | Classification | Notes |
 |---|---|---|---|---|
 | 3.1 | `ACTIVE→HOLD`, `ACTIVE→EXIT`, `ACTIVE→SAFE_EXIT`, `HOLD→ACTIVE` (Human Sovereign approval only), `HOLD→SAFE_EXIT` | **Found during LOOP 6 self-audit**: this exact 5-transition table already exists verbatim in `ch09_theoretical_invariants.tex` §`sec:inv-state-space` (lines 39-54), as part of the "UNCHANGED" v2.0 theoretical invariants restated in that chapter. Also consistent with Canon §3.4 and §2.1 (Human Sovereign approval for `HOLD→ACTIVE`). | **UNCHANGED** (corrected from an earlier ADDED/SOURCE-PENDING draft classification — see Part XVI §`sec:v73-hold-state-machine` correction note) | Reclassification recorded per evidence-discipline requirement; no silent correction. |
-| 3.2 | Empty `A_allowed` ⇒ HOLD, no candidate generated | Consistent with Canon §8 (execution may not expand `A_t`); not previously stated this explicitly | ADDED / SOURCE-PENDING | — |
+| 3.2 | Empty `A_allowed` ⇒ HOLD, no candidate generated | Consistent with Canon §8 (execution may not expand `A_t`); not previously stated this explicitly | **ADOPTED (v7.3, New Explicit Adoption — Human Sovereign, 2026-09-21)** *(was: ADDED / SOURCE-PENDING — see `V7_3_ADOPTION_RECORD.md` item 1)* | New-explicit adoption, not a claim of Canon/v7.2 precedent for the composite rule; the `a_t ∈ A_t` component remains Canon. |
 
 ## 4. Norn Operator
 
 | # | v7.3 requirement | Canon/v7.2 baseline | Classification | Notes |
 |---|---|---|---|---|
 | 4.1 | Canonical Norn is interpretive/monitoring, not decision-maker/executor | Canon §7.1 | UNCHANGED | — |
-| 4.2 | Detailed observable responsibilities (branch record, procedure audit, drift, passive observation, one-way post-decision) | Canon §7.1 states role generally; no itemized responsibility list existed | ADDED / SOURCE-PENDING | Consistent elaboration, no authority expansion |
+| 4.2 | Detailed observable responsibilities (branch record, procedure audit, drift, passive observation, one-way post-decision) | Canon §7.1 states role generally; no itemized responsibility list existed | **ADOPTED (v7.3, New Explicit Adoption — Human Sovereign, 2026-09-21)** *(was: ADDED / SOURCE-PENDING — see `V7_3_ADOPTION_RECORD.md` item 2)* | Consistent elaboration, no authority expansion; adopted as new-explicit content, not restored original text. |
 | 4.3 | "Norn MUST NOT: veto; execute; set thresholds; choose route/Vision/Mission; return final conclusion" | Directly entailed by Canon §7.1 + §8 | CLARIFIED | Makes an implicit Canon constraint explicit |
-| 4.4 | Drift classes: `DRIFT\|SIGNAL\|WITHIN_OWN_RANGE\|INSUFFICIENT_HISTORY` | No Canon precedent (Canon doesn't enumerate drift-classification vocabulary) | ADDED / SOURCE-PENDING | Descriptive-only per requirement text ("audit has no scale") — consistent with §7.1 non-decision role |
+| 4.4 | Drift classes: `DRIFT\|SIGNAL\|WITHIN_OWN_RANGE\|INSUFFICIENT_HISTORY` | No Canon precedent (Canon doesn't enumerate drift-classification vocabulary) | **ADOPTED (v7.3, New Explicit Adoption — Human Sovereign, 2026-09-21)** *(was: ADDED / SOURCE-PENDING — see `V7_3_ADOPTION_RECORD.md` item 3)* | Descriptive-only per requirement text ("audit has no scale") — consistent with §7.1 non-decision role; adopted as new-explicit vocabulary. |
 
 ## 5. Decision procedure (10-step order, "§14")
 
 | # | v7.3 requirement | Canon/v7.2 baseline | Classification | Notes |
 |---|---|---|---|---|
-| 5.1 | Ordered 10-step evaluation (Vision/Mission → ruin → reversibility → A_allowed → info sufficiency → candidates → observation → exit → reevaluation → return to Human Sovereign) | No equivalent single ordered procedure exists in Canon; individual steps each have Canon/chapter grounding (ruin: Ch9/Ch27; reversibility: Ch34/R1-FIX; A_allowed: Ch5/13/14; final authority: Canon §2.1) | ADDED / SOURCE-PENDING | Composite ordering is new; each component step is independently Canon-grounded. No component contradicts Canon. |
+| 5.1 | Ordered 10-step evaluation (Vision/Mission → ruin → reversibility → A_allowed → info sufficiency → candidates → observation → exit → reevaluation → return to Human Sovereign) | No equivalent single ordered procedure exists in Canon; individual steps each have Canon/chapter grounding (ruin: Ch9/Ch27; reversibility: Ch34/R1-FIX; A_allowed: Ch5/13/14; final authority: Canon §2.1) | **ADOPTED (v7.3, New Explicit Adoption — Human Sovereign, 2026-09-21)** *(was: ADDED / SOURCE-PENDING — see `V7_3_ADOPTION_RECORD.md` item 4)* | Composite ordering is new-explicit; each component step remains independently Canon-grounded. No component contradicts Canon. |
 | 5.2 | "Norn audits the procedure but cannot alter it" | Canon §7.1, §8 | UNCHANGED | — |
 
 ## 6. Ruin semantics
@@ -142,14 +142,14 @@ Decision (per evidence-hierarchy priority: Canon > historical spec > implementat
 
 | # | v7.3 requirement | Canon/v7.2 baseline | Classification | Notes |
 |---|---|---|---|---|
-| 10.1 | Preserve safe/standard/assertive/probe/sequence/costed-HOLD/exit candidate categories inside `A_allowed` | `ch20_strong_engine.tex`, `ch_part9_omega_full.tex` describe candidate generation generally; this exact category list is new | ADDED / SOURCE-PENDING | No contradiction; consistent refinement |
+| 10.1 | Preserve safe/standard/assertive/probe/sequence/costed-HOLD/exit candidate categories inside `A_allowed` | `ch20_strong_engine.tex`, `ch_part9_omega_full.tex` describe candidate generation generally; this exact category list is new | **ADDED / SOURCE-PENDING — DEFERRED (Human Sovereign, 2026-09-21)** | Weakest-evidenced item of the six ADDED rows; closed 7-category taxonomy judged not sufficiently evidenced and risks constraining StrongEngine Ω Full's future search capability. Open-ended replacement text proposed as `V7_3_ADOPTION_PROPOSAL.md` §11 addendum — **not yet adopted**. See `V7_3_ADOPTION_RECORD.md` §4. |
 | 10.2 | "No advisory layer may replace Ω Full selection with an inadmissible action" | Canon §2.3, §8 (`a_t ∈ A_t` strict) | UNCHANGED | — |
 
 ## 11. Trace / DecisionRecord
 
 | # | v7.3 requirement | Canon/v7.2 baseline | Classification | Notes |
 |---|---|---|---|---|
-| 11.1 | Persist authority/state/Ruin/reversibility/candidates/selection/observation/exit/reevaluation/Norn/Human-Sovereign-decision fields | Canon §10 requires version/provenance distinguishability generally; does not enumerate trace schema | ADDED / SOURCE-PENDING | Engineering elaboration of Canon §10 intent; no conflict |
+| 11.1 | Persist authority/state/Ruin/reversibility/candidates/selection/observation/exit/reevaluation/Norn/Human-Sovereign-decision fields | Canon §10 requires version/provenance distinguishability generally; does not enumerate trace schema | **ADOPTED (v7.3, New Explicit Adoption — Human Sovereign, 2026-09-21)** *(was: ADDED / SOURCE-PENDING — see `V7_3_ADOPTION_RECORD.md` item 6)* | Engineering elaboration of Canon §10 intent; no conflict; adopted as new-explicit schema, not restored original text. |
 
 ## 12. Conformance requirements / Non-goals (IMPLEMENTATION_SCOPE.md §"Conformance requirements", §"Non-goals")
 
@@ -168,7 +168,8 @@ Decision (per evidence-hierarchy priority: Canon > historical spec > implementat
 |---|---|
 | UNCHANGED | 14 |
 | CLARIFIED | 7 |
-| ADDED (all SOURCE-PENDING) | 7 |
+| ADOPTED (v7.3, New Explicit Adoption — Human Sovereign, 2026-09-21) | 5 |
+| ADDED / SOURCE-PENDING — DEFERRED (row 10.1 only) | 1 |
 | SUPERSEDED | 0 |
 | CONFLICT (resolved to CLARIFIED, see row 2.3) | 1 |
 | IMPLEMENTATION-ONLY | 2 |
@@ -178,6 +179,20 @@ Decision (per evidence-hierarchy priority: Canon > historical spec > implementat
 ADDED/SOURCE-PENDING to UNCHANGED after locating verbatim precedent in
 `ch09_theoretical_invariants.tex` §`sec:inv-state-space`. Counts above
 reflect this correction.
+
+**Revision note (2026-09-21 adoption record)**: rows 3.2, 4.2, 4.4, 5.1,
+and 11.1 — 5 of the 6 rows formerly counted as "ADDED (all
+SOURCE-PENDING)" — were reclassified to `ADOPTED (v7.3, New Explicit
+Adoption — Human Sovereign, 2026-09-21)` per
+`V7_3_ADOPTION_RECORD.md`. This is an explicit 2026 adoption decision on
+surviving evidence, not a claim that the lost v7.3 original text has been
+located or restored (that finding, ORIGINAL SOURCE NOT AVAILABLE, is
+unchanged — see the External audit record above). Row 10.1 (StrongEngine
+candidate-surface categories) was deliberately left `ADDED /
+SOURCE-PENDING` and marked DEFERRED; see `V7_3_ADOPTION_RECORD.md` §4 and
+`V7_3_ADOPTION_PROPOSAL.md` §11 for its pending open-ended revision, which
+is not yet adopted. No row in this table required, or received, a
+`NORMATIVE_CANON.md` change as part of this adoption.
 
 **No row required a NORMATIVE_CANON.md change.** The one apparent conflict
 (row 2.3, Type ZERO Mode labelset) resolves under existing Canon wording
