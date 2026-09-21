@@ -1,9 +1,16 @@
 # NRMO v7.3 — Differential Table (Provisional)
 
 **Status:** Provisional / working document. NOT a normative source by itself.
-**Purpose:** Track reconciliation of `NRMO v7.3` requirements (as evidenced by
-DecisionCompass secondary sources) against NRMO v7.2 / v7.2.1 / Normative
-Canon, prior to formal `NRMO_Integrated_System_v7_3` integration.
+**Purpose:** Track reconciliation of `NRMO v7.3` requirements — as of
+2026-09-21, evidenced primarily by the **located v7.3 operational
+originals** (`NRMOIntegrated/source/v7.3/original/`; see
+`docs/V7_3_ORIGINAL_SOURCE_DISCOVERY_RECORD.md`), with DecisionCompass
+documentation as corroborating/conformance evidence only (not a v7.3
+requirements source) — against NRMO v7.2 / v7.2.1 / Normative Canon,
+within `NRMO_Integrated_System_v7_3` integration (Part XVI). Prior to
+2026-09-21, this table's sole evidence for "what v7.3 requires" was
+DecisionCompass secondary documentation; that phase is preserved as
+history below (see each section's superseded-notice).
 
 ## Evidence hierarchy used for this table
 
@@ -131,7 +138,7 @@ session had access to search, and remains valid history.
 |---|---|---|---|---|
 | 2.1 | Operational Mode: `NORMAL\|SAFE\|VENTURE\|MISSION` | Canon §3.1 | UNCHANGED | — |
 | 2.2 | Context Override: `TRAINING(A-F,E+)\|HARE\|NONE` | Canon §3.2, §3.3 | UNCHANGED | — |
-| 2.3 | **Type ZERO Mode: `CORE\|VENTURE\|MISSION\|SHUTDOWN`** as an axis distinct from Operational Mode | Canon §5 marks this exact 4-tuple "superseded **as the current Operational Mode taxonomy**"; `ch02c_type_zero_modes.tex` preserves it as an explicit **historical, superseded** table | **CONFLICT → resolved as CLARIFIED (see LOOP 3 below)** / SOURCE-PENDING | Terminology-collision risk: identical labels (`MISSION`, `VENTURE`) used for two different axes. See root-cause judgment below. |
+| 2.3 | **Type ZERO Mode: `CORE\|VENTURE\|MISSION\|SHUTDOWN`** as an axis distinct from Operational Mode | Canon §5 marks this exact 4-tuple "superseded **as the current Operational Mode taxonomy**"; `ch02c_type_zero_modes.tex` preserves it as an explicit **historical, superseded** table; **located original confirms this axis directly**: §6 response format lists `Type ZERO Mode: CORE / VENTURE / MISSION / SHUTDOWN` as a line item separate from `Operational Mode: NORMAL / SAFE / VENTURE / MISSION`, and §8.3 gives it a dedicated definition with its own transition triggers (`IRREV`/`VOL`/`LOAD`) | **ORIGINAL-CONFIRMED + CLARIFIED** (updated 2026-09-21; was `CONFLICT → resolved as CLARIFIED` / `SOURCE-PENDING` pre-discovery — see root-cause judgment below, now updated) | Terminology-collision risk: identical labels (`MISSION`, `VENTURE`) used for two different axes remains real and is resolved the same way (qualify by axis). The original's own §6 output format already lists both axes as separate lines, directly corroborating the disambiguation. No longer `SOURCE-PENDING`. |
 | 2.4 | Lifecycle State: `ACTIVE\|HOLD\|EXIT\|SAFE_EXIT` | Canon §3.4 | UNCHANGED | — |
 | 2.5 | `A_allowed` extension: `MISSION_DEFENSE = active\|inactive` | Canon §3.6; `ch02g_mission_defense.tex` | UNCHANGED | — |
 | 2.6 | "Do not flatten these into one enum" | Canon implies via §3.4 (HOLD is not an Operational Mode) and §3.6 (MISSION-DEFENSE is not a mode) | CLARIFIED | Generalizes an already-Canon principle into an explicit engineering rule |
@@ -143,6 +150,16 @@ Candidate readings:
 2. **CLARIFIED reading**: Canon §5 supersedes `CORE/VENTURE/MISSION/SHUTDOWN` only *as the Operational Mode taxonomy*. It does not forbid Type ZERO from retaining an internal historical gating-state vocabulary for its own (non-actuator, per Canon §6) gating logic, provided it is never presented as, or confused with, canonical Operational Mode. `ch02c` already treats this 4-tuple as a **preserved historical table**, i.e. Canon already permits its continued existence as labelled historical/internal material.
 
 Decision (per evidence-hierarchy priority: Canon > historical spec > implementation doc): **CLARIFIED**, conditional on an explicit disambiguation note being added wherever the two axes could be read together. This is a documentation obligation, not a Canon change. Resolution implemented in the new v7.3 chapter (§ "Type ZERO Internal Gating State vs Operational Mode").
+
+**Update (2026-09-21, post-discovery):** the located original independently
+confirms the Type ZERO Mode axis directly (§6 output format, §8.3
+definition with its own transition triggers), reached this reading
+(reading 2 above) without stating it as a terminology-collision risk
+requiring resolution — the original simply lists both axes side by
+side. This upgrades the row to `ORIGINAL-CONFIRMED` for the axis's
+existence, while the disambiguation obligation (never presenting a bare
+`MISSION`/`VENTURE` without stating which axis) remains `CLARIFIED`
+engineering discipline, not itself stated verbatim in the original.
 
 ## 3. HOLD state machine
 
@@ -171,7 +188,7 @@ Decision (per evidence-hierarchy priority: Canon > historical spec > implementat
 
 | # | v7.3 requirement | Canon/v7.2 baseline | Classification | Notes |
 |---|---|---|---|---|
-| 6.1 | Maintain distinct trace/causal fields for **Hard Ruin, Soft Ruin, Active Ruin, Passive Ruin** as if one 4-way taxonomy | `Hard Ruin`/`Soft Ruin` are domain-specific (Investment SOP, `ch07_investment_sop.tex:47-51`, severity axis within the investment domain); `Active Ruin`/`Passive Ruin` are core-theory, domain-general (`ch_part9_omega_full.tex:134-142`, causal-origin axis) | **CLARIFIED, with required disambiguation** / SOURCE-PENDING | These are two **different, non-orthogonal-by-default axes from two different chapters/domains**, not natively a single 4-member enum. Treating them as one flat set risks implying Hard/Soft Ruin apply domain-generally (they don't) or that Active/Passive are investment-specific (they aren't). Resolution: v7.3 chapter states both axes separately and notes they may co-occur (e.g. a Soft Ruin within Investment domain may have Active or Passive causal origin) rather than presenting 4 siblings. |
+| 6.1 | Maintain distinct trace/causal fields for **Hard Ruin, Soft Ruin, Active Ruin, Passive Ruin** | Located original, §4.1 (NRMO Core role list) presents them as **two separate bullet items**: "Hard Ruin / Soft Ruin identification" and "Active Ruin / Passive Ruin identification" — not one merged list; §13.1–13.4 defines all four individually; `ch07_investment_sop.tex:47-51` (Hard/Soft, severity axis) and `ch_part9_omega_full.tex:134-142` (Active/Passive, causal-origin axis) independently corroborate the same two-axis structure | **ORIGINAL-CONFIRMED + CLARIFIED (axis semantics / disambiguation required)** | **That all four concepts must be tracked** is `ORIGINAL-CONFIRMED` (original §4.1, §13.1–13.4, §6/Standard-Output-Format §3 all require it; no `SOURCE-PENDING` status remains). **That they must never be flattened into one undifferentiated 4-way enum** is `CLARIFIED`: the original's own §4.1 phrasing (two separate bullets, not "Hard/Soft/Active/Passive Ruin の識別" as a single list) already supports reading them as two axes, and this is independently corroborated by the Canon-adjacent chapter split (severity axis, domain-specific, Investment SOP; causal-origin axis, domain-general, StrongEngine Ω Full). They may co-occur (e.g. a Soft Ruin within the Investment domain may have Active or Passive causal origin) rather than being 4 mutually exclusive siblings. See Part XVI §`sec:v73-ruin-disambiguation`. |
 | 6.2 | Passive Ruin uses avoidability-window definition as leading signal; legacy streak retained as lagging diagnostic only; "do not redefine Passive Ruin as inactivity alone" | Exactly matches `docs/v72_1_validation_record.md` and `docs/v72_implementation_integration_map.md` §2.1 (two-tier: leading window-closure + lagging streak) | CLARIFIED | This is the **strongest-evidence row in the whole table** — v7.2.1 already adopted this exact design before v7.3 implementation existed. Formal adoption into v7.3 chapter is safe. |
 
 ## 7. `A_allowed`
@@ -227,8 +244,8 @@ Decision (per evidence-hierarchy priority: Canon > historical spec > implementat
 |---|---|---|
 | UNCHANGED | 17 | 1.1,1.2,1.3,2.1,2.2,2.4,2.5,3.1,4.1,5.2,7.1,8.1,9.1,9.2,9.3,10.2,12.4 |
 | CLARIFIED | 4 | 2.6,4.3,6.2,7.2 |
-| CLARIFIED (disambiguation required) / SOURCE-PENDING | 1 | 6.1 |
-| CONFLICT (resolved to CLARIFIED, see row 2.3) | 1 | 2.3 |
+| **ORIGINAL-CONFIRMED + CLARIFIED** (axis semantics disambiguation required) | 2 | 2.3,6.1 |
+| CONFLICT (fully resolved, none remaining) | 0 | — |
 | **ORIGINAL-CONFIRMED** | **6** | 3.2,4.2,4.4,5.1,10.1a,11.1a |
 | **POST-HOC / UNRESOLVED EXTENSION** | 1 | 10.1b |
 | **HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION** | 1 | 11.1b |
@@ -237,9 +254,13 @@ Decision (per evidence-hierarchy priority: Canon > historical spec > implementat
 | HISTORICAL | 1 | 12.3 |
 | **Total rows** | **34** | |
 
-**Zero rows remain `ADDED / SOURCE-PENDING` as an unresolved terminal
-state as of this discovery pass.** The former 7-category text for row
-10.1 (now split into 10.1a/10.1b) remains `DEFERRED`/never-adopted per
+**Zero rows remain `ADDED / SOURCE-PENDING` or `SOURCE-PENDING` as an
+unresolved terminal state as of this pass** (row 6.1's prior
+`SOURCE-PENDING` tag is resolved: the original confirms the four-concept
+requirement outright; only the axis-semantics disambiguation remains a
+`CLARIFIED`-type documentation obligation, not an unresolved evidentiary
+gap). The former 7-category text for row 10.1 (now split into
+10.1a/10.1b) remains `DEFERRED`/never-adopted per
 `V7_3_ADOPTION_RECORD.md` §4, preserved as history, not reinstated.
 
 **Revision note (LOOP 6 self-audit)**: row 3.1 was reclassified from

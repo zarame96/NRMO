@@ -1,10 +1,15 @@
 % =================================================================
 % Part XVI: NRMO v7.3 — Production Contract Integration
-%   Reconciles the v7.3 implementation-target requirements (as
-%   evidenced by DecisionCompass secondary sources, 2026-09) against
-%   the v7.2 / v7.2.1 / Normative Canon baseline. Does not amend the
-%   Normative Canon. See NRMOIntegrated/docs/V7_3_DIFFERENTIAL_TABLE.md
-%   for the full row-by-row reconciliation this Part summarises.
+%   Reconciles the located v7.3 operational-source originals (primary
+%   v7.3 evidence, NRMOIntegrated/source/v7.3/original/, 2026-09-21)
+%   against the v7.2 / v7.2.1 / Normative Canon baseline (superior
+%   normative authority). DecisionCompass implementation-scope
+%   documentation is corroborating/conformance evidence only, not a
+%   source of v7.3 requirements. Does not amend the Normative Canon.
+%   See NRMOIntegrated/docs/V7_3_DIFFERENTIAL_TABLE.md for the full
+%   row-by-row reconciliation this Part summarises, and
+%   NRMOIntegrated/docs/V7_3_ORIGINAL_SOURCE_DISCOVERY_RECORD.md for
+%   the discovery and authenticity record.
 % =================================================================
 
 \part{NRMO v7.3 --- Production Contract Integration}
@@ -50,10 +55,17 @@ reconstructed from surviving secondary evidence and explicitly
 \textbf{ADOPTED} by Human Sovereign decision on 2026-09-21 (see
 \texttt{docs/V7\_3\_ADOPTION\_RECORD.md}, preserved unmodified as
 historical record). The original, located later the same day, confirmed
-that reconstruction at or near verbatim for 5 of those items --- a
-notable but coincidental convergence, not a claim that the
-reconstruction effort somehow produced or was equivalent to the
-original. \\[0.5em]
+\textbf{Items 1--4} (\S\ref{sec:v73-hold-state-machine} empty-set rule,
+\S\ref{ch:v73-norn} responsibilities and drift vocabulary,
+\S\ref{sec:v73-decision-procedure}) and \textbf{the original-confirmed
+portion of Item 6} (\S\ref{ch:v73-trace-schema}'s response-content
+fields) at or near verbatim --- a notable but coincidental convergence
+for those items, not a claim that the reconstruction effort somehow
+produced or was equivalent to the original. \textbf{Item 6's additional
+trace-persistence fields remain a separately adopted post-hoc
+extension} with no original-text precedent (\S\ref{ch:v73-trace-schema});
+they are not covered by this verbatim confirmation and must not be read
+as if they were. \\[0.5em]
 This build's overall \textbf{PROVISIONAL} status (this notice, the
 frontmatter notice, and the title page) is \textbf{unchanged} by the
 original's discovery or by this Part's update to reflect it --- removing
@@ -65,25 +77,39 @@ here.
 \label{sec:v73-decisioncompass-relationship}
 
 Per the Founding Charter and \texttt{NORMATIVE\_CANON.md} \S11
-(Conformance Rule), the authority order is:
+(Conformance Rule), updated to reflect the 2026-09-21 original-source
+discovery, the authority/evidence order is:
 
 \begin{center}
-\texttt{NRMO normative specification} $\to$
+\texttt{Human Sovereign} $\to$
+\texttt{NORMATIVE\_CANON.md / v7.2} $\to$
+\texttt{located v7.3 operational originals} $\to$
+\texttt{this Part (Integrated v7.3 reconciliation)} $\to$
 \texttt{DecisionCompass implementation} $\to$
-\texttt{conformance verification}
+\texttt{conformance evidence}
 \end{center}
 
 This Part is written to precede and govern DecisionCompass's v7.3
-implementation, not to certify or adopt it. Where DecisionCompass's
-implementation-scope document is used as evidence of what v7.3
-requires, this Part treats that document the way any implementation
-proposal is treated under \texttt{NORMATIVE\_CANON.md} \S9 and \S11:
-informative, not self-authorizing. DecisionCompass's own conformance
-matrix (\texttt{docs/nrmo\_v7\_3\_conformance.json}) is
-implementation-only evidence (Table~\ref{tab:v73-classification-summary},
-row category \texttt{IMPLEMENTATION-ONLY}) and is out of scope for this
-Part beyond the cross-reference in
-\S\ref{sec:v73-decisioncompass-conformance-summary}.
+implementation, not to certify or adopt it, and NRMO theory is never
+derived from DecisionCompass's implementation (Canon \S11). The located
+v7.3 originals (\texttt{NRMOIntegrated/source/v7.3/original/}) are the
+\textbf{primary} v7.3 operational-source evidence for this Part, superior
+to any DecisionCompass documentation. Prior to their discovery,
+DecisionCompass's implementation-scope document
+(\texttt{docs/NRMO\_V7\_3\_IMPLEMENTATION\_SCOPE.md}) was the best
+available secondary evidence and was treated, per
+\texttt{NORMATIVE\_CANON.md} \S9 and \S11, as informative, not
+self-authorizing --- that treatment and its outcome are preserved as
+history in \texttt{docs/V7\_3\_ADOPTION\_RECORD.md} and
+\texttt{docs/V7\_3\_ADOPTION\_PROPOSAL.md} (see their superseding
+notices), but is no longer this Part's active evidentiary basis for
+Items 1--4 and Item 6's original-confirmed portion. DecisionCompass's
+own conformance matrix (\texttt{docs/nrmo\_v7\_3\_conformance.json}) and
+runtime/tests remain \textbf{implementation/conformance evidence only}
+(Table~\ref{tab:v73-classification-summary}, row category
+\texttt{IMPLEMENTATION-ONLY}), never a source of v7.3 requirements; see
+\S\ref{sec:v73-decisioncompass-conformance-summary} and
+\texttt{docs/V7\_3\_DECISIONCOMPASS\_CONFORMANCE\_REEVALUATION.md}.
 
 \chapter{Authority, Mode, and Lifecycle Model}
 \label{ch:v73-authority-mode}
@@ -128,28 +154,35 @@ an extension flag on axis (1)'s MISSION profile, not a fifth axis.
 \subsection{Disambiguation: Type ZERO Internal Gating State vs Operational Mode}
 \label{sec:v73-typezero-disambiguation}
 
-\nrmobox{Resolved terminology-collision risk}{
-\textbf{Finding}: the v7.3 implementation-target document specifies a
-``Type ZERO Mode'' axis using the labels
-\texttt{CORE|VENTURE|MISSION|SHUTDOWN}. Section~\ref{sec:type-zero-modes-c2}
-already preserves exactly this 4-tuple as an explicit
-\emph{historical, superseded} table --- superseded specifically
-\emph{as the Operational Mode taxonomy} (\texttt{NORMATIVE\_CANON.md}
-\S5). Reusing identical labels (\texttt{MISSION}, \texttt{VENTURE}) for
-two different axes creates a serious readability and
-implementation-drift risk: a trace value \texttt{MISSION} would be
-ambiguous between ``Operational Mode = MISSION'' and ``Type ZERO
-internal gate = MISSION'' without qualification. \\[0.5em]
-\textbf{Resolution (Canon-priority reading, no Canon amendment)}:
-Canon \S5 supersedes this label set only as the Operational Mode
-taxonomy. It does not forbid Type ZERO from retaining an internal,
-non-actuator (Canon \S6) gating-state vocabulary that happens to reuse
-historical labels, \emph{provided it is never exposed or logged
-without an explicit \texttt{type\_zero\_gate} qualifier distinct from
-\texttt{operational\_mode}}. Any implementation or document that
-prints a bare \texttt{MISSION} without stating which axis it belongs
-to is non-conformant. This is a documentation/trace-schema obligation,
-not a theory change.
+\nrmobox{ORIGINAL-CONFIRMED + CLARIFIED --- terminology-collision risk resolved}{
+\textbf{Finding (\textbf{ORIGINAL-CONFIRMED})}: the located original
+directly confirms a ``Type ZERO Mode'' axis using the labels
+\texttt{CORE|VENTURE|MISSION|SHUTDOWN} --- its \S6 response format
+lists \texttt{Type ZERO Mode: CORE / VENTURE / MISSION / SHUTDOWN} as a
+line item separate from \texttt{Operational Mode: NORMAL / SAFE /
+VENTURE / MISSION}, and its \S8.3 gives Type ZERO Modes a dedicated
+definition with its own \texttt{IRREV}/\texttt{VOL}/\texttt{LOAD}
+transition triggers. Section~\ref{sec:type-zero-modes-c2} already
+preserves exactly this 4-tuple as an explicit \emph{historical,
+superseded} table --- superseded specifically \emph{as the Operational
+Mode taxonomy} (\texttt{NORMATIVE\_CANON.md} \S5). Reusing identical
+labels (\texttt{MISSION}, \texttt{VENTURE}) for two different axes ---
+confirmed by the original's own side-by-side \S6 listing --- creates a
+serious readability and implementation-drift risk: a trace value
+\texttt{MISSION} would be ambiguous between ``Operational Mode =
+MISSION'' and ``Type ZERO internal gate = MISSION'' without
+qualification. \\[0.5em]
+\textbf{Resolution (\textbf{CLARIFIED}; Canon-priority reading, no
+Canon amendment)}: Canon \S5 supersedes this label set only as the
+Operational Mode taxonomy. It does not forbid Type ZERO from retaining
+an internal, non-actuator (Canon \S6) gating-state vocabulary that
+happens to reuse historical labels, \emph{provided it is never exposed
+or logged without an explicit \texttt{type\_zero\_gate} qualifier
+distinct from \texttt{operational\_mode}}. Any implementation or
+document that prints a bare \texttt{MISSION} without stating which axis
+it belongs to is non-conformant. This qualifier discipline is this
+Part's own documentation/trace-schema obligation, not itself stated
+verbatim in the original, and not a theory change.
 }
 
 Required trace discipline going forward: every occurrence of this
@@ -335,12 +368,21 @@ Norn audits whether this order was followed; Norn cannot alter it
 \section{Disambiguation: Two Non-Identical Ruin Axes}
 \label{sec:v73-ruin-disambiguation}
 
-\nrmobox{Resolved terminology risk --- do not read as one 4-member enum}{
-\textbf{Finding}: the v7.3 implementation-target document lists ``Hard
-Ruin, Soft Ruin, Active Ruin, Passive Ruin'' as four items to keep
-distinct in trace fields. Read literally as one flat taxonomy, this
-conflates two chapters with \emph{different scope and different
-axis-meaning}:
+\nrmobox{ORIGINAL-CONFIRMED + CLARIFIED --- do not read as one 4-member enum}{
+\textbf{Requirement (\textbf{ORIGINAL-CONFIRMED})}: the located
+original requires all four concepts be tracked. \S4.1 (NRMO Core role
+list) requires ``Hard Ruin / Soft Ruin identification'' and, as a
+\emph{separate} bullet item, ``Active Ruin / Passive Ruin
+identification''; \S13.1--13.4 individually defines all four; the
+Standard Output Format (\S6) requires all four in every response. This
+requirement is no longer \texttt{SOURCE-PENDING}.
+
+\textbf{Axis semantics (\textbf{CLARIFIED}, disambiguation required)}:
+read literally as one flat four-item taxonomy, this risks conflating
+two chapters with \emph{different scope and different axis-meaning} ---
+a risk the original's own \S4.1 phrasing already resists, since it
+presents Hard/Soft and Active/Passive as two separate bulleted role
+items rather than one merged list of four:
 \begin{itemize}
 \item \textbf{Hard Ruin / Soft Ruin} (Chapter~\ref{ch:investment-sop},
 \S47--51): a \emph{severity} axis, defined specifically within the
@@ -354,21 +396,23 @@ Active Ruin = direct collapse from reckless action; Passive Ruin =
 erosion of optionality from avoidance/rigidity/adaptation failure.
 \end{itemize}
 These are not four siblings of one enum; they are two independent
-axes from two different chapters, one domain-scoped and one
-domain-general, that may co-occur (e.g.\ a Soft Ruin in the investment
-domain may have either an Active or a Passive causal origin).
+axes --- corroborated both by the original's own two-bullet structure
+and by the Canon-adjacent chapter split --- that may co-occur (e.g.\ a
+Soft Ruin in the investment domain may have either an Active or a
+Passive causal origin).
 }
 
 \textbf{Resolution}: trace schemas that need both axes must record
 them as \texttt{ruin\_severity \(\in\) \{Hard, Soft\}} (Investment
 domain only, may be \texttt{N/A} elsewhere) and
 \texttt{ruin\_origin \(\in\) \{Active, Passive\}} (domain-general)
-as two separate fields, never as one four-valued field. This
-resolves the CONFLICT identified in the differential table
-(\texttt{docs/V7\_3\_DIFFERENTIAL\_TABLE.md}, row 6.1) to
-\textbf{CLARIFIED} without requiring any Canon change (Canon does not
-mention any of the four terms; the ambiguity was entirely
-chapter-to-chapter).
+as two separate fields, never as one four-valued field. This resolves
+row 6.1 in the differential table
+(\texttt{docs/V7\_3\_DIFFERENTIAL\_TABLE.md}) as
+\textbf{ORIGINAL-CONFIRMED + CLARIFIED} without requiring any Canon
+change (Canon does not mention any of the four terms; the axis
+disambiguation is entirely chapter-to-chapter documentation, not a
+Canon-level distinction).
 
 \section{Passive Ruin: Avoidability-Window Definition (v7.2.1, adopted)}
 \label{sec:v73-passive-ruin-window}
@@ -547,12 +591,13 @@ user's subsequent decision).
 \textbf{Classification} & \textbf{Meaning} & \textbf{Rows (differential table)} \\
 \midrule
 UNCHANGED & Restates existing Canon/v7.2, no delta & 17 \\
-CLARIFIED & Adds precision, no new claim (1 needs disambiguation) & 5 \\
+CLARIFIED & Adds precision, no new claim & 4 \\
+ORIG.-CONFIRMED + CLARIFIED\textsuperscript{c} & Axis/four-concept requirement confirmed, disambiguation clarified & 2 \\
 ORIGINAL-CONFIRMED & Verbatim/near-verbatim in located original & 6 \\
 ADOPTED TRACE EXT.\textsuperscript{a} & No original precedent; explicitly adopted & 1 \\
 UNRESOLVED EXT.\textsuperscript{b} & Pre-discovery proposal, not adopted & 1 \\
 SUPERSEDED & Explicitly replaces prior content & 0 \\
-CONFLICT (resolved) & Resolved without Canon change & 1 \\
+CONFLICT (unresolved) & None remaining & 0 \\
 IMPLEMENTATION-ONLY & DecisionCompass runtime/CI concern & 2 \\
 HISTORICAL & Already-non-normative material & 1 \\
 \midrule
@@ -568,7 +613,12 @@ original-source discovery
 preserved unmodified as history. No row required a
 \texttt{NORMATIVE\_CANON.md} change. \textsuperscript{a}
 \texttt{HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION}.
-\textsuperscript{b} \texttt{POST-HOC / UNRESOLVED EXTENSION}.}
+\textsuperscript{b} \texttt{POST-HOC / UNRESOLVED EXTENSION}.
+\textsuperscript{c} rows 2.3 (Type ZERO axis) and 6.1 (Ruin
+four-concept tracking): axis/requirement existence
+\texttt{ORIGINAL-CONFIRMED}, disambiguation discipline
+\texttt{CLARIFIED} --- see \S\ref{sec:v73-typezero-disambiguation} and
+\S\ref{sec:v73-ruin-disambiguation}.}
 \label{tab:v73-classification-summary}
 \end{table}
 
