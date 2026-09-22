@@ -3,6 +3,16 @@
 **Status:** Assessment only. **Does not itself remove PROVISIONAL status,
 merge to `main`, or change `NORMATIVE_CANON.md`.** Those remain separate,
 later Human Sovereign decisions.
+
+**Update (2026-09-22, Human Sovereign decision, same day as this
+assessment):** acting on the `PROVISIONAL_REMOVAL_READY = YES` finding
+below, the Human Sovereign removed the v7.3 build's PROVISIONAL status.
+See `V7_3_PUBLICATION_DECISION.md` for the decision record. This
+assessment's content below is preserved unedited as the evidentiary
+basis for that decision — it does not itself perform the removal, and
+everything it says about *not* removing PROVISIONAL describes this
+document's own non-effect, not the build's current status. **`main`
+merge remains unaddressed by either this document or that decision.**
 **Basis:** `V7_3_DIFFERENTIAL_TABLE.md`, `V7_3_ORIGINAL_SOURCE_DISCOVERY_RECORD.md`,
 `V7_3_ADOPTION_PROPOSAL.md`, `V7_3_ADOPTION_RECORD.md`,
 `parts/part16_v73_production_contract.tex`,

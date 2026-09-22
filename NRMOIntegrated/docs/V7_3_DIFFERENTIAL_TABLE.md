@@ -1,6 +1,12 @@
 # NRMO v7.3 — Differential Table (Provisional)
 
-**Status:** Provisional / working document. NOT a normative source by itself.
+**Status:** Provisional / working document. NOT a normative source by
+itself. **"Provisional" here describes this table's own genre — a
+process/tracking artifact, not a normative source in its own right — and
+is independent of NRMO v7.3's build-level publication status.** The
+v7.3 build's own PROVISIONAL status was removed 2026-09-22; see
+`V7_3_PUBLICATION_DECISION.md`. This table remains, and is expected to
+remain, a working document even after that removal.
 **Purpose:** Track reconciliation of `NRMO v7.3` requirements — as of
 2026-09-21, evidenced primarily by the **located v7.3 operational
 originals** (`NRMOIntegrated/source/v7.3/original/`; see

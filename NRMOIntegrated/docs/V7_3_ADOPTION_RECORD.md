@@ -53,6 +53,15 @@ Effect on the six items decided below:
   SCOPE — NOT ADOPTED` — not a rejection, preserved in full as a future/
   independent proposal, and explicitly not a v7.3 publication blocker.
   See `docs/V7_3_PUBLICATION_READINESS.md`.
+- **PROVISIONAL status (§5–§6 below)**: on 2026-09-22, separately from
+  and later than every item decision recorded here, the Human Sovereign
+  removed the v7.3 build's overall PROVISIONAL status on the basis of
+  `V7_3_PUBLICATION_READINESS.md`'s readiness assessment. See
+  `docs/V7_3_PUBLICATION_DECISION.md`. §6's statement that "[t]his record
+  does not remove the v7.3 build's PROVISIONAL status" remains true as a
+  description of what *this* record did; it no longer describes the
+  build's *current* status, which is now **FINAL — READY FOR MAIN
+  INTEGRATION**.
 
 **This record's decisions were made in good faith under incomplete
 evidence and are preserved as historically valid** — not superseded

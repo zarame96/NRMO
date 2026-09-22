@@ -54,6 +54,16 @@ unaffected and remains `ORIGINAL-CONFIRMED`.
 This proposal's own reasoning, evidence hierarchy, and decision record
 remain valid as history and are not retracted.
 
+**Further update (2026-09-22, Human Sovereign decision — PROVISIONAL
+status removed)**: §7's statement above that removing the whole build's
+PROVISIONAL status "would need a separate, later decision" was correct
+at the time; that separate decision has now been made. NRMO v7.3's
+active publication status is **FINAL — READY FOR MAIN INTEGRATION**, not
+PROVISIONAL. See `docs/V7_3_PUBLICATION_DECISION.md`. This does not
+change anything else this proposal decided or left undecided (Item 5b
+remains `DEFERRED / OUT OF v7.3 NORMATIVE SCOPE — NOT ADOPTED`), and does
+not merge this branch into `main`.
+
 ---
 
 ## 1. Fact of source loss
