@@ -61,8 +61,12 @@ at the time; that separate decision has now been made. NRMO v7.3's
 active publication status is **FINAL — READY FOR MAIN INTEGRATION**, not
 PROVISIONAL. See `docs/V7_3_PUBLICATION_DECISION.md`. This does not
 change anything else this proposal decided or left undecided (Item 5b
-remains `DEFERRED / OUT OF v7.3 NORMATIVE SCOPE — NOT ADOPTED`), and does
-not merge this branch into `main`.
+remains `DEFERRED / OUT OF v7.3 NORMATIVE SCOPE — NOT ADOPTED`), and, at
+the time this note was written, did not merge this branch into `main`.
+**Post-merge note (2026-09-22, same day, separate decision):** the
+branch was subsequently merged into `main` via PR #16 (merge commit
+`cb5d2b406d4c302b1e092c619a7cf716973d1e71`). Current status: **FINAL ---
+MAIN INTEGRATED.**
 
 ---
 
