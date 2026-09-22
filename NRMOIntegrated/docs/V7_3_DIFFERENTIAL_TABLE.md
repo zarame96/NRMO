@@ -109,8 +109,12 @@ session had access to search, and remains valid history.
   located original v7.3 source text (`NRMOIntegrated/source/v7.3/original/`).
 - `ORIGINAL-PARTIAL` — some but not all content confirmed in the located
   original; remainder is a later, separately-labeled extension.
-- `POST-HOC / UNRESOLVED EXTENSION` — proposed by this session before the
-  original was located; absent from the original; not adopted.
+- `DEFERRED / OUT OF v7.3 NORMATIVE SCOPE` — proposed by this session
+  before the original was located; absent from the original; explicitly
+  placed outside v7.3 normative scope by Human Sovereign decision
+  (2026-09-22); **not adopted, not rejected, not deleted** — an open
+  proposal for a future version or independent track, and not a
+  publication blocker for v7.3.
 - `HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION` — content with no original-text
   precedent that the Human Sovereign explicitly adopted as new v7.3
   content on 2026-09-21, independent of original-text status.
@@ -217,7 +221,7 @@ engineering discipline, not itself stated verbatim in the original.
 | # | v7.3 requirement | Canon/v7.2 baseline | Classification | Notes |
 |---|---|---|---|---|
 | 10.1a | StrongEngine candidates, **presentation layer**: default response shows 3 named alternatives (A: safe-leaning, B: standard, C: aggressive/forward), all within `A_allowed` | Original §6 "Strong Engine候補" / §7 "PP_Deliver Format" | **ORIGINAL-CONFIRMED** (narrowly) | Confirmed exactly as a **default output-presentation format** — §6 itself says "通常は" (normally), not an unconditional absolute. **Not** a statement about StrongEngine's internal candidate-generation architecture; the original does not address that separately. See Discovery Record §7. |
-| 10.1b | StrongEngine candidates, **internal generation**: "must not collapse candidate generation to a single risk posture when materially distinct admissible alternatives exist" (Revision 2 principle) | No Canon precedent; **not present in either original v7.3 file, in any form** | **POST-HOC / UNRESOLVED EXTENSION — NOT ADOPTED** | Authored by this session before the originals were located, as a proposed internal-architecture principle distinct from 10.1a's output-format requirement. Relationship to 10.1a (compatible elaboration vs. tension with a closed A/B/C reading) is unresolved — see Discovery Record §7. The original 7-category "safe/standard/assertive/probe/sequence/costed-HOLD/exit" text (proposed 2026-09-20, deferred 2026-09-21) remains `DEFERRED`, never adopted, and is not restored by this reclassification — see `V7_3_ADOPTION_RECORD.md` §4 (preserved, historical). |
+| 10.1b | StrongEngine candidates, **internal generation**: "must not collapse candidate generation to a single risk posture when materially distinct admissible alternatives exist" (Revision 2 principle) | No Canon precedent; **not present in either original v7.3 file, in any form** | **DEFERRED / OUT OF v7.3 NORMATIVE SCOPE — NOT ADOPTED** (Human Sovereign decision, 2026-09-22) | Authored by this session before the originals were located, as a proposed internal-architecture principle distinct from 10.1a's output-format requirement. **Disposition (2026-09-22): not adopted into v7.3 normative scope** — located v7.3 does not contain it, 5a's presentation-layer A/B/C default is already original-confirmed and sufficient for v7.3 completeness, and 5b is not needed to restore/finalize v7.3. **This is not a rejection or deletion of Revision 2**: the proposal text is preserved in full (`V7_3_ADOPTION_PROPOSAL.md` §11) as an open candidate for a future version or an independent proposal track, outside v7.3's normative scope. **Not a v7.3 publication blocker** (see `V7_3_PUBLICATION_READINESS.md`). The original 7-category "safe/standard/assertive/probe/sequence/costed-HOLD/exit" text (proposed 2026-09-20, deferred 2026-09-21) remains `DEFERRED`, never adopted, and is not restored by this reclassification — see `V7_3_ADOPTION_RECORD.md` §4 (preserved, historical). |
 | 10.2 | "No advisory layer may replace Ω Full selection with an inadmissible action" | Canon §2.3, §8 (`a_t ∈ A_t` strict) | UNCHANGED | Also consistent with original §2.4: `a_t ∈ A_t` formal invariant restated verbatim in the original. |
 
 ## 11. Trace / DecisionRecord
@@ -247,7 +251,7 @@ engineering discipline, not itself stated verbatim in the original.
 | **ORIGINAL-CONFIRMED + CLARIFIED** (axis semantics disambiguation required) | 2 | 2.3,6.1 |
 | CONFLICT (fully resolved, none remaining) | 0 | — |
 | **ORIGINAL-CONFIRMED** | **6** | 3.2,4.2,4.4,5.1,10.1a,11.1a |
-| **POST-HOC / UNRESOLVED EXTENSION** | 1 | 10.1b |
+| **DEFERRED / OUT OF v7.3 NORMATIVE SCOPE** | 1 | 10.1b |
 | **HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION** | 1 | 11.1b |
 | SUPERSEDED | 0 | — |
 | IMPLEMENTATION-ONLY | 2 | 12.1,12.2 |
@@ -301,11 +305,14 @@ that the 2026-09-21 adoption decision was wrong or is being discarded**
 historically valid decision made under incomplete evidence, whose
 outcome happened to match the subsequently-located original closely.
 Row 10.1 was split into 10.1a (`ORIGINAL-CONFIRMED`, narrowly — the
-presentation-layer A/B/C default only) and 10.1b (`POST-HOC /
-UNRESOLVED EXTENSION`, not adopted — the internal-generation diversity
-principle, absent from the original). Row 11.1 was split into 11.1a
-(`ORIGINAL-CONFIRMED`) and 11.1b (`HUMAN-SOVEREIGN-ADOPTED TRACE
-EXTENSION` — retained as adopted, per Human Sovereign instruction,
+presentation-layer A/B/C default only) and 10.1b (at this point still
+under review as an unresolved extension; **2026-09-22 update**: formally
+disposed as `DEFERRED / OUT OF v7.3 NORMATIVE SCOPE — NOT ADOPTED`, see
+the 2026-09-22 revision note below — the internal-generation diversity
+principle, absent from the original, not needed for v7.3 completeness,
+preserved as an open future/independent proposal). Row 11.1 was split
+into 11.1a (`ORIGINAL-CONFIRMED`) and 11.1b (`HUMAN-SOVEREIGN-ADOPTED
+TRACE EXTENSION` — retained as adopted, per Human Sovereign instruction,
 precisely because it was an explicit 2026-09-21 normative decision
 independent of original-text status, not an unconfirmed guess that
 should revert to SOURCE-PENDING merely because the original lacks it).
@@ -316,6 +323,24 @@ without amendment, provided the v7.3 chapter adds the disambiguation note
 described above. Row 6.1 requires a disambiguation note but not a Canon
 change (Hard/Soft vs Active/Passive are chapter-scoped axes, not Canon-level
 concepts to begin with — Canon does not mention any of the four terms).
+
+**Revision note (2026-09-22, Item 5b disposition, `ACTIVE_AND_CORRECT`)**:
+the Human Sovereign reviewed row 10.1b (the internal-generation
+candidate-diversity principle, "Revision 2") and decided: **DEFERRED /
+OUT OF v7.3 NORMATIVE SCOPE. NOT ADOPTED.** Reasoning: (1) the located
+v7.3 original does not contain it, in any form; (2) row 10.1a
+(presentation-layer A/B/C default) is already `ORIGINAL-CONFIRMED` and
+is sufficient, by itself, for v7.3 normative completeness on the
+StrongEngine-candidates topic; (3) 5b is a later-generation, internal-
+architecture proposal that is not required to restore or finalize v7.3.
+**This is explicitly not a rejection or deletion**: the Revision 2 text
+remains preserved in full (`V7_3_ADOPTION_PROPOSAL.md` §11) as an open
+proposal for a future NRMO version or an independent track. **Row 10.1b
+is not, and must not be treated as, a v7.3 publication blocker** — see
+`docs/V7_3_PUBLICATION_READINESS.md`. No prior "UNRESOLVED" framing on
+this row should be read as blocking v7.3 completeness; it described an
+open architectural question, not a gap in the v7.3 specification
+itself (which needs only 10.1a).
 
 ## LOOP 4/5/6 completion record
 

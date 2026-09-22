@@ -149,7 +149,7 @@ reclassification below.
 | 3 | 4.4 | Norn drift-classification vocabulary | **ORIGINAL-CONFIRMED** | §4.10 "変化の扱い" table: `DRIFT / SIGNAL / WITHIN_OWN_RANGE / INSUFFICIENT_HISTORY` — exact label match. |
 | 4 | 5.1 | §14 ordered ten-step decision procedure | **ORIGINAL-CONFIRMED** | §14 Decision Logic, steps 1–10, identical order and content to what was adopted — including the section number (`§14`) itself matching. |
 | 5a | 10.1 | StrongEngine candidates, presentation layer | **ORIGINAL-CONFIRMED** (narrowly — see §7) | §6 "Strong Engine候補" / §7 "PP_Deliver Format": a default A/B/C (safe / standard / aggressive-forward) response format. Confirmed as an **output-presentation default**, not as a statement about internal candidate-generation architecture. |
-| 5b | 10.1 | StrongEngine internal candidate-diversity principle | **POST-HOC / UNRESOLVED EXTENSION** | Revision 2's "must not collapse to a single risk posture" is **not stated, in any form, anywhere in either original file.** It is this session's own post-hoc extension, proposed as a separate, deeper-layer principle. Relationship to 5a is unresolved (§7) — not adopted. |
+| 5b | 10.1 | StrongEngine internal candidate-diversity principle | **DEFERRED / OUT OF v7.3 NORMATIVE SCOPE** (2026-09-22; was `POST-HOC / UNRESOLVED EXTENSION`) | Revision 2's "must not collapse to a single risk posture" is **not stated, in any form, anywhere in either original file.** It is this session's own post-hoc extension, proposed as a separate, deeper-layer principle. Relationship to 5a is analytically unresolved (§7); the v7.3-scope question is decided — not needed, not a blocker — not adopted. |
 | 6 | 11.1 | DecisionRecord / trace schema | **ORIGINAL-PARTIAL + POST-HOC TRACE EXTENSION** | Split required (§7a) — some fields confirmed in original §6, others are this session's post-hoc additions with no original precedent at all. |
 
 ## 7. Item 5 — two-layer split (5a / 5b), per Human Sovereign correction
@@ -193,7 +193,16 @@ three named postures — §6/§7 are response-formatting sections, and
 appear separately from "2. Top-Level Hierarchy" / "4. Module Separation"
 where the document defines StrongEngine's actual internal role.
 
-### 5b. `POST-HOC / UNRESOLVED EXTENSION` — internal candidate-diversity principle
+### 5b. `DEFERRED / OUT OF v7.3 NORMATIVE SCOPE` (was: `POST-HOC / UNRESOLVED EXTENSION`) — internal candidate-diversity principle
+
+**Update (2026-09-22, Human Sovereign decision — see
+`docs/V7_3_PUBLICATION_READINESS.md`)**: 5b is formally disposed as
+`DEFERRED / OUT OF v7.3 NORMATIVE SCOPE`, not adopted, not rejected,
+not deleted — preserved as an open future/independent proposal and
+explicitly **not a v7.3 publication blocker**. The analysis below,
+written 2026-09-21, is preserved unedited as the record of what was
+found at discovery time; it remains an accurate description of the
+original text's silence on this topic.
 
 Revision 2's principle ("StrongEngine Ω Full must not collapse candidate
 generation to a single risk posture when materially distinct admissible
@@ -203,16 +212,22 @@ originals were located, as a proposed internal-architecture principle.
 It is not confirmed, not contradicted, and **not adopted** by the
 original text — it simply is not addressed by it at all.
 
-### Relationship between 5a and 5b — genuinely unresolved, not decided here
+### Relationship between 5a and 5b — analytically unresolved (2026-09-21 finding); scope question decided 2026-09-22
 
 Whether 5b is a reasonable elaboration compatible with 5a (StrongEngine
 could search a broader internal candidate space while the response layer
 still defaults to presenting the 3 named postures from 5a), or whether it
-is redundant with, or in tension with, 5a's specific fixed format, is
-**not resolved by this record**. Revision 2 remains **not adopted**. Any
-future decision on Item 5 should treat 5a and 5b as two separate
-questions — one already `ORIGINAL-CONFIRMED` at the presentation layer,
-one still an open, admittedly post-hoc, non-original proposal at the
+is redundant with, or in tension with, 5a's specific fixed format, was
+**not resolved by this record** as of 2026-09-21, and this analytical
+question remains open. What **has** been decided (2026-09-22) is a
+separate, narrower question: 5b is not needed for v7.3 normative
+completeness (5a alone satisfies the original's requirement) and is
+therefore out of v7.3's normative scope regardless of how the
+analytical question above is eventually answered. Revision 2 remains
+**not adopted**. Any future decision on Item 5 should treat 5a and 5b as
+two separate questions — one already `ORIGINAL-CONFIRMED` at the
+presentation layer, one still an open, admittedly post-hoc, non-original
+proposal (now out-of-scope for v7.3 specifically) at the
 internal-architecture layer — rather than one merged item.
 
 ## 7a. Item 6 — `ORIGINAL-PARTIAL + POST-HOC TRACE EXTENSION`, fields split

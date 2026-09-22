@@ -39,8 +39,17 @@ Revision 2 is **still not adopted**, and the original text does not
 adopt it either — the original confirms only a narrower,
 presentation-layer, 3-alternative default (differential-table row
 10.1a), a different claim and a different architectural layer from
-Revision 2's internal candidate-generation-diversity principle (now row
-10.1b, `POST-HOC / UNRESOLVED EXTENSION`).
+Revision 2's internal candidate-generation-diversity principle (row
+10.1b).
+
+**Update (2026-09-22, Human Sovereign decision)**: row 10.1b/Revision 2
+is formally disposed as `DEFERRED / OUT OF v7.3 NORMATIVE SCOPE — NOT
+ADOPTED`. This is not a rejection: the proposal text below (§11) is
+preserved in full and remains open for reconsideration in a future
+version or an independent track. It is not, and must not be treated
+as, a v7.3 publication blocker — see
+`docs/V7_3_PUBLICATION_READINESS.md`. Row 10.1a (this section) is
+unaffected and remains `ORIGINAL-CONFIRMED`.
 
 This proposal's own reasoning, evidence hierarchy, and decision record
 remain valid as history and are not retracted.
@@ -404,12 +413,23 @@ is retained here unfilled, as the original proposal instrument; it is
 superseded for decision-tracking purposes by that record, not edited in
 place, so the proposal-to-decision history stays legible.
 
-## §11 — Revised Item 5 proposal (open-ended), NOT YET ADOPTED
+## §11 — Revised Item 5 proposal (open-ended) — DEFERRED / OUT OF v7.3 NORMATIVE SCOPE (2026-09-22)
 
 Per Human Sovereign instruction (2026-09-21), Item 5's closed
 seven-category taxonomy is replaced in this revised proposal by an
 open-ended diversity requirement. **This section is a proposal only.
 It has not been adopted. No file has been changed to reflect it.**
+
+**Final disposition (Human Sovereign, 2026-09-22): this entire §11
+proposal ("Revision 2") is DEFERRED and placed OUT OF v7.3 NORMATIVE
+SCOPE — not adopted, not rejected, not deleted.** It remains preserved
+below exactly as drafted, as an open candidate for a future NRMO
+version or an independent proposal track. See the disposition note
+immediately above (§10 area) and `docs/V7_3_PUBLICATION_READINESS.md`
+for why this does not block v7.3 completeness: the original's
+requirement on this topic is fully satisfied by the presentation-layer
+A/B/C default (differential-table row 10.1a, `ORIGINAL-CONFIRMED`),
+and Revision 2 was never part of the located original to begin with.
 
 ### Current Part XVI text (unchanged, still in effect)
 
@@ -602,7 +622,12 @@ admissible) is a DecisionCompass-side test-coverage question, not
 something `check_v73_consistency.py` (a Part XVI text guard) can or
 should attempt.
 
-### Status
+### Status (`HISTORICAL_AND_MARKED_SUPERSEDED` — see final disposition above)
+
+*This section describes the status as of 2026-09-21, before both the
+original-source discovery and the 2026-09-22 final disposition.
+Preserved verbatim as history; current status is the "Final
+disposition" note at the top of §11.*
 
 Revision 2 is the current proposal for Item 5. **Not adopted.** Row
 10.1 remains `ADDED / SOURCE-PENDING — DEFERRED` in
@@ -614,6 +639,11 @@ new dated tag `ADOPTED (v7.3, New Explicit Adoption — Human Sovereign,
 `V7_3_DIFFERENTIAL_TABLE.md` row 10.1 and Part XVI both updated, and
 (per the feasibility finding above) the new negative guard added to
 `check_v73_consistency.py` in the same commit.
+
+**Current status (2026-09-22)**: row 10.1a (presentation-layer default)
+is `ORIGINAL-CONFIRMED`; row 10.1b (this §11 proposal) is `DEFERRED /
+OUT OF v7.3 NORMATIVE SCOPE — NOT ADOPTED`, not a publication blocker,
+and remains available for future reconsideration exactly as drafted.
 
 ---
 

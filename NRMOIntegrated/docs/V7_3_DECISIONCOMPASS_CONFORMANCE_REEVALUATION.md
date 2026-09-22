@@ -60,6 +60,77 @@ already-established (now `ORIGINAL-CONFIRMED` or
    would need to extend `test_nrmo_v73_procedure_contract.py` or
    equivalent — not done here, and this note does not direct them to.
 
+## Minimal future-Issue requirement sketches (LOOP E, 2026-09-22)
+
+**Scope note, read this first:** the two sketches below are
+DecisionCompass-side **implementation/conformance gaps**, not NRMO v7.3
+**normative** gaps and not v7.3 **publication blockers**. NRMO v7.3's own
+text for both underlying items (10.1a, 11.1a/11.1b) is already
+`ORIGINAL-CONFIRMED` or `HUMAN-SOVEREIGN-ADOPTED` in
+`V7_3_DIFFERENTIAL_TABLE.md` — nothing about NRMO's own specification is
+open here. What is open is only whether, and how fully,
+`zarame96/DecisionCompass` implements what NRMO v7.3 already specifies.
+These sketches are provided so a future DecisionCompass Issue can be
+opened directly from them; **no Issue has been opened, and this branch
+does not open one** (out of scope: read-only against DecisionCompass).
+See `V7_3_PUBLICATION_READINESS.md` for how these two gaps are
+categorized against the four-way publication-blocker taxonomy.
+
+### Sketch 1 — 10.1a: presentation-layer 3-alternative (A/B/C) default
+
+- **Requirement (from NRMO v7.3, `ORIGINAL-CONFIRMED`, row 10.1a):**
+  StrongEngine's standard output/response format presents three named
+  alternatives (A/B/C) as the default candidate-presentation surface.
+- **Current DecisionCompass state:** a generic, variable-length
+  `candidates` list is rendered in `decisioncompass_web/src/App.tsx`
+  (lines 530, 792, 1813-1814, 2528); no fixed 3-item A/B/C default
+  naming convention was found repo-wide.
+- **Minimal Issue scope for DecisionCompass maintainers:**
+  1. Add a conformance requirement ID (e.g.
+     `strongengine-presentation-default`) to
+     `docs/nrmo_v7_3_conformance.json`.
+  2. Decide, as a DecisionCompass product/UX question (not an NRMO
+     question), whether the existing generic `candidates` list is
+     intended to satisfy this default, or whether a distinct fixed
+     3-alternative (A/B/C) presentation path is required.
+  3. Add a test (e.g. in `tests/unit/test_nrmo_v73_procedure_contract.py`
+     or a UI-layer equivalent) asserting whichever of the two the
+     maintainers choose.
+- **Not included in this sketch:** any opinion on which UX choice
+  DecisionCompass should make — that is a DecisionCompass-side product
+  decision outside NRMO's authority to dictate presentation
+  implementation detail beyond what the original text already fixes.
+
+### Sketch 2 — 11.1b: persisted trace-extension fields
+
+- **Requirement (from NRMO v7.3,
+  `HUMAN-SOVEREIGN-ADOPTED TRACE EXTENSION`, row 11.1b):** the
+  DecisionRecord/trace schema persists, in addition to the
+  `ORIGINAL-CONFIRMED` 11.1a fields: component-version provenance,
+  vetoed-candidates-with-reasons, StrongEngine score metadata, and a
+  persisted Human Sovereign accept/modify/reject outcome (not merely a
+  boolean human-authority flag).
+- **Current DecisionCompass state:** `test_nrmo_v73_procedure_contract.py`
+  persists a boolean `human_sovereign` / `final_decision_authority ==
+  "human"` flag; `test_audit.py` persists a bare `vetoed_actions` list
+  (no attached reasons confirmed); no component-version provenance or
+  StrongEngine score metadata field was found.
+- **Minimal Issue scope for DecisionCompass maintainers:**
+  1. Extend the persisted DecisionRecord schema with four fields (or
+     confirm equivalents already exist under different names):
+     `component_version_provenance`, `vetoed_candidates` with an
+     attached `reason` per entry, `strongengine_score_metadata`, and a
+     tri-state `human_sovereign_outcome` (`accept` / `modify` /
+     `reject`) replacing or supplementing the current boolean flag.
+  2. Add/extend tests asserting each field is actually populated at
+     runtime, not merely present in the schema.
+  3. Update `docs/nrmo_v7_3_conformance.json`'s entry for this
+     requirement from partial to full once done.
+- **Not included in this sketch:** a schema migration plan, storage
+  format, or backward-compatibility strategy for existing persisted
+  records — implementation detail for DecisionCompass maintainers to
+  decide.
+
 ---
 
 *Prepared read-only, this NRMO branch only. No `zarame96/DecisionCompass`

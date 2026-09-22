@@ -48,6 +48,11 @@ Effect on the six items decided below:
   text nor Revision 2 is adopted by the original's discovery.** Both
   remain exactly as this record left them: the seven-category text
   DEFERRED/never-adopted, Revision 2 proposed/not-adopted.
+  **Further update (2026-09-22, Human Sovereign decision)**: Revision 2
+  (row 10.1b) is formally disposed as `DEFERRED / OUT OF v7.3 NORMATIVE
+  SCOPE — NOT ADOPTED` — not a rejection, preserved in full as a future/
+  independent proposal, and explicitly not a v7.3 publication blocker.
+  See `docs/V7_3_PUBLICATION_READINESS.md`.
 
 **This record's decisions were made in good faith under incomplete
 evidence and are preserved as historically valid** — not superseded
