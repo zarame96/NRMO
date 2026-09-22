@@ -14,6 +14,22 @@ PROVISIONAL status.
 
 ---
 
+**POST-MERGE UPDATE (2026-09-22, same day, separate Human Sovereign
+approval):** PR #16 merged. Merge commit
+`cb5d2b406d4c302b1e092c619a7cf716973d1e71`. The specification remains
+FINAL. Repository integration is now complete: `main` contains this
+decision, Part XVI, both immutable original source files, and the full
+documentation trail listed in §1. **Current active status: FINAL ---
+MAIN INTEGRATED.** This update does not change anything this decision
+recorded below — the "New status" field above, and §4's description of
+main-merge as a "separate, later decision," describe accurately what
+was true and undecided at the moment this record was written, earlier
+the same day; they are preserved unedited as history. The merge itself
+was a distinct decision, made later that day and recorded in this
+session's chat, not by this document.
+
+---
+
 ## 1. What this decision is
 
 This record documents a single, narrow decision: removing the v7.3
@@ -89,15 +105,19 @@ first:
 1. **Publication status of the v7.3 specification content**: was
    PROVISIONAL; is now **FINAL**, as of this decision.
 2. **Repository integration status** (has the branch carrying this
-   content been merged into `main`): **NOT YET** — `main` remains at
-   its pre-existing HEAD, and this branch
+   content been merged into `main`): **NOT YET, as of this decision** —
+   `main` remains at its pre-existing HEAD, and this branch
    (`claude/nrmo-version-7-4-piox1y`) remains ahead of it, unmerged.
    Merging is a distinct, later Human Sovereign action, requiring its
    own explicit instruction. This decision record's recommended active
    status wording — **FINAL --- READY FOR MAIN INTEGRATION** — is
    deliberately phrased to keep these two facts visibly separate,
    rather than a bare "PUBLISHED" claim that would misstate the second
-   fact.
+   fact. **Update: that distinct, later action has since happened** —
+   see the POST-MERGE UPDATE note above. As of PR #16's merge, both
+   questions resolve to the same answer: **FINAL --- MAIN INTEGRATED.**
+   The reasoning above for why the wording separated the two facts
+   remains valid and is preserved as written.
 
 ## 5. Guardrails (carried from `V7_3_ADOPTION_RECORD.md` /
 `NORMATIVE_CANON_ADOPTION.md` precedent)
