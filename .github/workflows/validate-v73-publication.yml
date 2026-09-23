@@ -1,0 +1,110 @@
+name: Validate NRMO v7.3 publication build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - NRMOIntegrated/NRMO_Integrated_System_v7_3.tex
+      - NRMOIntegrated/frontmatter/**
+      - NRMOIntegrated/parts/**
+      - NRMOIntegrated/chapters/**
+      - NRMOIntegrated/appendices/**
+      - NRMOIntegrated/source/v7.3/**
+      - NRMOIntegrated/tools/check_v73_original_sources.py
+      - NRMOIntegrated/tools/check_v73_consistency.py
+      - NRMOIntegrated/tools/check_pdf_page_bounds.py
+  pull_request:
+    paths:
+      - NRMOIntegrated/NRMO_Integrated_System_v7_3.tex
+      - NRMOIntegrated/frontmatter/**
+      - NRMOIntegrated/parts/**
+      - NRMOIntegrated/chapters/**
+      - NRMOIntegrated/appendices/**
+      - NRMOIntegrated/source/v7.3/**
+  workflow_dispatch:
+
+# Read-only validation. This workflow never commits or pushes anything
+# -- it builds NRMO_Integrated_System_v7_3.tex from source in a scratch
+# checkout and validates the result, matching validate-nrmo-provenance.yml's
+# non-committing pattern. It is the v7.3 (current publication-of-record)
+# counterpart to build-nrmo-pdf.yml, which remains the v7.2 historical
+# rebuild path and is unmodified by this file.
+
+jobs:
+  validate-v73:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout NRMO
+        uses: actions/checkout@v4
+
+      - name: Install LaTeX toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-pictures \
+            texlive-science \
+            poppler-utils
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install PyMuPDF (for page-bounds guard)
+        run: pip install --quiet pymupdf
+
+      - name: Original-source integrity guard
+        working-directory: NRMOIntegrated
+        run: python3 tools/check_v73_original_sources.py
+
+      - name: Part XVI consistency guard
+        working-directory: NRMOIntegrated
+        run: python3 tools/check_v73_consistency.py
+
+      - name: Build v7.3 publication PDF from source
+        working-directory: NRMOIntegrated
+        run: |
+          set -euo pipefail
+          pdflatex -interaction=nonstopmode NRMO_Integrated_System_v7_3.tex
+          makeindex NRMO_Integrated_System_v7_3.idx || true
+          pdflatex -interaction=nonstopmode NRMO_Integrated_System_v7_3.tex
+          pdflatex -interaction=nonstopmode NRMO_Integrated_System_v7_3.tex
+          test -s NRMO_Integrated_System_v7_3.pdf
+          pdfinfo NRMO_Integrated_System_v7_3.pdf | tee /tmp/nrmo-v73-pdfinfo.txt
+          sha256sum NRMO_Integrated_System_v7_3.pdf | tee /tmp/nrmo-v73-pdf-sha256.txt
+
+      - name: Fail on LaTeX fatal errors
+        working-directory: NRMOIntegrated
+        run: |
+          set -euo pipefail
+          if grep -q "^! " NRMO_Integrated_System_v7_3.log; then
+            grep "^! " NRMO_Integrated_System_v7_3.log
+            echo "Fatal LaTeX error(s) found in build log." >&2
+            exit 1
+          fi
+
+      - name: Page-boundary overflow guard (generic, no hardcoded page list)
+        working-directory: NRMOIntegrated
+        run: python3 tools/check_pdf_page_bounds.py NRMO_Integrated_System_v7_3.pdf
+
+      - name: Build summary
+        if: always()
+        run: |
+          {
+            echo "## NRMO v7.3 publication build validation"
+            echo
+            if [ -f /tmp/nrmo-v73-pdfinfo.txt ]; then
+              echo '```text'
+              cat /tmp/nrmo-v73-pdfinfo.txt
+              echo '```'
+            fi
+            if [ -f /tmp/nrmo-v73-pdf-sha256.txt ]; then
+              echo '```text'
+              cat /tmp/nrmo-v73-pdf-sha256.txt
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
