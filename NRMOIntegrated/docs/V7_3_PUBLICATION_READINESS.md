@@ -13,6 +13,14 @@ basis for that decision — it does not itself perform the removal, and
 everything it says about *not* removing PROVISIONAL describes this
 document's own non-effect, not the build's current status. **`main`
 merge remains unaddressed by either this document or that decision.**
+
+**Further update (2026-09-23, separate Human Sovereign decision):**
+`main` merge happened 2026-09-22 (PR #16); and on 2026-09-23, NRMO
+Integrated System v7.3 was designated the current publication of
+record, superseding v7.2 / v7.2 rev2. See `V7_3_PUBLICATION_DECISION.md`
+and `V7_3_PUBLICATION_OF_RECORD_DECISION.md`. Neither event changes
+this assessment's findings below, which remain the evidentiary basis
+for both later decisions.
 **Basis:** `V7_3_DIFFERENTIAL_TABLE.md`, `V7_3_ORIGINAL_SOURCE_DISCOVERY_RECORD.md`,
 `V7_3_ADOPTION_PROPOSAL.md`, `V7_3_ADOPTION_RECORD.md`,
 `parts/part16_v73_production_contract.tex`,

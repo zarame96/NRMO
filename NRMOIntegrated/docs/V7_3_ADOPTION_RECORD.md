@@ -60,8 +60,12 @@ Effect on the six items decided below:
   `docs/V7_3_PUBLICATION_DECISION.md`. §6's statement that "[t]his record
   does not remove the v7.3 build's PROVISIONAL status" remains true as a
   description of what *this* record did; it no longer describes the
-  build's *current* status, which is now **FINAL — READY FOR MAIN
-  INTEGRATION**.
+  build's *current* status.
+- **Publication of record (2026-09-23, separate Human Sovereign
+  decision)**: NRMO Integrated System v7.3 was designated the current
+  publication of record, superseding v7.2 / v7.2 rev2 in that role. See
+  `docs/V7_3_PUBLICATION_OF_RECORD_DECISION.md`. Current status: **FINAL
+  — PUBLICATION OF RECORD — MAIN INTEGRATED**.
 
 **This record's decisions were made in good faith under incomplete
 evidence and are preserved as historically valid** — not superseded

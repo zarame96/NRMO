@@ -6,7 +6,11 @@ process/tracking artifact, not a normative source in its own right — and
 is independent of NRMO v7.3's build-level publication status.** The
 v7.3 build's own PROVISIONAL status was removed 2026-09-22; see
 `V7_3_PUBLICATION_DECISION.md`. This table remains, and is expected to
-remain, a working document even after that removal.
+remain, a working document even after that removal. On 2026-09-23,
+NRMO Integrated System v7.3 was further designated the current
+publication of record, superseding v7.2 / v7.2 rev2 in that role; see
+`V7_3_PUBLICATION_OF_RECORD_DECISION.md`. Neither change alters any
+row classification in this table.
 **Purpose:** Track reconciliation of `NRMO v7.3` requirements — as of
 2026-09-21, evidenced primarily by the **located v7.3 operational
 originals** (`NRMOIntegrated/source/v7.3/original/`; see
