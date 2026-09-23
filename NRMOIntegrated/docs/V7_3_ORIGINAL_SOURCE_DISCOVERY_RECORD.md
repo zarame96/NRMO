@@ -7,6 +7,14 @@ Revision 2; rebuild `NRMO_Integrated_System_v7_3.pdf`; change
 publication/PROVISIONAL status; merge to `main`; delete or alter
 `V7_3_ADOPTION_RECORD.md` or `V7_3_ADOPTION_PROPOSAL.md`.
 
+**Update (2026-09-23):** PROVISIONAL status was later removed
+(2026-09-22), the branch merged to `main` (2026-09-22, PR #16), and
+NRMO Integrated System v7.3 designated the current publication of
+record (2026-09-23) — each by its own separate, later Human Sovereign
+decision, not by this record. See `V7_3_PUBLICATION_DECISION.md` and
+`V7_3_PUBLICATION_OF_RECORD_DECISION.md`. This record's reclassification
+findings below are unaffected and preserved unedited.
+
 ---
 
 ## 1. Discovery

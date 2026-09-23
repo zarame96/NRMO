@@ -28,6 +28,13 @@ the same day; they are preserved unedited as history. The merge itself
 was a distinct decision, made later that day and recorded in this
 session's chat, not by this document.
 
+**Further update (2026-09-23, separate Human Sovereign decision):**
+NRMO Integrated System v7.3 was designated the current publication of
+record, superseding v7.2 / v7.2 rev2 in that role. See
+`V7_3_PUBLICATION_OF_RECORD_DECISION.md`. This is a distinct decision
+from both the PROVISIONAL-removal decision recorded above and the
+main-merge event; neither is altered by it.
+
 ---
 
 ## 1. What this decision is

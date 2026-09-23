@@ -65,8 +65,14 @@ remains `DEFERRED / OUT OF v7.3 NORMATIVE SCOPE — NOT ADOPTED`), and, at
 the time this note was written, did not merge this branch into `main`.
 **Post-merge note (2026-09-22, same day, separate decision):** the
 branch was subsequently merged into `main` via PR #16 (merge commit
-`cb5d2b406d4c302b1e092c619a7cf716973d1e71`). Current status: **FINAL ---
-MAIN INTEGRATED.**
+`cb5d2b406d4c302b1e092c619a7cf716973d1e71`).
+
+**Publication-of-record note (2026-09-23, separate Human Sovereign
+decision):** NRMO Integrated System v7.3 was designated the current
+publication of record, superseding v7.2 / v7.2 rev2 in that role (v7.2
+rev2 preserved as historical baseline). See
+`docs/V7_3_PUBLICATION_OF_RECORD_DECISION.md`. Current status:
+**FINAL --- PUBLICATION OF RECORD --- MAIN INTEGRATED.**
 
 ---
 
