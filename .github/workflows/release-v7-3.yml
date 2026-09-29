@@ -1,0 +1,105 @@
+name: Publish NRMO v7.3 release (one-shot)
+
+# Runs only when the helper branch claude/release-v7-3 is pushed. This
+# branch is never merged into main. The release targets the exact approved
+# main commit below, not this branch's head, and the attached PDF is the
+# blob committed at that commit, checked against a precomputed SHA-256.
+
+on:
+  push:
+    branches: [claude/release-v7-3]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-v7-3
+  cancel-in-progress: false
+
+env:
+  TAG: v7.3
+  TARGET_SHA: a254359c3ed55467247a18bea6622609ee8a9583
+  PDF_PATH: NRMOIntegrated/NRMO_Integrated_System_v7_3.pdf
+  ASSET_NAME: NRMO_Integrated_System_v7_3.pdf
+  EXPECTED_SHA256: a4f6942369a53981bddf95c65c2cdd73e1751f960b01c7d547201837844f1783
+  EXPECTED_PAGES: "537"
+  TITLE: NRMO Integrated System v7.3 — Publication of Record
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout helper branch (release notes)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pdfinfo
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends poppler-utils
+
+      - name: Refuse if tag or release already exists
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists on origin; refusing to create, move, or overwrite it." >&2
+            exit 1
+          fi
+          if gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists; refusing to overwrite it." >&2
+            exit 1
+          fi
+
+      - name: Extract and verify PDF from the approved commit
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse "${TARGET_SHA}^{commit}")" = "${TARGET_SHA}"
+          mkdir -p asset
+          git show "${TARGET_SHA}:${PDF_PATH}" > "asset/${ASSET_NAME}"
+          test -s "asset/${ASSET_NAME}"
+          actual_sha="$(sha256sum "asset/${ASSET_NAME}" | cut -d' ' -f1)"
+          echo "sha256: ${actual_sha}"
+          test "${actual_sha}" = "${EXPECTED_SHA256}"
+          pages="$(pdfinfo "asset/${ASSET_NAME}" | awk '/^Pages:/ {print $2}')"
+          echo "pages: ${pages}"
+          test "${pages}" = "${EXPECTED_PAGES}"
+          pdfinfo "asset/${ASSET_NAME}"
+
+      - name: Create release (tag created at the exact approved commit)
+        run: |
+          set -euo pipefail
+          gh release create "${TAG}" "asset/${ASSET_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --target "${TARGET_SHA}" \
+            --title "${TITLE}" \
+            --notes-file .github/release-notes/v7.3.md \
+            --latest
+
+      - name: Verify published release
+        run: |
+          set -euo pipefail
+          gh release view "${TAG}" --repo "${GITHUB_REPOSITORY}" \
+            --json tagName,name,isDraft,isPrerelease,publishedAt,url,assets | tee release.json
+          tag_sha="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${TAG}" --jq .sha)"
+          echo "tag target: ${tag_sha}"
+          test "${tag_sha}" = "${TARGET_SHA}"
+          latest="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" --jq .tag_name)"
+          echo "latest: ${latest}"
+          test "${latest}" = "${TAG}"
+          mkdir -p verify
+          gh release download "${TAG}" --repo "${GITHUB_REPOSITORY}" \
+            --pattern "${ASSET_NAME}" --dir verify
+          dl_sha="$(sha256sum "verify/${ASSET_NAME}" | cut -d' ' -f1)"
+          echo "downloaded asset sha256: ${dl_sha}"
+          test "${dl_sha}" = "${EXPECTED_SHA256}"
+          {
+            echo "## NRMO v7.3 release"
+            echo
+            echo "- tag target: \`${tag_sha}\`"
+            echo "- latest: \`${latest}\`"
+            echo "- downloaded asset sha256: \`${dl_sha}\`"
+            echo
+            echo '```json'
+            cat release.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
