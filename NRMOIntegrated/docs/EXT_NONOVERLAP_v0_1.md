@@ -33,9 +33,10 @@ NRMO を「本人のより高性能な外部出力」として、本人により
 | Caged Beast Model | `chapters/ch20_strong_engine.tex` |
 | 状態空間 S | `chapters/ch09_theoretical_invariants.tex`、v7.3 §8.4 |
 | 権限境界・不変条件 1–7 | `docs/AUTHORITY_BOUNDARIES.md` |
-| ALB Core 定義・3層構造 | 2026-09 の対話で確定（設計メモ `NRMO_ALB_ARCHITECTURE_v0.1.md`、`ALB_THEORY_CH01_FOUNDATIONS_v0.2.md`）。**本リポジトリには未収録** |
+| ALB Core 定義・3層構造 | `ALB/NRMO_ALB_ARCHITECTURE_v0.1.md`、`ALB/ALB_THEORY_CH01_FOUNDATIONS_v0.2.md`（2026-09 の対話ログから復元して収録） |
+| 未確定事項への一次案 | `ALB/ALB_THEORY_CH02_FILL_v0.1.md` |
 
-ALB 部分は、確定済みの定義のみを典拠とする。
+ALB 部分は、確定済みの定義と、復元収録した ALB 文書を典拠とする。
 
 - 階層：Human Sovereign → 判断機構（仮称未定。NRMO と ALB 双方の声を受けて提示するが、決定しない）→ NRMO ∥ ALB（対等・並立）
 - 信号：signal_ALB ∈ {PASS, INTERVENE_MINOR, INTERVENE_MAJOR}（NRMO の PASS / HOLD / SAFE_EXIT に対称）
@@ -231,7 +232,7 @@ A_t ← { a ∈ A_t | ∀p ∈ P: rel_irrev(a, p) = 0 }
 - **X7-b**：NRMO は相手の内面をモデル化しない（§10.3、MISSION-DEFENSE §8.5 の禁止事項と整合。操作・誘導・依存設計の素材を作らない）
 - **X7-c**：P は決裁者が宣言したものに限る。システムが関係を推定して追加しない
 
-**ALB との関係**：ALB の INTERVENE も NRMO の veto を無視できないので、rel_irrev = 1 の行動は ALB 経由でも実行候補にならない。
+**ALB との関係**：ALB が強制した行動も「行動」である以上、NRMO が能動的破滅について審査する（`ALB_THEORY_CH02_FILL_v0.1.md` §2.6 の提案：審査権を失敗モードで分ける。NRMO を ALB の上位に置くのではない）。したがって rel_irrev = 1 の行動は ALB 経由でも実行候補にならない。加えて、ALB の force は決裁者自身の行動に限られ、相手の応答を成功条件にしない（同 §2.1）。
 
 ---
 
@@ -275,16 +276,20 @@ AUTHORITY_BOUNDARIES 不変条件 1–7 は、いずれの要素でも変更し�
 
 ## 8. 未解決事項
 
+各項目への一次案は `ALB/ALB_THEORY_CH02_FILL_v0.1.md` の (C) に置いた（決裁者の承認待ち）。
+
+
 1. E1：EXIT[SATIATION] → ACTIVE の再開遷移を追加するか
 2. E2：λ_N をモードに連動させるか（不変条件 5 との緊張）
 3. E5：b_t → LOAD の写像（閾値は HST-N 側に置く。Norn には置かない）
 4. E6：RECOVERY 中の ALB の介入規則（ALB 理論側の合意を要する）
 5. ALB 第1章の持ち越し 4 件（強制対象が自分か相手か、θ_A の算出方法、DefensiveEngine の減衰アルゴリズム、実証パート）は本メモでは扱わない
 6. v7.3 パッチ第5部の未解決（MISSION の二義性ほか）には触れない
-7. ALB の設計メモ・第1章を本リポジトリに収録するか
+7. ~~ALB の設計メモ・第1章を本リポジトリに収録するか~~ → 収録済み（`ALB/`）
 
 ---
 
 ## 9. 記録
 
 - 2026-10-21 v0.1 起筆。非重複 7 点のうち 1・2・5・6・7 を搭載、3 を除外、4 を現状維持とする決裁に基づく
+- 2026-10-21 E7 の ALB 関係の記述を訂正（NRMO を上位に置く非対称を含んでいたため）。ALB 文書の収録と未解決への一次案の所在を追記
