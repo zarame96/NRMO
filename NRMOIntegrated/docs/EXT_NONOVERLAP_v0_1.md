@@ -152,7 +152,7 @@ A_t = NRMO(X_t')          NRMO は決定的関数のまま
 b_t の経路は既存モジュールと既存次元を使う。新しい次元は作らない。
 
 - HST-N（人間状態分類、AUTHORITY_BOUNDARIES）
-- Type ZERO の LOAD 観測（L0 / L1 / L2）
+- Type ZERO の LOAD 観測（典拠で明示されている水準は L2 のみ。L2 未満の水準区分は未定義）
 - `WorldState.E`（体力）：現在は `DecisionContext.energy`（自己申告）から埋まる。b_t は、その自己申告と並ぶ**独立した観測値**として置き、置換はしない。両者の乖離そのものを Norn の記録対象にする
 
 **不変条件**
