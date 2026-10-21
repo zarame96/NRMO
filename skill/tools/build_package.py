@@ -73,9 +73,11 @@ def validate_archive(data, files):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", type=Path, default=ROOT / "dist/nrmo-rc3")
+    parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     release, files = collect()
+    if args.output is None:
+        args.output = ROOT / "dist" / ("nrmo-" + release["version"].rsplit("-", 1)[-1])
     package = make_zip(files)
     if package != make_zip(files):
         raise ValueError("package is not reproducible within this runtime")
