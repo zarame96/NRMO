@@ -1,10 +1,10 @@
 # claude.ai アプリでの確認手順（個人版）
 
-アプリ上の rc3・rc4 の動作は未確認。最後に確認された保存版は rc1。CLI の結果・パッケージの形式検証・アプリ上の実動作を区別する。
+アプリ上の rc3〜rc5 の動作は未確認。最後に確認された保存版は rc1。CLI の結果・パッケージの形式検証・アプリ上の実動作を区別する。
 
 ## 準備
 
-1. PR #22 の Skill package checks が成功した対象コミットの artifact を入手する。nrmo.skill と BUILD_MANIFEST.json の版・対象コミット・sha256 を確認する。旧 rc2・rc3 は archive/ に保存してある。
+1. PR #22 の Skill package checks が成功した対象コミットの artifact を入手する。nrmo.skill と BUILD_MANIFEST.json の版・対象コミット・sha256 を確認する。旧 rc2〜rc4 は archive/ に保存してある。
 2. 未検証の候補版であると分かったうえで、設定の Skills にその nrmo.skill を登録し、重複する旧 nrmo を有効にしない。
 3. 各入力はプロジェクト外の新しいチャットで個別に送る。モデル名、メモリ設定、日時、版を記録する。設定を変えた場合も残す。
 
