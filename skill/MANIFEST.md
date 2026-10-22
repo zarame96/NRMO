@@ -1,3 +1,27 @@
+# nrmo Skill — rc10 正典階層再整合候補
+
+| 項目 | 値 |
+|---|---|
+| 版 | nrmo-skill v1.0.0-rc10（未承認・未実動作試験） |
+| 起点 | Claude作業ブランチ `c104b930c9c5c1e7d40c891795e4670d6975de55`（rc9実行中の記録まで） |
+| 現行ソース | `skill/nrmo/`。21参照のsha256は`skill/release.json` |
+| 計画 | `skill/tests/rc10/PLAN.md` |
+| 生成 | `python3 skill/tools/build_package.py` → `dist/nrmo-rc10/` |
+| 状態 | 静的検証PASS。Claude Code・claude.aiの挙動はNOT_RUN |
+
+## rc9からの変更
+
+- 保存原本の`nrmo_system_v7_3.md`を単独の正典として扱わない。上位の`NORMATIVE_CANON.md`と原本の`SOURCE_MANIFEST.md`をSkillへ収録し、運用MarkdownをLLM/GEM向け従属仕様として位置づける
+- `RUNTIME_RECONCILIATION.md`を追加し、Canon、Publication of Record、運用Markdownの参照順と、PDFの必読節を固定する
+- HOLDを「現在の記録状態」「今回のgovernance result」「HOLD→ACTIVEの本人承認」に分ける。ACTIVE→HOLDには本人操作・承認を要求しない
+- Passive Ruinの主要条件をavoidability-window closureとし、不活動期間を二次的な標識に限定する
+- Hard/Softのseverity軸（Investment domain）とActive/Passiveのorigin軸（domain-general）を分離する
+- 保存原本の運用Markdown、v7.3 PDF、従来の17参照は変更しない。Business版、ALB/NPMO、DecisionCompassは対象外
+
+rc9までの試験結果は旧参照構成の記録として保持する。rc10の正典適合や挙動の証拠には転用しない。
+
+---
+
 # nrmo Skill — rc9 個人版候補の固定記録
 
 | 項目 | 値 |

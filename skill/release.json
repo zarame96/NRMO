@@ -1,9 +1,13 @@
 {
-  "version": "v1.0.0-rc9",
-  "previous_commit": "e15fb46bd6f0bb4369593d2bae545170cd4e7b06",
+  "version": "v1.0.0-rc10",
+  "previous_commit": "c104b930c9c5c1e7d40c891795e4670d6975de55",
   "status": "candidate-not-model-tested",
   "reference_sha256": {
     "references/NRMO_Integrated_System_v7_3.pdf": "a4f6942369a53981bddf95c65c2cdd73e1751f960b01c7d547201837844f1783",
+    "references/NORMATIVE_CANON.md": "ca1ab7e7d9bcc7acbc086e9892922e58897c9fd15558d247cad8dde313d690c0",
+    "references/PDF_CAVEATS.md": "f36b65e72d345b07163883ee517bb6d83ff7b36b2effcac4bf5db98e1d2122a0",
+    "references/RUNTIME_RECONCILIATION.md": "78d25d867df7ba42b41b703c4820c72710914f09aa0e21bce403da744036d2e2",
+    "references/SOURCE_MANIFEST.md": "124552dc0602f4fc642c9109b62304b192f67d0d0d295e20169b61c1ef7ba435",
     "references/alb/ALB_THEORY_CH01_FOUNDATIONS_v0.2.md": "b3aca79494f3a9034a12555881a671b1d2db71c44eab3bb0fc35a4cb1af7eb91",
     "references/alb/ALB_THEORY_CH02_FILL_v0.1.md": "3b7c93354d678b18ef2ac2f5925bfd412ce8740b90221cbbae477e7ad6b110d1",
     "references/alb/NRMO_ALB_ARCHITECTURE_v0.1.md": "134b48380a4d8791b022b4db321224f9060b48a0927459b89f5747b22987804d",
