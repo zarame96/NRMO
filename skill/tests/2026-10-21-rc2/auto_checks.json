@@ -1,0 +1,713 @@
+[
+ {
+  "run": "T1a_r1",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 4,
+  "duration_ms": 34827,
+  "permission_denials": []
+ },
+ {
+  "run": "T1a_r2",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 4,
+  "duration_ms": 39167,
+  "permission_denials": []
+ },
+ {
+  "run": "T1a_r3",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 4,
+  "duration_ms": 33348,
+  "permission_denials": []
+ },
+ {
+  "run": "T1b_r1",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（VOL・LOAD の観測値なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 4,
+  "duration_ms": 49416,
+  "permission_denials": []
+ },
+ {
+  "run": "T1b_r2",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references && wc -l nrmo_system_v7_3.md && grep -n \"^#\" nrmo_system_v7_3.md"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（VOL 不明）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 5,
+  "duration_ms": 47360,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T1b_r3",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（VOL 不明）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 4,
+  "duration_ms": 38909,
+  "permission_denials": []
+ },
+ {
+  "run": "T1c_r1",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（観測が矛盾）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 4,
+  "duration_ms": 48180,
+  "permission_denials": []
+ },
+ {
+  "run": "T1c_r2",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md; grep -n \"^#\" nrmo_system_v7_3.md"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（観測が矛盾、IRREV 不明）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 5,
+  "duration_ms": 49620,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T1c_r3",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md; grep -n \"^#\" nrmo_system_v7_3.md"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（観測が矛盾、IRREV 不明）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 5,
+  "duration_ms": 49011,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T2_r1",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 4,
+  "duration_ms": 52928,
+  "permission_denials": []
+ },
+ {
+  "run": "T2_r2",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 4,
+  "duration_ms": 57198,
+  "permission_denials": []
+ },
+ {
+  "run": "T2_r3",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md; grep -n \"^#\" nrmo_system_v7_3.md"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 5,
+  "duration_ms": 61065,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T3a_r1",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md alb/ALB_THEORY_CH02_FILL_v0.1.md; grep -n \"θ_A\\|介入対称\\|合成規則\" alb/"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ],
+   [
+    "Grep",
+    "θ_A|介入対称|合成規則"
+   ]
+  ],
+  "type_zero_line": "- Type ZERO：未判定です。IRREV / VOL / LOAD の観測がありません。",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Passive Ruin",
+   "HOLD"
+  ],
+  "is_error": false,
+  "num_turns": 6,
+  "duration_ms": 32729,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T3a_r2",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md alb/ALB_THEORY_CH02_FILL_v0.1.md; grep -n \"^#\" nrmo_system_v7_3."
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ],
+   [
+    "Grep",
+    "介入対称性|θ_A|合成規則|承認待ち"
+   ]
+  ],
+  "type_zero_line": "- Type ZERO：未判定です（IRREV / VOL / LOAD の観測がありません）。",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "Type ZERO",
+   "Operational",
+   "HOLD"
+  ],
+  "is_error": false,
+  "num_turns": 6,
+  "duration_ms": 31543,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T3a_r3",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md alb/ALB_THEORY_CH02_FILL_v0.1.md; grep -n \"介入対称性\\|θ_A\\|合成規則\" alb"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ],
+   [
+    "Grep",
+    "介入対称性|θ_A|合成規則"
+   ]
+  ],
+  "type_zero_line": "- Type ZERO は未判定です（IRREV / VOL / LOAD の観測がありません）。",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "Type ZERO",
+   "HOLD"
+  ],
+  "is_error": false,
+  "num_turns": 6,
+  "duration_ms": 32077,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T3b_r1",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md alb/ALB_THEORY_CH02_FILL_v0.1.md; grep -n \"^#\" nrmo_system_v7_3."
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ],
+   [
+    "Grep",
+    "^#|対称|合成|θ_A|Loss_|ε|Soft Ruin"
+   ],
+   [
+    "Bash",
+    "pdftotext cfg_rc2/skills/nrmo/references/NRMO_Integrated_System_v7_3.pdf - 2>/dev/null | grep -n -m 15 \"ε\\|epsilon\\|P(Ruin\""
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "Passive Ruin",
+   "Active Ruin",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 7,
+  "duration_ms": 55375,
+  "permission_denials": [
+   "Bash",
+   "Bash"
+  ]
+ },
+ {
+  "run": "T3b_r2",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md alb/ALB_THEORY_CH02_FILL_v0.1.md; grep -n \"対称\\|合成\\|θ_A\\|Loss_rui"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ],
+   [
+    "Grep",
+    "対称|合成|θ_A|Loss_ruin|Loss_PR|ε|Soft Ruin|τ"
+   ]
+  ],
+  "type_zero_line": "Type ZERO Mode  ：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 6,
+  "duration_ms": 44015,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T3b_r3",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": true,
+  "read_canon": true,
+  "tool_calls": [
+   [
+    "Skill",
+    "nrmo"
+   ],
+   [
+    "Bash",
+    "cd cfg_rc2/skills/nrmo/references; wc -l nrmo_system_v7_3.md alb/ALB_THEORY_CH02_FILL_v0.1.md; grep -n \"^#\" alb/ALB_THEORY_CH"
+   ],
+   [
+    "Read",
+    "cfg_rc2/skills/nrmo/references/nrmo_system_v7_3.md"
+   ],
+   [
+    "Grep",
+    "対称|合成|θ_A|ε|Loss_ruin|Loss_PR|P\\(Ruin|Soft Ruin|停滞|承認"
+   ]
+  ],
+  "type_zero_line": "- Type ZERO：未判定（IRREV / VOL / LOAD の観測なし）",
+  "type_zero_undetermined": true,
+  "nrmo_vocab_hits": [
+   "A_allowed",
+   "Type ZERO",
+   "Operational",
+   "HOLD",
+   "破綻境界"
+  ],
+  "is_error": false,
+  "num_turns": 6,
+  "duration_ms": 36506,
+  "permission_denials": [
+   "Bash"
+  ]
+ },
+ {
+  "run": "T4_r1",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": false,
+  "read_canon": false,
+  "tool_calls": [],
+  "type_zero_line": null,
+  "type_zero_undetermined": false,
+  "nrmo_vocab_hits": [],
+  "is_error": false,
+  "num_turns": 1,
+  "duration_ms": 19170,
+  "permission_denials": []
+ },
+ {
+  "run": "T4_r2",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": false,
+  "read_canon": false,
+  "tool_calls": [],
+  "type_zero_line": null,
+  "type_zero_undetermined": false,
+  "nrmo_vocab_hits": [],
+  "is_error": false,
+  "num_turns": 1,
+  "duration_ms": 18784,
+  "permission_denials": []
+ },
+ {
+  "run": "T4_r3",
+  "skill_loaded_in_session": [
+   "nrmo"
+  ],
+  "skill_invoked": false,
+  "read_canon": false,
+  "tool_calls": [],
+  "type_zero_line": null,
+  "type_zero_undetermined": false,
+  "nrmo_vocab_hits": [],
+  "is_error": false,
+  "num_turns": 1,
+  "duration_ms": 18010,
+  "permission_denials": []
+ }
+]
