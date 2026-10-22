@@ -9,7 +9,7 @@
 | 生成 | python3 skill/tools/build_package.py → dist/nrmo-rc9/（descriptionは1〜200文字でなければ失敗する） |
 | 過去版 | archive/v1.0.0-rc8/・v1.0.0-rc8-upload1/までの固定パッケージと、各版のCLI試験を保持 |
 | 修正の動機 | rc8-upload1のアプリ応答15件の本文レビュー（PASS 7、FAIL（軽度）8、環境未確認）。原応答は公開変更に含めない |
-| rc9のClaude Code試験 | skill/tests/rc9/（主試験33件と補助12件を別に報告） |
+| rc9のClaude Code試験 | 主試験33/33 PASS（欠陥0）、補助12件はPASS 10・FAIL（発動）2（skill/tests/rc9/run-01/REPORT.md） |
 | rc9のclaude.ai試験 | NOT_RUN |
 
 ## rc8からの変更
