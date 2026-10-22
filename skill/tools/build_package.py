@@ -11,10 +11,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "skill" / "nrmo"
+DESCRIPTION_LIMIT = 200
 
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def description(skill):
+    match = re.match(r"\A---\nname: nrmo\ndescription: ([^\n]+)\n---\n", skill)
+    if not match:
+        raise ValueError("unexpected Skill frontmatter")
+    # claude.ai's documented limit; the rc8 description (235 chars) exceeded it.
+    if not 1 <= len(match.group(1)) <= DESCRIPTION_LIMIT:
+        raise ValueError(f"Skill description must be 1-{DESCRIPTION_LIMIT} characters, got {len(match.group(1))}")
+    return match.group(1)
 
 
 def collect():
@@ -32,9 +43,7 @@ def collect():
         if sha(files[path]) != digest:
             raise ValueError(f"unchanged-reference hash mismatch: {path}")
     skill = files["SKILL.md"].decode("utf-8")
-    match = re.match(r"\A---\nname: nrmo\ndescription: ([^\n]+)\n---\n", skill)
-    if not match:
-        raise ValueError("unexpected Skill frontmatter")
+    description(skill)
     if release["version"] not in skill:
         raise ValueError("release version missing from Skill")
     if any(term in skill for term in ("NRMOなしで", "外部判定として", "NRMOを使わずに")):
@@ -112,6 +121,8 @@ def main():
             "round_trip": True,
             "same_runtime_reproducible": True,
             "mismatch_rejection": True,
+            "description_characters": len(description(files["SKILL.md"].decode("utf-8"))),
+            "description_limit": DESCRIPTION_LIMIT,
         },
         "model_behavior": "NOT_RUN",
         "claude_ai_behavior": "NOT_RUN",
