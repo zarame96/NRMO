@@ -21,10 +21,22 @@ jobs:
           persist-credentials: false
       - name: Validate references and round-trip the deterministic package
         run: python3 skill/tools/build_package.py
+      - name: Validate the claude.ai upload variant without changing rc8
+        run: |
+          python3 skill/tools/build_upload_variant.py
+          cmp dist/nrmo-rc8-upload1/nrmo.skill skill/archive/v1.0.0-rc8-upload1/nrmo.skill
+          cmp dist/nrmo-rc8-upload1/BUILD_MANIFEST.json skill/archive/v1.0.0-rc8-upload1/BUILD_MANIFEST.json
       - name: Upload candidate package and manifest (not a model-test result)
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: nrmo-rc8-${{ github.event.pull_request.head.sha || github.sha }}
           path: dist/nrmo-rc8/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Upload claude.ai compatibility variant (upload not yet confirmed)
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: nrmo-rc8-upload1-${{ github.event.pull_request.head.sha || github.sha }}
+          path: dist/nrmo-rc8-upload1/
           if-no-files-found: error
           retention-days: 30
