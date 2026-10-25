@@ -53,10 +53,17 @@ def collect():
     reconciliation = files["references/RUNTIME_RECONCILIATION.md"].decode("utf-8")
     if any(section not in reconciliation for section in REQUIRED_PDF_SECTIONS):
         raise ValueError("runtime reconciliation is missing a mandatory PDF route")
+    # rc11: one continuous standard read range, and the Caged Beast context is PDF Chapter 22, not 20.
+    if '"463-474"' not in reconciliation or "211-216" not in reconciliation:
+        raise ValueError("runtime reconciliation is missing the standard read range or the Chapter 22 route")
+    if "Chapter 3 and Chapter 20" in reconciliation:
+        raise ValueError("runtime reconciliation still routes epsilon to PDF Chapter 20")
     skill = files["SKILL.md"].decode("utf-8")
     description(skill)
     if release["version"] not in skill:
         raise ValueError("release version missing from Skill")
+    if '"463-474"' not in skill or "211" not in skill or "第20章、Caged" in skill:
+        raise ValueError("Skill PDF routing does not match the runtime reconciliation")
     if any(term in skill for term in ("NRMOなしで", "外部判定として", "NRMOを使わずに")):
         raise ValueError("removed dedicated opt-out rule remains in current Skill")
     for ref in re.findall(r"`(references/[^ `]+)`", skill):

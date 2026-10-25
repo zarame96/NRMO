@@ -1,3 +1,27 @@
+# nrmo Skill — rc11 PDF必読手順の固定候補
+
+| 項目 | 値 |
+|---|---|
+| 版 | nrmo-skill v1.0.0-rc11（未承認・未実動作試験） |
+| 起点 | PR #23 head `6f4f2727732186165a29e027eef756b38abd5462`（rc10 と rc10 run-01 の記録） |
+| 現行ソース | `skill/nrmo/`。21参照のsha256は`skill/release.json` |
+| 計画 | `skill/tests/rc11/PLAN.md`（実行前に固定） |
+| 生成 | `python3 skill/tools/build_package.py` → `dist/nrmo-rc11/` |
+
+## rc10からの変更（PR #23 コメント 6394494345 の判断に基づく）
+
+- 標準の意思決定判定では、回答の組み立て前に PDF ファイルページ 463〜474 を1回の Read で、連続した1つの範囲として読む（SKILL.md、RUNTIME_RECONCILIATION.md）
+- 会話の終了だけを求められた場合の終了応答を、標準判定から分ける。状態・Ruin・governance result・再評価日を出さず、状態履歴を作る表現を禁止する。この経路では PDF を開かない
+- ε の参照先を、PDF 第3章（ファイルページ 59〜82）と、PDF Chapter 22「Caged Beast Model」（ファイルページ 211〜216）／同梱 `foundations/ch20_caged_beast.tex` に訂正する。「PDF第20章」とは書かない
+- 初期費用＋仮定上の月次赤字の計算例（45万円など）を「上限」「上限の目安」「最大損失」と書かない
+- 実際に開いていない資料を「確認した」「根拠は〜」と書かない
+- ビルド検証に、連続範囲 `"463-474"`、Chapter 22（211-216）の経路、「Chapter 3 and Chapter 20」の不在、SKILL.md と照合ファイルの経路の一致を追加
+- 変更したのは `SKILL.md` と `RUNTIME_RECONCILIATION.md` だけ。Canon、保存原本、v7.3 PDF、他の19参照は変更しない。Business版、ALB/NPMO、DecisionCompassは対象外
+
+rc10 は不合格候補として固定し、原出力・採点・計画を変更しない。
+
+---
+
 # nrmo Skill — rc10 正典階層再整合候補
 
 | 項目 | 値 |

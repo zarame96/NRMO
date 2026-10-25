@@ -27,9 +27,15 @@ The PDF has 537 file pages. Printed page numbers differ from file-page numbers. 
 | Passive Ruin | §63.2 Avoidability-Window Definition | printed p.432; file page 472 |
 | `A_allowed` classification | §64.1 Admissibility Refinement | printed p.433; file page 473 |
 | StrongEngine candidate surface | §64.2 StrongEngine Candidate Surface | printed pp.433-434; file pages 473-474 |
-| `Pr(τ_F ≤ T | s,a) ≤ ε` | Chapter 3 and Chapter 20 | read both contexts before using the expression |
+| `Pr(τ_F ≤ T | s,a) ≤ ε` | Chapter 3, and Chapter 22 "Caged Beast Model" | Chapter 3: file pages 59-82 (expressions mainly 61-71). Chapter 22: file pages 211-216; the bundled text source is `foundations/ch20_caged_beast.tex`. Read both contexts before using the expression. PDF Chapter 20 is "NRMO Life SOP" and does not contain the expression; do not call this context "PDF Chapter 20" |
 
 For an ordinary decision consultation, read this file, `NORMATIVE_CANON.md`, and `nrmo_system_v7_3.md`. Before producing an output that uses any row above, also read the corresponding PDF section. If the PDF cannot be read, say which required source was unavailable and do not replace its rule with an inference from the operational Markdown.
+
+**Standard decision response.** The standard output format (`nrmo_system_v7_3.md` §6) always contains the mode and state, the ruin boundary, `A_allowed`, and StrongEngine candidates. Therefore, before composing any standard decision response, read PDF file pages 463-474 in a single Read call with one continuous range (`pages: "463-474"`). Do not pass comma-separated page lists. This one range covers §60.3, §63.1, §63.2, §64.1, and §64.2. Add the Chapter 3 and Chapter 22 contexts when the ruin-probability row applies.
+
+**Closing-only response.** When the user only asks to end or pause the conversation and does not ask for an assessment, do not produce a standard decision response. Do not output a lifecycle state, governance result, Ruin label, mode, or review date, and do not write anything that reads as a state history or a new record. No PDF reading is required on this path because no determination is made.
+
+**Evidence of reading.** Do not state that a source was read, checked, or used as a basis unless it was actually opened in this response.
 
 ## 3. HOLD reconciliation
 
