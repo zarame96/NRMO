@@ -1,6 +1,6 @@
 {
-  "version": "v1.0.0-rc11",
-  "previous_commit": "6f4f2727732186165a29e027eef756b38abd5462",
+  "version": "v1.0.0-rc12",
+  "previous_commit": "8fbe4a48407c1b81d6666dccb2f649768bef9809",
   "status": "candidate-not-model-tested",
   "reference_sha256": {
     "references/NRMO_Integrated_System_v7_3.pdf": "a4f6942369a53981bddf95c65c2cdd73e1751f960b01c7d547201837844f1783",

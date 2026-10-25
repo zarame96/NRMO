@@ -1,3 +1,23 @@
+# nrmo Skill — rc12 状態を含む終了場面の発動補強候補
+
+| 項目 | 値 |
+|---|---|
+| 版 | nrmo-skill v1.0.0-rc12（未承認・未実動作試験） |
+| 起点 | PR #23 head `8fbe4a48407c1b81d6666dccb2f649768bef9809`（rc11 と rc11 run-01 の記録） |
+| 現行ソース | `skill/nrmo/`。21参照のsha256は`skill/release.json`（rc11 から不変） |
+| 計画 | `skill/tests/rc12/PLAN.md`（実行前に固定） |
+| 生成 | `python3 skill/tools/build_package.py` → `dist/nrmo-rc12/` |
+
+## rc11からの変更（PR #23 コメント 6395006095 の判断に基づく）
+
+- `SKILL.md` の description に「正式状態・HOLD・保留期間を含む区切りや終了の確認にも使う。」を加えた（147→178文字、上限200）。終了一般・あいさつ・翻訳は発動対象に加えていない
+- SKILL.md 本文は版名の行だけを変更。終了経路を含む規則は rc11 のまま
+- 21参照（Canon、保存原本、v7.3 PDF、RUNTIME_RECONCILIATION.md を含む）は rc11 からバイト単位で不変
+
+rc11 は「内容・PDF参照は合格、発動境界に軽度欠陥3件が残った不合格候補」として固定する。
+
+---
+
 # nrmo Skill — rc11 PDF必読手順の固定候補
 
 | 項目 | 値 |
