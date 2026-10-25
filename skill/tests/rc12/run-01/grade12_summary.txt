@@ -1,0 +1,66 @@
+T1a_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T1a_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T1a_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T1b_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T1b_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T1b_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T1c_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T1c_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T1c_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T2_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T2_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T2_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T3a_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T3a_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T3a_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T3b_r1 ec=0 inv=True pdfreads=[('463-474', False), ('61-71', False), ('211-216', False)] acc[603,631,632,641,642,ch3,caged]=1111111 single=True
+T3b_r2 ec=0 inv=True pdfreads=[('463-474', False), ('61-71', False)] acc[603,631,632,641,642,ch3,caged]=1111111 single=True
+T3b_r3 ec=0 inv=True pdfreads=[('463-474', False), ('61-71', False), ('211-216', False)] acc[603,631,632,641,642,ch3,caged]=1111111 single=True
+T5a_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5a_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5a_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5b_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5b_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5b_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5c_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5c_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5c_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+T5d_r1 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r10 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r2 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r3 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r4 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r5 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r6 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r7 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r8 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5d_r9 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r1 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r10 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r2 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r3 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r4 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r5 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r6 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r7 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r8 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+T5e_r9 ec=0 inv=False pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r1 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r10 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r2 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r3 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r4 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r5 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r6 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r7 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r8 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U1_r9 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U2_r1 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U2_r2 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U2_r3 ec=0 inv=True pdfreads=[] acc[603,631,632,641,642,ch3,caged]=....... single=False
+U3_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+U3_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+U3_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+U4_r1 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+U4_r2 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
+U4_r3 ec=0 inv=True pdfreads=[('463-474', False)] acc[603,631,632,641,642,ch3,caged]=11111.. single=True
