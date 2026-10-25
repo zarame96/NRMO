@@ -1,0 +1,5 @@
+
+Claude configuration file not found at: /tmp/claude-0/-home-user-NRMO/52d78ce8-8508-56ed-aaab-63247e7801b2/scratchpad/cfg11/.claude.json
+A backup file exists at: /tmp/claude-0/-home-user-NRMO/52d78ce8-8508-56ed-aaab-63247e7801b2/scratchpad/cfg11/backups/.claude.json.backup.1792910861656
+You can manually restore it by running: cp "/tmp/claude-0/-home-user-NRMO/52d78ce8-8508-56ed-aaab-63247e7801b2/scratchpad/cfg11/backups/.claude.json.backup.1792910861656" "/tmp/claude-0/-home-user-NRMO/52d78ce8-8508-56ed-aaab-63247e7801b2/scratchpad/cfg11/.claude.json"
+
