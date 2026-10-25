@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "skill" / "nrmo"
 DESCRIPTION_LIMIT = 200
+REQUIRED_PDF_SECTIONS = ("§60.3", "§63.1", "§63.2", "§64.1", "§64.2")
 
 
 def sha(data):
@@ -36,16 +37,33 @@ def collect():
             raise ValueError(f"symlink is not allowed: {path}")
         if path.is_file():
             files[path.relative_to(SOURCE).as_posix()] = path.read_bytes()
-    expected = set(release["reference_sha256"]) | {"SKILL.md", "references/PDF_CAVEATS.md"}
+    expected = set(release["reference_sha256"]) | {"SKILL.md"}
     if set(files) != expected:
         raise ValueError(f"unexpected/missing package files: {set(files) ^ expected}")
     for path, digest in release["reference_sha256"].items():
         if sha(files[path]) != digest:
             raise ValueError(f"unchanged-reference hash mismatch: {path}")
+    canon_source = (ROOT / "NRMOIntegrated/NORMATIVE_CANON.md").read_text(encoding="utf-8").rstrip("\n")
+    canon_copy = files["references/NORMATIVE_CANON.md"].decode("utf-8").rstrip("\n")
+    if canon_copy != canon_source:
+        raise ValueError("packaged Normative Canon differs from the repository authority source")
+    source_manifest = ROOT / "NRMOIntegrated/source/v7.3/original/SOURCE_MANIFEST.md"
+    if files["references/SOURCE_MANIFEST.md"] != source_manifest.read_bytes():
+        raise ValueError("packaged source manifest differs from the immutable original")
+    reconciliation = files["references/RUNTIME_RECONCILIATION.md"].decode("utf-8")
+    if any(section not in reconciliation for section in REQUIRED_PDF_SECTIONS):
+        raise ValueError("runtime reconciliation is missing a mandatory PDF route")
+    # rc11: one continuous standard read range, and the Caged Beast context is PDF Chapter 22, not 20.
+    if '"463-474"' not in reconciliation or "211-216" not in reconciliation:
+        raise ValueError("runtime reconciliation is missing the standard read range or the Chapter 22 route")
+    if "Chapter 3 and Chapter 20" in reconciliation:
+        raise ValueError("runtime reconciliation still routes epsilon to PDF Chapter 20")
     skill = files["SKILL.md"].decode("utf-8")
     description(skill)
     if release["version"] not in skill:
         raise ValueError("release version missing from Skill")
+    if '"463-474"' not in skill or "211" not in skill or "第20章、Caged" in skill:
+        raise ValueError("Skill PDF routing does not match the runtime reconciliation")
     if any(term in skill for term in ("NRMOなしで", "外部判定として", "NRMOを使わずに")):
         raise ValueError("removed dedicated opt-out rule remains in current Skill")
     for ref in re.findall(r"`(references/[^ `]+)`", skill):
@@ -123,6 +141,9 @@ def main():
             "mismatch_rejection": True,
             "description_characters": len(description(files["SKILL.md"].decode("utf-8"))),
             "description_limit": DESCRIPTION_LIMIT,
+            "normative_canon_text_match": True,
+            "source_manifest_byte_match": True,
+            "mandatory_pdf_routes": list(REQUIRED_PDF_SECTIONS),
         },
         "model_behavior": "NOT_RUN",
         "claude_ai_behavior": "NOT_RUN",

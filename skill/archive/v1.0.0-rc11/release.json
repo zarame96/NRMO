@@ -1,0 +1,28 @@
+{
+  "version": "v1.0.0-rc11",
+  "previous_commit": "6f4f2727732186165a29e027eef756b38abd5462",
+  "status": "candidate-not-model-tested",
+  "reference_sha256": {
+    "references/NRMO_Integrated_System_v7_3.pdf": "a4f6942369a53981bddf95c65c2cdd73e1751f960b01c7d547201837844f1783",
+    "references/NORMATIVE_CANON.md": "ca1ab7e7d9bcc7acbc086e9892922e58897c9fd15558d247cad8dde313d690c0",
+    "references/PDF_CAVEATS.md": "f36b65e72d345b07163883ee517bb6d83ff7b36b2effcac4bf5db98e1d2122a0",
+    "references/RUNTIME_RECONCILIATION.md": "ad8856d4bf6c78a91b26402370d2be13a3bea477c05022bd7d60081e036c2d54",
+    "references/SOURCE_MANIFEST.md": "124552dc0602f4fc642c9109b62304b192f67d0d0d295e20169b61c1ef7ba435",
+    "references/alb/ALB_THEORY_CH01_FOUNDATIONS_v0.2.md": "b3aca79494f3a9034a12555881a671b1d2db71c44eab3bb0fc35a4cb1af7eb91",
+    "references/alb/ALB_THEORY_CH02_FILL_v0.1.md": "3b7c93354d678b18ef2ac2f5925bfd412ce8740b90221cbbae477e7ad6b110d1",
+    "references/alb/NRMO_ALB_ARCHITECTURE_v0.1.md": "134b48380a4d8791b022b4db321224f9060b48a0927459b89f5747b22987804d",
+    "references/authority_boundaries.md": "f130d1d223e3636f07206c98dbe1401364b5bd45e693918a3cae2a0079915c3c",
+    "references/evidence/CALIBRATION_REPORT.md": "1e69f852a6f3acbd79666bd4f3c9299dc894b5b557c24f867ba104464153c97a",
+    "references/evidence/DIAGNOSIS_over_defense.md": "cd214965ddc77c708d58ab6d1582b31d1cea1ba4795c45db5157b3f13d69acc7",
+    "references/evidence/EXPERIMENT_FINDINGS_Norn.md": "b05cf688d601cf5e145af3e9f93ab2adf74cc680acb27724dacdc3fb3b2b7c01",
+    "references/evidence/PHASE11_COMPLETION_REPORT.md": "2f96eebf0e4776a9542b7552f013f9527c58fafbe185cd1231a50fc570cb93ef",
+    "references/evidence/STRONG_ENGINE_OMEGA_FULL_REPORT.md": "d9adf4a88690ddcea01ff268fa69ee551dc0ba61993517c50bd63ee30c94a37e",
+    "references/ext_nonoverlap_v0_1.md": "a771420765da1eef583f57e612253fd9800ecb6e0179887d3e1acdf63dc91a60",
+    "references/foundations/DETECTION_INTERVENTION_PRINCIPLE.md": "956dc4fbbd4b340ebf2ad9ab056e1e24bffe4cd95335b74fa8cc3b2a3056d21e",
+    "references/foundations/NRMO_Constitution_v7_MaxForward.md": "73e2794391a13b7b9ec4de198f1dae8659516b21c82a6aff3d2329c893cb3a89",
+    "references/foundations/NRMO_Realignment_Master_Spec.md": "d845845a1d93ff57343d0d40cde46b389a11c630b2d83b2fb2fb8634355cdd49",
+    "references/foundations/ch20_caged_beast.tex": "beefe8e610a657ec9c4c1d0c22be2bbe99376dc3584cf3c9b3a0604265fd85f2",
+    "references/nrmo_system_v7_3.md": "474b635063830d12ec4065e6a13d77ab455af4bfef70e10e917a07948e85c712",
+    "references/v7_3_patch.md": "dbb79f8aeb4455031f598da7666608374fc7cbfcd0c8220629972b4b1705825d"
+  }
+}
