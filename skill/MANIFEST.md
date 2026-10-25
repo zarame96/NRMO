@@ -1,3 +1,23 @@
+# NRMO Business — 管理職共通版 v1.0.0-business-rc1
+
+| 項目 | 値 |
+|---|---|
+| 基準 | 正式承認済み個人版 nrmo v1.0.0-rc12 |
+| 現行ソース | skill/nrmo-business/ |
+| 対象 | 管理職共通。稟議・契約・投資・人事・プロジェクト・事故対応・撤退・監査 |
+| Business固有参照 | references/BUSINESS_GOVERNANCE.md |
+| 除外 | ALB/NPMO、非重複拡張草稿、会社固有規程の推測 |
+| 計画 | skill/tests/business-rc1/PLAN.md |
+| 生成 | python3 skill/tools/build_business_package.py → dist/nrmo-business-rc1/ |
+| 固定ソース | 4d883f2b724eb20ab1bb94cb44242bc8fc2c5201 |
+| 固定パッケージ | CI成果物 nrmo-business-rc1-<source SHA>/nrmo-business.skill |
+| SHA-256 | 819f6b5e56638411e3e5efddff4b599095ed171116e5c14f024fe8f874a0226a |
+| 状態 | 静的検証PASS。モデル試験・所有者アプリ試験はNOT_RUN |
+
+個人版rc12のCanon、Publication of Record、保存原本、共有参照はバイト単位で維持する。Business版は個人版を置き換えず、別名・別パッケージで提供する。
+
+---
+
 # nrmo Skill — rc12 状態を含む終了場面の発動補強候補
 
 | 項目 | 値 |
