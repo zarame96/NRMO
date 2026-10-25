@@ -1,3 +1,24 @@
+# NRMO Work — 全社員版 v1.0.0-work-rc1
+
+| 項目 | 値 |
+|---|---|
+| 基準 | 正式承認済み個人版 nrmo v1.0.0-rc12 |
+| 現行ソース | skill/nrmo-work/ |
+| 対象 | 全社員。日常業務・改善提案・報連相・安全・相談・通報・顧客対応 |
+| Work固有参照 | references/WORKPLACE_BOUNDARIES.md |
+| 決裁境界 | 人事評価・処分・契約・予算・会社リスクの承認を代行しない |
+| 除外 | ALB/NPMO、非重複拡張草稿、会社固有規程・窓口の推測 |
+| 計画 | skill/tests/work-rc1/PLAN.md |
+| 生成 | python3 skill/tools/build_work_package.py → dist/nrmo-work-rc1/ |
+| 固定ソース | b330a2dc4fb949fed48e1c5d2ec672d2c6a8912a |
+| 固定パッケージ | CI成果物 nrmo-work-rc1-<source SHA>/nrmo-work.skill |
+| SHA-256 | 5544f888cc83d9afc49d04996c7824c6886e065bc909152183cb1c9737cb09a7 |
+| 状態 | 静的検証PASS。モデル試験・所有者アプリ試験はNOT_RUN |
+
+個人版rc12と管理職版を置き換えない。全社員版は社員本人の職務範囲、準備、相談、報告に限定し、組織判断は権限ある人間の手続へ返す。
+
+---
+
 # nrmo Skill — rc12 状態を含む終了場面の発動補強候補
 
 | 項目 | 値 |
