@@ -1,0 +1,65 @@
+name: NRMO Business Gemini package checks
+
+on:
+  push:
+    paths:
+      - "skill/nrmo-business/**"
+      - "skill/tools/build_gemini_business_package.py"
+      - ".github/workflows/gemini-business-package.yml"
+  pull_request:
+    paths:
+      - "skill/nrmo-business/**"
+      - "skill/tools/build_gemini_business_package.py"
+      - ".github/workflows/gemini-business-package.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Gemini package twice
+        run: |
+          python3 skill/tools/build_gemini_business_package.py \
+            --output-dir dist/gemini-a --source-commit "$GITHUB_SHA"
+          python3 skill/tools/build_gemini_business_package.py \
+            --output-dir dist/gemini-b --source-commit "$GITHUB_SHA"
+      - name: Verify deterministic output and contents
+        run: |
+          cmp dist/gemini-a/nrmo-business-gemini-rc1.zip dist/gemini-b/nrmo-business-gemini-rc1.zip
+          python3 - <<'PY'
+          import json, zipfile
+          from pathlib import Path
+
+          package = Path("dist/gemini-a/nrmo-business-gemini-rc1.zip")
+          expected = {
+              "GEM_INSTRUCTIONS.txt",
+              "INSTALL.txt",
+              "KNOWLEDGE_SHA256SUMS.txt",
+              "NRMO_BUSINESS_KNOWLEDGE.md",
+              "NRMO_Integrated_System_v7_3.pdf",
+          }
+          with zipfile.ZipFile(package) as archive:
+              names = set(archive.namelist())
+              assert names == expected, names
+              instructions = archive.read("GEM_INSTRUCTIONS.txt").decode()
+              knowledge = archive.read("NRMO_BUSINESS_KNOWLEDGE.md").decode()
+              assert "AI自身は承認者・実行者・監査者にならない" in instructions
+              assert "ALB/NPMO" in instructions
+              assert "SOURCE: BUSINESS_GOVERNANCE.md" in knowledge
+              assert "SOURCE: RUNTIME_RECONCILIATION.md" in knowledge
+          manifest = json.loads(Path("dist/gemini-a/BUILD_MANIFEST.json").read_text())
+          assert manifest["source_commit"] == "${{ github.sha }}"
+          assert len(manifest["members"]) == 5
+          PY
+      - name: Upload Gemini candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: nrmo-business-gemini-rc1-${{ github.sha }}
+          path: |
+            dist/gemini-a/nrmo-business-gemini-rc1.zip
+            dist/gemini-a/BUILD_MANIFEST.json
+          if-no-files-found: error
+          retention-days: 30
