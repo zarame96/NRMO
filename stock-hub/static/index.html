@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stock Hub</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a1a;--mut:#666;--line:#ddd;--up:#0a7d3b;--down:#c62828;--ac:#2557d6}
+@media(prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#e8e8e8;--mut:#999;--line:#2c2f36;--up:#4cc27a;--down:#ef7373;--ac:#7aa2ff}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px}
+form{display:flex;gap:8px}
+input,button{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+input{flex:1}button{background:var(--ac);color:#fff;border:0;cursor:pointer}
+.price{font-size:2rem;font-weight:600}.up{color:var(--up)}.down{color:var(--down)}
+svg{width:100%;height:160px}.mut{color:var(--mut);font-size:.9rem}
+ul{list-style:none;padding:0}li{padding:10px 0;border-top:1px solid var(--line)}
+a{color:var(--ac)}#err{color:var(--down)}
+</style>
+</head>
+<body>
+<main>
+<h1>Stock Hub</h1>
+<form id="f"><input id="s" placeholder="AAPL / 7203 / 7203.T" value="AAPL" aria-label="銘柄"><button>検索</button></form>
+<p id="err" role="alert"></p>
+<section id="q"></section>
+<svg id="c" viewBox="0 0 600 160" preserveAspectRatio="none" aria-label="株価チャート"></svg>
+<h2>関連ニュース</h2>
+<ul id="n"></ul>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const hdr=()=>{const t=localStorage.getItem('token');return t?{Authorization:'Bearer '+t}:{}};
+async function api(p){const r=await fetch(p,{headers:hdr()});if(r.status===401){const t=prompt('APIトークン');if(t){localStorage.setItem('token',t);return api(p)}}
+ if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.status);return r.json()}
+function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML}
+function draw(cl){const mn=Math.min(...cl),mx=Math.max(...cl),w=600,h=160;
+ const pts=cl.map((v,i)=>`${i/(cl.length-1)*w},${h-8-(v-mn)/((mx-mn)||1)*(h-16)}`).join(' ');
+ $('c').innerHTML=`<polyline points="${pts}" fill="none" stroke="var(--ac)" stroke-width="2" vector-effect="non-scaling-stroke"/>`}
+$('f').onsubmit=async e=>{e.preventDefault();$('err').textContent='';
+ try{const sym=encodeURIComponent($('s').value.trim());
+  const [s,ch]=await Promise.all([api('/api/summary/'+sym),api('/api/chart/'+sym)]);
+  const q=s.quote,cls=q.change>=0?'up':'down';
+  $('q').innerHTML=`<div>${esc(q.name)} <span class="mut">${esc(q.symbol)} · ${esc(q.date)}</span></div>
+   <div class="price">${q.price} <small>${esc(q.currency)}</small> <span class="${cls}">${q.change>=0?'+':''}${q.change} (${q.change_pct}%)</span></div>`;
+  draw(ch.closes);
+  $('n').innerHTML=s.news.map(n=>`<li><a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a><div class="mut">${esc(n.source)} ${esc((n.published||'').slice(0,16))}</div></li>`).join('')||'<li class="mut">ニュースなし</li>'
+ }catch(x){$('err').textContent='取得失敗: '+x.message}};
+</script>
+</body>
+</html>
