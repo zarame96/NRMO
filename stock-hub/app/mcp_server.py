@@ -4,7 +4,8 @@
 """
 from mcp.server.fastmcp import FastMCP
 
-from . import data
+from . import data, hub
+from . import modules  # noqa: F401
 
 mcp = FastMCP("stock-hub")
 
@@ -25,6 +26,18 @@ def get_stock_chart(symbol: str, range: str = "3mo") -> dict:
 def get_stock_news(query: str, limit: int = 10, lang: str = "ja") -> list[dict]:
     """銘柄名・ティッカー・テーマで関連ニュースを検索(lang: ja|en)。"""
     return data.get_news(query, limit, lang)
+
+
+@mcp.tool()
+def list_hub_modules() -> list[dict]:
+    """統合環境のモジュール一覧(カテゴリ>モジュール、有効/無効)。"""
+    return hub.tree()
+
+
+@mcp.tool()
+def run_hub_module(module_id: str) -> dict:
+    """モジュールを実行して結果を返す(例: finance.crypto, news.topics, net.tech, notes.memo)。"""
+    return hub.run(module_id)
 
 
 if __name__ == "__main__":

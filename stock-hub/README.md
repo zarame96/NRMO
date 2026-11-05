@@ -11,6 +11,14 @@ STOCK_HUB_DEMO=1 uvicorn app.main:app   # 外部API無しのデモデータ
 pytest
 ```
 
+## 統合環境(モジュール式)
+左のツリー(金融 > 株/債券/金/コイン、ニュース、ネット、ノート)から選んで表示。`×`で非表示、`↑↓`で並べ替え、設定は `data/config.json` に保存。
+モジュール追加は `app/modules/` にファイルを足し、関数に `@module("カテゴリ.名前", "表示名", {既定パラメータ})` を付けるだけ。
+パラメータ(銘柄・ニューストピック等)は `PATCH /api/hub/{id}` に `{"params": {...}}` で変更。
+- ノート: 貼った内容を保存し、`ANTHROPIC_API_KEY` を設定すると「事業の種を抽出」が使える(AIの推測であり要検証)。
+- Instagram: 自分のアカウントのみ、`INSTAGRAM_TOKEN`(公式Graph API)が必要。既定は無効。
+- 債券=米国債利回り(^TNX等)、金=先物(GC=F)、コイン=CoinGecko、流行ツール=Hacker News。
+
 ## API
 | | |
 |---|---|

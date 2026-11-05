@@ -8,7 +8,9 @@ from pathlib import Path
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.responses import FileResponse
 
-from . import data
+from . import data, hub
+from . import modules  # noqa: F401  (モジュール自動登録)
+from .modules import notes as notes_mod
 
 app = FastAPI(title="stock-hub", version="0.1.0")
 STATIC = Path(__file__).resolve().parent.parent / "static"
@@ -60,6 +62,48 @@ def summary(symbol: str, news_limit: int = Query(5, ge=1, le=20)):
     except data.DataError:
         n = []
     return {"quote": q, "news": n}
+
+
+@app.get("/api/hub/tree", dependencies=[Depends(auth)])
+def hub_tree():
+    return hub.tree()
+
+
+@app.get("/api/hub/{mid}", dependencies=[Depends(auth)])
+def hub_run(mid: str):
+    try:
+        return hub.run(mid)
+    except KeyError:
+        raise HTTPException(404, "unknown module")
+
+
+@app.patch("/api/hub/{mid}", dependencies=[Depends(auth)])
+def hub_update(mid: str, patch: dict):
+    """enabled / order / params を更新(例: {"enabled": false})。"""
+    try:
+        return hub.update(mid, patch)
+    except KeyError:
+        raise HTTPException(404, "unknown module")
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/notes", dependencies=[Depends(auth)])
+def notes_add(body: dict):
+    try:
+        return notes_mod.add_note(str(body.get("text", "")))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/notes/seeds", dependencies=[Depends(auth)])
+def notes_seeds():
+    try:
+        return notes_mod.extract_seeds()
+    except RuntimeError as e:
+        raise HTTPException(503, str(e))
+    except Exception as e:  # API障害等
+        raise HTTPException(502, f"seed extraction failed: {type(e).__name__}")
 
 
 @app.get("/")

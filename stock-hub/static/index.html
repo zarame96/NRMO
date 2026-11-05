@@ -3,49 +3,72 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stock Hub</title>
+<title>Hub</title>
 <style>
-:root{--bg:#fff;--fg:#1a1a1a;--mut:#666;--line:#ddd;--up:#0a7d3b;--down:#c62828;--ac:#2557d6}
-@media(prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#e8e8e8;--mut:#999;--line:#2c2f36;--up:#4cc27a;--down:#ef7373;--ac:#7aa2ff}}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
-main{max-width:760px;margin:0 auto;padding:16px}
-form{display:flex;gap:8px}
-input,button{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
-input{flex:1}button{background:var(--ac);color:#fff;border:0;cursor:pointer}
-.price{font-size:2rem;font-weight:600}.up{color:var(--up)}.down{color:var(--down)}
-svg{width:100%;height:160px}.mut{color:var(--mut);font-size:.9rem}
-ul{list-style:none;padding:0}li{padding:10px 0;border-top:1px solid var(--line)}
-a{color:var(--ac)}#err{color:var(--down)}
+:root{--bg:#fff;--fg:#1a1a1a;--mut:#666;--line:#ddd;--up:#0a7d3b;--down:#c62828;--ac:#2557d6;--side:#f5f6f8}
+@media(prefers-color-scheme:dark){:root{--bg:#14161a;--fg:#e8e8e8;--mut:#999;--line:#2c2f36;--up:#4cc27a;--down:#ef7373;--ac:#7aa2ff;--side:#1b1e24}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,sans-serif}
+.app{display:flex;min-height:100vh}
+nav{width:240px;background:var(--side);border-right:1px solid var(--line);padding:12px;flex-shrink:0}
+nav h3{margin:14px 0 4px;font-size:.8rem;color:var(--mut);letter-spacing:.05em}
+.mod{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:6px;cursor:pointer}
+.mod:hover,.mod.on{background:color-mix(in srgb,var(--ac) 15%,transparent)}
+.mod.off span.t{color:var(--mut);text-decoration:line-through}
+.mod span.t{flex:1}.mod button{padding:0 6px;font-size:.8rem;background:none;border:1px solid var(--line);color:var(--mut);border-radius:4px;cursor:pointer}
+main{flex:1;padding:16px;min-width:0}
+h2{margin:0 0 12px}.mut{color:var(--mut);font-size:.9rem}.up{color:var(--up)}.down{color:var(--down)}
+.card{border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:0 0 10px;display:flex;justify-content:space-between;gap:10px}
+.price{font-size:1.2rem;font-weight:600}
+ul{list-style:none;padding:0;margin:0}li{padding:8px 0;border-top:1px solid var(--line)}li:first-child{border:0}
+a{color:var(--ac)}textarea,button.p{font:inherit;border-radius:6px;border:1px solid var(--line)}
+textarea{width:100%;min-height:90px;padding:8px;background:var(--bg);color:var(--fg)}
+button.p{background:var(--ac);color:#fff;border:0;padding:8px 14px;cursor:pointer;margin:6px 6px 6px 0}
+pre{white-space:pre-wrap;background:var(--side);padding:10px;border-radius:6px}
+#err{color:var(--down)}
+@media(max-width:700px){.app{flex-direction:column}nav{width:auto;border-right:0;border-bottom:1px solid var(--line)}}
 </style>
 </head>
 <body>
-<main>
-<h1>Stock Hub</h1>
-<form id="f"><input id="s" placeholder="AAPL / 7203 / 7203.T" value="AAPL" aria-label="銘柄"><button>検索</button></form>
-<p id="err" role="alert"></p>
-<section id="q"></section>
-<svg id="c" viewBox="0 0 600 160" preserveAspectRatio="none" aria-label="株価チャート"></svg>
-<h2>関連ニュース</h2>
-<ul id="n"></ul>
-</main>
+<div class="app">
+<nav aria-label="モジュール"><strong>Hub</strong><div id="tree"></div>
+<p class="mut">× で非表示、↑↓ で並べ替え。設定は保存されます。</p></nav>
+<main><p id="err" role="alert"></p><div id="view"><p class="mut">左からモジュールを選択</p></div></main>
+</div>
 <script>
 const $=id=>document.getElementById(id);
-const hdr=()=>{const t=localStorage.getItem('token');return t?{Authorization:'Bearer '+t}:{}};
-async function api(p){const r=await fetch(p,{headers:hdr()});if(r.status===401){const t=prompt('APIトークン');if(t){localStorage.setItem('token',t);return api(p)}}
+const esc=s=>{const d=document.createElement('div');d.textContent=s??'';return d.innerHTML};
+const hdr=()=>{try{const t=localStorage.getItem('token');return t?{Authorization:'Bearer '+t}:{}}catch{return{}}};
+async function api(p,opt={}){const r=await fetch(p,{...opt,headers:{'Content-Type':'application/json',...hdr(),...(opt.headers||{})}});
+ if(r.status===401){const t=prompt('APIトークン');if(t){try{localStorage.setItem('token',t)}catch{}return api(p,opt)}}
  if(!r.ok)throw new Error((await r.json().catch(()=>({}))).detail||r.status);return r.json()}
-function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML}
-function draw(cl){const mn=Math.min(...cl),mx=Math.max(...cl),w=600,h=160;
- const pts=cl.map((v,i)=>`${i/(cl.length-1)*w},${h-8-(v-mn)/((mx-mn)||1)*(h-16)}`).join(' ');
- $('c').innerHTML=`<polyline points="${pts}" fill="none" stroke="var(--ac)" stroke-width="2" vector-effect="non-scaling-stroke"/>`}
-$('f').onsubmit=async e=>{e.preventDefault();$('err').textContent='';
- try{const sym=encodeURIComponent($('s').value.trim());
-  const [s,ch]=await Promise.all([api('/api/summary/'+sym),api('/api/chart/'+sym)]);
-  const q=s.quote,cls=q.change>=0?'up':'down';
-  $('q').innerHTML=`<div>${esc(q.name)} <span class="mut">${esc(q.symbol)} · ${esc(q.date)}</span></div>
-   <div class="price">${q.price} <small>${esc(q.currency)}</small> <span class="${cls}">${q.change>=0?'+':''}${q.change} (${q.change_pct}%)</span></div>`;
-  draw(ch.closes);
-  $('n').innerHTML=s.news.map(n=>`<li><a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a><div class="mut">${esc(n.source)} ${esc((n.published||'').slice(0,16))}</div></li>`).join('')||'<li class="mut">ニュースなし</li>'
- }catch(x){$('err').textContent='取得失敗: '+x.message}};
+let cur=null;
+async function loadTree(){const t=await api('/api/hub/tree');
+ $('tree').innerHTML=t.map(c=>`<h3>${esc(c.title)}</h3>`+c.modules.map((m,i)=>
+  `<div class="mod ${m.enabled?'':'off'} ${cur===m.id?'on':''}" data-id="${m.id}"><span class="t">${esc(m.title)}</span>
+   <button data-a="up" title="上へ">↑</button><button data-a="down" title="下へ">↓</button>
+   <button data-a="tog" title="${m.enabled?'非表示':'表示'}">${m.enabled?'×':'＋'}</button></div>`).join('')).join('');
+ window._t=t}
+$('tree').onclick=async e=>{const row=e.target.closest('.mod');if(!row)return;const id=row.dataset.id,a=e.target.dataset.a;
+ try{if(a==='tog'){const m=window._t.flatMap(c=>c.modules).find(x=>x.id===id);await api('/api/hub/'+id,{method:'PATCH',body:JSON.stringify({enabled:!m.enabled})})}
+ else if(a){const m=window._t.flatMap(c=>c.modules).find(x=>x.id===id);const sib=window._t.find(c=>c.modules.some(x=>x.id===id)).modules;
+  const j=sib.indexOf(m)+(a==='up'?-1:1);if(j>=0&&j<sib.length){const o=sib[j];
+   await api('/api/hub/'+id,{method:'PATCH',body:JSON.stringify({order:o.order})});await api('/api/hub/'+o.id,{method:'PATCH',body:JSON.stringify({order:m.order})})}}
+ else{cur=id;await show(id)}
+ await loadTree()}catch(x){$('err').textContent=x.message}};
+const q=c=>`<div class="card"><div><b>${esc(c.name||c.symbol)}</b> <span class="mut">${esc(c.symbol)}</span></div>
+ <div><span class="price">${c.price}</span> <small>${esc(c.currency||'')}</small> <span class="${(c.change_pct||0)>=0?'up':'down'}">${(c.change_pct||0)>=0?'+':''}${c.change_pct}%</span></div></div>`;
+const li=n=>`<li><a href="${esc(n.link)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a><div class="mut">${esc(n.source||n.meta||'')} ${esc((n.published||'').slice(0,16))}</div></li>`;
+async function show(id){$('err').textContent='';$('view').innerHTML='<p class="mut">読み込み中…</p>';
+ const title=window._t.flatMap(c=>c.modules).find(m=>m.id===id).title;const d=await api('/api/hub/'+id);let h=`<h2>${esc(title)}</h2>`;
+ if(d.type==='quotes')h+=d.items.map(q).join('')+(d.errors||[]).map(e=>`<p class="mut">⚠ ${esc(e)}</p>`).join('');
+ else if(d.type==='topics')h+=d.groups.map(g=>`<h3>${esc(g.topic)}</h3><ul>${g.items.map(li).join('')}</ul>`).join('')+(d.errors||[]).map(e=>`<p class="mut">⚠ ${esc(e)}</p>`).join('');
+ else if(d.type==='list')h+=`<ul>${d.items.map(li).join('')}</ul>`;
+ else if(d.type==='notes')h+=`<textarea id="nt" placeholder="話した内容・考えたことを貼る"></textarea><div><button class="p" id="add">保存</button><button class="p" id="seed">事業の種を抽出</button></div><div id="sd"></div><ul>${d.items.map(n=>`<li><span class="mut">${esc(n.ts)}</span><br>${esc(n.text)}</li>`).join('')}</ul>`;
+ else h+=`<p>${esc(d.text)}</p>`;
+ $('view').innerHTML=h;
+ if(d.type==='notes'){$('add').onclick=async()=>{try{await api('/api/notes',{method:'POST',body:JSON.stringify({text:$('nt').value})});show(id)}catch(x){$('err').textContent=x.message}};
+  $('seed').onclick=async()=>{$('sd').innerHTML='<p class="mut">抽出中…</p>';try{const s=await api('/api/notes/seeds',{method:'POST'});$('sd').innerHTML='<h3>事業の種(AIの推測。要検証)</h3><pre>'+esc(JSON.stringify(s,null,2))+'</pre>'}catch(x){$('sd').innerHTML='';$('err').textContent=x.message}}}}
+loadTree().catch(x=>$('err').textContent=x.message);
 </script>
 </body>
 </html>
